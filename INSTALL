@@ -1,0 +1,9 @@
+Building Espers
+
+See doc/readme-qt.rst for instructions on building Espers QT,
+the intended-for-end-users, nice-graphical-interface, reference
+implementation of Espers.
+
+See doc/build-*.txt for instructions on building Espersd,
+the intended-for-services, no-graphical-interface, reference
+implementation of Espers.
