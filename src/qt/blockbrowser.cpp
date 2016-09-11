@@ -488,11 +488,11 @@ void BlockBrowser::updateStatistics()
     QString stakemin = QString::number(nMinWeight);
     QString stakemax = QString::number(nNetworkWeight);
     QString phase = "";
-    if (pindexBest->nHeight < 4350)
+    if (pindexBest->nHeight < 2125)
     {
         phase = "PoW";
     }
-    else if (pindexBest->nHeight > 4349)
+    else if (pindexBest->nHeight > 2124)
     {
         phase = "PoW+PoS";
     }
@@ -504,7 +504,8 @@ void BlockBrowser::updateStatistics()
     QString Qlpawrate = clientModel->getLastBlockDate().toString();
 
     QString QPeers = QString::number(peers);
-    QString qVolume = QLocale(QLocale::English).toString(volume);
+    // QString qVolume = QLocale(QLocale::English).toString(volume);
+    QString qVolume = QString::number(volume);
 
     if(nHeight > heightPrevious)
     {
