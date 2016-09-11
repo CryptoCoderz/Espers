@@ -45,9 +45,9 @@ QString BitcoinUnits::description(int unit)
 {
     switch(unit)
     {
-    case BTC: return QString("Esperss");
-    case mBTC: return QString("Milli-Esperss (1 / 1,000)");
-    case uBTC: return QString("Micro-Esperss (1 / 1,000,000)");
+    case BTC: return QString("Espers");
+    case mBTC: return QString("Milli-Espers (1 / 1,000)");
+    case uBTC: return QString("Micro-Espers (1 / 1,000,000)");
     default: return QString("???");
     }
 }
@@ -67,9 +67,9 @@ int BitcoinUnits::amountDigits(int unit)
 {
     switch(unit)
     {
-    case BTC: return 8; // 21,000,000 (# digits, without commas)
-    case mBTC: return 11; // 21,000,000,000
-    case uBTC: return 14; // 21,000,000,000,000
+    case BTC: return 11; //          21,000,000,000 (# digits, without commas)
+    case mBTC: return 14; //     21,000,000,000,000
+    case uBTC: return 17; // 21,000,000,000,000,000
     default: return 0;
     }
 }
