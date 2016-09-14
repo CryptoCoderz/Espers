@@ -60,11 +60,13 @@ static const int64_t MIN_RELAY_TX_FEE = MIN_TX_FEE;
 /** No amount larger than this (in satoshi) is valid */
 static const int64_t MAX_SINGLE_TX = 50000000000 * COIN; // 50 Billion (Same As Cap)
 /** PoS Subsidy */
-static const int64_t COIN_YEAR_REWARD = 250 * CENT; // 25% 1st PoS Subsidy Phase ||| ~6497353689.6 1st yr for 3yrs ||| ~25989414758.4 |||
+static const int64_t COIN_YEAR_REWARD = 250 * CENT; // Miscalculated (2 day hinderance, no major issues)
 /** PoS Subsidy 2 */
-static const int64_t COIN_YEAR_REWARD2 = 50 * CENT; // 5% 2nd PoS Subsidy Phase @ (~45Billion)
+static const int64_t COIN_YEAR_REWARD2 = 19 * CENT; // ~25% 4300000000 annually
 /** PoS Subsidy 3 */
-static const int64_t COIN_YEAR_REWARD3 = 10 * CENT; // 1% 3nd PoS Subsidy Phase @ (~48Billion)
+static const int64_t COIN_YEAR_REWARD3 = 4 * CENT; // ~5% 860000000 annually
+/** PoS Subsidy 4 */
+static const int64_t COIN_YEAR_REWARD4 = 0.8 * CENT; // ~1% TODO: Correct numbers
 /** Genesis block subsidy */
 static const int64_t nGenesisBlockReward = 1 * COIN;
 /** Reserve block subsidy */
@@ -79,10 +81,12 @@ static const int64_t nGenesisHeight = 0;
 static const int64_t nReservePhaseStart = 10;
 /** Reserve Phase end block */ 
 static const int64_t nReservePhaseEnd = 356; // rounded +95 blocks for ~17.2 Swap mine
+/** PoS25 Phase start block */
+static const int64_t nPoS25PhaseStart = 20000; // Dropped date due to 25% staking miscalculation
 /** PoS5 Phase start block */
-static const int64_t nPoS5PhaseStart = 2000800; // Begins @ ~45481475827.2 ESP (+1000000 or ~1.5Years)
+static const int64_t nPoS5PhaseStart = 2000800; // Begins @ ~48892586514.24 ESP
 /** PoS1 Phase start block */
-static const int64_t nPoS1PhaseStart = 3000883; // Begins @ ~48892586514.24 ESP
+static const int64_t nPoS1PhaseStart = 3000300; // Begins @ ~48892586514.24 ESP
 /** Mineout/HardCap block Height [HardCap v1.7] */
 static const int64 nMineoutBlock = 1750000; // Starting at block 1,750,000 reward = Chain Fees (starts @ 8.75-Billion)
 /** Coinbase transaction outputs can only be spent after this number of new blocks (network rule) */

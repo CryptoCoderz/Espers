@@ -1,6 +1,6 @@
 TEMPLATE = app
 TARGET = Espers-qt
-VERSION = 0.8.4.0
+VERSION = 0.8.4.1
 INCLUDEPATH += src src/json src/qt
 #QT += network
 QT += core gui widgets network
@@ -134,8 +134,7 @@ SOURCES += src/txdb-leveldb.cpp \
     src/shabal.c \
     src/whirlpool.c \
     src/haval.c \
-    src/sha2big.c \
-    src/qt/siteonchain.cpp
+    src/sha2big.c
 !win32 {
     # we use QMAKE_CXXFLAGS_RELEASE even without RELEASE=1 because we use RELEASE to indicate linking preferences not -O preferences
     genleveldb.commands = cd $$PWD/src/leveldb && CC=$$QMAKE_CC CXX=$$QMAKE_CXX $(MAKE) OPT=\"$$QMAKE_CXXFLAGS $$QMAKE_CXXFLAGS_RELEASE\" libleveldb.a libmemenv.a
@@ -378,7 +377,8 @@ SOURCES += src/qt/bitcoin.cpp src/qt/bitcoingui.cpp \
     src/scrypt-x86.S \
     src/scrypt-x86_64.S \
     src/scrypt.cpp \
-    src/pbkdf2.cpp
+    src/pbkdf2.cpp \
+    src/qt/siteonchain.cpp
 
 RESOURCES += \
     src/qt/bitcoin.qrc
