@@ -988,16 +988,16 @@ int64_t GetProofOfStakeReward(int64_t nCoinAge, int64_t nFees)
 {
     int64_t nSubsidy = nCoinAge * COIN_YEAR_REWARD * 33 / (365 * 33 + 8);
 
-      // Previously nBestHeight
-      if(pindexBest->nHeight > nPoS25PhaseStart){
-      nSubsidy = nCoinAge * COIN_YEAR_REWARD2 * 33 / (365 * 33 + 8);
+      if(pindexBest->nHeight > nPoS1PhaseStart){
+      nSubsidy = nCoinAge * COIN_YEAR_REWARD4 * 33 / (365 * 33 + 8);
       }
       // Previously nBestHeight
       else if(pindexBest->nHeight > nPoS5PhaseStart){
       nSubsidy = nCoinAge * COIN_YEAR_REWARD3 * 33 / (365 * 33 + 8);
       }
-      else if(pindexBest->nHeight > nPoS1PhaseStart){
-      nSubsidy = nCoinAge * COIN_YEAR_REWARD4 * 33 / (365 * 33 + 8);
+      // Previously nBestHeight
+      else if(pindexBest->nHeight > nPoS25PhaseStart){
+      nSubsidy = nCoinAge * COIN_YEAR_REWARD2 * 33 / (365 * 33 + 8);
       }
 
     LogPrint("creation", "GetProofOfStakeReward(): create=%s nCoinAge=%d\n", FormatMoney(nSubsidy), nCoinAge);
