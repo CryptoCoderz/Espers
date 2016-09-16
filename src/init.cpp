@@ -28,6 +28,11 @@
 #include <signal.h>
 #endif
 
+#include <QTextStream>
+#include <QFile>
+#include <QDir>
+#include <QTextStream>
+#include <QFileInfo>
 
 using namespace std;
 using namespace boost;
@@ -868,6 +873,15 @@ bool AppInit2(boost::thread_group& threadGroup)
     // ********************************************************* Step 12: finished
 
     uiInterface.InitMessage(_("Done loading"));
+
+    //TODO: CORRECT THIS
+    QString runcheck = QDir::homePath() + "/AppData/Roaming/ESP/chk.file";
+    QFile rcheck(runcheck);
+    if(rcheck.open(QIODevice::ReadWrite))
+    {
+    QTextStream saturate(&rcheck);
+    saturate << "Temp File that flags launcher" << endl;
+    }
 
 #ifdef ENABLE_WALLET
     if (pwalletMain) {

@@ -97,14 +97,14 @@ void ClientControlPage::on_chck4_upd8_clicked()
     }
 
     QProcess *process = new QProcess();
-    QString fileX = QDir::homePath() + "/AppData/Roaming/CryptoCoderz/ESP-Client/getVer.exe";
+    QString fileX = QDir::homePath() + "/AppData/Roaming/CryptoCoderz/ESP-Client/Espers_Launcher.exe";
     process->start(fileX);
 }
 
 void ClientControlPage::on_dwngrd_opt_clicked()
 {
     QMessageBox::information(this, "No Available Versions",
-                       "v0.8.4.0 cannot be downgraded, only later versions can.",
+                       "v0.8.4.2 cannot be downgraded, only later versions can.",
                        QMessageBox::Ok );
 }
 
@@ -136,7 +136,7 @@ void ClientControlPage::on_CS_submit_clicked()
 
 void ClientControlPage::on_BR_submit_clicked()
 {
-    QMessageBox::information(this, "Coming in v0.8.4.1",
+    QMessageBox::information(this, "Coming in v0.8.4.3",
                        "Please email your issues to CryptoCoderz@gmail.com",
                        QMessageBox::Ok );
 }

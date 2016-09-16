@@ -420,6 +420,7 @@ private:
     std::vector<T> vValues;
     std::vector<T> vSorted;
     unsigned int nSize;
+
 public:
     CMedianFilter(unsigned int size, T initial_value):
         nSize(size)

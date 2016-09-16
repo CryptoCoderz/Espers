@@ -1,6 +1,6 @@
 TEMPLATE = app
 TARGET = Espers-qt
-VERSION = 0.8.4.1
+VERSION = 0.8.4.2
 INCLUDEPATH += src src/json src/qt
 #QT += network
 QT += core gui widgets network
