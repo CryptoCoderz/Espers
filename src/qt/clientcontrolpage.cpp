@@ -31,19 +31,23 @@ ClientControlPage::ClientControlPage(QWidget *parent) :
 {
     ui->setupUi(this);
     // CHECK IF STANDALONE
-    QFileInfo check_standalone(QDir::homePath() + "/AppData/Roaming/CryptoCoderz/ESP-Client");
+    QFileInfo check_standalone(QDir::currentPath());
     if(!check_standalone.exists())
     {
         // C.C.S
-        ui->chck4_upd8->setEnabled(false);
-        ui->dwngrd_opt->setEnabled(false);
-        ui->checkBoxupd8->setEnabled(false);
-        ui->minCLIE->setEnabled(false);
-        ui->CS_submit->setEnabled(false);
-        ui->br_input->setEnabled(false);
-        ui->BR_submit->setEnabled(false);
-        ui->optin_test->setEnabled(false);
-        ui->AU_apply->setEnabled(false);
+      //  ui->chck4_upd8->setEnabled(false);
+      //  ui->dwngrd_opt->setEnabled(false);
+      // ui->checkBoxupd8->setEnabled(false);
+      //  ui->minCLIE->setEnabled(false);
+      //  ui->CS_submit->setEnabled(false);
+      //  ui->br_input->setEnabled(false);
+      //  ui->BR_submit->setEnabled(false);
+     //   ui->optin_test->setEnabled(false);
+     //   ui->AU_apply->setEnabled(false);
+
+        QMessageBox::warning(this, "Error",
+                           "Local directory not found... Somehow. Error 54",
+                           QMessageBox::Ok );
     }
     else if(check_standalone.exists())
     {
@@ -57,7 +61,17 @@ ClientControlPage::ClientControlPage(QWidget *parent) :
 
         // READ LIVE (CURRENT) VERSION
         //open a file
-        QString curtxt = QDir::homePath() + "/AppData/Roaming/CryptoCoderz/ESP-Client/version.check";
+        QFile iniFILE(QDir::currentPath() + "/ESP.cfg");
+        if(!iniFILE.open(QIODevice::ReadOnly | QIODevice::Text))
+            // error out if not accesable
+            QMessageBox::information(0,"info",iniFILE.errorString());
+        QTextStream streamINI(&iniFILE);
+        ui->dDIR->setPlainText(streamINI.readLine());
+
+        QDir directory(ui->dDIR->toPlainText());
+        QString curtxt = directory.filePath("version.check");
+            iniFILE.close();
+
         QFile fileV(curtxt);
         if(!fileV.open(QIODevice::ReadOnly | QIODevice::Text))
             // error out if not accesable
@@ -65,7 +79,7 @@ ClientControlPage::ClientControlPage(QWidget *parent) :
         QTextStream inV(&fileV);
         ui->liveVER->setPlainText(inV.readAll());
 
-        QFileInfo check_call(QDir::homePath() + "/AppData/Roaming/CryptoCoderz/ESP-Client/upd8.skip");
+        QFileInfo check_call(directory.filePath("upd8.skip"));
         if (check_call.exists() && check_call.isFile())
         {
             ui->checkBoxupd8->setChecked(false);
@@ -76,6 +90,7 @@ ClientControlPage::ClientControlPage(QWidget *parent) :
         {
              ui->checkBoxupd8->setChecked(true);
         }
+
     }
 
 }
@@ -88,7 +103,17 @@ ClientControlPage::~ClientControlPage()
 
 void ClientControlPage::on_chck4_upd8_clicked()
 {
-    QString genCheck = QDir::homePath() + "/AppData/Roaming/CryptoCoderz/ESP-Client/version.call";
+    QFile iniFILE(QDir::currentPath() + "/ESP.cfg");
+    if(!iniFILE.open(QIODevice::ReadOnly | QIODevice::Text))
+        // error out if not accesable
+        QMessageBox::information(0,"info",iniFILE.errorString());
+    QTextStream streamINI(&iniFILE);
+    ui->dDIR->setPlainText(streamINI.readLine());
+
+    QDir directory(ui->dDIR->toPlainText());
+    QString genCheck = directory.filePath("version.call");
+        iniFILE.close();
+
     QFile genCall(genCheck);
     if(genCall.open(QIODevice::ReadWrite))
     {
@@ -97,7 +122,7 @@ void ClientControlPage::on_chck4_upd8_clicked()
     }
 
     QProcess *process = new QProcess();
-    QString fileX = QDir::homePath() + "/AppData/Roaming/CryptoCoderz/ESP-Client/Espers_Launcher.exe";
+    QString fileX = QDir::currentPath() + "/Espers_Launcher.exe";
     process->start(fileX);
 }
 
@@ -143,17 +168,27 @@ void ClientControlPage::on_BR_submit_clicked()
 
 void ClientControlPage::on_AU_apply_clicked()
 {
+    QFile iniFILE(QDir::currentPath() + "/ESP.cfg");
+    if(!iniFILE.open(QIODevice::ReadOnly | QIODevice::Text))
+        // error out if not accesable
+        QMessageBox::information(0,"info",iniFILE.errorString());
+    QTextStream streamINI(&iniFILE);
+    ui->dDIR->setPlainText(streamINI.readLine());
+
+    QDir directory(ui->dDIR->toPlainText());
+    QString upSkip = directory.filePath("upd8.skip");
+    QString rmSKIP = directory.filePath("upd8.skip");
+        iniFILE.close();
+
     if(ui->checkBoxupd8->isChecked())
     {
-        QString rmSKIP = QDir::homePath() + "/AppData/Roaming/CryptoCoderz/ESP-Client/upd8.skip";
         if (QFile::exists(rmSKIP)) {
             QFile::remove(rmSKIP);
         }
     }
     else
     {
-    // Skip Updating
-    QString upSkip = QDir::homePath() + "/AppData/Roaming/CryptoCoderz/ESP-Client/upd8.skip";
+    // Skip Updating       
     QFile skipCall(upSkip);
     if(skipCall.open(QIODevice::ReadWrite))
     {
