@@ -874,14 +874,16 @@ bool AppInit2(boost::thread_group& threadGroup)
 
     uiInterface.InitMessage(_("Done loading"));
 
+#ifdef Q_OS_WIN
     //TODO: CORRECT THIS
-    QString runcheck = QDir::homePath() + "/AppData/Roaming/ESP/chk.file";
+    QString runcheck = QDir::currentPath() + "/chk.file";
     QFile rcheck(runcheck);
     if(rcheck.open(QIODevice::ReadWrite))
     {
     QTextStream saturate(&rcheck);
     saturate << "Temp File that flags launcher" << endl;
     }
+#endif
 
 #ifdef ENABLE_WALLET
     if (pwalletMain) {
