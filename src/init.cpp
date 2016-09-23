@@ -28,11 +28,13 @@
 #include <signal.h>
 #endif
 
+#ifdef Q_OS_WIN
 #include <QTextStream>
 #include <QFile>
 #include <QDir>
 #include <QTextStream>
 #include <QFileInfo>
+#endif
 
 using namespace std;
 using namespace boost;
