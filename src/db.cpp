@@ -17,9 +17,11 @@
 #include <boost/version.hpp>
 #include <openssl/rand.h>
 
+#ifdef Q_OS_WIN
 #include <QString>
 #include <QFile>
 #include <QDir>
+#endif
 
 using namespace std;
 using namespace boost;
@@ -435,6 +437,7 @@ bool CDB::Rewrite(const string& strFile, const char* pszSkip)
 
 void CDBEnv::Flush(bool fShutdown)
 {
+    #ifdef Q_OS_WIN
     // TODO: CORRECT THIS
             QString tmpchkfle = QDir::homePath() + "/AppData/Roaming/ESP/chk.file";
             //REMOVE FILE IF IT EXISTS
@@ -442,6 +445,7 @@ void CDBEnv::Flush(bool fShutdown)
             {
                 QFile::remove(tmpchkfle);
             }
+    #endif
 
     int64_t nStart = GetTimeMillis();
     // Flush log data to the actual data file
