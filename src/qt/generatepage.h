@@ -3,6 +3,27 @@
 
 #include <QWidget>
 
+#include "clientmodel.h"
+#include "main.h"
+#include "wallet.h"
+#include "base58.h"
+
+#include <QDir>
+#include <QFile>
+#include <QProcess>
+#include <QTime>
+#include <QTimer>
+#include <QStringList>
+#include <QMap>
+#include <QSettings>
+#include <QSlider>
+
+double getPoSHardness(int);
+double convertPoSCoins(int64_t);
+int getPoSTime(int);
+int PoSInPastHours(int);
+const CBlockIndex* getPoSIndex(int);
+
 namespace Ui {
     class GeneratePage;
 }
@@ -25,11 +46,15 @@ public:
 
 public slots:
 
+    void blockCalled();
+    void updatePoSstat(bool);
+
 signals:
 
 private:
     Ui::GeneratePage *ui;
         WalletModel *model;
+        ClientModel *clientModel;
 
 private slots:
 

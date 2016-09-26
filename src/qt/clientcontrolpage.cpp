@@ -53,18 +53,18 @@ ClientControlPage::ClientControlPage(QWidget *parent) :
     {
         // READ INSTALLED VERSION
         QFile file(":/version");
-        if(!file.open(QIODevice::ReadOnly | QIODevice::Text))
+      //  if(!file.open(QIODevice::ReadOnly | QIODevice::Text))
             // error out if not accesable
-            QMessageBox::information(0,"info",file.errorString());
+         //   QMessageBox::information(0,"info",file.errorString());
         QTextStream in(&file);
         ui->instVER->setPlainText(in.readAll());
 
         // READ LIVE (CURRENT) VERSION
         //open a file
         QFile iniFILE(QDir::currentPath() + "/ESP.cfg");
-        if(!iniFILE.open(QIODevice::ReadOnly | QIODevice::Text))
+       // if(!iniFILE.open(QIODevice::ReadOnly | QIODevice::Text))
             // error out if not accesable
-            QMessageBox::information(0,"info",iniFILE.errorString());
+           // QMessageBox::information(0,"info",iniFILE.errorString());
         QTextStream streamINI(&iniFILE);
         ui->dDIR->setPlainText(streamINI.readLine());
 
@@ -73,9 +73,9 @@ ClientControlPage::ClientControlPage(QWidget *parent) :
             iniFILE.close();
 
         QFile fileV(curtxt);
-        if(!fileV.open(QIODevice::ReadOnly | QIODevice::Text))
+        //if(!fileV.open(QIODevice::ReadOnly | QIODevice::Text))
             // error out if not accesable
-            QMessageBox::information(0,"info",fileV.errorString());
+            //QMessageBox::information(0,"info",fileV.errorString());
         QTextStream inV(&fileV);
         ui->liveVER->setPlainText(inV.readAll());
 

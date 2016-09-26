@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>879</width>
-    <height>501</height>
+    <height>499</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -55,8 +55,8 @@
              </property>
              <property name="font">
               <font>
-               <weight>75</weight>
-               <bold>true</bold>
+               <weight>50</weight>
+               <bold>false</bold>
               </font>
              </property>
              <property name="title">
@@ -117,8 +117,6 @@
                </item>
               </layout>
              </widget>
-             <zorder>verticalLayoutWidget_6</zorder>
-             <zorder>gBPoW</zorder>
             </widget>
            </item>
            <item>
@@ -137,8 +135,8 @@
              </property>
              <property name="font">
               <font>
-               <weight>75</weight>
-               <bold>true</bold>
+               <weight>50</weight>
+               <bold>false</bold>
               </font>
              </property>
              <property name="title">
@@ -294,8 +292,8 @@ color: rgb(255, 255, 255);</string>
              </property>
              <property name="font">
               <font>
-               <weight>75</weight>
-               <bold>true</bold>
+               <weight>50</weight>
+               <bold>false</bold>
               </font>
              </property>
              <property name="title">
@@ -641,14 +639,10 @@ color: rgb(255, 255, 255);</string>
                </item>
               </layout>
              </widget>
-             <zorder></zorder>
-             <zorder>verticalLayoutWidget</zorder>
             </widget>
            </item>
           </layout>
          </widget>
-         <zorder>gbCPU</zorder>
-         <zorder>verticalLayoutWidget_2</zorder>
         </widget>
        </item>
       </layout>
@@ -664,33 +658,408 @@ color: rgb(255, 255, 255);</string>
           </font>
          </property>
          <property name="title">
-          <string>PoS Configuration</string>
+          <string>PoS</string>
          </property>
          <widget class="QWidget" name="verticalLayoutWidget_5">
           <property name="geometry">
            <rect>
             <x>10</x>
             <y>20</y>
-            <width>244</width>
-            <height>301</height>
+            <width>261</width>
+            <height>451</height>
            </rect>
           </property>
           <layout class="QVBoxLayout" name="verticalLayout_10">
            <item>
-            <widget class="QLabel" name="label_2">
+            <widget class="QGroupBox" name="groupBox_4">
              <property name="font">
               <font>
-               <pointsize>20</pointsize>
                <weight>50</weight>
                <bold>false</bold>
               </font>
              </property>
-             <property name="text">
-              <string>COMING - SOON</string>
+             <property name="title">
+              <string>Overview</string>
              </property>
-             <property name="alignment">
-              <set>Qt::AlignCenter</set>
-             </property>
+             <widget class="QWidget" name="verticalLayoutWidget_3">
+              <property name="geometry">
+               <rect>
+                <x>10</x>
+                <y>20</y>
+                <width>241</width>
+                <height>421</height>
+               </rect>
+              </property>
+              <layout class="QVBoxLayout" name="verticalLayout_11">
+               <item>
+                <widget class="QGroupBox" name="groupBox_5">
+                 <property name="title">
+                  <string>Status</string>
+                 </property>
+                 <widget class="QWidget" name="horizontalLayoutWidget">
+                  <property name="geometry">
+                   <rect>
+                    <x>10</x>
+                    <y>20</y>
+                    <width>221</width>
+                    <height>21</height>
+                   </rect>
+                  </property>
+                  <layout class="QHBoxLayout" name="horizontalLayout_2">
+                   <item>
+                    <widget class="QLabel" name="label_8">
+                     <property name="text">
+                      <string>Coins are:</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item>
+                    <widget class="QLabel" name="stkstat">
+                     <property name="text">
+                      <string>NOT STAKING</string>
+                     </property>
+                    </widget>
+                   </item>
+                  </layout>
+                 </widget>
+                 <widget class="QWidget" name="horizontalLayoutWidget_2">
+                  <property name="geometry">
+                   <rect>
+                    <x>10</x>
+                    <y>40</y>
+                    <width>221</width>
+                    <height>21</height>
+                   </rect>
+                  </property>
+                  <layout class="QHBoxLayout" name="horizontalLayout_3">
+                   <item>
+                    <widget class="QLabel" name="label_12">
+                     <property name="text">
+                      <string>Est. Next Stake:</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item>
+                    <widget class="QLabel" name="estnxt">
+                     <property name="text">
+                      <string>UNKNOWN</string>
+                     </property>
+                    </widget>
+                   </item>
+                  </layout>
+                 </widget>
+                 <widget class="QWidget" name="horizontalLayoutWidget_3">
+                  <property name="geometry">
+                   <rect>
+                    <x>10</x>
+                    <y>60</y>
+                    <width>221</width>
+                    <height>21</height>
+                   </rect>
+                  </property>
+                  <layout class="QHBoxLayout" name="horizontalLayout_4">
+                   <item>
+                    <widget class="QLabel" name="label_14">
+                     <property name="text">
+                      <string>Hashrate:</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item>
+                    <widget class="QLabel" name="hashrt">
+                     <property name="text">
+                      <string>0</string>
+                     </property>
+                    </widget>
+                   </item>
+                  </layout>
+                 </widget>
+                 <widget class="QWidget" name="horizontalLayoutWidget_4">
+                  <property name="geometry">
+                   <rect>
+                    <x>10</x>
+                    <y>80</y>
+                    <width>221</width>
+                    <height>21</height>
+                   </rect>
+                  </property>
+                  <layout class="QHBoxLayout" name="horizontalLayout_5">
+                   <item>
+                    <widget class="QLabel" name="label_15">
+                     <property name="text">
+                      <string>Difficulty:</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item>
+                    <widget class="QLabel" name="diffdsp">
+                     <property name="text">
+                      <string>0</string>
+                     </property>
+                    </widget>
+                   </item>
+                  </layout>
+                 </widget>
+                 <widget class="QWidget" name="horizontalLayoutWidget_9">
+                  <property name="geometry">
+                   <rect>
+                    <x>10</x>
+                    <y>100</y>
+                    <width>221</width>
+                    <height>21</height>
+                   </rect>
+                  </property>
+                  <layout class="QHBoxLayout" name="horizontalLayout_17">
+                   <item>
+                    <widget class="QLabel" name="label_11">
+                     <property name="text">
+                      <string>Staking is:</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item>
+                    <widget class="QLabel" name="stken">
+                     <property name="text">
+                      <string>DISABLED</string>
+                     </property>
+                    </widget>
+                   </item>
+                  </layout>
+                 </widget>
+                </widget>
+               </item>
+               <item>
+                <widget class="QGroupBox" name="groupBox_6">
+                 <property name="title">
+                  <string>Weight</string>
+                 </property>
+                 <widget class="QWidget" name="verticalLayoutWidget_8">
+                  <property name="geometry">
+                   <rect>
+                    <x>10</x>
+                    <y>20</y>
+                    <width>231</width>
+                    <height>113</height>
+                   </rect>
+                  </property>
+                  <layout class="QVBoxLayout" name="verticalLayout_12">
+                   <item>
+                    <widget class="QLabel" name="label_2">
+                     <property name="text">
+                      <string>You:</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item>
+                    <widget class="QProgressBar" name="urwheight">
+                     <property name="value">
+                      <number>0</number>
+                     </property>
+                    </widget>
+                   </item>
+                   <item>
+                    <widget class="QLabel" name="label_7">
+                     <property name="text">
+                      <string>Network:</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item>
+                    <widget class="QProgressBar" name="netweight">
+                     <property name="value">
+                      <number>0</number>
+                     </property>
+                     <property name="invertedAppearance">
+                      <bool>true</bool>
+                     </property>
+                    </widget>
+                   </item>
+                   <item>
+                    <spacer name="verticalSpacer_4">
+                     <property name="orientation">
+                      <enum>Qt::Vertical</enum>
+                     </property>
+                     <property name="sizeHint" stdset="0">
+                      <size>
+                       <width>20</width>
+                       <height>40</height>
+                      </size>
+                     </property>
+                    </spacer>
+                   </item>
+                  </layout>
+                 </widget>
+                </widget>
+               </item>
+               <item>
+                <widget class="QGroupBox" name="groupBox_7">
+                 <property name="title">
+                  <string>Staking Statistics</string>
+                 </property>
+                 <widget class="QWidget" name="horizontalLayoutWidget_5">
+                  <property name="geometry">
+                   <rect>
+                    <x>10</x>
+                    <y>20</y>
+                    <width>231</width>
+                    <height>21</height>
+                   </rect>
+                  </property>
+                  <layout class="QHBoxLayout" name="horizontalLayout_9">
+                   <item>
+                    <widget class="QLabel" name="label_18">
+                     <property name="maximumSize">
+                      <size>
+                       <width>100</width>
+                       <height>16777215</height>
+                      </size>
+                     </property>
+                     <property name="text">
+                      <string>Hourly:</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item>
+                    <widget class="QLabel" name="hourlydsp">
+                     <property name="text">
+                      <string>0</string>
+                     </property>
+                    </widget>
+                   </item>
+                  </layout>
+                 </widget>
+                 <widget class="QWidget" name="horizontalLayoutWidget_6">
+                  <property name="geometry">
+                   <rect>
+                    <x>10</x>
+                    <y>60</y>
+                    <width>231</width>
+                    <height>21</height>
+                   </rect>
+                  </property>
+                  <layout class="QHBoxLayout" name="horizontalLayout_14">
+                   <item>
+                    <widget class="QLabel" name="label_19">
+                     <property name="maximumSize">
+                      <size>
+                       <width>100</width>
+                       <height>16777215</height>
+                      </size>
+                     </property>
+                     <property name="text">
+                      <string>Weekly:</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item>
+                    <widget class="QLabel" name="weeklydsp">
+                     <property name="text">
+                      <string>0</string>
+                     </property>
+                    </widget>
+                   </item>
+                  </layout>
+                 </widget>
+                 <widget class="QWidget" name="horizontalLayoutWidget_7">
+                  <property name="geometry">
+                   <rect>
+                    <x>10</x>
+                    <y>80</y>
+                    <width>231</width>
+                    <height>21</height>
+                   </rect>
+                  </property>
+                  <layout class="QHBoxLayout" name="horizontalLayout_15">
+                   <item>
+                    <widget class="QLabel" name="label_21">
+                     <property name="maximumSize">
+                      <size>
+                       <width>100</width>
+                       <height>16777215</height>
+                      </size>
+                     </property>
+                     <property name="text">
+                      <string>Monthly:</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item>
+                    <widget class="QLabel" name="monthlydsp">
+                     <property name="text">
+                      <string>0</string>
+                     </property>
+                    </widget>
+                   </item>
+                  </layout>
+                 </widget>
+                 <widget class="QWidget" name="horizontalLayoutWidget_8">
+                  <property name="geometry">
+                   <rect>
+                    <x>10</x>
+                    <y>40</y>
+                    <width>231</width>
+                    <height>21</height>
+                   </rect>
+                  </property>
+                  <layout class="QHBoxLayout" name="horizontalLayout_16">
+                   <item>
+                    <widget class="QLabel" name="label_24">
+                     <property name="maximumSize">
+                      <size>
+                       <width>100</width>
+                       <height>16777215</height>
+                      </size>
+                     </property>
+                     <property name="text">
+                      <string>Daily</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item>
+                    <widget class="QLabel" name="dailydsp">
+                     <property name="text">
+                      <string>0</string>
+                     </property>
+                    </widget>
+                   </item>
+                  </layout>
+                 </widget>
+                 <widget class="QWidget" name="horizontalLayoutWidget_10">
+                  <property name="geometry">
+                   <rect>
+                    <x>10</x>
+                    <y>100</y>
+                    <width>231</width>
+                    <height>21</height>
+                   </rect>
+                  </property>
+                  <layout class="QHBoxLayout" name="horizontalLayout_20">
+                   <item>
+                    <widget class="QLabel" name="label_13">
+                     <property name="maximumSize">
+                      <size>
+                       <width>100</width>
+                       <height>16777215</height>
+                      </size>
+                     </property>
+                     <property name="text">
+                      <string>Last Block Time:</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item>
+                    <widget class="QLabel" name="lbTime">
+                     <property name="text">
+                      <string>00:00</string>
+                     </property>
+                    </widget>
+                   </item>
+                  </layout>
+                 </widget>
+                </widget>
+               </item>
+              </layout>
+             </widget>
             </widget>
            </item>
           </layout>
