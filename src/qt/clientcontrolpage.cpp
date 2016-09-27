@@ -51,13 +51,15 @@ ClientControlPage::ClientControlPage(QWidget *parent) :
     }
     else if(check_standalone.exists())
     {
+        // TODO: Fix this up for OS porting
+#ifdef Q_OS_WIN
         // READ INSTALLED VERSION
         QFile file(":/version");
-      //  if(!file.open(QIODevice::ReadOnly | QIODevice::Text))
+        if(!file.open(QIODevice::ReadOnly | QIODevice::Text))
             // error out if not accesable
-         //   QMessageBox::information(0,"info",file.errorString());
+           QMessageBox::information(0,"info",file.errorString());
         QTextStream in(&file);
-        ui->instVER->setPlainText(in.readAll());
+        ui->instVER->setPlainText(in.readLine());
 
         // READ LIVE (CURRENT) VERSION
         //open a file
@@ -90,7 +92,7 @@ ClientControlPage::ClientControlPage(QWidget *parent) :
         {
              ui->checkBoxupd8->setChecked(true);
         }
-
+#endif
     }
 
 }
