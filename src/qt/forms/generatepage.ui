@@ -761,7 +761,7 @@ color: rgb(255, 255, 255);</string>
                    <item>
                     <widget class="QLabel" name="label_14">
                      <property name="text">
-                      <string>Hashrate:</string>
+                      <string>Net Total Stake:</string>
                      </property>
                     </widget>
                    </item>

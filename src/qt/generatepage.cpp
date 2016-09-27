@@ -210,28 +210,48 @@ void GeneratePage::updatePoSstat(bool stat)
         uint64_t nNetworkWeight = GetPoSKernelPS();
         bool staking = nLastCoinStakeSearchInterval && nWeight;
         uint64_t nExpectedTime = staking ? (Params().TargetSpacing() * nNetworkWeight / nWeight) : 0;
-        QString Qseconds = " Seconds";
+        QString Qseconds = " Second(s)";
         if(nExpectedTime > 86399)
         {
            nExpectedTime = nExpectedTime / 60 / 60 / 24;
-           Qseconds = " Days";
+           Qseconds = " Day(s)";
         }
         else if(nExpectedTime > 3599)
         {
            nExpectedTime = nExpectedTime / 60 / 60;
-           Qseconds = " Hours";
+           Qseconds = " Hour(s)";
         }
         else if(nExpectedTime > 59)
         {
            nExpectedTime = nExpectedTime / 60;
-           Qseconds = " Minutes";
+           Qseconds = " Minute(s)";
         }
         ui->lbTime->show();
         ui->diffdsp->show();;
         ui->hashrt->show();
         int height = pindexBest->nHeight;
         uint64_t Pawrate = GetPoSKernelPS();
-        double Pawrate2 = ((double)Pawrate / 1000000);
+        double Pawrate2 = ((double)Pawrate / 100000000);
+        QString QPawrate = QString::number(Pawrate2, 'f', 2);
+        ui->hashrt->setText(QPawrate + " ESP");
+        if(Pawrate2 > 999999999)
+        {
+           Pawrate2 = (Pawrate2 / 1000000000);
+           QPawrate = QString::number(Pawrate2, 'f', 2);
+           ui->hashrt->setText(QPawrate + " BILLION ESP");
+        }
+        else if(Pawrate2 > 999999)
+        {
+           Pawrate2 = (Pawrate2 / 1000000);
+           QPawrate = QString::number(Pawrate2, 'f', 2);
+           ui->hashrt->setText(QPawrate + " MILLION ESP");
+        }
+        else if(Pawrate2 > 999)
+        {
+           Pawrate2 = (Pawrate2 / 1000);
+           QPawrate = QString::number(Pawrate2, 'f', 2);
+           ui->hashrt->setText(QPawrate + " THOUSAND ESP");
+        }
         double hardness = getPoSHardness(height);
         uint64_t nStakePercentage = (double)nWeight / (double)nNetworkWeight * 100;
         uint64_t nNetPercentage = (100 - (double)nStakePercentage);
@@ -241,15 +261,13 @@ void GeneratePage::updatePoSstat(bool stat)
             nNetPercentage = (100 - (double)nStakePercentage);
         }
         CBlockIndex* pindex = pindexBest;;
-        QString QHardness = QString::number(hardness, 'f', 6);
-        QString QPawrate = QString::number(Pawrate2, 'f', 3);
+        QString QHardness = QString::number(hardness, 'f', 6);      
         QString QStakePercentage = QString::number(nStakePercentage, 'f', 2);
         QString QNetPercentage = QString::number(nNetPercentage, 'f', 2);
         QString QTime = clientModel->getLastBlockDate().toString();
         QString QExpect = QString::number(nExpectedTime, 'f', 0);;
         QString QStaking = "DISABLED";
         QString QStakeEN = "NOT STAKING";
-        ui->hashrt->setText(QPawrate + " MH/s");
         ui->estnxt->setText(QExpect + Qseconds);
         ui->stkstat->setText(QStakeEN);
         if(!pindex->IsProofOfStake())
