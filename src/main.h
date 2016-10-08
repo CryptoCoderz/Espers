@@ -77,6 +77,8 @@ static const int64_t nBlockPoWReward = 5000 * COIN;
 static const int64_t nBlockRewardBuffer = 0.1 * COIN;
 /** Genesis Block Height */                                                     
 static const int64_t nGenesisHeight = 0;
+/** Target Blocktime Retard */
+static const int64_t nBlocktimeregress = 125000; // Retard block time
 /** Reserve Phase start block */ 
 static const int64_t nReservePhaseStart = 10;
 /** Reserve Phase end block */ 

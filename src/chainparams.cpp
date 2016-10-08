@@ -105,7 +105,12 @@ public:
         convertSeed6(vFixedSeeds, pnSeed6_main, ARRAYLEN(pnSeed6_main));
 
         nTargetSpacing = 40;
-        nTargetTimespan = 10 * nTargetSpacing; // 400 Blocks
+        // Block rate reduced for ~40 Second block times
+        if(nBestHeight > nBlocktimeregress)
+        {
+        nTargetSpacing = 150;
+        }
+        nTargetTimespan = 10 * nTargetSpacing;
         nStartPoSBlock = 2125; // Delay PoS start until swap start
     }
 
