@@ -227,7 +227,7 @@ void GeneratePage::updatePoSstat(bool stat)
            Qseconds = " Minute(s)";
         }
         ui->lbTime->show();
-        ui->diffdsp->show();;
+        ui->diffdsp->show();
         ui->hashrt->show();
         int height = pindexBest->nHeight;
         uint64_t Pawrate = GetPoSKernelPS();
@@ -260,12 +260,12 @@ void GeneratePage::updatePoSstat(bool stat)
             nStakePercentage = (double)nNetworkWeight / (double)nWeight * 100;
             nNetPercentage = (100 - (double)nStakePercentage);
         }
-        CBlockIndex* pindex = pindexBest;;
+        CBlockIndex* pindex = pindexBest;
         QString QHardness = QString::number(hardness, 'f', 6);      
         QString QStakePercentage = QString::number(nStakePercentage, 'f', 2);
         QString QNetPercentage = QString::number(nNetPercentage, 'f', 2);
         QString QTime = clientModel->getLastBlockDate().toString();
-        QString QExpect = QString::number(nExpectedTime, 'f', 0);;
+        QString QExpect = QString::number(nExpectedTime, 'f', 0);
         QString QStaking = "DISABLED";
         QString QStakeEN = "NOT STAKING";
         ui->estnxt->setText(QExpect + Qseconds);
@@ -299,6 +299,11 @@ void GeneratePage::updatePoSstat(bool stat)
         {
             ui->urwheight->setValue(1);
             ui->netweight->setValue(99);
+        }
+        else if(nStakePercentage > 99 && pindex->nHeight > Params().StartPoSBlock())
+        {
+            ui->urwheight->setValue(99);
+            ui->netweight->setValue(1);
         }
 // TODO: DISPLAY STAKING STATISTICS
         ui->hourlydsp->setText("0");

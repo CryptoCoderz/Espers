@@ -972,11 +972,13 @@ int64_t GetProofOfWorkReward(int64_t nHeight, int64_t nFees)
         nSubsidy = nBlockRewardReserve;
         }
     }
-
-        // hardCap v1.7
-    else if (nHeight >= nMineoutBlock) {
+    // hardCap v2.1
+    else if(pindexBest->nMoneySupply > MAX_SINGLE_TX)
+    {
+        LogPrint("MINEOUT", "GetProofOfWorkReward(): create=%s nFees=%d\n", FormatMoney(nFees), nFees);
         return nFees;
-   }
+    }
+   
 
    return nSubsidy + nFees;
 
@@ -999,6 +1001,12 @@ int64_t GetProofOfStakeReward(int64_t nCoinAge, int64_t nFees)
       else if(pindexBest->nHeight > nPoS25PhaseStart){
       nSubsidy = nCoinAge * COIN_YEAR_REWARD2 * 33 / (365 * 33 + 8);
       }
+      // hardCap v2.1
+      else if(pindexBest->nMoneySupply > MAX_SINGLE_TX)
+      {
+        LogPrint("MINEOUT", "GetProofOfStakeReward(): create=%s nFees=%d\n", FormatMoney(nFees), nFees);
+        return nFees;
+      }
 
     LogPrint("creation", "GetProofOfStakeReward(): create=%s nCoinAge=%d\n", FormatMoney(nSubsidy), nCoinAge);
 
@@ -1013,8 +1021,15 @@ const CBlockIndex* GetLastBlockIndex(const CBlockIndex* pindex, bool fProofOfSta
     return pindex;
 }
 
-unsigned int GetNextTargetRequired(const CBlockIndex* pindexLast, bool fProofOfStake)
+// DGW Stake limit define
+static CBigNum GetProofOfStakeLimit(int nHeight)
 {
+    return Params().ProofOfStakeLimit();
+}
+
+unsigned int PeercoinDiff(const CBlockIndex* pindexLast, bool fProofOfStake)
+{
+    // Standard PPC retarget system, similiar to BTC's
     CBigNum bnTargetLimit = fProofOfStake ? Params().ProofOfStakeLimit() : Params().ProofOfWorkLimit();
 
     if (pindexLast == NULL)
@@ -1043,6 +1058,92 @@ unsigned int GetNextTargetRequired(const CBlockIndex* pindexLast, bool fProofOfS
         bnNew = bnTargetLimit;
 
     return bnNew.GetCompact();
+}
+
+unsigned int DarkGravityWave(const CBlockIndex* pindexLast, bool fProofOfStake)
+{
+    // DarkGravity v3, written by Evan Duffield - evan@dashpay.io 
+    const CBigNum nProofOfWorkLimit = fProofOfStake ? GetProofOfStakeLimit(pindexLast->nHeight) : Params().ProofOfWorkLimit();
+
+    const CBlockIndex *BlockLastSolved = pindexLast;
+    const CBlockIndex *BlockReading = pindexLast;
+    int64_t nActualTimespan = 0;
+    int64_t LastBlockTime = 0;
+    int64_t PastBlocksMin = 7;
+    int64_t PastBlocksMax = 24;
+    int64_t CountBlocks = 0;
+    CBigNum PastDifficultyAverage;
+    CBigNum PastDifficultyAveragePrev;
+
+    if (BlockLastSolved == NULL || BlockLastSolved->nHeight == 0 || BlockLastSolved->nHeight < PastBlocksMin) {
+        return nProofOfWorkLimit.GetCompact();
+    }
+
+    for (unsigned int i = 1; BlockReading && BlockReading->nHeight > 0; i++) {
+        if (PastBlocksMax > 0 && i > PastBlocksMax) { break; }
+        CountBlocks++;
+
+        if(CountBlocks <= PastBlocksMin) {
+            if (CountBlocks == 1) { PastDifficultyAverage.SetCompact(BlockReading->nBits); }
+            else { PastDifficultyAverage = ((PastDifficultyAveragePrev * CountBlocks) + (CBigNum().SetCompact(BlockReading->nBits))) / (CountBlocks + 1); }
+            PastDifficultyAveragePrev = PastDifficultyAverage;
+        }
+
+        if(LastBlockTime > 0){
+            int64_t Diff = (LastBlockTime - BlockReading->GetBlockTime());
+            nActualTimespan += Diff;
+        }
+        LastBlockTime = BlockReading->GetBlockTime();
+
+        if (BlockReading->pprev == NULL) { assert(BlockReading); break; }
+        BlockReading = BlockReading->pprev;
+    }
+
+    CBigNum bnNew(PastDifficultyAverage);
+
+    int64_t _nTargetTimespan = CountBlocks * Params().TargetSpacing();
+
+    if (nActualTimespan < _nTargetTimespan/3)
+        nActualTimespan = _nTargetTimespan/3;
+    if (nActualTimespan > _nTargetTimespan*3)
+        nActualTimespan = _nTargetTimespan*3;
+
+    // Retarget
+    bnNew *= nActualTimespan;
+    bnNew /= _nTargetTimespan;
+
+    if (bnNew > nProofOfWorkLimit){
+        bnNew = nProofOfWorkLimit;
+    }
+
+    return bnNew.GetCompact();
+}
+
+unsigned int GetNextTargetRequired(const CBlockIndex* pindexLast, bool fProofOfStake)
+{
+    unsigned int retarget = DIFF_DGW;
+
+    /* Chain starts with Peercoin per-block restarget,
+       PPC retarget difficulty runs for the initial 17 blocks */
+    if(pindexBest->nHeight < nGravityFork)
+    {
+        retarget = DIFF_PPC;
+        // debug info for testing
+        // LogPrintf("PPC per-block retarget selected \n");
+    }
+    // Retarget using PPC
+    if (retarget == DIFF_PPC)
+    {
+        // debug info for testing
+        // LogPrintf("Espers retargetted using: PPC difficulty algo \n");
+        return PeercoinDiff(pindexLast, fProofOfStake);
+    }
+    // Retarget using Dark Gravity Wave v3
+    // debug info for testing
+    // LogPrintf("DarkGravityWave retarget selected \n");
+    // LogPrintf("Espers retargetted using: DGW-v3 difficulty algo \n");
+    return DarkGravityWave(pindexLast, fProofOfStake);
+
 }
 
 bool CheckProofOfWork(uint256 hash, unsigned int nBits)

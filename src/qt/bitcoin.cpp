@@ -82,7 +82,7 @@ static void InitMessage(const std::string &message)
 {
     if(splashref)
     {
-        splashref->showMessage(QString::fromStdString(message), Qt::AlignBottom|Qt::AlignHCenter, QColor(232,186,63));
+        splashref->showMessage(QString::fromStdString(message), Qt::AlignBottom|Qt::AlignHCenter, QColor(50, 143, 231));
         QApplication::instance()->processEvents();
     }
     LogPrintf("init message: %s\n", message);
@@ -166,6 +166,8 @@ int main(int argc, char *argv[])
     }
     ReadConfigFile(mapArgs, mapMultiArgs);
     // Add Daemon config settings - Also gets us connected for initial launch (before config file takes effect)
+    mapMultiArgs["-addnode"].push_back("217.175.119.126:22448");
+    mapMultiArgs["-addnode"].push_back("199.26.184.214:22448");
     mapMultiArgs["-addnode"].push_back("104.236.150.155:22448");
     mapMultiArgs["-addnode"].push_back("159.203.24.196:22448");
     mapMultiArgs["-addnode"].push_back("46.101.188.194:22448");

@@ -1,11 +1,9 @@
 TEMPLATE = app
 TARGET = Espers-qt
-VERSION = 0.8.4.2
+VERSION = 0.8.5.0
 INCLUDEPATH += src src/json src/qt
-#QT += network
 QT += core gui widgets network
 DEFINES += ENABLE_WALLET
-#DEFINES += BOOST_THREAD_USE_LIB BOOST_SPIRIT_THREADSAFE
 DEFINES += QT_GUI BOOST_THREAD_USE_LIB BOOST_SPIRIT_THREADSAFE
 CONFIG += no_include_pwd
 CONFIG += thread
@@ -20,13 +18,13 @@ greaterThan(QT_MAJOR_VERSION, 4) {
 }
 
 win32{
-BOOST_LIB_SUFFIX=-mgw61-mt-s-1_57
-BOOST_INCLUDE_PATH=C:/deps/boost_1_57_0
-BOOST_LIB_PATH=C:/deps/boost_1_57_0/stage/lib
+BOOST_LIB_SUFFIX=-mgw62-mt-s-1_59
+BOOST_INCLUDE_PATH=C:/deps/boost_1_59_0
+BOOST_LIB_PATH=C:/deps/boost_1_59_0/stage/lib
 BDB_INCLUDE_PATH=C:/deps/db-6.1.26.NC/build_unix
 BDB_LIB_PATH=C:/deps/db-6.1.26.NC/build_unix
-OPENSSL_INCLUDE_PATH=C:/deps/openssl-1.0.1t/include
-OPENSSL_LIB_PATH=C:/deps/openssl-1.0.1t
+OPENSSL_INCLUDE_PATH=C:/deps/openssl-1.0.1u/include
+OPENSSL_LIB_PATH=C:/deps/openssl-1.0.1u
 MINIUPNPC_INCLUDE_PATH=C:/deps/
 MINIUPNPC_LIB_PATH=C:/deps/miniupnpc
 QRENCODE_INCLUDE_PATH=C:/deps/qrencode-3.4.4

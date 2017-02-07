@@ -1,6 +1,6 @@
 // Copyright (c) 2009-2010 Satoshi Nakamoto
 // Copyright (c) 2009-2012 The Bitcoin developers
-// Copyright (c) 2016-2017 The CryptoCoderz Team / Espers
+// Copyright (c) 2016 The CryptoCoderz Team / Espers
 // Distributed under the MIT/X11 software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 #ifndef BITCOIN_MAIN_H
@@ -86,8 +86,6 @@ static const int64_t nBlockRewardBuffer = 0.1 * COIN;
 static const int64_t nGenesisHeight = 0;
 /** Target Blocktime Retard */
 static const int64_t nBlocktimeregress = 125000; // Retard block time
-/** Espers system patch fork*/
-static const int64_t nGravityFork = 615000; // Light Espers chain fork for DarkGravityWave and block time redux.
 /** Reserve Phase start block */ 
 static const int64_t nReservePhaseStart = 10;
 /** Reserve Phase end block */ 

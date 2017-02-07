@@ -46,13 +46,13 @@
         <file alias="chaininfo">res/icons/chaininfo.png</file>
         <file alias="messaging">res/icons/messaging.png</file>
         <file alias="sitechain">res/icons/siteonchain.png</file>
-        <file alias="ccs">res/icons/ccs.png</file>
         <file alias="generate">res/icons/generate.png</file>
+        <file alias="ccs">res/icons/ccs.png</file>
     </qresource>
     <qresource prefix="/images">
         <file alias="about">res/images/about.png</file>
         <file alias="splash">res/images/splash.png</file>
-        <file alias="0840m">res/images/ESP/8.4.0_ESP.PNG</file>
+        <file alias="header">res/images/header.png</file>
     </qresource>
     <qresource prefix="/movies">
         <file alias="update_spinner">res/movies/update_spinner.mng</file>

@@ -1,5 +1,5 @@
 // Copyright (c) 2009-2012 The Bitcoin developers
-// Copyright (c) 2016 The Espers developers
+// Copyright (c) 2016-2017 The Espers developers
 // Distributed under the MIT/X11 software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -40,6 +40,13 @@ namespace Checkpoints
         ( CheckHeight_0008,       CheckBlock_0008)
         ( CheckHeight_0009,       CheckBlock_0009)
         ( CheckHeight_0010,       CheckBlock_0010)
+        ( CheckHeight_0011,       CheckBlock_0011)
+        ( CheckHeight_0012,       CheckBlock_0012)
+        ( CheckHeight_0013,       CheckBlock_0013)
+        ( CheckHeight_0014,       CheckBlock_0014)
+        ( CheckHeight_0015,       CheckBlock_0015)
+        ( CheckHeight_0016,       CheckBlock_0016)
+        ( CheckHeight_0017,       CheckBlock_0017)
     ;
 
     // TestNet has no checkpoints

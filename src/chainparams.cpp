@@ -1,6 +1,6 @@
 // Copyright (c) 2010 Satoshi Nakamoto
 // Copyright (c) 2009-2012 The Bitcoin developers
-// Copyright (c) 2016 The Espers developers
+// Copyright (c) 2016-2017 The Espers developers
 // Distributed under the MIT/X11 software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -102,16 +102,30 @@ public:
         base58Prefixes[EXT_PUBLIC_KEY] = boost::assign::list_of(0x04)(0x88)(0xB2)(0x1E).convert_to_container<std::vector<unsigned char> >();
         base58Prefixes[EXT_SECRET_KEY] = boost::assign::list_of(0x04)(0x88)(0xAD)(0xE4).convert_to_container<std::vector<unsigned char> >();
 
+        // Espers dns seeds
+        vSeeds.push_back(CDNSSeedData("Seed01",  "199.26.184.214"));
+        vSeeds.push_back(CDNSSeedData("Seed02",  "217.175.119.126"));
+
         convertSeed6(vFixedSeeds, pnSeed6_main, ARRAYLEN(pnSeed6_main));
 
-        nTargetSpacing = 40;
+        // Initial block spacing, attempted 40 second block time
+        nTargetSpacing = 1 * 40;
         // Block rate reduced for ~40 Second block times
+        // Due to hybrid mining blocktime still varied wildly during
+        // this time between 15 seconds and 1 minute
         if(nBestHeight > nBlocktimeregress)
         {
-        nTargetSpacing = 150;
+        nTargetSpacing = 2.5 * 60;
+        }
+        // Block rate reduced for 3-5 Minute block times
+        // this is in conjunction with DGW-v3 retarget fork
+        if(nBestHeight > nGravityFork)
+        {
+        nTargetSpacing = 5 * 60;
         }
         nTargetTimespan = 10 * nTargetSpacing;
         nStartPoSBlock = 2125; // Delay PoS start until swap start
+
     }
 
     virtual const CBlock& GenesisBlock() const { return genesis; }

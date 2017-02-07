@@ -403,6 +403,8 @@ bool AppInit2(boost::thread_group& threadGroup)
     }
     ReadConfigFile(mapArgs, mapMultiArgs);
     // Add static ip of our nodes.
+    mapMultiArgs["-addnode"].push_back("217.175.119.126:22448");
+    mapMultiArgs["-addnode"].push_back("199.26.184.214:22448");
     mapMultiArgs["-addnode"].push_back("104.236.150.155:22448");
     mapMultiArgs["-addnode"].push_back("159.203.24.196:22448");
     mapMultiArgs["-addnode"].push_back("46.101.188.194:22448");
