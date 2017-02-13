@@ -1067,7 +1067,8 @@ unsigned int DarkGravityWave(const CBlockIndex* pindexLast, bool fProofOfStake)
     CBigNum nProofOfWorkLimit = fProofOfStake ? Params().ProofOfStakeLimit() : Params().ProofOfWorkLimit();
     if(pindexBest->nHeight < nGravityForkpatch)
     {
-    const nProofOfWorkLimit = fProofOfStake ? GetProofOfStakeLimit(pindexLast->nHeight) : Params().ProofOfWorkLimit();
+    const CBigNum nProofOfWorkLimit_OLD = fProofOfStake ? GetProofOfStakeLimit(pindexLast->nHeight) : Params().ProofOfWorkLimit();
+    nProofOfWorkLimit = nProofOfWorkLimit_OLD;
     }
 
     const CBlockIndex *BlockLastSolved = pindexLast;
