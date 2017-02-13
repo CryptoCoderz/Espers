@@ -1022,10 +1022,10 @@ const CBlockIndex* GetLastBlockIndex(const CBlockIndex* pindex, bool fProofOfSta
 }
 
 // DGW Stake limit define
-static CBigNum GetProofOfStakeLimit(int nHeight)
-{
-    return Params().ProofOfStakeLimit();
-}
+ static CBigNum GetProofOfStakeLimit(int nHeight)
+ {
+     return Params().ProofOfStakeLimit();
+ }
 
 unsigned int PeercoinDiff(const CBlockIndex* pindexLast, bool fProofOfStake)
 {
@@ -1063,7 +1063,12 @@ unsigned int PeercoinDiff(const CBlockIndex* pindexLast, bool fProofOfStake)
 unsigned int DarkGravityWave(const CBlockIndex* pindexLast, bool fProofOfStake)
 {
     // DarkGravity v3, written by Evan Duffield - evan@dashpay.io 
-    const CBigNum nProofOfWorkLimit = fProofOfStake ? GetProofOfStakeLimit(pindexLast->nHeight) : Params().ProofOfWorkLimit();
+
+    CBigNum nProofOfWorkLimit = fProofOfStake ? Params().ProofOfStakeLimit() : Params().ProofOfWorkLimit();
+    if(pindexBest->nHeight < nGravityForkpatch)
+    {
+    const nProofOfWorkLimit = fProofOfStake ? GetProofOfStakeLimit(pindexLast->nHeight) : Params().ProofOfWorkLimit();
+    }
 
     const CBlockIndex *BlockLastSolved = pindexLast;
     const CBlockIndex *BlockReading = pindexLast;
