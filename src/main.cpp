@@ -1112,31 +1112,81 @@ unsigned int DarkGravityWave(const CBlockIndex* pindexLast, bool fProofOfStake)
         return bnNew.GetCompact();
 }
 
+unsigned int DarkGravityWaveFixed(const CBlockIndex* pindexLast, bool fProofOfStake)
+{
+        // DarkGravity v3, written by Evan Duffield - evan@dashpay.io
+        const CBigNum nProofOfWorkLimit = fProofOfStake ? Params().ProofOfStakeLimit() : Params().ProofOfWorkLimit();
+        const CBlockIndex *BlockLastSolved = GetLastBlockIndex(pindexLast, fProofOfStake);
+        const CBlockIndex *BlockReading = BlockLastSolved;
+        int64_t nActualTimespan = 0;
+        int64_t LastBlockTime = 0;
+        int64_t PastBlocksMin = 7;
+        int64_t PastBlocksMax = 24;
+        int64_t CountBlocks = 0;
+        CBigNum PastDifficultyAverage;
+        CBigNum PastDifficultyAveragePrev;
+
+        if (BlockLastSolved == NULL || BlockLastSolved->nHeight == 0 || BlockLastSolved->nHeight < PastBlocksMax) {
+            return nProofOfWorkLimit.GetCompact();
+        }
+
+        for (unsigned int i = 1; BlockReading && BlockReading->nHeight > 0; i++) {
+            if (PastBlocksMax > 0 && i > PastBlocksMax) { break; }
+            CountBlocks++;
+
+            if(CountBlocks <= PastBlocksMin) {
+                if (CountBlocks == 1) { PastDifficultyAverage.SetCompact(BlockReading->nBits); }
+                else { PastDifficultyAverage = ((PastDifficultyAveragePrev * CountBlocks) + (CBigNum().SetCompact(BlockReading->nBits))) / (CountBlocks + 1); }
+                PastDifficultyAveragePrev = PastDifficultyAverage;
+            }
+
+            if(LastBlockTime > 0){
+                int64_t Diff = (LastBlockTime - BlockReading->GetBlockTime());
+                nActualTimespan += Diff;
+            }
+            LastBlockTime = BlockReading->GetBlockTime();
+
+            BlockReading = GetLastBlockIndex(BlockReading->pprev, fProofOfStake);
+        }
+
+        CBigNum bnNew(PastDifficultyAverage);
+
+        int64_t _nTargetTimespan = CountBlocks * Params().TargetSpacing();
+
+        if (nActualTimespan < _nTargetTimespan/3)
+            nActualTimespan = _nTargetTimespan/3;
+        if (nActualTimespan > _nTargetTimespan*3)
+            nActualTimespan = _nTargetTimespan*3;
+
+        // Retarget
+        bnNew *= nActualTimespan;
+        bnNew /= _nTargetTimespan;
+
+        if (bnNew > nProofOfWorkLimit){
+            bnNew = nProofOfWorkLimit;
+        }
+
+        return bnNew.GetCompact();
+}
+
 unsigned int GetNextTargetRequired(const CBlockIndex* pindexLast, bool fProofOfStake)
 {
-    unsigned int retarget = DIFF_DGW;
-
     /* Chain starts with Peercoin per-block restarget,
        PPC retarget difficulty runs for the initial 17 blocks */
     if(pindexBest->nHeight < nGravityFork)
     {
-        retarget = DIFF_PPC;
-        // debug info for testing
-        // LogPrintf("PPC per-block retarget selected \n");
-    }
-    // Retarget using PPC
-    if (retarget == DIFF_PPC)
-    {
-        // debug info for testing
         //LogPrintf("Espers retargetted using: PPC difficulty algo \n");
         return PeercoinDiff(pindexLast, fProofOfStake);
+    }
+    if(pindexBest->nHeight < nGravityFixFork)
+    {
+        return DarkGravityWave(pindexLast, fProofOfStake);
     }
     // Retarget using Dark Gravity Wave v3
     // debug info for testing
     // LogPrintf("DarkGravityWave retarget selected \n");
     //LogPrintf("Espers retargetted using: DGW-v3 difficulty algo \n");
-    return DarkGravityWave(pindexLast, fProofOfStake);
-
+    return DarkGravityWaveFixed(pindexLast, fProofOfStake);
 }
 
 bool CheckProofOfWork(uint256 hash, unsigned int nBits)
