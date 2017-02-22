@@ -89,7 +89,7 @@ static const int64_t nBlocktimeregress = 125000; // Retard block time
 /** Espers system patch fork*/
 static const int64_t nGravityFork = 615000; // Light Espers chain fork for DarkGravityWave and block time redux.
 /** Espers low gravity fix fork*/
-static const int64_t nlowGravity = 638000; // Correct low gravity issue with DGW implementation.
+static const int64_t nlowGravity = 642000; // Correct low gravity issue with DGW implementation.
 /** Reserve Phase start block */ 
 static const int64_t nReservePhaseStart = 10;
 /** Reserve Phase end block */ 
