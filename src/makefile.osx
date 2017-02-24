@@ -77,6 +77,8 @@ OBJS= \
     obj/main.o \
     obj/net.o \
     obj/protocol.o \
+    obj/velocity.o \
+    obj/rpcvelocity.o \
     obj/rpcclient.o \
     obj/rpcprotocol.o \
     obj/rpcserver.o \

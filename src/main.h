@@ -48,6 +48,24 @@ static const unsigned int MAX_ORPHAN_TRANSACTIONS = MAX_BLOCK_SIZE/100;
 static const unsigned int DEFAULT_MAX_ORPHAN_BLOCKS = 750;
 /** The maximum number of entries in an 'inv' protocol message */
 static const unsigned int MAX_INV_SZ = 50000;
+/** Fees smaller than this (in satoshi) are considered zero fee (for transaction creation) */
+static const int64_t MIN_TX_FEE = 10000;
+/** Fees smaller than this (in satoshi) are considered zero fee (for relaying) */
+static const int64_t MIN_RELAY_TX_FEE = MIN_TX_FEE;
+/** Minimum TX count (for relaying) */
+static const int64_t MIN_TX_COUNT = 0;
+/** Minimum TX value (for relaying) */
+static const int64_t MIN_TX_VALUE = 0.01 * COIN;
+/** No amount larger than this (in satoshi) is valid */
+static const int64_t MAX_SINGLE_TX = 50000000000 * COIN; // 50 Billion (Same As Cap)
+/** PoS Subsidy */
+static const int64_t COIN_YEAR_REWARD = 250 * CENT; // Miscalculated (2 day hinderance, no major issues)
+/** PoS Subsidy 2 */
+static const int64_t COIN_YEAR_REWARD2 = 19 * CENT; // ~25% 4300000000 annually
+/** PoS Subsidy 3 */
+static const int64_t COIN_YEAR_REWARD3 = 4 * CENT; // ~5% 860000000 annually
+/** PoS Subsidy 4 */
+static const int64_t COIN_YEAR_REWARD4 = 0.8 * CENT; // ~1% TODO: Correct numbers
 /** Minimum nCoinAge required to stake PoS */
 static const unsigned int nStakeMinAge = 2 * 60 * 60; // 2 hours
 /** Time to elapse before new modifier is computed */
@@ -60,20 +78,6 @@ static const unsigned int timeRegNetGenesis = 1473059000; // Mon, 05 Sep 2016 07
 static const unsigned int nNonceMain = 1934069;
 /** Genesis Nonce Testnet */
 static const unsigned int nNonceTest = 8903;
-/** Fees smaller than this (in satoshi) are considered zero fee (for transaction creation) */
-static const int64_t MIN_TX_FEE = 10000;
-/** Fees smaller than this (in satoshi) are considered zero fee (for relaying) */
-static const int64_t MIN_RELAY_TX_FEE = MIN_TX_FEE;
-/** No amount larger than this (in satoshi) is valid */
-static const int64_t MAX_SINGLE_TX = 50000000000 * COIN; // 50 Billion (Same As Cap)
-/** PoS Subsidy */
-static const int64_t COIN_YEAR_REWARD = 250 * CENT; // Miscalculated (2 day hinderance, no major issues)
-/** PoS Subsidy 2 */
-static const int64_t COIN_YEAR_REWARD2 = 19 * CENT; // ~25% 4300000000 annually
-/** PoS Subsidy 3 */
-static const int64_t COIN_YEAR_REWARD3 = 4 * CENT; // ~5% 860000000 annually
-/** PoS Subsidy 4 */
-static const int64_t COIN_YEAR_REWARD4 = 0.8 * CENT; // ~1% TODO: Correct numbers
 /** Genesis block subsidy */
 static const int64_t nGenesisBlockReward = 1 * COIN;
 /** Reserve block subsidy */
@@ -90,6 +94,12 @@ static const int64_t nBlocktimeregress = 125000; // Retard block time
 static const int64_t nGravityFork = 615000; // Light Espers chain fork for DarkGravityWave and block time redux.
 /** Espers low gravity fix fork*/
 static const int64_t nlowGravity = 642000; // Correct low gravity issue with DGW implementation.
+/** Velocity toggle block */
+static const int64_t VELOCITY_TOGGLE = 650000; // Implementation of the Velocity system into the chain.
+/** Block spacing preferred */
+static const int64_t BLOCK_SPACING = 5 * 60;
+/** Block spacing minimum */
+static const int64_t BLOCK_SPACING_MIN = 3.5 * 60;
 /** Reserve Phase start block */ 
 static const int64_t nReservePhaseStart = 10;
 /** Reserve Phase end block */ 
@@ -100,11 +110,6 @@ static const int64_t nPoS25PhaseStart = 20000; // Dropped date due to 25% stakin
 static const int64_t nPoS5PhaseStart = 2000800; // Begins @ ~48892586514.24 ESP
 /** PoS1 Phase start block */
 static const int64_t nPoS1PhaseStart = 3000300; // Begins @ ~48892586514.24 ESP
-
-/** DEPRICATED AS OF PATCH 6 **/
-/** Mineout/HardCap block Height [HardCap v1.7] */ // DEPRICATED IN HARDCAP V2.1
-
-// static const int64 nMineoutBlock = 1750000; // Starting at block 1,750,000 reward = Chain Fees (starts @ 8.75-Billion)
 /** Coinbase transaction outputs can only be spent after this number of new blocks (network rule) */
 static const int nCoinbaseMaturity = 60;
 /** Money Range Params */
@@ -134,6 +139,7 @@ extern uint256 nBestChainTrust;
 extern uint256 nBestInvalidTrust;
 extern uint256 hashBestChain;
 extern CBlockIndex* pindexBest;
+extern CBlockIndex* GetBlockHeader;
 extern uint64_t nLastBlockTx;
 extern uint64_t nLastBlockSize;
 extern int64_t nLastCoinStakeSearchInterval;

@@ -87,6 +87,8 @@ extern double GetPoSKernelPS();
 extern std::string HelpRequiringPassphrase();
 extern void EnsureWalletIsUnlocked();
 
+extern int64_t GetPrevAccountBalance;
+
 //
 // Utilities: convert hex-encoded Values
 // (throws error if not hex).

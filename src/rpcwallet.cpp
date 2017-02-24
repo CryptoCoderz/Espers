@@ -17,6 +17,7 @@ using namespace std;
 using namespace json_spirit;
 
 int64_t nWalletUnlockTime;
+int64_t GetPrevAccountBalance = 0;
 static CCriticalSection cs_nWalletUnlockTime;
 
 extern void TxToJSON(const CTransaction& tx, const uint256 hashBlock, json_spirit::Object& entry);
@@ -446,7 +447,6 @@ Value getreceivedbyaccount(const Array& params, bool fHelp)
     return (double)nAmount / (double)COIN;
 }
 
-
 int64_t GetAccountBalance(CWalletDB& walletdb, const string& strAccount, int nMinDepth)
 {
     int64_t nBalance = 0;
@@ -468,6 +468,9 @@ int64_t GetAccountBalance(CWalletDB& walletdb, const string& strAccount, int nMi
 
     // Tally internal accounting entries
     nBalance += walletdb.GetAccountCreditDebit(strAccount);
+
+    // Record balance for Velocity
+    GetPrevAccountBalance = nBalance;
 
     return nBalance;
 }

@@ -16,6 +16,7 @@
 #include "net.h"
 #include "txdb.h"
 #include "txmempool.h"
+#include "velocity.cpp"
 #include "ui_interface.h"
 
 using namespace std;
@@ -2097,10 +2098,21 @@ bool CBlock::AcceptBlock()
     CBlockIndex* pindexPrev = (*mi).second;
     int nHeight = pindexPrev->nHeight+1;
 
+    // Check created block for version control
     if (nVersion < 7)
         return DoS(100, error("AcceptBlock() : reject too old nVersion = %d", nVersion));
     else if (nVersion > 7)
         return DoS(100, error("AcceptBlock() : reject too new nVersion = %d", nVersion));
+
+    // Check block against Velocity parameters
+    if(Velocity_check(nHeight))
+    {
+        // Announce Velocity constraint failure
+        if(!Velocity(pindexPrev, this))
+        {
+            return DoS(100, error("AcceptBlock() : Velocity rejected block %d, required parameters not met", nHeight));
+        }
+    }
 
     // Check coinbase timestamp
     if (GetBlockTime() > FutureDrift((int64_t)vtx[0].nTime))
