@@ -16,7 +16,7 @@
 #include "net.h"
 #include "txdb.h"
 #include "txmempool.h"
-#include "velocity.cpp"
+#include "velocity.h"
 #include "ui_interface.h"
 
 using namespace std;
