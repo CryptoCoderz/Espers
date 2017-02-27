@@ -2105,7 +2105,11 @@ bool CBlock::AcceptBlock()
         return DoS(100, error("AcceptBlock() : reject too new nVersion = %d", nVersion));
 
     // Check block against Velocity parameters
+#ifdef __APPLE__
+	if(450000 > nHeight)
+#else	
     if(Velocity_check(nHeight))
+#endif
     {
         // Announce Velocity constraint failure
         if(!Velocity(pindexPrev, this))
