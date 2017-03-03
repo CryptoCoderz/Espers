@@ -2106,7 +2106,7 @@ bool CBlock::AcceptBlock()
 
     // Check block against Velocity parameters
 #ifdef __APPLE__
-	if(450000 > nHeight)
+    if(650000 > nHeight)
 #else	
     if(Velocity_check(nHeight))
 #endif

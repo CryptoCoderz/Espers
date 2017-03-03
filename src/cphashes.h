@@ -25,6 +25,11 @@ static const uint256 CheckBlock_0014("0xb9bcdb6c31ffe8a380ea8be43ef50dbee5f24f1f
 static const uint256 CheckBlock_0015("0x00000005801537ce67cbb78349b6673e05a3835b50f97d336c6b0ce10862827b");
 static const uint256 CheckBlock_0016("0x526e980f55e221879f9d67a8524f60077d9d834b950490f445265a82b7f13a23");
 static const uint256 CheckBlock_0017("0xb95313efd4415c4e0f136337d82b1bfc8d303d7292ae6680bc39c1307fe6773c");
+// Velocity additions
+static const uint256 CheckBlock_0018("0x00000002736a3fb2074417e38cc02158bda9a0e216ff96718ad1203ae2a3cad2");
+static const uint256 CheckBlock_0019("0x0000008dc88e24a0790041e551f0e36061c8d8ef6ec9907a3df4960b72ea9708");
+static const uint256 CheckBlock_0020("0x000004938ad1637822be49315700e2082ec7f66d95f57aba977364855b89d397");
+
 
 static const int64 CheckHeight_0001 = 10;
 static const int64 CheckHeight_0002 = 25;
@@ -44,5 +49,9 @@ static const int64 CheckHeight_0014 = 300000;
 static const int64 CheckHeight_0015 = 400000;
 static const int64 CheckHeight_0016 = 500000;
 static const int64 CheckHeight_0017 = 595000;
+// Velocity additions
+static const int64 CheckHeight_0018 = 650000;
+static const int64 CheckHeight_0019 = 650035;
+static const int64 CheckHeight_0020 = 650147;
 
 #endif
