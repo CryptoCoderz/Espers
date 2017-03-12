@@ -108,17 +108,16 @@ CBlock* CreateNewBlock(CReserveKey& reservekey, bool fProofOfStake, int64_t* pFe
     if (!pblock.get())
         return NULL;
 
-    CBlockIndex* pindexPrev = pindexBest;
-    int nHeight = pindexPrev->nHeight + 1;
-
     // Velocity enforcement prior to final checks
-    int i = VelocityI(nHeight);
-    if((pblock->GetBlockTime() - pindexPrev->GetBlockTime()) < VELOCITY_MIN_RATE[i]) // Check for minimum spacing
+    if((pblock->GetBlockTime() - pindexBest->GetBlockTime()) < (3.5 * 60)) // Check for minimum spacing
     {
         // Debug log for testing
         LogPrintf("CreateNewBlock(): Velocity constraint failure, Not enough spacing from previous block");
         return NULL;
     }
+
+    CBlockIndex* pindexPrev = pindexBest;
+    int nHeight = pindexPrev->nHeight + 1;
 
     // Create coinbase tx
     CTransaction txNew;
