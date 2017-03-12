@@ -112,7 +112,7 @@ CBlock* CreateNewBlock(CReserveKey& reservekey, bool fProofOfStake, int64_t* pFe
     if((pblock->GetBlockTime() - pindexBest->GetBlockTime()) < (3.5 * 60)) // Check for minimum spacing
     {
         // Debug log for testing
-        LogPrintf("CreateNewBlock(): Velocity constraint failure, Not enough spacing from previous block");
+        LogPrintf("CreateNewBlock(): Velocity constraint failure, Unacceptable block spacing");
         return NULL;
     }
 
