@@ -111,6 +111,15 @@ CBlock* CreateNewBlock(CReserveKey& reservekey, bool fProofOfStake, int64_t* pFe
     CBlockIndex* pindexPrev = pindexBest;
     int nHeight = pindexPrev->nHeight + 1;
 
+    // Velocity enforcement prior to final checks
+    int i = VelocityI(nHeight);
+    if((pblock->GetBlockTime() - pindexPrev->GetBlockTime()) < VELOCITY_MIN_RATE[i]) // Check for minimum spacing
+    {
+        // Debug log for testing
+        LogPrintf("CreateNewBlock(): Velocity constraint failure, Not enough spacing from previous block");
+        return NULL;
+    }
+
     // Create coinbase tx
     CTransaction txNew;
     txNew.vin.resize(1);
@@ -445,12 +454,6 @@ bool CheckWork(CBlock* pblock, CWallet& wallet, CReserveKey& reservekey)
     uint256 hashProof = pblock->GetHash();
     uint256 hashTarget = CBigNum().SetCompact(pblock->nBits).getuint256();
 
-    // Velocity enforcement prior to final checks
-    int nHeight_v = pindexBest->nHeight;
-    int i = VelocityI(nHeight_v);
-    if((pblock->GetBlockTime() - pindexBest->GetBlockTime()) < VELOCITY_MIN_RATE[i]) // Check for minimum spacing
-        return error("CheckWork(): Velocity constraint failure, Not enough spacing from previous block");
-
     if(!pblock->IsProofOfWork())
         return error("CheckWork() : %s is not a proof-of-work block", hashBlock.GetHex());
 
@@ -489,12 +492,6 @@ bool CheckStake(CBlock* pblock, CWallet& wallet)
 {
     uint256 proofHash = 0, hashTarget = 0;
     uint256 hashBlock = pblock->GetHash();
-
-    // Velocity enforcement prior to final checks
-    int nHeight_v = pindexBest->nHeight;
-    int i = VelocityI(nHeight_v);
-    if((pblock->GetBlockTime() - pindexBest->GetBlockTime()) < VELOCITY_MIN_RATE[i]) // Check for minimum spacing
-        return error("CheckStake(): Velocity constraint failure, Not enough spacing from previous block");
 
     if(!pblock->IsProofOfStake())
         return error("CheckStake() : %s is not a proof-of-stake block", hashBlock.GetHex());
