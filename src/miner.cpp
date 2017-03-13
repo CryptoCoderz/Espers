@@ -8,7 +8,6 @@
 #include "txdb.h"
 #include "miner.h"
 #include "kernel.h"
-#include "velocity.h"
 
 using namespace std;
 
@@ -107,14 +106,6 @@ CBlock* CreateNewBlock(CReserveKey& reservekey, bool fProofOfStake, int64_t* pFe
     auto_ptr<CBlock> pblock(new CBlock());
     if (!pblock.get())
         return NULL;
-
-    // Velocity enforcement prior to final checks
-    //if((pblock->GetBlockTime() - pindexBest->GetBlockTime()) < (3.5 * 60)) // Check for minimum spacing
-    //{
-        // Debug log for testing
-    //    LogPrintf("CreateNewBlock(): Velocity constraint failure, Unacceptable block spacing");
-    //    return NULL;
-    //}
 
     CBlockIndex* pindexPrev = pindexBest;
     int nHeight = pindexPrev->nHeight + 1;
