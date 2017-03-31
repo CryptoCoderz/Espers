@@ -95,7 +95,7 @@ public:
         base58Prefixes[EXT_PUBLIC_KEY] = list_of(0x04)(0x88)(0xB2)(0x1E);
         base58Prefixes[EXT_SECRET_KEY] = list_of(0x04)(0x88)(0xAD)(0xE4);
         */
-        /** REQUIRED IN QT 5.6+  (To compile on Qt5.5.1 and lower comment out below */
+        /** REQUIRED IN QT 5.6+  (To compile on Qt5.5.1 and lower comment out below) */
         base58Prefixes[PUBKEY_ADDRESS] = std::vector<unsigned char>(1,33);
         base58Prefixes[SCRIPT_ADDRESS] = std::vector<unsigned char>(1,92);
         base58Prefixes[SECRET_KEY] =     std::vector<unsigned char>(1,144);
@@ -103,8 +103,8 @@ public:
         base58Prefixes[EXT_SECRET_KEY] = boost::assign::list_of(0x04)(0x88)(0xAD)(0xE4).convert_to_container<std::vector<unsigned char> >();
 
         // Espers dns seeds
-        vSeeds.push_back(CDNSSeedData("Seed01",  "199.26.184.214"));
-        vSeeds.push_back(CDNSSeedData("Seed02",  "217.175.119.126"));
+        vSeeds.push_back(CDNSSeedData("Seed01",  "104.237.0.79"));
+        vSeeds.push_back(CDNSSeedData("Seed02",  "144.76.237.39"));
 
         convertSeed6(vFixedSeeds, pnSeed6_main, ARRAYLEN(pnSeed6_main));
 
@@ -121,7 +121,7 @@ public:
         // this is in conjunction with DGW-v3 retarget fork
         if(nBestHeight > nGravityFork)
         {
-        nTargetSpacing = 5 * 60;
+        nTargetSpacing = BLOCK_SPACING * 1;
         }
         nTargetTimespan = 10 * nTargetSpacing;
         nStartPoSBlock = 2125; // Delay PoS start until swap start

@@ -1,6 +1,5 @@
 // Copyright (c) 2010 Satoshi Nakamoto
 // Copyright (c) 2009-2012 The Bitcoin developers
-// Copyright (c) 2016-2017 The CryptoCoderz Team / Espers
 // Distributed under the MIT/X11 software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -26,10 +25,6 @@ static CReserveKey* pMiningKey = NULL;
 void InitRPCMining()
 {
     if (!pwalletMain)
-        return;
-
-    // Don't generate blocks if they do not meet minimum spacing
-    if((GetTime() - pindexBest->GetBlockTime()) < (3.5 * 60))
         return;
 
     // getwork/getblocktemplate mining rewards paid here:

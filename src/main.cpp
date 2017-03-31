@@ -1,5 +1,6 @@
 // Copyright (c) 2009-2010 Satoshi Nakamoto
 // Copyright (c) 2009-2012 The Bitcoin developers
+// Copyright (c) 2016-2017 The CryptoCoderz Team / Espers
 // Distributed under the MIT/X11 software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -1128,9 +1129,230 @@ unsigned int DarkGravityWave(const CBlockIndex* pindexLast, bool fProofOfStake)
         return bnNew.GetCompact();
 }
 
+unsigned int Terminal_Velocity_RateX(const CBlockIndex* pindexLast, bool fProofOfStake)
+{
+    // Terminal-Velocity-RateX, v10-Alpha-R1, written by Jonathan Dan Zaretsky - cryptocoderz@gmail.com
+    const CBigNum bnTerminalVelocity = fProofOfStake ? Params().ProofOfStakeLimit() : Params().ProofOfWorkLimit();
+
+    // Check for block 0
+    if (pindexLast == NULL)
+        return bnTerminalVelocity.GetCompact(); // genesis block
+    // Differentiate PoW/PoS prev block
+    const CBlockIndex* BlockVelocityType = GetLastBlockIndex(pindexLast, fProofOfStake);
+    // Set prev blocks to check spacing
+    const CBlockIndex* BlockVelocityPrev1 = pindexLast;
+    if (BlockVelocityPrev1->pprev == NULL)
+        return bnTerminalVelocity.GetCompact(); // first block
+    const CBlockIndex* BlockVelocityPrevPrev1 = BlockVelocityPrev1->pprev;
+    if (BlockVelocityPrevPrev1->pprev == NULL)
+        return bnTerminalVelocity.GetCompact(); // second block
+    const CBlockIndex* BlockVelocityPrev2 = BlockVelocityPrevPrev1->pprev;
+    if (BlockVelocityPrev2->pprev == NULL)
+        return bnTerminalVelocity.GetCompact(); // third block
+    const CBlockIndex* BlockVelocityPrevPrev2 = BlockVelocityPrev2->pprev;
+    if (BlockVelocityPrevPrev2->pprev == NULL)
+        return bnTerminalVelocity.GetCompact(); // fourth block
+    const CBlockIndex* BlockVelocityPrev3 = BlockVelocityPrevPrev2->pprev;
+    if (BlockVelocityPrev3->pprev == NULL)
+        return bnTerminalVelocity.GetCompact(); // fifth block
+    const CBlockIndex* BlockVelocityPrevPrev3 = BlockVelocityPrev3->pprev;
+    if (BlockVelocityPrevPrev3->pprev == NULL)
+        return bnTerminalVelocity.GetCompact(); // sixth block
+
+    // Define values
+    double VLF1 = 0;
+    double VLF2 = 0;
+    double VLF3 = 0;
+    double VLF4 = 0;
+    double VLF5 = 0;
+    double VRFsm1 = 1;
+    double VRFdw1 = 0.75;
+    double VRFdw2 = 0.5;
+    double VRFup1 = 1.25;
+    double VRFup2 = 1.5;
+    double VRFup3 = 2;
+    double TerminalAverage = 0;
+    double TerminalFactor = 10000;
+    int64_t VLrate1 = 0;
+    int64_t VLrate2 = 0;
+    int64_t VLrate3 = 0;
+    int64_t VLrate4 = 0;
+    int64_t VLrate5 = 0;
+    int64_t DSrateNRM = BLOCK_SPACING;
+    int64_t DSrateMAX = BLOCK_SPACING_MAX;
+    int64_t FRrateDWN = DSrateNRM - 60;
+    int64_t FRrateFLR = DSrateNRM - 80;
+    int64_t FRrateCLNG = DSrateMAX * 3;
+    int64_t difficultyfactor = 0;
+    int64_t AverageDivisor = 5;
+    // Set standard values
+    VLrate1 = BlockVelocityPrev1->GetBlockTime() - BlockVelocityPrevPrev1->GetBlockTime();
+    VLrate2 = BlockVelocityPrevPrev1->GetBlockTime() - BlockVelocityPrev2->GetBlockTime();
+    VLrate3 = BlockVelocityPrev2->GetBlockTime() - BlockVelocityPrevPrev2->GetBlockTime();
+    VLrate4 = BlockVelocityPrevPrev2->GetBlockTime() - BlockVelocityPrev3->GetBlockTime();
+    VLrate5 = BlockVelocityPrev3->GetBlockTime() - BlockVelocityPrevPrev3->GetBlockTime();
+    // LogPrintf("Terminal-Velocity 1st spacing: %u: \n",VLrate1);
+    // LogPrintf("Terminal-Velocity 2nd spacing: %u: \n",VLrate2);
+    // LogPrintf("Terminal-Velocity 3rd spacing: %u: \n",VLrate3);
+    // LogPrintf("Terminal-Velocity 4th spacing: %u: \n",VLrate4);
+    // LogPrintf("Terminal-Velocity 5th spacing: %u: \n",VLrate5);
+    // LogPrintf("Desired normal spacing: %u: \n",DSrateNRM);
+    // LogPrintf("Desired maximum spacing: %u: \n",DSrateMAX);
+    // Check value round 1
+    if(VLrate1 >= DSrateNRM)
+    {
+        VLF1 = VRFsm1;
+        if(VLrate1 > DSrateMAX)
+        {
+            VLF1 = VRFdw1;
+            if(VLrate1 > FRrateCLNG)
+            {
+                VLF1 = VRFdw2;
+            }
+        }
+    }
+    else if(VLrate1 < DSrateNRM)
+    {
+        VLF1 = VRFup1;
+        if(VLrate1 < FRrateDWN)
+        {
+            VLF1 = VRFup2;
+            if(VLrate1 < FRrateFLR)
+            {
+                VLF1 = VRFup3;
+            }
+        }
+    }
+    // Check value round 2
+    if(VLrate2 >= DSrateNRM)
+    {
+        VLF2 = VRFsm1;
+        if(VLrate2 > DSrateMAX)
+        {
+            VLF2 = VRFdw1;
+            if(VLrate2 > FRrateCLNG)
+            {
+                VLF2 = VRFdw2;
+            }
+        }
+    }
+    else if(VLrate2 < DSrateNRM)
+    {
+        VLF2 = VRFup1;
+        if(VLrate2 < FRrateDWN)
+        {
+            VLF2 = VRFup2;
+            if(VLrate2 < FRrateFLR)
+            {
+                VLF2 = VRFup3;
+            }
+        }
+    }
+    // Check value round 3
+    if(VLrate3 >= DSrateNRM)
+    {
+        VLF3 = VRFsm1;
+        if(VLrate3 > DSrateMAX)
+        {
+            VLF3 = VRFdw1;
+            if(VLrate3 > FRrateCLNG)
+            {
+                VLF3 = VRFdw2;
+            }
+        }
+    }
+    else if(VLrate3 < DSrateNRM)
+    {
+        VLF3 = VRFup1;
+        if(VLrate3 < FRrateDWN)
+        {
+            VLF3 = VRFup2;
+            if(VLrate3 < FRrateFLR)
+            {
+                VLF3 = VRFup3;
+            }
+        }
+    }
+    // Check value round 4
+    if(VLrate4 >= DSrateNRM)
+    {
+        VLF4 = VRFsm1;
+        if(VLrate4 > DSrateMAX)
+        {
+            VLF4 = VRFdw1;
+            if(VLrate4 > FRrateCLNG)
+            {
+                VLF4 = VRFdw2;
+            }
+        }
+    }
+    else if(VLrate4 < DSrateNRM)
+    {
+        VLF4 = VRFup1;
+        if(VLrate4 < FRrateDWN)
+        {
+            VLF4 = VRFup2;
+            if(VLrate4 < FRrateFLR)
+            {
+                VLF4 = VRFup3;
+            }
+        }
+    }
+    // Check value round 5
+    if(VLrate5 >= DSrateNRM)
+    {
+        VLF5 = VRFsm1;
+        if(VLrate5 > DSrateMAX)
+        {
+            VLF5 = VRFdw1;
+            if(VLrate5 > FRrateCLNG)
+            {
+                VLF5 = VRFdw2;
+            }
+        }
+    }
+    else if(VLrate5 < DSrateNRM)
+    {
+        VLF5 = VRFup1;
+        if(VLrate5 < FRrateDWN)
+        {
+            VLF5 = VRFup2;
+            if(VLrate5 < FRrateFLR)
+            {
+                VLF5 = VRFup3;
+            }
+        }
+    }
+    // Final mathematics
+    // LogPrintf("Terminal-Velocity 1st multiplier set to: %f: \n",VLF1);
+    // LogPrintf("Terminal-Velocity 2nd multiplier set to: %f: \n",VLF2);
+    // LogPrintf("Terminal-Velocity 3rd multiplier set to: %f: \n",VLF3);
+    // LogPrintf("Terminal-Velocity 4th multiplier set to: %f: \n",VLF4);
+    // LogPrintf("Terminal-Velocity 5th multiplier set to: %f: \n",VLF5);
+    TerminalAverage = (VLF1 + VLF2 + VLF3 + VLF4 + VLF5) / AverageDivisor;
+    // LogPrintf("Terminal-Velocity averaged a final multiplier of: %f: \n",TerminalAverage);
+
+    // Retarget
+    CBigNum bnOld;
+    CBigNum bnNew;
+
+    TerminalFactor *= TerminalAverage;
+    difficultyfactor = TerminalFactor;
+    bnOld.SetCompact(BlockVelocityType->nBits);
+    bnNew = bnOld / difficultyfactor;
+    bnNew *= 10000;
+
+    if (bnNew > bnTerminalVelocity)
+      bnNew = bnTerminalVelocity;
+
+    // LogPrintf("Prior Terminal-Velocity: %08x  %s\n", BlockVelocityType->nBits, bnOld.ToString());
+    // LogPrintf("New Terminal-Velocity:  %08x  %s\n", bnNew.GetCompact(), bnNew.ToString());
+    return bnNew.GetCompact();
+}
+
 unsigned int GetNextTargetRequired(const CBlockIndex* pindexLast, bool fProofOfStake)
 {
-    unsigned int retarget = DIFF_DGW;
+    unsigned int retarget = DIFF_VRX;
 
     /* Chain starts with Peercoin per-block restarget,
        PPC retarget difficulty runs for the initial 615k (thousand) blocks */
@@ -1140,18 +1362,32 @@ unsigned int GetNextTargetRequired(const CBlockIndex* pindexLast, bool fProofOfS
         // debug info for testing
         // LogPrintf("PPC per-block retarget selected \n");
     }
+    /* DarkGravityWave v3 retarget difficulty runs until block 652500 */
+    if(pindexBest->nHeight < VELOCITY_TDIFF)
+    {
+        retarget = DIFF_DGW;
+        // debug info for testing
+        // LogPrintf("DarkGravityWave retarget selected \n");
+    }
     // Retarget using PPC
     if (retarget == DIFF_PPC)
     {
         // debug info for testing
-        //LogPrintf("Espers retargetted using: PPC difficulty algo \n");
+        // LogPrintf("Espers retargetted using: PPC difficulty algo \n");
         return PeercoinDiff(pindexLast, fProofOfStake);
     }
-    // Retarget using Dark Gravity Wave v3
+    // Retarget using DGW
+    if (retarget == DIFF_DGW)
+    {
+        // debug info for testing
+        // LogPrintf("Espers retargetted using: DGW-v3 difficulty algo \n");
+        return DarkGravityWave(pindexLast, fProofOfStake);
+    }
+    // Retarget using Terminal-Velocity
     // debug info for testing
-    // LogPrintf("DarkGravityWave retarget selected \n");
-    //LogPrintf("Espers retargetted using: DGW-v3 difficulty algo \n");
-    return DarkGravityWave(pindexLast, fProofOfStake);
+    // LogPrintf("Terminal-Velocity retarget selected \n");
+    // LogPrintf("Espers retargetted using: Terminal-Velocity difficulty curve \n");
+    return Terminal_Velocity_RateX(pindexLast, fProofOfStake);
 
 }
 
@@ -2107,9 +2343,15 @@ bool CBlock::AcceptBlock()
     // Check block against Velocity parameters
 #ifdef __APPLE__
     if(650000 > nHeight)
+    {
+        // Announce Velocity constraint failure
+        if(Velocity_MacValue == 0)
+        {
+            return DoS(100, error("AcceptBlock() : Velocity rejected block %d, required parameters not met", nHeight));
+        }
+    }
 #else	
     if(Velocity_check(nHeight))
-#endif
     {
         // Announce Velocity constraint failure
         if(!Velocity(pindexPrev, this))
@@ -2117,6 +2359,7 @@ bool CBlock::AcceptBlock()
             return DoS(100, error("AcceptBlock() : Velocity rejected block %d, required parameters not met", nHeight));
         }
     }
+#endif
 
     // Check coinbase timestamp
     if (GetBlockTime() > FutureDrift((int64_t)vtx[0].nTime))

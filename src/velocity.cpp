@@ -27,10 +27,10 @@ bool Velocity_check(int nHeight)
     if(VelocityI(nHeight) >= 0)
     {
         LogPrintf("Velocity is currently Enabled\n");
-		return true;
-	}
+        return true;
+    }
     LogPrintf("Velocity is currently disabled\n");
-	return false;
+    return false;
 }
 
 /* Velocity(CBlockIndex* prevBlock, CBlock* block) ? true : false
