@@ -1,5 +1,6 @@
 // Copyright (c) 2009-2010 Satoshi Nakamoto
 // Copyright (c) 2009-2012 The Bitcoin developers
+// Copyright (c) 2016-2017 The CryptoCoderz Team / Espers
 // Distributed under the MIT/X11 software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -1038,7 +1039,7 @@ void ReadConfigFile(map<string, string>& mapSettingsRet,
     if (!streamConfig.good())
     {
         boost::filesystem::path ConfPath;
-               ConfPath = GetDefaultDataDir() / "Espers.conf";
+               ConfPath = GetDataDir() / "Espers.conf";
                FILE* ConfFile = fopen(ConfPath.string().c_str(), "w");
                fprintf(ConfFile, "listen=1\n");
                fprintf(ConfFile, "server=1\n");
@@ -1057,29 +1058,25 @@ void ReadConfigFile(map<string, string>& mapSettingsRet,
                fprintf(ConfFile, "port=22448\n");
                fprintf(ConfFile, "rpcport=22442\n");
                fprintf(ConfFile, "rpcconnect=127.0.0.1\n");
-               fprintf(ConfFile, "addnode=199.26.184.214:22448\n");
-               fprintf(ConfFile, "addnode=104.236.150.155:22448\n");
-               fprintf(ConfFile, "addnode=159.203.24.196:22448\n");
-               fprintf(ConfFile, "addnode=46.101.188.194:22448\n");
-               fprintf(ConfFile, "addnode=173.18.196.253:22448\n");
-               fprintf(ConfFile, "addnode=208.68.36.6:22448\n");
-               fprintf(ConfFile, "addnode=146.185.153.196:22448\n");
-               fprintf(ConfFile, "addnode=188.166.155.131:22448\n");
-               fprintf(ConfFile, "addnode=107.170.212.222:22448\n");
-               fprintf(ConfFile, "addnode=159.203.12.73:22448\n");
-               fprintf(ConfFile, "addnode=217.175.119.126:22448\n");
+               fprintf(ConfFile, "addnode=104.237.0.79:22448\n");
+               fprintf(ConfFile, "addnode=144.76.237.39:22448\n");
+               fprintf(ConfFile, "addnode=198.245.50.213:22448\n");
+               fprintf(ConfFile, "addnode=85.255.7.224:22448\n");
+               fprintf(ConfFile, "addnode=120.24.217.96:22448\n");
+               fprintf(ConfFile, "addnode=137.74.33.96:22448\n");
 
                fclose(ConfFile);
 
                // Returns our config path, created config file is NOT loaded first time...
                // Wallet will need to be reloaded before config file is properly read...
                return ;
+    }
 
-               if (confLoop < 1)
-               {
-               ++confLoop;
-               goto injectConfig;
-               }
+    // loop back and load config for initial generation
+    if (confLoop < 1)
+    {
+        ++confLoop;
+        goto injectConfig;
     }
 
     set<string> setOptions;

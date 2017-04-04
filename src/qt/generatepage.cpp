@@ -1,4 +1,4 @@
-// Copyright (c) 2016 The CryptoCoderz Team / Espers
+// Copyright (c) 2016-2017 The CryptoCoderz Team / Espers
 // Distributed under the MIT/X11 software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 #include "generatepage.h"
@@ -38,7 +38,7 @@ GeneratePage::GeneratePage(QWidget *parent) :
         QFileInfo check_standalone(QDir::homePath() + "/AppData/Roaming/CryptoCoderz/ESP-Client");
         if(!check_standalone.exists())
         { */
-            // Generation Page (Will be enabled in supplementary 0805 update)
+            // Generation Page (Will be enabled in an supplementary 0860+ update)
             ui->CPUcbox->setEnabled(false);
             ui->pushButton_7->setEnabled(false);
             ui->GPUamnt->setEnabled(false);

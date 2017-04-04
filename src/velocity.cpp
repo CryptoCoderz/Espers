@@ -13,10 +13,9 @@ int VelocityI(int nHeight)
 {
     int i = 0;
     i --;
-    if(nHeight >= VELOCITY_HEIGHT[i])
-    {
-        i++;
-    }
+    BOOST_FOREACH(int h, VELOCITY_HEIGHT)
+    if( nHeight >= h )
+      i++;
     return i;
 }
 
@@ -28,10 +27,10 @@ bool Velocity_check(int nHeight)
     if(VelocityI(nHeight) >= 0)
     {
         LogPrintf("Velocity is currently Enabled\n");
-		return true;
-	}
+        return true;
+    }
     LogPrintf("Velocity is currently disabled\n");
-	return false;
+    return false;
 }
 
 /* Velocity(CBlockIndex* prevBlock, CBlock* block) ? true : false
@@ -51,7 +50,13 @@ bool Velocity(CBlockIndex* prevBlock, CBlock* block)
     int nHeight = prevBlock->nHeight+1;
     int i = VelocityI(nHeight);
     int HaveCoins = false;
-    // Set values
+    // Set stanard values
+    TXrate = block->GetBlockTime() - prevBlock->GetBlockTime();
+ // TEMP PATCH : FIX VELOCITY REFERENCE IMPLEMENTATION PRIORITY 1
+ // Factor in TXs for Velocity constraints only if there are TXs to do so with
+ if(VELOCITY_FACTOR[i] == true && TXvalue > 0)
+ {
+    // Set factor values
     BOOST_FOREACH(const CTransaction& tx, block->vtx)
     {
         TXvalue = tx.GetValueOut();
@@ -59,9 +64,9 @@ bool Velocity(CBlockIndex* prevBlock, CBlock* block)
         TXfee = TXinput - TXvalue;
         TXcount = block->vtx.size();
         TXlogic = GetPrevAccountBalance - TXinput;
-        TXrate = block->GetBlockTime() - prevBlock->GetBlockTime();
+        // TXrate = block->GetBlockTime() - prevBlock->GetBlockTime();
     }
-    // Set Velocity logic value
+        // Set Velocity logic value
     if(TXlogic > 0)
     {
        HaveCoins = true;
@@ -85,9 +90,7 @@ bool Velocity(CBlockIndex* prevBlock, CBlock* block)
              return false;
           }
        }
-       // Factor in TXs for Velocity constraints only if there are TXs to do so with
-       if(VELOCITY_FACTOR[i] == true && TXvalue > 0)
-       {
+
           if(VELOCITY_MIN_VALUE[i] > 0 && TXvalue < VELOCITY_MIN_VALUE[i])
           {
              LogPrintf("DENIED: Invalid TX value found by Velocity\n");
@@ -101,8 +104,8 @@ bool Velocity(CBlockIndex* prevBlock, CBlock* block)
                 return false;
              }
           }
-       }
-    }
+     }
+  }
     // Verify minimum Velocity rate
     if( VELOCITY_RATE[i] > 0 && TXrate > VELOCITY_RATE[i] )
     {

@@ -20,6 +20,7 @@ enum DiffMode {
     DIFF_DEFAULT = 0, // Default to invalid 0
     DIFF_PPC     = 1, // Retarget using Peercoin per-block
     DIFF_DGW     = 2, // Retarget using DarkGravityWave v3
+    DIFF_VRX     = 3, // Retarget using Terminal-Velocity
 };
 
 class CBlock;
@@ -96,10 +97,14 @@ static const int64_t nGravityFork = 615000; // Light Espers chain fork for DarkG
 static const int64_t nlowGravity = 642000; // Correct low gravity issue with DGW implementation.
 /** Velocity toggle block */
 static const int64_t VELOCITY_TOGGLE = 650000; // Implementation of the Velocity system into the chain.
+/** Velocity retarget toggle block */
+static const int64_t VELOCITY_TDIFF = 667350; // Use Velocity's retargetting method.
 /** Block spacing preferred */
 static const int64_t BLOCK_SPACING = 5 * 60;
 /** Block spacing minimum */
 static const int64_t BLOCK_SPACING_MIN = 3.5 * 60;
+/** Block spacing maximum */
+static const int64_t BLOCK_SPACING_MAX = 7.5 * 60;
 /** Reserve Phase start block */ 
 static const int64_t nReservePhaseStart = 10;
 /** Reserve Phase end block */ 
@@ -269,6 +274,7 @@ enum GetMinFee_mode
 
 typedef std::map<uint256, std::pair<CTxIndex, CTransaction> > MapPrevTx;
 
+// TODO: Velocity reference
 int64_t GetMinFee(const CTransaction& tx, unsigned int nBlockSize = 1, enum GetMinFee_mode mode = GMF_BLOCK, unsigned int nBytes = 0);
 
 /** The basic transaction that is broadcasted on the network and contained in
@@ -339,9 +345,10 @@ public:
         return (vin.size() > 0 && (!vin[0].prevout.IsNull()) && vout.size() >= 2 && vout[0].IsEmpty());
     }
 
-    /** Amount of bitcoins spent by this transaction.
+    /** Amount of Espers spent by this transaction.
         @return sum of all outputs (note: does not include fees)
      */
+    // TODO: Velocity reference
     int64_t GetValueOut() const
     {
         int64_t nValueOut = 0;
@@ -362,6 +369,7 @@ public:
         @return	Sum of value of all inputs (scriptSigs)
         @see CTransaction::FetchInputs
      */
+    // TODO: Velocity reference
     int64_t GetValueIn(const MapPrevTx& mapInputs) const;
 
     bool ReadFromDisk(CDiskTxPos pos, FILE** pfileRet=NULL)
