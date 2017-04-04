@@ -2341,16 +2341,6 @@ bool CBlock::AcceptBlock()
         return DoS(100, error("AcceptBlock() : reject too new nVersion = %d", nVersion));
 
     // Check block against Velocity parameters
-#ifdef __APPLE__
-    if(650000 > nHeight)
-    {
-        // Announce Velocity constraint failure
-        if(Velocity_MacValue == 0)
-        {
-            return DoS(100, error("AcceptBlock() : Velocity rejected block %d, required parameters not met", nHeight));
-        }
-    }
-#else	
     if(Velocity_check(nHeight))
     {
         // Announce Velocity constraint failure
@@ -2359,7 +2349,6 @@ bool CBlock::AcceptBlock()
             return DoS(100, error("AcceptBlock() : Velocity rejected block %d, required parameters not met", nHeight));
         }
     }
-#endif
 
     // Check coinbase timestamp
     if (GetBlockTime() > FutureDrift((int64_t)vtx[0].nTime))
