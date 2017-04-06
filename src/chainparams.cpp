@@ -105,6 +105,10 @@ public:
         // Espers dns seeds
         vSeeds.push_back(CDNSSeedData("Seed01",  "104.237.0.79"));
         vSeeds.push_back(CDNSSeedData("Seed02",  "144.76.237.39"));
+        vSeeds.push_back(CDNSSeedData("Seed03",  "198.245.50.213"));
+        vSeeds.push_back(CDNSSeedData("Seed04",  "85.255.7.224"));
+        vSeeds.push_back(CDNSSeedData("Seed05",  "120.24.217.96"));
+        vSeeds.push_back(CDNSSeedData("Seed06",  "137.74.33.96"));
 
         convertSeed6(vFixedSeeds, pnSeed6_main, ARRAYLEN(pnSeed6_main));
 

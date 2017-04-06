@@ -1352,8 +1352,16 @@ unsigned int Terminal_Velocity_RateX(const CBlockIndex* pindexLast, bool fProofO
 
 unsigned int GetNextTargetRequired(const CBlockIndex* pindexLast, bool fProofOfStake)
 {
+    // Default with VRX
     unsigned int retarget = DIFF_VRX;
 
+    /* DarkGravityWave v3 retarget difficulty runs until block 667350 */
+    if(pindexBest->nHeight < VELOCITY_TDIFF)
+    {
+        retarget = DIFF_DGW;
+        // debug info for testing
+        // LogPrintf("DarkGravityWave-v3 retarget selected \n");
+    }
     /* Chain starts with Peercoin per-block restarget,
        PPC retarget difficulty runs for the initial 615k (thousand) blocks */
     if(pindexBest->nHeight < nGravityFork)
@@ -1362,26 +1370,19 @@ unsigned int GetNextTargetRequired(const CBlockIndex* pindexLast, bool fProofOfS
         // debug info for testing
         // LogPrintf("PPC per-block retarget selected \n");
     }
-    /* DarkGravityWave v3 retarget difficulty runs until block 652500 */
-    if(pindexBest->nHeight < VELOCITY_TDIFF)
-    {
-        retarget = DIFF_DGW;
-        // debug info for testing
-        // LogPrintf("DarkGravityWave retarget selected \n");
-    }
-    // Retarget using PPC
-    if (retarget == DIFF_PPC)
-    {
-        // debug info for testing
-        // LogPrintf("Espers retargetted using: PPC difficulty algo \n");
-        return PeercoinDiff(pindexLast, fProofOfStake);
-    }
-    // Retarget using DGW
+    // Retarget using DGW-v3
     if (retarget == DIFF_DGW)
     {
         // debug info for testing
         // LogPrintf("Espers retargetted using: DGW-v3 difficulty algo \n");
         return DarkGravityWave(pindexLast, fProofOfStake);
+    }
+    // Retarget using PPC
+    else if (retarget == DIFF_PPC)
+    {
+        // debug info for testing
+        // LogPrintf("Espers retargetted using: PPC difficulty algo \n");
+        return PeercoinDiff(pindexLast, fProofOfStake);
     }
     // Retarget using Terminal-Velocity
     // debug info for testing
