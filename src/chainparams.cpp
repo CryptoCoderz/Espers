@@ -119,13 +119,13 @@ public:
         // this time between 15 seconds and 1 minute
         if(nBestHeight > nBlocktimeregress)
         {
-        nTargetSpacing = 2.5 * 60;
+            nTargetSpacing = 2.5 * 60;
         }
         // Block rate reduced for 3-5 Minute block times
         // this is in conjunction with DGW-v3 retarget fork
         if(nBestHeight > nGravityFork)
         {
-        nTargetSpacing = BLOCK_SPACING * 1;
+            nTargetSpacing = BLOCK_SPACING * 1;
         }
         nTargetTimespan = 10 * nTargetSpacing;
         nStartPoSBlock = 2125; // Delay PoS start until swap start

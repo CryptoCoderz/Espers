@@ -4,8 +4,7 @@
 #ifndef ESPERS_CPHASHES_H
 #define ESPERS_CPHASHES_H
 
-class CBlockIndex;
-class CBlock;
+#include "bignum.h"
 
 static const uint256 CheckBlock_0001("0x0000068c30d404af5c95bc7caa3c464447e63ac3d6fc69d071b3965818487ad1");
 static const uint256 CheckBlock_0002("0x00000932f50079a2bbe960fc72f0f5e65e779b735c2a1130ad4e16f57bdf9c46");
@@ -31,27 +30,27 @@ static const uint256 CheckBlock_0019("0x0000008dc88e24a0790041e551f0e36061c8d8ef
 static const uint256 CheckBlock_0020("0x000004938ad1637822be49315700e2082ec7f66d95f57aba977364855b89d397");
 
 
-static const int64 CheckHeight_0001 = 10;
-static const int64 CheckHeight_0002 = 25;
-static const int64 CheckHeight_0003 = 50;
-static const int64 CheckHeight_0004 = 75;
-static const int64 CheckHeight_0005 = 110;
-static const int64 CheckHeight_0006 = 140;
-static const int64 CheckHeight_0007 = 175;
-static const int64 CheckHeight_0008 = 225;
-static const int64 CheckHeight_0009 = 275;
-static const int64 CheckHeight_0010 = 356;
+static const int64_t CheckHeight_0001 = 10;
+static const int64_t CheckHeight_0002 = 25;
+static const int64_t CheckHeight_0003 = 50;
+static const int64_t CheckHeight_0004 = 75;
+static const int64_t CheckHeight_0005 = 110;
+static const int64_t CheckHeight_0006 = 140;
+static const int64_t CheckHeight_0007 = 175;
+static const int64_t CheckHeight_0008 = 225;
+static const int64_t CheckHeight_0009 = 275;
+static const int64_t CheckHeight_0010 = 356;
 // Patch 6 additions
-static const int64 CheckHeight_0011 = 50000;
-static const int64 CheckHeight_0012 = 125000;
-static const int64 CheckHeight_0013 = 210000;
-static const int64 CheckHeight_0014 = 300000;
-static const int64 CheckHeight_0015 = 400000;
-static const int64 CheckHeight_0016 = 500000;
-static const int64 CheckHeight_0017 = 595000;
+static const int64_t CheckHeight_0011 = 50000;
+static const int64_t CheckHeight_0012 = 125000;
+static const int64_t CheckHeight_0013 = 210000;
+static const int64_t CheckHeight_0014 = 300000;
+static const int64_t CheckHeight_0015 = 400000;
+static const int64_t CheckHeight_0016 = 500000;
+static const int64_t CheckHeight_0017 = 595000;
 // Velocity additions
-static const int64 CheckHeight_0018 = 650000;
-static const int64 CheckHeight_0019 = 650035;
-static const int64 CheckHeight_0020 = 650147;
+static const int64_t CheckHeight_0018 = 650000;
+static const int64_t CheckHeight_0019 = 650035;
+static const int64_t CheckHeight_0020 = 650147;
 
 #endif

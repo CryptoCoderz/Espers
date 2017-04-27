@@ -20,7 +20,7 @@ enum DiffMode {
     DIFF_DEFAULT = 0, // Default to invalid 0
     DIFF_PPC     = 1, // Retarget using Peercoin per-block
     DIFF_DGW     = 2, // Retarget using DarkGravityWave v3
-    DIFF_VRX     = 3, // Retarget using Terminal-Velocity
+    DIFF_VRX     = 3, // Retarget using Terminal-Velocity-RateX
 };
 
 class CBlock;
@@ -67,6 +67,16 @@ static const int64_t COIN_YEAR_REWARD2 = 19 * CENT; // ~25% 4300000000 annually
 static const int64_t COIN_YEAR_REWARD3 = 4 * CENT; // ~5% 860000000 annually
 /** PoS Subsidy 4 */
 static const int64_t COIN_YEAR_REWARD4 = 0.8 * CENT; // ~1% TODO: Correct numbers
+/** Velocity toggle block */
+static const int64_t VELOCITY_TOGGLE = 650000; // Implementation of the Velocity system into the chain.
+/** Velocity retarget toggle block */
+static const int64_t VELOCITY_TDIFF = 667350; // Use Velocity's retargetting method.
+/** Block spacing preferred */
+static const int64_t BLOCK_SPACING = 5 * 60;
+/** Block spacing minimum */
+static const int64_t BLOCK_SPACING_MIN = 3.5 * 60;
+/** Block spacing maximum */
+static const int64_t BLOCK_SPACING_MAX = 7.5 * 60;
 /** Minimum nCoinAge required to stake PoS */
 static const unsigned int nStakeMinAge = 2 * 60 * 60; // 2 hours
 /** Time to elapse before new modifier is computed */
@@ -89,26 +99,16 @@ static const int64_t nBlockPoWReward = 5000 * COIN;
 static const int64_t nBlockRewardBuffer = 0.1 * COIN;
 /** Genesis Block Height */                                                     
 static const int64_t nGenesisHeight = 0;
+/** Reserve Phase start block */ 
+static const int64_t nReservePhaseStart = 10;
+/** Reserve Phase end block */ 
+static const int64_t nReservePhaseEnd = 356; // rounded +95 blocks for ~17.2 Swap mine
 /** Target Blocktime Retard */
 static const int64_t nBlocktimeregress = 125000; // Retard block time
 /** Espers system patch fork*/
 static const int64_t nGravityFork = 615000; // Light Espers chain fork for DarkGravityWave and block time redux.
 /** Espers low gravity fix fork*/
 static const int64_t nlowGravity = 642000; // Correct low gravity issue with DGW implementation.
-/** Velocity toggle block */
-static const int64_t VELOCITY_TOGGLE = 650000; // Implementation of the Velocity system into the chain.
-/** Velocity retarget toggle block */
-static const int64_t VELOCITY_TDIFF = 667350; // Use Velocity's retargetting method.
-/** Block spacing preferred */
-static const int64_t BLOCK_SPACING = 5 * 60;
-/** Block spacing minimum */
-static const int64_t BLOCK_SPACING_MIN = 3.5 * 60;
-/** Block spacing maximum */
-static const int64_t BLOCK_SPACING_MAX = 7.5 * 60;
-/** Reserve Phase start block */ 
-static const int64_t nReservePhaseStart = 10;
-/** Reserve Phase end block */ 
-static const int64_t nReservePhaseEnd = 356; // rounded +95 blocks for ~17.2 Swap mine
 /** PoS25 Phase start block */
 static const int64_t nPoS25PhaseStart = 20000; // Dropped date due to 25% staking miscalculation
 /** PoS5 Phase start block */

@@ -1,6 +1,6 @@
 TEMPLATE = app
 TARGET = Espers-qt
-VERSION = 0.8.6.1
+VERSION = 0.8.6.2
 INCLUDEPATH += src src/json src/qt
 QT += core gui widgets network
 DEFINES += ENABLE_WALLET
@@ -9,6 +9,7 @@ CONFIG += no_include_pwd
 CONFIG += thread
 CONFIG += widgets
 CONFIG += static
+CONFIG += openssl
 
 QMAKE_CXXFLAGS += -fpermissive
 
@@ -41,18 +42,25 @@ QRENCODE_LIB_PATH=C:/deps/qrencode-3.4.4/.libs
 #    BOOST_INCLUDE_PATH, BOOST_LIB_PATH, BDB_INCLUDE_PATH,
 #    BDB_LIB_PATH, OPENSSL_INCLUDE_PATH and OPENSSL_LIB_PATH respectively
 
+# workaround for boost 1.58
+DEFINES += BOOST_VARIANT_USE_RELAXED_GET_BY_DEFAULT
+
 OBJECTS_DIR = build
 MOC_DIR = build
 UI_DIR = build
 
 # use: qmake "RELEASE=1"
 contains(RELEASE, 1) {
-    # Mac: compile for maximum compatibility (10.7, 64-bit)
-    macx:QMAKE_CXXFLAGS += -mmacosx-version-min=10.7 -arch x86_64 -isysroot /Applications/XCode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKsMacOSX10.7.sdk
+    # Mac: compile for maximum compatibility (10.12, 64-bit)
+    macx:QMAKE_CXXFLAGS += -mmacosx-version-min=10.12 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.12.sdk
+    macx:QMAKE_CFLAGS += -mmacosx-version-min=10.12 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.12.sdk
+    macx:QMAKE_LFLAGS += -mmacosx-version-min=10.12 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.12.sdk
+    macx:QMAKE_OBJECTIVE_CFLAGS += -mmacosx-version-min=10.12 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.12.sdk
+
 
     !windows:!macx {
         # Linux: static link
-        LIBS += -Wl,-Bstatic
+        # LIBS += -Wl,-Bstatic
     }
 }
 
@@ -95,7 +103,6 @@ INCLUDEPATH += $$MINIUPNPC_INCLUDE_PATH
 LIBS += $$join(MINIUPNPC_LIB_PATH,,-L,) -lminiupnpc
 win32:LIBS += -liphlpapi
 }
-
 
 USE_DBUS=0
 # use: qmake "USE_DBUS=1" or qmake "USE_DBUS=0"
