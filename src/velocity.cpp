@@ -51,11 +51,15 @@ bool Velocity(CBlockIndex* prevBlock, CBlock* block)
     int64_t OLDvalstamp  = 0;
     int64_t CURstamp = 0;
     int64_t OLDstamp = 0;
+    int64_t TXstampC = 0;
+    int64_t TXstampO = 0;
     int nHeight = prevBlock->nHeight+1;
     int i = VelocityI(nHeight);
     int HaveCoins = false;
     // Set stanard values
     TXrate = block->GetBlockTime() - prevBlock->GetBlockTime();
+    TXstampC = block->nTime;
+    TXstampO = prevBlock->nTime;
     CURstamp = block->GetBlockTime();
     OLDstamp = prevBlock->GetBlockTime();
     CURvalstamp = prevBlock->GetBlockTime() + VELOCITY_MIN_RATE[i];
@@ -126,7 +130,7 @@ bool Velocity(CBlockIndex* prevBlock, CBlock* block)
         return false;
     }
     // Validate timestamp is logical
-    else if(CURstamp < CURvalstamp || OLDstamp < OLDvalstamp)
+    else if(CURstamp < CURvalstamp || OLDstamp < OLDvalstamp || TXstampC < CURvalstamp || TXstampO < OLDvalstamp)
     {
         LogPrintf("DENIED: Block timestamp is not logical\n");
         return false;
