@@ -28,6 +28,7 @@ static const uint256 CheckBlock_0017("0xb95313efd4415c4e0f136337d82b1bfc8d303d72
 static const uint256 CheckBlock_0018("0x00000002736a3fb2074417e38cc02158bda9a0e216ff96718ad1203ae2a3cad2");
 static const uint256 CheckBlock_0019("0x0000008dc88e24a0790041e551f0e36061c8d8ef6ec9907a3df4960b72ea9708");
 static const uint256 CheckBlock_0020("0x000004938ad1637822be49315700e2082ec7f66d95f57aba977364855b89d397");
+static const uint256 CheckBlock_0021("0x9a26fc52cdab2b863e4cebbfe2a8889209be938f9ab748f5ab257e39a9954b61");
 
 
 static const int64_t CheckHeight_0001 = 10;
@@ -52,5 +53,6 @@ static const int64_t CheckHeight_0017 = 595000;
 static const int64_t CheckHeight_0018 = 650000;
 static const int64_t CheckHeight_0019 = 650035;
 static const int64_t CheckHeight_0020 = 650147;
+static const int64_t CheckHeight_0021 = 669750;
 
 #endif

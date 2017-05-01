@@ -47,12 +47,20 @@ bool Velocity(CBlockIndex* prevBlock, CBlock* block)
     int64_t TXcount = 0;
     int64_t TXlogic = 0;
     int64_t TXrate = 0;
+    int64_t CURvalstamp  = 0;
+    int64_t OLDvalstamp  = 0;
+    int64_t CURstamp = 0;
+    int64_t OLDstamp = 0;
     int nHeight = prevBlock->nHeight+1;
     int i = VelocityI(nHeight);
     int HaveCoins = false;
     // Set stanard values
     TXrate = block->GetBlockTime() - prevBlock->GetBlockTime();
- // TEMP PATCH : FIX VELOCITY REFERENCE IMPLEMENTATION PRIORITY 1
+    CURstamp = block->GetBlockTime();
+    OLDstamp = prevBlock->GetBlockTime();
+    CURvalstamp = prevBlock->GetBlockTime() + VELOCITY_MIN_RATE[i];
+    OLDvalstamp = prevBlock->pprev->GetBlockTime() + VELOCITY_MIN_RATE[i];
+ // TODO: Rework and activate below section for future releases
  // Factor in TXs for Velocity constraints only if there are TXs to do so with
  if(VELOCITY_FACTOR[i] == true && TXvalue > 0)
  {
@@ -117,6 +125,13 @@ bool Velocity(CBlockIndex* prevBlock, CBlock* block)
         LogPrintf("DENIED: Minimum block spacing not met for Velocity\n");
         return false;
     }
+    // Validate timestamp is logical
+    else if(CURstamp < CURvalstamp || OLDstamp < OLDvalstamp)
+    {
+        LogPrintf("DENIED: Block timestamp is not logical\n");
+        return false;
+    }
+
     // Constrain Velocity
     if(VELOCITY_EXPLICIT[i])
     {
