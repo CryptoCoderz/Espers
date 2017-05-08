@@ -218,7 +218,7 @@ public:
         bnProofOfWorkLimit = CBigNum(~uint256(0) >> 1);
         genesis.nTime = timeRegNetGenesis;
         genesis.nBits  = bnProofOfWorkLimit.GetCompact();
-        genesis.nNonce = 8;
+        genesis.nNonce = nNonceReg;
         hashGenesisBlock = genesis.GetHash();
         nDefaultPort = 32445;
         strDataDir = "regtest";

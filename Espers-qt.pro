@@ -1,6 +1,6 @@
 TEMPLATE = app
 TARGET = Espers-qt
-VERSION = 0.8.6.4
+VERSION = 0.8.6.5
 INCLUDEPATH += src src/json src/qt
 QT += core gui widgets network
 DEFINES += ENABLE_WALLET
@@ -204,6 +204,7 @@ HEADERS += src/qt/bitcoingui.h \
     src/qt/editaddressdialog.h \
     src/qt/bitcoinaddressvalidator.h \
     src/alert.h \
+    src/blocksizecalculator.h \
     src/addrman.h \
     src/base58.h \
     src/bignum.h \
@@ -211,6 +212,8 @@ HEADERS += src/qt/bitcoingui.h \
     src/chainparamsseeds.h \
     src/checkpoints.h \
     src/cphashes.h \
+    src/fork.h \
+    src/genesis.h \
     src/compat.h \
     src/coincontrol.h \
     src/sync.h \
@@ -224,6 +227,7 @@ HEADERS += src/qt/bitcoingui.h \
     src/core.h \
     src/main.h \
     src/miner.h \
+    src/mining.h \
     src/net.h \
     src/key.h \
     src/db.h \
@@ -318,6 +322,7 @@ SOURCES += src/qt/bitcoin.cpp src/qt/bitcoingui.cpp \
     src/qt/editaddressdialog.cpp \
     src/qt/bitcoinaddressvalidator.cpp \
     src/alert.cpp \
+    src/blocksizecalculator.cpp \
     src/chainparams.cpp \
     src/version.cpp \
     src/sync.cpp \

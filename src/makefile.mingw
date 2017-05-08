@@ -76,12 +76,14 @@ OBJS= \
     obj/script.o \
     obj/sync.o \
     obj/txmempool.o \
+    obj/blocksizecalculator \
     obj/util.o \
     obj/hash.o \
     obj/noui.o \
     obj/kernel.o \
     obj/pbkdf2.o \
     obj/scrypt.o \
+    obj/scrypt-arm.o \
     obj/scrypt-x86.o \
     obj/scrypt-x86_64.o \
     obj/chainparams.o \

@@ -7,8 +7,12 @@
 #include <boost/algorithm/string/replace.hpp>
 #include <boost/filesystem.hpp>
 #include <boost/filesystem/fstream.hpp>
+#include <boost/lexical_cast.hpp>
+#include <boost/random/mersenne_twister.hpp>
+#include <boost/random/uniform_int_distribution.hpp>
 
 #include "alert.h"
+#include "blocksizecalculator.h"
 #include "chainparams.h"
 #include "checkpoints.h"
 #include "db.h"
@@ -953,11 +957,26 @@ void static PruneOrphanBlocks()
     mapOrphanBlocks.erase(hash);
 }
 
+int static generateMTRandom(unsigned int s, int range)
+{
+    random::mt19937 gen(s);
+    random::uniform_int_distribution<> dist(0, range);
+    return dist(gen);
+}
+
 // miner's coin base reward
 int64_t GetProofOfWorkReward(int64_t nHeight, int64_t nFees)
 {
-    int64_t nSubsidy = nBlockPoWReward;
+    // Superblock calculations PoW
+    uint256 prevHash = 0;
+    if(pindexBest->pprev)
+        prevHash = pindexBest->pprev->GetBlockHash();
+    std::string cseed_str = prevHash.ToString().substr(7,7);
+    const char* cseed = cseed_str.c_str();
+    long seed = hex2long(cseed);
+    int rand1 = generateMTRandom(seed, 1000000);
 
+    int64_t nSubsidy = nBlockPoWReward;
     // Genesis block subsidy
     if(nHeight == nGenesisHeight) {
         return  nGenesisBlockReward;
@@ -971,6 +990,12 @@ int64_t GetProofOfWorkReward(int64_t nHeight, int64_t nFees)
         if(nHeight < nReservePhaseEnd){
         nSubsidy = nBlockRewardReserve;
         }
+    }
+    // Superblock reward
+    else if(sysUpgrade_01 > GetTime()){
+        nSubsidy = nMinPoWReward;
+        if(rand1 <= 25000) // 25% Chance of superblock
+            nSubsidy = nSuperPoWReward;
     }
     // hardCap v2.1
     else if(pindexBest->nMoneySupply > MAX_SINGLE_TX)
@@ -1126,7 +1151,7 @@ unsigned int DarkGravityWave(const CBlockIndex* pindexLast, bool fProofOfStake)
 
 unsigned int Terminal_Velocity_RateX(const CBlockIndex* pindexLast, bool fProofOfStake)
 {
-       // Terminal-Velocity-RateX, v10-Beta-R3, written by Jonathan Dan Zaretsky - cryptocoderz@gmail.com
+       // Terminal-Velocity-RateX, v10-Beta-R4, written by Jonathan Dan Zaretsky - cryptocoderz@gmail.com
        const CBigNum bnTerminalVelocity = fProofOfStake ? Params().ProofOfStakeLimit() : Params().ProofOfWorkLimit();
        // Define values
        double VLF1 = 0;
@@ -1209,10 +1234,10 @@ unsigned int Terminal_Velocity_RateX(const CBlockIndex* pindexLast, bool fProofO
        // Differentiate PoW/PoS prev block
        const CBlockIndex* BlockVelocityType = GetLastBlockIndex(pindexLast, fProofOfStake);
        // Skew for less selected block type
-       //int64_t nNow = GetTime(); int64_t nThen = 1493596800; // Toggle skew system fork - Mon, 01 May 2017 00:00:00 GMT
-       //if(nNow > nThen){if(prevPoW < prevPoS && !fProofOfStake){if((prevPoS-prevPoW) > 3) TerminalAverage /= 3;}
-       //else if(prevPoW > prevPoS && fProofOfStake){if((prevPoW-prevPoS) > 3) TerminalAverage /= 3;}
-       //if(TerminalAverage < 0.5) TerminalAverage = 0.5;} // limit skew to halving
+       int64_t nNow = GetTime(); int64_t nThen = sysUpgrade_01; // Toggle skew system fork - Sat, 20 May 2017 00:00:00 GMT
+       if(nNow > nThen){if(prevPoW < prevPoS && !fProofOfStake){if((prevPoS-prevPoW) > 3) TerminalAverage /= 3;}
+       else if(prevPoW > prevPoS && fProofOfStake){if((prevPoW-prevPoS) > 3) TerminalAverage /= 3;}
+       if(TerminalAverage < 0.5) TerminalAverage = 0.5;} // limit skew to halving
        // Retarget
        CBigNum bnOld;
        CBigNum bnNew;
@@ -1652,6 +1677,14 @@ bool CBlock::ConnectBlock(CTxDB& txdb, CBlockIndex* pindex, bool fJustCheck)
     int64_t nValueOut = 0;
     int64_t nStakeReward = 0;
     unsigned int nSigOps = 0;
+
+    if(sysUpgrade_01 > GetTime())
+    {
+        MAX_BLOCK_SIZE = BlockSizeCalculator::ComputeBlockSize(pindex);
+        MAX_BLOCK_SIGOPS = MAX_BLOCK_SIZE/50;
+        MAX_TX_SIGOPS = MAX_BLOCK_SIGOPS/5;
+    }
+
     BOOST_FOREACH(CTransaction& tx, vtx)
     {
         uint256 hashTx = tx.GetHash();
@@ -3675,6 +3708,43 @@ bool static ProcessMessage(CNode* pfrom, string strCommand, CDataStream& vRecv, 
 
 
     return true;
+}
+
+// Adaptive block sizing depends on this
+FILE* OpenDiskFile(const CDiskBlockPos &pos, const char *prefix, bool fReadOnly)
+{
+    if (pos.IsNull())
+        return NULL;
+    boost::filesystem::path path = GetBlockPosFilename(pos, prefix);
+    boost::filesystem::create_directories(path.parent_path());
+    FILE* file = fopen(path.string().c_str(), "rb+");
+    if (!file && !fReadOnly)
+        file = fopen(path.string().c_str(), "wb+");
+    if (!file) {
+        LogPrintf("Unable to open file %s\n", path.string());
+        return NULL;
+    }
+    if (pos.nPos) {
+        if (fseek(file, pos.nPos, SEEK_SET)) {
+            LogPrintf("Unable to seek to position %u of %s\n", pos.nPos, path.string());
+            fclose(file);
+            return NULL;
+        }
+    }
+    return file;
+}
+
+FILE* OpenBlockFile(const CDiskBlockPos &pos, bool fReadOnly) {
+    return OpenDiskFile(pos, "blk", fReadOnly);
+}
+
+FILE* OpenUndoFile(const CDiskBlockPos &pos, bool fReadOnly) {
+    return OpenDiskFile(pos, "rev", fReadOnly);
+}
+
+boost::filesystem::path GetBlockPosFilename(const CDiskBlockPos &pos, const char *prefix)
+{
+    return GetDataDir() / "blocks" / strprintf("%s%05u.dat", prefix, pos.nFile);
 }
 
 // requires LOCK(cs_vRecvMsg)

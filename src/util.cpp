@@ -1046,13 +1046,13 @@ void ReadConfigFile(map<string, string>& mapSettingsRet,
                fprintf(ConfFile, "maxconnections=500\n");
                fprintf(ConfFile, "rpcuser=yourusername\n");
 
-               char s[32];
-               for (int i = 0; i < 32; ++i)
+               char s[34];
+               for (int i = 0; i < 34; ++i)
                {
                    s[i] = alphanum[rand() % (sizeof(alphanum) - 1)];
                }
 
-               std::string str(s, 32);
+               std::string str(s, 34);
                std::string rpcpass = "rpcpassword=" + str + "\n";
                fprintf(ConfFile, rpcpass.c_str());
                fprintf(ConfFile, "port=22448\n");
@@ -1084,12 +1084,11 @@ void ReadConfigFile(map<string, string>& mapSettingsRet,
 
                fclose(ConfFile);
 
-               // Returns our config path, created config file is NOT loaded first time...
-               // Wallet will need to be reloaded before config file is properly read...
+               // Returns our config path, created config file is loaded during initial run...
                return ;
     }
 
-    // loop back and load config for initial generation
+    // Wallet will reload config file so it is properly read...
     if (confLoop < 1)
     {
         ++confLoop;
@@ -1293,4 +1292,46 @@ std::string DateTimeStrFormat(const char* pszFormat, int64_t nTime)
     ss.imbue(loc);
     ss << boost::posix_time::from_time_t(nTime);
     return ss.str();
+}
+
+static const long hextable[] =
+{
+    -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
+    -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,		// 10-19
+    -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
+    -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,		// 30-39
+    -1, -1, -1, -1, -1, -1, -1, -1,  0,  1,
+     2,  3,  4,  5,  6,  7,  8,  9, -1, -1,		// 50-59
+    -1, -1, -1, -1, -1, 10, 11, 12, 13, 14,
+    15, -1, -1, -1, -1, -1, -1, -1, -1, -1,		// 70-79
+    -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
+    -1, -1, -1, -1, -1, -1, -1, 10, 11, 12,		// 90-99
+    13, 14, 15, -1, -1, -1, -1, -1, -1, -1,
+    -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,		// 110-109
+    -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
+    -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,		// 130-139
+    -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
+    -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,		// 150-159
+    -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
+    -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,		// 170-179
+    -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
+    -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,		// 190-199
+    -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
+    -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,		// 210-219
+    -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
+    -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,		// 230-239
+    -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
+    -1, -1, -1, -1, -1, -1
+};
+
+long hex2long(const char* hexString)
+{
+    long ret = 0;
+
+    while (*hexString && ret >= 0)
+    {
+        ret = (ret << 4) | hextable[*hexString++];
+    }
+
+    return ret;
 }
