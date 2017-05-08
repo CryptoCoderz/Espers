@@ -90,7 +90,7 @@ OBJS= \
     obj/script.o \
     obj/sync.o \
     obj/txmempool.o \
-    obj/blocksizecalculator \
+    obj/blocksizecalculator.o \
     obj/util.o \
     obj/hash.o \
     obj/noui.o \
