@@ -90,6 +90,10 @@ Value getmininginfo(const Array& params, bool fHelp)
     if (pwalletMain)
         nWeight = pwalletMain->GetStakeWeight();
 
+    // Define block rewards
+    int64_t nRewardPoW = (uint64_t)GetProofOfWorkReward(nBestHeight, 0);
+    int64_t nRewardPoS = (uint64_t)GetProofOfStakeReward(nBestHeight, 0);
+
     Object obj, diff, weight;
     obj.push_back(Pair("blocks",        (int)nBestHeight));
     obj.push_back(Pair("currentblocksize",(uint64_t)nLastBlockSize));
@@ -100,7 +104,8 @@ Value getmininginfo(const Array& params, bool fHelp)
     diff.push_back(Pair("search-interval",      (int)nLastCoinStakeSearchInterval));
     obj.push_back(Pair("difficulty",    diff));
 
-    obj.push_back(Pair("blockvalue",    (uint64_t)GetProofOfWorkReward(nBestHeight, 0)));
+    obj.push_back(Pair("blockvalue-PoS",    nRewardPoS));
+    obj.push_back(Pair("blockvalue-PoW",    nRewardPoW));//obj.push_back(Pair("blockvalue",    (uint64_t)GetProofOfWorkReward(nBestHeight, 0)));
     obj.push_back(Pair("netmhashps",     GetPoWMHashPS()));
     obj.push_back(Pair("netstakeweight", GetPoSKernelPS()));
     obj.push_back(Pair("errors",        GetWarnings("statusbar")));
