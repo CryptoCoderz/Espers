@@ -24,8 +24,8 @@ static const int64_t nPoS25PhaseStart = 20000; // Dropped date due to 25% stakin
 static const int64_t nPoS5PhaseStart = 2000800; // Begins @ ~48892586514.24 ESP
 /** PoS1 Phase start block */
 static const int64_t nPoS1PhaseStart = 3000300; // Begins @ ~48892586514.24 ESP
-/** First system upgrade fork */
-static const int64_t sysUpgrade_01 = 1495238400; // Sat, 20 May 2017 00:00:00 GMT
+/** System Upgrade 01 */
+static const int64_t sysUpgrade_01 = 674400; // Start swinging difficulty skew, superblocks and adaptive block sizes
 /** Velocity toggle block */
 static const int64_t VELOCITY_TOGGLE = 650000; // Implementation of the Velocity system into the chain.
 /** Velocity retarget toggle block */

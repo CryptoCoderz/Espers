@@ -1,6 +1,6 @@
 TEMPLATE = app
 TARGET = Espers-qt
-VERSION = 0.8.6.5
+VERSION = 0.8.6.6
 INCLUDEPATH += src src/json src/qt
 QT += core gui widgets network
 DEFINES += ENABLE_WALLET

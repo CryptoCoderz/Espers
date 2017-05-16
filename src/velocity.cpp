@@ -130,10 +130,18 @@ bool Velocity(CBlockIndex* prevBlock, CBlock* block)
         return false;
     }
     // Validate timestamp is logical
-    else if(CURstamp < CURvalstamp || OLDstamp < OLDvalstamp || TXstampC < CURvalstamp || TXstampO < OLDvalstamp)
+    else if(CURstamp < CURvalstamp || TXstampC < CURvalstamp)
     {
         LogPrintf("DENIED: Block timestamp is not logical\n");
         return false;
+    }
+    else if(OLDstamp < OLDvalstamp || TXstampO < OLDvalstamp)
+    {
+        if(nHeight != VELOCITY_HEIGHT[i])
+        {
+            LogPrintf("DENIED: Block timestamp is not logical\n");
+            return false;
+        }
     }
 
     // Constrain Velocity

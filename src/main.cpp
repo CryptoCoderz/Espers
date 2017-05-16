@@ -992,7 +992,7 @@ int64_t GetProofOfWorkReward(int64_t nHeight, int64_t nFees)
         }
     }
     // Superblock reward
-    else if(sysUpgrade_01 > GetTime()){
+    else if(nHeight > sysUpgrade_01){
         nSubsidy = nMinPoWReward;
         if(rand1 <= 25000) // 25% Chance of superblock
             nSubsidy = nSuperPoWReward;
@@ -1234,7 +1234,7 @@ unsigned int Terminal_Velocity_RateX(const CBlockIndex* pindexLast, bool fProofO
        // Differentiate PoW/PoS prev block
        const CBlockIndex* BlockVelocityType = GetLastBlockIndex(pindexLast, fProofOfStake);
        // Skew for less selected block type
-       int64_t nNow = GetTime(); int64_t nThen = sysUpgrade_01; // Toggle skew system fork - Sat, 20 May 2017 00:00:00 GMT
+       int64_t nNow = nBestHeight; int64_t nThen = sysUpgrade_01; // Toggle skew system fork
        if(nNow > nThen){if(prevPoW < prevPoS && !fProofOfStake){if((prevPoS-prevPoW) > 3) TerminalAverage /= 3;}
        else if(prevPoW > prevPoS && fProofOfStake){if((prevPoW-prevPoS) > 3) TerminalAverage /= 3;}
        if(TerminalAverage < 0.5) TerminalAverage = 0.5;} // limit skew to halving
@@ -1678,7 +1678,7 @@ bool CBlock::ConnectBlock(CTxDB& txdb, CBlockIndex* pindex, bool fJustCheck)
     int64_t nStakeReward = 0;
     unsigned int nSigOps = 0;
 
-    if(sysUpgrade_01 > GetTime())
+    if(nBestHeight > sysUpgrade_01)
     {
         MAX_BLOCK_SIZE = BlockSizeCalculator::ComputeBlockSize(pindex);
         MAX_BLOCK_SIGOPS = MAX_BLOCK_SIZE/50;
