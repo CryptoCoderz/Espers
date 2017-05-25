@@ -15,7 +15,7 @@
         <location line="+41"/>
         <source>Copyright © 2009-2014 The Bitcoin developers
 Copyright © 2012-2014 The NovaCoin developers
-Copyright © 2014 The Espers developers</source>
+Copyright © 2016-2017 The Espers developers</source>
         <translation>Copyright © 2009-2014 De Bitcoin ontwikkelaars
 Copyright © 2012-2014 De NovaCoin ontwikkelaars
 Copyright © 2014 De Espers ontwikkelaars</translation>
@@ -1793,8 +1793,8 @@ Dit betekend dat een fee van %2 is vereist.</translation>
     </message>
     <message>
         <location filename="../sendcoinsdialog.cpp" line="-174"/>
-        <source>Enter a Espers address (e.g. btK1jUZ2SEe7hxMA4tvDWxpBigJyekXPgZ)</source>
-        <translation>Voeg een Espers adres in (bijv. btK1jUZ2SEe7hxMA4tvDWxpBigJyekXPgZ)</translation>
+        <source>Enter a Espers address (e.g. EMuaHEDdPj4Y99GUfBABQCjanuQE1tFHBH)</source>
+        <translation>Voeg een Espers adres in (bijv. EMuaHEDdPj4Y99GUfBABQCjanuQE1tFHBH)</translation>
     </message>
     <message>
         <location line="+15"/>
@@ -1926,7 +1926,7 @@ Dit betekend dat een fee van %2 is vereist.</translation>
     </message>
     <message>
         <location line="+34"/>
-        <source>The address to send the payment to (e.g. btK1jUZ2SEe7hxMA4tvDWxpBigJyekXPgZ)</source>
+        <source>The address to send the payment to (e.g. EMuaHEDdPj4Y99GUfBABQCjanuQE1tFHBH)</source>
         <translation type="unfinished"/>
     </message>
     <message>
@@ -1967,8 +1967,8 @@ Dit betekend dat een fee van %2 is vereist.</translation>
     </message>
     <message>
         <location filename="../sendcoinsentry.cpp" line="+1"/>
-        <source>Enter a Espers address (e.g. btK1jUZ2SEe7hxMA4tvDWxpBigJyekXPgZ)</source>
-        <translation>Voeg een Espers adres in (bijv. btK1jUZ2SEe7hxMA4tvDWxpBigJyekXPgZ)</translation>
+        <source>Enter a Espers address (e.g. EMuaHEDdPj4Y99GUfBABQCjanuQE1tFHBH)</source>
+        <translation>Voeg een Espers adres in (bijv. EMuaHEDdPj4Y99GUfBABQCjanuQE1tFHBH)</translation>
     </message>
 </context>
 <context>
@@ -1991,8 +1991,8 @@ Dit betekend dat een fee van %2 is vereist.</translation>
     </message>
     <message>
         <location line="+18"/>
-        <source>The address to sign the message with (e.g. btK1jUZ2SEe7hxMA4tvDWxpBigJyekXPgZ)</source>
-        <translation>Het adres om het bericht te ondertekenen (bijv. btK1jUZ2SEe7hxMA4tvDWxpBigJyekXPgZ) </translation>
+        <source>The address to sign the message with (e.g. EMuaHEDdPj4Y99GUfBABQCjanuQE1tFHBH)</source>
+        <translation>Het adres om het bericht te ondertekenen (bijv. EMuaHEDdPj4Y99GUfBABQCjanuQE1tFHBH) </translation>
     </message>
     <message>
         <location line="+10"/>
@@ -2055,8 +2055,8 @@ Dit betekend dat een fee van %2 is vereist.</translation>
     </message>
     <message>
         <location line="+21"/>
-        <source>The address the message was signed with (e.g. btK1jUZ2SEe7hxMA4tvDWxpBigJyekXPgZ)</source>
-        <translation>Het adres van het bericht is ondertekend met (bijv. btK1jUZ2SEe7hxMA4tvDWxpBigJyekXPgZ)</translation>
+        <source>The address the message was signed with (e.g. EMuaHEDdPj4Y99GUfBABQCjanuQE1tFHBH)</source>
+        <translation>Het adres van het bericht is ondertekend met (bijv. EMuaHEDdPj4Y99GUfBABQCjanuQE1tFHBH)</translation>
     </message>
     <message>
         <location line="+40"/>
@@ -2071,8 +2071,8 @@ Dit betekend dat een fee van %2 is vereist.</translation>
     <message>
         <location filename="../signverifymessagedialog.cpp" line="+27"/>
         <location line="+3"/>
-        <source>Enter a Espers address (e.g. btK1jUZ2SEe7hxMA4tvDWxpBigJyekXPgZ)</source>
-        <translation>Voeg een Espers adres in (bijv. btK1jUZ2SEe7hxMA4tvDWxpBigJyekXPgZ)</translation>
+        <source>Enter a Espers address (e.g. EMuaHEDdPj4Y99GUfBABQCjanuQE1tFHBH)</source>
+        <translation>Voeg een Espers adres in (bijv. EMuaHEDdPj4Y99GUfBABQCjanuQE1tFHBH)</translation>
     </message>
     <message>
         <location line="-2"/>

@@ -15,7 +15,7 @@
         <location line="+41"/>
         <source>Copyright © 2009-2014 The Bitcoin developers
 Copyright © 2012-2014 The NovaCoin developers
-Copyright © 2014 The Espers developers</source>
+Copyright © 2016-2017 The Espers developers</source>
         <translation>Telif Hakkı © 2009-2014 Bitcoin geliştiricileri
 Telif Hakkı © 2012-2014 NovaCoin geliştiricileri
 Telif Hakkı © 2014 Espers geliştiricileri</translation>
@@ -1798,8 +1798,8 @@ This label turns red, if the priority is smaller than &quot;medium&quot;.
     </message>
     <message>
         <location filename="../sendcoinsdialog.cpp" line="-174"/>
-        <source>Enter a Espers address (e.g. btK1jUZ2SEe7hxMA4tvDWxpBigJyekXPgZ)</source>
-        <translation>Bir Espers adresi gir (örn: btK1jUZ2SEe7hxMA4tvDWxpBigJyekXPgZ)</translation>
+        <source>Enter a Espers address (e.g. EMuaHEDdPj4Y99GUfBABQCjanuQE1tFHBH)</source>
+        <translation>Bir Espers adresi gir (örn: EMuaHEDdPj4Y99GUfBABQCjanuQE1tFHBH)</translation>
     </message>
     <message>
         <location line="+15"/>
@@ -1931,8 +1931,8 @@ This label turns red, if the priority is smaller than &quot;medium&quot;.
     </message>
     <message>
         <location line="+34"/>
-        <source>The address to send the payment to (e.g. btK1jUZ2SEe7hxMA4tvDWxpBigJyekXPgZ)</source>
-        <translation>Ödemenin gönderileceği adres (örn:  btK1jUZ2SEe7hxMA4tvDWxpBigJyekXPgZ)</translation>
+        <source>The address to send the payment to (e.g. EMuaHEDdPj4Y99GUfBABQCjanuQE1tFHBH)</source>
+        <translation>Ödemenin gönderileceği adres (örn:  EMuaHEDdPj4Y99GUfBABQCjanuQE1tFHBH)</translation>
     </message>
     <message>
         <location line="+60"/>
@@ -1972,8 +1972,8 @@ This label turns red, if the priority is smaller than &quot;medium&quot;.
     </message>
     <message>
         <location filename="../sendcoinsentry.cpp" line="+1"/>
-        <source>Enter a Espers address (e.g. btK1jUZ2SEe7hxMA4tvDWxpBigJyekXPgZ)</source>
-        <translation>Bir Espers adresi girin (örn: btK1jUZ2SEe7hxMA4tvDWxpBigJyekXPgZ)</translation>
+        <source>Enter a Espers address (e.g. EMuaHEDdPj4Y99GUfBABQCjanuQE1tFHBH)</source>
+        <translation>Bir Espers adresi girin (örn: EMuaHEDdPj4Y99GUfBABQCjanuQE1tFHBH)</translation>
     </message>
 </context>
 <context>
@@ -1996,8 +1996,8 @@ This label turns red, if the priority is smaller than &quot;medium&quot;.
     </message>
     <message>
         <location line="+18"/>
-        <source>The address to sign the message with (e.g. btK1jUZ2SEe7hxMA4tvDWxpBigJyekXPgZ)</source>
-        <translation>Mesajın imzalanacağı adres (örn: btK1jUZ2SEe7hxMA4tvDWxpBigJyekXPgZ)</translation>
+        <source>The address to sign the message with (e.g. EMuaHEDdPj4Y99GUfBABQCjanuQE1tFHBH)</source>
+        <translation>Mesajın imzalanacağı adres (örn: EMuaHEDdPj4Y99GUfBABQCjanuQE1tFHBH)</translation>
     </message>
     <message>
         <location line="+10"/>
@@ -2060,8 +2060,8 @@ This label turns red, if the priority is smaller than &quot;medium&quot;.
     </message>
     <message>
         <location line="+21"/>
-        <source>The address the message was signed with (e.g. btK1jUZ2SEe7hxMA4tvDWxpBigJyekXPgZ)</source>
-        <translation>Mesajın imzalandığı adres (örn: btK1jUZ2SEe7hxMA4tvDWxpBigJyekXPgZ)</translation>
+        <source>The address the message was signed with (e.g. EMuaHEDdPj4Y99GUfBABQCjanuQE1tFHBH)</source>
+        <translation>Mesajın imzalandığı adres (örn: EMuaHEDdPj4Y99GUfBABQCjanuQE1tFHBH)</translation>
     </message>
     <message>
         <location line="+40"/>
@@ -2076,8 +2076,8 @@ This label turns red, if the priority is smaller than &quot;medium&quot;.
     <message>
         <location filename="../signverifymessagedialog.cpp" line="+27"/>
         <location line="+3"/>
-        <source>Enter a Espers address (e.g. btK1jUZ2SEe7hxMA4tvDWxpBigJyekXPgZ)</source>
-        <translation>Bir Espers adresi girin (örn: btK1jUZ2SEe7hxMA4tvDWxpBigJyekXPgZ)</translation>
+        <source>Enter a Espers address (e.g. EMuaHEDdPj4Y99GUfBABQCjanuQE1tFHBH)</source>
+        <translation>Bir Espers adresi girin (örn: EMuaHEDdPj4Y99GUfBABQCjanuQE1tFHBH)</translation>
     </message>
     <message>
         <location line="-2"/>
