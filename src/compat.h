@@ -11,6 +11,7 @@
 #ifndef NOMINMAX
 #define NOMINMAX
 #endif
+#define FD_SETSIZE 1024
 #include <winsock2.h>
 #include <mswsock.h>
 #include <ws2tcpip.h>

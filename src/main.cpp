@@ -957,25 +957,9 @@ void static PruneOrphanBlocks()
     mapOrphanBlocks.erase(hash);
 }
 
-int static generateMTRandom(unsigned int s, int range)
-{
-    random::mt19937 gen(s);
-    random::uniform_int_distribution<> dist(0, range);
-    return dist(gen);
-}
-
 // miner's coin base reward
 int64_t GetProofOfWorkReward(int64_t nHeight, int64_t nFees)
 {
-    // Superblock calculations PoW
-    uint256 prevHash = 0;
-    if(pindexBest->pprev)
-        prevHash = pindexBest->pprev->GetBlockHash();
-    std::string cseed_str = prevHash.ToString().substr(7,7);
-    const char* cseed = cseed_str.c_str();
-    long seed = hex2long(cseed);
-    int rand1 = generateMTRandom(seed, 1000000);
-
     int64_t nSubsidy = nBlockPoWReward;
     // Genesis block subsidy
     if(nHeight == nGenesisHeight) {
@@ -990,12 +974,6 @@ int64_t GetProofOfWorkReward(int64_t nHeight, int64_t nFees)
         if(nHeight < nReservePhaseEnd){
         nSubsidy = nBlockRewardReserve;
         }
-    }
-    // Superblock reward
-    else if(nHeight > sysUpgrade_01){
-        nSubsidy = nMinPoWReward;
-        if(rand1 <= 25000) // 25% Chance of superblock
-            nSubsidy = nSuperPoWReward;
     }
     // hardCap v2.1
     else if(pindexBest->nMoneySupply > MAX_SINGLE_TX)

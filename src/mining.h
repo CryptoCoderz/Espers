@@ -17,7 +17,7 @@ static const int64_t COIN_YEAR_REWARD2 = 19 * CENT; // ~25% 4300000000 annually
 /** PoS Subsidy 3 */
 static const int64_t COIN_YEAR_REWARD3 = 4 * CENT; // ~5% 860000000 annually
 /** PoS Subsidy 4 */
-static const int64_t COIN_YEAR_REWARD4 = 0.8 * CENT; // ~1% TODO: Correct numbers
+static const int64_t COIN_YEAR_REWARD4 = 1 * CENT; // ~1% TODO: Correct numbers
 /** Block spacing preferred */
 static const int64_t BLOCK_SPACING = 5 * 60;
 /** Block spacing minimum */
@@ -30,10 +30,6 @@ static const int64_t nGenesisBlockReward = 1 * COIN;
 static const int64_t nBlockRewardReserve = 50000000 * COIN; // 12.5B Currently + 4739414758.4 for new chain swap (94.788295168 blocks)
 /** Starting block subsidy */
 static const int64_t nBlockPoWReward = 5000 * COIN;
-/** Minimum block subsidy */
-static const int64_t nMinPoWReward = 500 * COIN;
-/** Superblock subsidy */
-static const int64_t nSuperPoWReward = 7500 * COIN;
 /** Invalid block subsidy */
 static const int64_t nBlockRewardBuffer = 0.1 * COIN;
 /** Coinbase transaction outputs can only be spent after this number of new blocks (network rule) */
