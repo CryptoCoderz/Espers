@@ -48,11 +48,13 @@
         <file alias="sitechain">res/icons/siteonchain.png</file>
         <file alias="generate">res/icons/generate.png</file>
         <file alias="ccs">res/icons/ccs.png</file>
+        <file alias="notsynced">res/icons/notsynced.png</file>
     </qresource>
     <qresource prefix="/images">
         <file alias="about">res/images/about.png</file>
         <file alias="splash">res/images/splash.png</file>
         <file alias="header">res/images/header.png</file>
+        <file alias="qt">res/images/qt.png</file>
     </qresource>
     <qresource prefix="/movies">
         <file alias="update_spinner">res/movies/update_spinner.mng</file>

@@ -12,7 +12,6 @@ class WalletModel;
 class TransactionView;
 class OverviewPage;
 class ClientControlPage;
-class GeneratePage;
 class MessagePage;
 class BlockBrowser;
 class SiteOnChain;
@@ -71,7 +70,6 @@ private:
     AddressBookPage *receiveCoinsPage;
     SendCoinsDialog *sendCoinsPage;
     ClientControlPage *clientcontrolPage;
-    GeneratePage *generatePage;
     MessagePage *messagePage;
     BlockBrowser *blockbrowser;
     SiteOnChain *siteonChain;
@@ -165,8 +163,6 @@ private slots:
     void gotoOverviewPage();
     /** Switch to clientcontrol(management) page */
     void gotoClientControlPage();
-    /** Switch to generate(mining) page */
-    void gotoGeneratePage();
     /** Switch to message(encrypted-emailing) page */
     void gotoMessagePage();
     /** Switch to chain info(explorer) page */

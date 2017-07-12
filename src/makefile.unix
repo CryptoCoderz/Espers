@@ -139,6 +139,7 @@ OBJS= \
     obj/scrypt-x86.o \
     obj/scrypt-x86_64.o \
     obj/chainparams.o \
+    obj/blockparams.o \
     obj/blake.o\
     obj/bmw.o\
     obj/groestl.o\

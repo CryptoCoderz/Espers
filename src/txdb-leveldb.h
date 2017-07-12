@@ -3,8 +3,8 @@
 // Distributed under the MIT/X11 software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
-#ifndef BITCOIN_LEVELDB_H
-#define BITCOIN_LEVELDB_H
+#ifndef ESPERS_LEVELDB_H
+#define ESPERS_LEVELDB_H
 
 #include "main.h"
 
@@ -207,4 +207,4 @@ private:
 };
 
 
-#endif // BITCOIN_DB_H
+#endif // ESPERS_DB_H

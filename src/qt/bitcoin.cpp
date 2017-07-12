@@ -27,8 +27,8 @@
 #include <QSplashScreen>
 #include <QLibraryInfo>
 
-#if defined(BITCOIN_NEED_QT_PLUGINS) && !defined(_BITCOIN_QT_PLUGINS_INCLUDED)
-#define _BITCOIN_QT_PLUGINS_INCLUDED
+#if defined(ESPERS_NEED_QT_PLUGINS) && !defined(_ESPERS_QT_PLUGINS_INCLUDED)
+#define _ESPERS_QT_PLUGINS_INCLUDED
 #define __INSURE__
 #include <QtPlugin>
 Q_IMPORT_PLUGIN(qcncodecs)
@@ -120,7 +120,7 @@ void DebugMessageHandler(QtMsgType type, const QMessageLogContext& context, cons
 }
 #endif
 
-#ifndef BITCOIN_QT_TEST
+#ifndef ESPERS_QT_TEST
 int main(int argc, char *argv[])
 {
     fHaveGUI = true;
@@ -324,4 +324,4 @@ int main(int argc, char *argv[])
     }
     return 0;
 }
-#endif // BITCOIN_QT_TEST
+#endif // ESPERS_QT_TEST

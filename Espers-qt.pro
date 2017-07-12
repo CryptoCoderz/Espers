@@ -1,6 +1,6 @@
 TEMPLATE = app
 TARGET = Espers-qt
-VERSION = 0.8.6.7
+VERSION = 0.8.6.8
 INCLUDEPATH += src src/json src/qt
 QT += core gui widgets network
 DEFINES += ENABLE_WALLET
@@ -19,15 +19,15 @@ greaterThan(QT_MAJOR_VERSION, 4) {
 }
 
 win32{
-BOOST_LIB_SUFFIX=-mgw63-mt-s-1_63
-BOOST_INCLUDE_PATH=C:/deps/boost_1_63_0
-BOOST_LIB_PATH=C:/deps/boost_1_63_0/stage/lib
+BOOST_LIB_SUFFIX=-mgw63-mt-s-1_64
+BOOST_INCLUDE_PATH=C:/deps/boost_1_64_0
+BOOST_LIB_PATH=C:/deps/boost_1_64_0/stage/lib
 BDB_INCLUDE_PATH=C:/deps/db-6.2.23.NC/build_unix
 BDB_LIB_PATH=C:/deps/db-6.2.23.NC/build_unix
-OPENSSL_INCLUDE_PATH=C:/deps/openssl-1.0.2k/include
-OPENSSL_LIB_PATH=C:/deps/openssl-1.0.2k
+OPENSSL_INCLUDE_PATH=C:/deps/openssl-1.0.2l/include
+OPENSSL_LIB_PATH=C:/deps/openssl-1.0.2l
 MINIUPNPC_INCLUDE_PATH=C:/deps/
-MINIUPNPC_LIB_PATH=C:/deps/miniupnpc
+MINIUPNPC_LIB_PATH=C:/deps/miniupnpc-1.9
 QRENCODE_INCLUDE_PATH=C:/deps/qrencode-3.4.4
 QRENCODE_LIB_PATH=C:/deps/qrencode-3.4.4/.libs
 }
@@ -115,8 +115,8 @@ contains(USE_DBUS, 1) {
     QT += dbus
 }
 
-contains(BITCOIN_NEED_QT_PLUGINS, 1) {
-    DEFINES += BITCOIN_NEED_QT_PLUGINS
+contains(ESPERS_NEED_QT_PLUGINS, 1) {
+    DEFINES += ESPERS_NEED_QT_PLUGINS
     QTPLUGIN += qcncodecs qjpcodecs qtwcodecs qkrcodecs qtaccessiblewidgets
 }
 
@@ -196,7 +196,6 @@ HEADERS += src/qt/bitcoingui.h \
     src/qt/sendcoinsdialog.h \
     src/qt/addressbookpage.h \
     src/qt/clientcontrolpage.h \
-    src/qt/generatepage.h \
     src/qt/messagepage.h \
     src/qt/blockbrowser.h \
     src/qt/signverifymessagedialog.h \
@@ -208,6 +207,7 @@ HEADERS += src/qt/bitcoingui.h \
     src/addrman.h \
     src/base58.h \
     src/bignum.h \
+    src/blockparams.h \
     src/chainparams.h \
     src/chainparamsseeds.h \
     src/checkpoints.h \
@@ -323,6 +323,7 @@ SOURCES += src/qt/bitcoin.cpp src/qt/bitcoingui.cpp \
     src/qt/bitcoinaddressvalidator.cpp \
     src/alert.cpp \
     src/blocksizecalculator.cpp \
+    src/blockparams.cpp \
     src/chainparams.cpp \
     src/version.cpp \
     src/sync.cpp \
@@ -345,7 +346,6 @@ SOURCES += src/qt/bitcoin.cpp src/qt/bitcoingui.cpp \
     src/walletdb.cpp \
     src/qt/clientmodel.cpp \
     src/qt/clientcontrolpage.cpp \
-    src/qt/generatepage.cpp \
     src/qt/messagepage.cpp \
     src/qt/blockbrowser.cpp \
     src/qt/guiutil.cpp \
@@ -407,7 +407,6 @@ FORMS += \
     src/qt/forms/transactiondescdialog.ui \
     src/qt/forms/overviewpage.ui \
     src/qt/forms/clientcontrolpage.ui \
-    src/qt/forms/generatepage.ui \
     src/qt/forms/messagepage.ui \
     src/qt/forms/blockbrowser.ui \
     src/qt/forms/sendcoinsentry.ui \
