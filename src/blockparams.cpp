@@ -6,6 +6,7 @@
 #include "chainparams.h"
 #include "checkpoints.h"
 #include "db.h"
+#include "fork.h"
 #include "init.h"
 #include "kernel.h"
 #include "net.h"
@@ -307,13 +308,13 @@ void VRX_BaseEngine(const CBlockIndex* pindexLast, bool fProofOfStake)
            // Log hybrid block type
            //
            // v1.0
-           if(pindexBest->GetBlockTime() < 9993058800) // OFF (NOT TOGGLED)
+           if(pindexBest->GetBlockTime() < SWING_PATCH) // ON (TOGGLED 11/01/2017)
            {
                 if     (fProofOfStake) prevPoS ++;
                 else if(!fProofOfStake) prevPoW ++;
            }
            // v1.1
-           if(pindexBest->GetBlockTime() > 9993058800) // OFF (NOT TOGGLED)
+           if(pindexBest->GetBlockTime() > SWING_PATCH) // ON (TOGGLED 11/01/2017)
            {
                if(pindexPrev->IsProofOfStake())
                {
@@ -351,7 +352,7 @@ void VRX_ThreadCurve(const CBlockIndex* pindexLast, bool fProofOfStake)
 
     // Version 1.1 curve-patch
     //
-    if(pindexBest->GetBlockTime() > 9993058800) // OFF (NOT TOGGLED)
+    if(pindexBest->GetBlockTime() > SWING_PATCH) // ON (TOGGLED 11/01/2017)
     {
         uint64_t prvTime = BlockVelocityType->GetBlockTime();
         uint64_t cntTime = GetTime();

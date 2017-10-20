@@ -29,13 +29,13 @@ static const int DATABASE_VERSION = 70509;
 //
 // network protocol versioning
 //
-static const int PROTOCOL_VERSION = 60029;
+static const int PROTOCOL_VERSION = 60030;
 
 // intial proto version, to be increased after version/verack negotiation
 static const int INIT_PROTO_VERSION = 209;
 
 // disconnect from peers older than this proto version
-static const int MIN_PEER_PROTO_VERSION = 60028;
+static const int MIN_PEER_PROTO_VERSION = 60027;
 
 // nTime field added to CAddress, starting with this version;
 // if possible, avoid requesting addresses nodes older than this
@@ -43,7 +43,13 @@ static const int CADDR_TIME_VERSION = 31402;
 
 // only request blocks from nodes outside this range of versions
 static const int NOBLKS_VERSION_START = 0;
-static const int NOBLKS_VERSION_END = 60027;
+static const int NOBLKS_VERSION_END = 60026;
+
+// hard cutoff time for legacy network connections
+static const int64_t HRD_LEGACY_CUTOFF = 1509537600; // ON (TOGGLED 11/01/2017)
+
+// hard cutoff time for future network connections
+static const int64_t HRD_FUTURE_CUTOFF = 9993058800; // OFF (NOT TOGGLED)
 
 // BIP 0031, pong message, is enabled for all versions AFTER this one
 static const int BIP0031_VERSION = 60000;
