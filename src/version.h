@@ -6,6 +6,7 @@
 
 #include "clientversion.h"
 #include <string>
+#include <stdint.h>
 
 //
 // client versioning

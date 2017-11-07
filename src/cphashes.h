@@ -29,6 +29,9 @@ static const uint256 CheckBlock_0018("0x00000002736a3fb2074417e38cc02158bda9a0e2
 static const uint256 CheckBlock_0019("0x0000008dc88e24a0790041e551f0e36061c8d8ef6ec9907a3df4960b72ea9708");
 static const uint256 CheckBlock_0020("0x000004938ad1637822be49315700e2082ec7f66d95f57aba977364855b89d397");
 static const uint256 CheckBlock_0021("0x9a26fc52cdab2b863e4cebbfe2a8889209be938f9ab748f5ab257e39a9954b61");
+// Swing Patch
+static const uint256 CheckBlock_0022("0x45681988b0e9bc1275c0186160e913b13972083025f02dd35ce13a8d2835192c");
+static const uint256 CheckBlock_0023("0x5ee5e4319108aca517f15574165887b97a7ce078e683b51d6d5decd0f74f3cd9");
 
 
 static const int64_t CheckHeight_0001 = 10;
@@ -54,5 +57,8 @@ static const int64_t CheckHeight_0018 = 650000;
 static const int64_t CheckHeight_0019 = 650035;
 static const int64_t CheckHeight_0020 = 650147;
 static const int64_t CheckHeight_0021 = 669750;
+// Swing Patch
+static const int64_t CheckHeight_0022 = 704190;
+static const int64_t CheckHeight_0023 = 704195;
 
 #endif

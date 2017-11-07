@@ -51,6 +51,8 @@ namespace Checkpoints
         ( CheckHeight_0019,       CheckBlock_0019)
         ( CheckHeight_0020,       CheckBlock_0020)
         ( CheckHeight_0021,       CheckBlock_0021)
+        ( CheckHeight_0022,       CheckBlock_0022)
+        ( CheckHeight_0023,       CheckBlock_0023)
     ;
 
     // TestNet has no checkpoints
