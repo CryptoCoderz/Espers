@@ -28,6 +28,8 @@ static const int64_t nPoS1PhaseStart = 3000300; // Begins @ ~48892586514.24 ESP
 static const int64_t sysUpgrade_01 = 674400; // Start swinging difficulty skew, and adaptive block sizes
 /** Block type swing patch */
 static const int64_t SWING_PATCH = 1509537600; // Patch skew to a more even swing w/ 50/50 block select
+/** Value patch on swing */
+static const int64_t VALUE_PATCH = 1509537600; // Revision to previous patch -- currently TEST set
 /** Velocity toggle block */
 static const int64_t VELOCITY_TOGGLE = 650000; // Implementation of the Velocity system into the chain.
 /** Velocity retarget toggle block */

@@ -954,13 +954,13 @@ void PrintExceptionContinue(std::exception* pex, const char* pszThread)
 boost::filesystem::path GetDefaultDataDir()
 {
     namespace fs = boost::filesystem;
-    // Windows < Vista: C:\Documents and Settings\Username\Application Data\ESP
-    // Windows >= Vista: C:\Users\Username\AppData\Roaming\ESP
-    // Mac: ~/Library/Application Support/ESP
-    // Unix: ~/.ESP
+    // Windows < Vista: C:\Documents and Settings\Username\Application Data\ESPTEST
+    // Windows >= Vista: C:\Users\Username\AppData\Roaming\ESPTEST
+    // Mac: ~/Library/Application Support/ESPTEST
+    // Unix: ~/.ESPTEST
 #ifdef WIN32
     // Windows
-    return GetSpecialFolderPath(CSIDL_APPDATA) / "ESP";
+    return GetSpecialFolderPath(CSIDL_APPDATA) / "ESPTEST";
 #else
     fs::path pathRet;
     char* pszHome = getenv("HOME");
@@ -972,10 +972,10 @@ boost::filesystem::path GetDefaultDataDir()
     // Mac
     pathRet /= "Library/Application Support";
     fs::create_directory(pathRet);
-    return pathRet / "ESP";
+    return pathRet / "ESPTEST";
 #else
     // Unix
-    return pathRet / ".ESP";
+    return pathRet / ".ESPTEST";
 #endif
 #endif
 }
@@ -1058,7 +1058,7 @@ void ReadConfigFile(map<string, string>& mapSettingsRet,
                fprintf(ConfFile, "port=22448\n");
                fprintf(ConfFile, "rpcport=22442\n");
                fprintf(ConfFile, "rpcconnect=127.0.0.1\n");
-               fprintf(ConfFile, "addnode=144.76.237.39:22448\n");
+             /*  fprintf(ConfFile, "addnode=144.76.237.39:22448\n");
                fprintf(ConfFile, "addnode=104.237.0.79:22448\n");
                fprintf(ConfFile, "addnode=198.245.50.213:22448\n");
                fprintf(ConfFile, "addnode=85.255.7.224:22448\n");
@@ -1080,7 +1080,7 @@ void ReadConfigFile(map<string, string>& mapSettingsRet,
                fprintf(ConfFile, "addnode=151.80.46.154:59038\n");
                fprintf(ConfFile, "addnode=77.146.96.68:34845\n");
                fprintf(ConfFile, "addnode=77.146.96.68:35402\n");
-               fprintf(ConfFile, "addnode=137.74.33.96:22448\n");
+               fprintf(ConfFile, "addnode=137.74.33.96:22448\n"); */
 
                fclose(ConfFile);
 
