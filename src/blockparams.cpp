@@ -355,7 +355,7 @@ void VRX_ThreadCurve(const CBlockIndex* pindexLast, bool fProofOfStake)
     if(pindexBest->GetBlockTime() > SWING_PATCH) // ON (TOGGLED 11/01/2017)
     {
         // Differentiate PoW/PoS prev block
-        if(pindexBest->GetBlockTime() > VALUE_PATCH)
+        if(pindexBest->nHeight >= VALUE_PATCH)
             BlockVelocityType = GetLastBlockIndex(pindexLast, fProofOfStake);
 
         uint64_t prvTime = BlockVelocityType->GetBlockTime();

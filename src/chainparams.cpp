@@ -103,8 +103,8 @@ public:
         base58Prefixes[EXT_SECRET_KEY] = boost::assign::list_of(0x04)(0x88)(0xAD)(0xE4).convert_to_container<std::vector<unsigned char> >();
 
         // Espers dns seeds
-        vSeeds.push_back(CDNSSeedData("cryptocoderz.com",  "esp.cryptocoderz.com"));
-        vSeeds.push_back(CDNSSeedData("thecryptochat.net",  "espers.thecryptochat.net"));
+        // vSeeds.push_back(CDNSSeedData("cryptocoderz.com",  "esp.cryptocoderz.com"));
+        // vSeeds.push_back(CDNSSeedData("thecryptochat.net",  "espers.thecryptochat.net"));
 
         convertSeed6(vFixedSeeds, pnSeed6_main, ARRAYLEN(pnSeed6_main));
 
