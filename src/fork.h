@@ -29,7 +29,7 @@ static const int64_t sysUpgrade_01 = 674400; // Start swinging difficulty skew, 
 /** Block type swing patch */
 static const int64_t SWING_PATCH = 1509537600; // Patch skew to a more even swing w/ 50/50 block select
 /** Value patch on swing */
-static const int64_t VALUE_PATCH = 706596; // Revision to previous patch -- currently TEST set
+static const int64_t VALUE_PATCH = 704195; // Revision to previous patch -- currently TEST set
 /** Velocity toggle block */
 static const int64_t VELOCITY_TOGGLE = 650000; // Implementation of the Velocity system into the chain.
 /** Velocity retarget toggle block */
