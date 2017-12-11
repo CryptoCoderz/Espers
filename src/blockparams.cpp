@@ -367,11 +367,24 @@ void VRX_ThreadCurve(const CBlockIndex* pindexLast, bool fProofOfStake)
             LogPrintf("Previously discovered PoS block: %u: \n",prvTime);
             LogPrintf("Current time: %u: \n",cntTime);
             LogPrintf("Time since last PoS block: %u: \n",difTimePoS);
-            if(difTimePoS > 1 * 60 * 60) { TerminalAverage /= 2; LogPrintf("diffTimePoS is greater than 1 Hours \n");}
-            if(difTimePoS > 2 * 60 * 60) { TerminalAverage /= 2; LogPrintf("diffTimePoS is greater than 2 Hours \n");}
-            if(difTimePoS > 3 * 60 * 60) { TerminalAverage /= 2; LogPrintf("diffTimePoS is greater than 3 Hours \n");}
-            if(difTimePoS > 4 * 60 * 60) { TerminalAverage /= 2; LogPrintf("diffTimePoS is greater than 4 Hours \n");}
-            if(difTimePoS > 5 * 60 * 60) { bnNew = fProofOfStake ? Params().ProofOfStakeLimit() : Params().ProofOfWorkLimit(); LogPrintf("diffTimePoS is greater than 5 Hours \n");}
+
+            if(nBestHeight < 704200)
+            {
+                if(difTimePoS > 1 * 60 * 60) { TerminalAverage /= 2; }
+                if(difTimePoS > 2 * 60 * 60) { TerminalAverage /= 2; }
+                if(difTimePoS > 3 * 60 * 60) { TerminalAverage /= 2; }
+                if(difTimePoS > 4 * 60 * 60) { TerminalAverage /= 2; }
+                if(difTimePoS > 5 * 60 * 60) { bnNew = fProofOfStake ? Params().ProofOfStakeLimit() : Params().ProofOfWorkLimit(); }
+            }
+
+            else if(nBestHeight > 704199)
+            {
+                if(difTimePoS > 1 * 60 * 60) { TerminalAverage /= 2; LogPrintf("diffTimePoS is greater than 1 Hours \n",cntTime);}
+                if(difTimePoS > 2 * 60 * 60) { TerminalAverage /= 2; LogPrintf("diffTimePoS is greater than 2 Hours \n",cntTime);}
+                if(difTimePoS > 3 * 60 * 60) { TerminalAverage /= 2; LogPrintf("diffTimePoS is greater than 3 Hours \n",cntTime);}
+                if(difTimePoS > 4 * 60 * 60) { TerminalAverage /= 2; LogPrintf("diffTimePoS is greater than 4 Hours \n",cntTime);}
+                if(difTimePoS > 5 * 60 * 60) { bnNew = fProofOfStake ? Params().ProofOfStakeLimit() : Params().ProofOfWorkLimit(); LogPrintf("diffTimePoS is greater than 5 Hours \n",cntTime);}
+            }
         }
         else if(!fProofOfStake)
         {
@@ -379,11 +392,24 @@ void VRX_ThreadCurve(const CBlockIndex* pindexLast, bool fProofOfStake)
             LogPrintf("Previously discovered PoW block: %u: \n",prvTime);
             LogPrintf("Current time: %u: \n",cntTime);
             LogPrintf("Time since last PoW block: %u: \n",difTimePoW);
-            if(difTimePoW > 1 * 60 * 60) { TerminalAverage /= 2; LogPrintf("diffTimePoW is greater than 1 Hours %u: \n",cntTime);}
-            if(difTimePoW > 2 * 60 * 60) { TerminalAverage /= 2; LogPrintf("diffTimePoW is greater than 2 Hours \n",cntTime);}
-            if(difTimePoW > 3 * 60 * 60) { TerminalAverage /= 2; LogPrintf("diffTimePoW is greater than 3 Hours \n",cntTime);}
-            if(difTimePoW > 4 * 60 * 60) { TerminalAverage /= 2; LogPrintf("diffTimePoW is greater than 4 Hours \n",cntTime);}
-            if(difTimePoW > 5 * 60 * 60) { bnNew = fProofOfStake ? Params().ProofOfStakeLimit() : Params().ProofOfWorkLimit(); LogPrintf("diffTimePoW is greater than 5 Hours \n");}
+
+            if(nBestHeight < 704200)
+            {
+                if(difTimePoW > 1 * 60 * 60) { TerminalAverage /= 2; }
+                if(difTimePoW > 2 * 60 * 60) { TerminalAverage /= 2; }
+                if(difTimePoW > 3 * 60 * 60) { TerminalAverage /= 2; }
+                if(difTimePoW > 4 * 60 * 60) { TerminalAverage /= 2; }
+                if(difTimePoW > 5 * 60 * 60) { bnNew = fProofOfStake ? Params().ProofOfStakeLimit() : Params().ProofOfWorkLimit(); }
+            }
+
+            else if(nBestHeight > 704199)
+            {
+                if(difTimePoW > 1 * 60 * 60) { TerminalAverage /= 2; LogPrintf("diffTimePoW is greater than 1 Hours \n",cntTime);}
+                if(difTimePoW > 2 * 60 * 60) { TerminalAverage /= 2; LogPrintf("diffTimePoW is greater than 2 Hours \n",cntTime);}
+                if(difTimePoW > 3 * 60 * 60) { TerminalAverage /= 2; LogPrintf("diffTimePoW is greater than 3 Hours \n",cntTime);}
+                if(difTimePoW > 4 * 60 * 60) { TerminalAverage /= 2; LogPrintf("diffTimePoW is greater than 4 Hours \n",cntTime);}
+                if(difTimePoW > 5 * 60 * 60) { bnNew = fProofOfStake ? Params().ProofOfStakeLimit() : Params().ProofOfWorkLimit(); LogPrintf("diffTimePoW is greater than 5 Hours \n",cntTime);}
+            }
         }
     }
     return;
