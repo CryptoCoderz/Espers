@@ -355,8 +355,8 @@ void VRX_ThreadCurve(const CBlockIndex* pindexLast, bool fProofOfStake)
     if(pindexBest->GetBlockTime() > SWING_PATCH) // ON (TOGGLED 11/01/2017)
     {
         // Differentiate PoW/PoS prev block
-        if(pindexBest->nHeight >= VALUE_PATCH)
-            BlockVelocityType = GetLastBlockIndex(pindexLast, fProofOfStake);
+       // if(pindexBest->nHeight >= VALUE_PATCH)
+       //     BlockVelocityType = GetLastBlockIndex(pindexLast, fProofOfStake);
 
         uint64_t prvTime = BlockVelocityType->GetBlockTime();
         uint64_t cntTime = GetTime();
@@ -430,10 +430,14 @@ unsigned int VRX_Retarget(const CBlockIndex* pindexLast, bool fProofOfStake)
     VRX_ThreadCurve(pindexLast, fProofOfStake);
 
     // Check for stall
-    if(bnNew.GetCompact() == bnVelocity.GetCompact())
+    // v1.0
+    if(nBestHeight < 704215)
     {
-        LogPrintf("Diff restarted DUE TO STALL \n");
-        return bnVelocity.GetCompact(); // restart thread diff
+        if(bnNew.GetCompact() == bnVelocity.GetCompact())
+        {
+            LogPrintf("Diff restarted DUE TO STALL \n");
+            return bnVelocity.GetCompact(); // restart thread diff
+        }
     }
 
     // Force fork block min diff
