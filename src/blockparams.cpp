@@ -437,7 +437,7 @@ unsigned int VRX_Retarget(const CBlockIndex* pindexLast, bool fProofOfStake)
 
     // Check for stall
     // Depricated as of DEC/15/2017 until futher notice
-    if(nBestHeight < 704194)
+    if(nBestHeight < 704195)
     {
         if(bnNew.GetCompact() == bnVelocity.GetCompact())
         {
