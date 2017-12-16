@@ -65,8 +65,11 @@ const CBlockIndex* pindexPrev = 0;
 const CBlockIndex* BlockVelocityType = 0;
 CBigNum bnOld;
 CBigNum bnNew;
-// Default with VRX
-unsigned int retarget = DIFF_VRX;
+unsigned int retarget = DIFF_VRX; // Default with VRX
+uint64_t cntTime = 0;
+uint64_t prvTime = 0;
+uint64_t difTimePoS = 0;
+uint64_t difTimePoW = 0;
 
 
 //////////////////////////////////////////////////////////////////////////////
@@ -77,6 +80,32 @@ unsigned int retarget = DIFF_VRX;
 //
 // Debug log printing
 //
+
+void VRXswngPoSdebug()
+{
+    // Print for debugging
+    LogPrintf("Previously discovered PoS block: %u: \n",prvTime);
+    LogPrintf("Current block-time: %u: \n",cntTime);
+    LogPrintf("Time since last PoS block: %u: \n",difTimePoS);
+    if(difTimePoS > 1 * 60 * 60) { TerminalAverage /= 2; LogPrintf("diffTimePoS is greater than 1 Hours: %u \n",cntTime);}
+    if(difTimePoS > 2 * 60 * 60) { TerminalAverage /= 2; LogPrintf("diffTimePoS is greater than 2 Hours: %u \n",cntTime);}
+    if(difTimePoS > 3 * 60 * 60) { TerminalAverage /= 2; LogPrintf("diffTimePoS is greater than 3 Hours: %u \n",cntTime);}
+    if(difTimePoS > 4 * 60 * 60) { TerminalAverage /= 2; LogPrintf("diffTimePoS is greater than 4 Hours: %u \n",cntTime);}
+    return;
+}
+
+void VRXswngPoWdebug()
+{
+    // Print for debugging
+    LogPrintf("Previously discovered PoW block: %u: \n",prvTime);
+    LogPrintf("Current block-time: %u: \n",cntTime);
+    LogPrintf("Time since last PoW block: %u: \n",difTimePoW);
+    if(difTimePoW > 1 * 60 * 60) { TerminalAverage /= 2; LogPrintf("diffTimePoW is greater than 1 Hours: %u \n",cntTime);}
+    if(difTimePoW > 2 * 60 * 60) { TerminalAverage /= 2; LogPrintf("diffTimePoW is greater than 2 Hours: %u \n",cntTime);}
+    if(difTimePoW > 3 * 60 * 60) { TerminalAverage /= 2; LogPrintf("diffTimePoW is greater than 3 Hours: %u \n",cntTime);}
+    if(difTimePoW > 4 * 60 * 60) { TerminalAverage /= 2; LogPrintf("diffTimePoW is greater than 4 Hours: %u \n",cntTime);}
+    return;
+}
 
 void VRXdebug()
 {
@@ -354,61 +383,38 @@ void VRX_ThreadCurve(const CBlockIndex* pindexLast, bool fProofOfStake)
     //
     if(pindexBest->GetBlockTime() > SWING_PATCH) // ON (TOGGLED 11/01/2017)
     {
-        // Differentiate PoW/PoS prev block
-       // if(pindexBest->nHeight >= VALUE_PATCH)
-       //     BlockVelocityType = GetLastBlockIndex(pindexLast, fProofOfStake);
-
-        uint64_t prvTime = BlockVelocityType->GetBlockTime();
-        uint64_t cntTime = GetTime();
+        // Define time values
+        cntTime = BlockVelocityType->GetBlockTime();
+        prvTime = BlockVelocityType->pprev->GetBlockTime();
 
         if(fProofOfStake)
         {
-            uint64_t difTimePoS = cntTime - prvTime;
-            LogPrintf("Previously discovered PoS block: %u: \n",prvTime);
-            LogPrintf("Current time: %u: \n",cntTime);
-            LogPrintf("Time since last PoS block: %u: \n",difTimePoS);
+            difTimePoS = cntTime - prvTime;
 
-            if(nBestHeight < 704200)
+            // Debug print toggle
+            if(fDebug) VRXswngPoSdebug();
+            // Normal Run
+            else if(!fDebug)
             {
                 if(difTimePoS > 1 * 60 * 60) { TerminalAverage /= 2; }
                 if(difTimePoS > 2 * 60 * 60) { TerminalAverage /= 2; }
                 if(difTimePoS > 3 * 60 * 60) { TerminalAverage /= 2; }
                 if(difTimePoS > 4 * 60 * 60) { TerminalAverage /= 2; }
-                if(difTimePoS > 5 * 60 * 60) { bnNew = fProofOfStake ? Params().ProofOfStakeLimit() : Params().ProofOfWorkLimit(); }
-            }
-
-            else if(nBestHeight > 704199)
-            {
-                if(difTimePoS > 1 * 60 * 60) { TerminalAverage /= 2; LogPrintf("diffTimePoS is greater than 1 Hours: %u \n",cntTime);}
-                if(difTimePoS > 2 * 60 * 60) { TerminalAverage /= 2; LogPrintf("diffTimePoS is greater than 2 Hours: %u \n",cntTime);}
-                if(difTimePoS > 3 * 60 * 60) { TerminalAverage /= 2; LogPrintf("diffTimePoS is greater than 3 Hours: %u \n",cntTime);}
-                if(difTimePoS > 4 * 60 * 60) { TerminalAverage /= 2; LogPrintf("diffTimePoS is greater than 4 Hours: %u \n",cntTime);}
-                if(difTimePoS > 5 * 60 * 60) { bnNew = fProofOfStake ? Params().ProofOfStakeLimit() : Params().ProofOfWorkLimit(); LogPrintf("diffTimePoS is greater than 5 Hours: %u \n",cntTime);}
             }
         }
         else if(!fProofOfStake)
         {
-            uint64_t difTimePoW = cntTime - prvTime;
-            LogPrintf("Previously discovered PoW block: %u: \n",prvTime);
-            LogPrintf("Current time: %u: \n",cntTime);
-            LogPrintf("Time since last PoW block: %u: \n",difTimePoW);
+            difTimePoW = cntTime - prvTime;
 
-            if(nBestHeight < 704200)
+            // Debug print toggle
+            if(fDebug) VRXswngPoWdebug();
+            // Normal Run
+            else if(!fDebug)
             {
                 if(difTimePoW > 1 * 60 * 60) { TerminalAverage /= 2; }
                 if(difTimePoW > 2 * 60 * 60) { TerminalAverage /= 2; }
                 if(difTimePoW > 3 * 60 * 60) { TerminalAverage /= 2; }
                 if(difTimePoW > 4 * 60 * 60) { TerminalAverage /= 2; }
-                if(difTimePoW > 5 * 60 * 60) { bnNew = fProofOfStake ? Params().ProofOfStakeLimit() : Params().ProofOfWorkLimit(); }
-            }
-
-            else if(nBestHeight > 704199)
-            {
-                if(difTimePoW > 1 * 60 * 60) { TerminalAverage /= 2; LogPrintf("diffTimePoW is greater than 1 Hours: %u \n",cntTime);}
-                if(difTimePoW > 2 * 60 * 60) { TerminalAverage /= 2; LogPrintf("diffTimePoW is greater than 2 Hours: %u \n",cntTime);}
-                if(difTimePoW > 3 * 60 * 60) { TerminalAverage /= 2; LogPrintf("diffTimePoW is greater than 3 Hours: %u \n",cntTime);}
-                if(difTimePoW > 4 * 60 * 60) { TerminalAverage /= 2; LogPrintf("diffTimePoW is greater than 4 Hours: %u \n",cntTime);}
-                if(difTimePoW > 5 * 60 * 60) { bnNew = fProofOfStake ? Params().ProofOfStakeLimit() : Params().ProofOfWorkLimit(); LogPrintf("diffTimePoW is greater than 5 Hours: %u \n",cntTime);}
             }
         }
     }
@@ -430,8 +436,8 @@ unsigned int VRX_Retarget(const CBlockIndex* pindexLast, bool fProofOfStake)
     VRX_ThreadCurve(pindexLast, fProofOfStake);
 
     // Check for stall
-    // v1.0
-    if(nBestHeight < 704215)
+    // Depricated as of DEC/15/2017 until futher notice
+    if(nBestHeight < 704194)
     {
         if(bnNew.GetCompact() == bnVelocity.GetCompact())
         {
