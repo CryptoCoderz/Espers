@@ -449,6 +449,12 @@ unsigned int VRX_Retarget(const CBlockIndex* pindexLast, bool fProofOfStake)
     // Force fork block min diff
     if(nBestHeight == 704194)
         return bnVelocity.GetCompact(); // restart thread diff
+    // Force fork block min diff (PoW)
+    if(nBestHeight > 704315 && nBestHeight < 704330)
+    {
+        if(!fProofOfStake)
+            return bnVelocity.GetCompact(); // restart thread diff
+    }
 
     // Retarget
     TerminalFactor *= TerminalAverage;
