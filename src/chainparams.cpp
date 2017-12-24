@@ -104,7 +104,6 @@ public:
 
         // Espers dns seeds
         vSeeds.push_back(CDNSSeedData("cryptocoderz.com",  "esp.cryptocoderz.com"));
-        vSeeds.push_back(CDNSSeedData("thecryptochat.net",  "espers.thecryptochat.net"));
 
         convertSeed6(vFixedSeeds, pnSeed6_main, ARRAYLEN(pnSeed6_main));
 
