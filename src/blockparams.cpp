@@ -437,7 +437,7 @@ unsigned int VRX_Retarget(const CBlockIndex* pindexLast, bool fProofOfStake)
 
     // Check for stall
     // Depricated as of DEC/15/2017 until futher notice
-    if(nBestHeight < 720195) // ON -- TODO - ADJUST DATE!
+    if(nBestHeight < 727000) // ON -- TODO - ADJUST DATE!
     {
         if(nBestHeight > 704195)
         {
