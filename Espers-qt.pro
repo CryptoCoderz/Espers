@@ -19,13 +19,13 @@ greaterThan(QT_MAJOR_VERSION, 4) {
 }
 
 win32{
-BOOST_LIB_SUFFIX=-mgw63-mt-s-1_65_1
-BOOST_INCLUDE_PATH=C:/deps/boost_1_65_1
-BOOST_LIB_PATH=C:/deps/boost_1_65_1/stage/lib
-BDB_INCLUDE_PATH=C:/deps/db-6.2.23.NC/build_unix
-BDB_LIB_PATH=C:/deps/db-6.2.23.NC/build_unix
-OPENSSL_INCLUDE_PATH=C:/deps/openssl-1.0.2l/include
-OPENSSL_LIB_PATH=C:/deps/openssl-1.0.2l
+BOOST_LIB_SUFFIX=-mgw63-mt-s-x32-1_66
+BOOST_INCLUDE_PATH=C:/deps/boost_1_66_0
+BOOST_LIB_PATH=C:/deps/boost_1_66_0/stage/lib
+BDB_INCLUDE_PATH=C:/deps/db-6.2.32.NC/build_unix
+BDB_LIB_PATH=C:/deps/db-6.2.32.NC/build_unix
+OPENSSL_INCLUDE_PATH=C:/deps/openssl-1.0.2n/include
+OPENSSL_LIB_PATH=C:/deps/openssl-1.0.2n
 MINIUPNPC_INCLUDE_PATH=C:/deps/
 MINIUPNPC_LIB_PATH=C:/deps/miniupnpc-1.9
 QRENCODE_INCLUDE_PATH=C:/deps/qrencode-3.4.4
@@ -123,23 +123,24 @@ contains(ESPERS_NEED_QT_PLUGINS, 1) {
 INCLUDEPATH += src/leveldb/include src/leveldb/helpers
 LIBS += $$PWD/src/leveldb/libleveldb.a $$PWD/src/leveldb/libmemenv.a
 SOURCES += src/txdb-leveldb.cpp \
-    src/blake.c \
-    src/bmw.c \
-    src/groestl.c \
-    src/jh.c \
-    src/keccak.c \
-    src/skein.c \
-    src/luffa.c \
-    src/cubehash.c \
-    src/shavite.c \
-    src/echo.c \
-    src/simd.c \
-    src/hamsi.c \
-    src/fugue.c \
-    src/shabal.c \
-    src/whirlpool.c \
-    src/haval.c \
-    src/sha2big.c
+    src/hmq1725/aes_helper.c \
+    src/hmq1725/blake.c \
+    src/hmq1725/bmw.c \
+    src/hmq1725/groestl.c \
+    src/hmq1725/jh.c \
+    src/hmq1725/keccak.c \
+    src/hmq1725/skein.c \
+    src/hmq1725/luffa.c \
+    src/hmq1725/cubehash.c \
+    src/hmq1725/shavite.c \
+    src/hmq1725/echo.c \
+    src/hmq1725/simd.c \
+    src/hmq1725/hamsi.c \
+    src/hmq1725/fugue.c \
+    src/hmq1725/shabal.c \
+    src/hmq1725/whirlpool.c \
+    src/hmq1725/haval.c \
+    src/hmq1725/sha2big.c
 !win32 {
     # we use QMAKE_CXXFLAGS_RELEASE even without RELEASE=1 because we use RELEASE to indicate linking preferences not -O preferences
     genleveldb.commands = cd $$PWD/src/leveldb && CC=$$QMAKE_CC CXX=$$QMAKE_CXX $(MAKE) OPT=\"$$QMAKE_CXXFLAGS $$QMAKE_CXXFLAGS_RELEASE\" libleveldb.a libmemenv.a
@@ -286,28 +287,28 @@ HEADERS += src/qt/bitcoingui.h \
     src/clientversion.h \
     src/threadsafety.h \
     src/tinyformat.h \
-    src/hashblock.h \
-    src/sph_blake.h \
-    src/sph_bmw.h \
-    src/sph_groestl.h \
-    src/sph_jh.h \
-    src/sph_keccak.h \
-    src/sph_skein.h \
-    src/sph_types.h \
+    src/qt/siteonchain.h \
+    src/hmq1725/hashblock.h \
+    src/hmq1725/sph_blake.h \
+    src/hmq1725/sph_bmw.h \
+    src/hmq1725/sph_groestl.h \
+    src/hmq1725/sph_jh.h \
+    src/hmq1725/sph_keccak.h \
+    src/hmq1725/sph_skein.h \
+    src/hmq1725/sph_types.h \
     src/qt/macnotificationhandler.h \
     #ADDED FOR HMQ1725
-    src/sph_luffa.h \
-    src/sph_cubehash.h \
-    src/sph_echo.h \
-    src/sph_shavite.h \
-    src/sph_simd.h \
-    src/sph_hamsi.h \
-    src/sph_fugue.h \
-    src/sph_shabal.h \
-    src/sph_whirlpool.h \
-    src/sph_haval.h \
-    src/sph_sha2.h \
-    src/qt/siteonchain.h
+    src/hmq1725/sph_luffa.h \
+    src/hmq1725/sph_cubehash.h \
+    src/hmq1725/sph_echo.h \
+    src/hmq1725/sph_shavite.h \
+    src/hmq1725/sph_simd.h \
+    src/hmq1725/sph_hamsi.h \
+    src/hmq1725/sph_fugue.h \
+    src/hmq1725/sph_shabal.h \
+    src/hmq1725/sph_whirlpool.h \
+    src/hmq1725/sph_haval.h \
+    src/hmq1725/sph_sha2.h
 
 SOURCES += src/qt/bitcoin.cpp src/qt/bitcoingui.cpp \
     src/qt/transactiontablemodel.cpp \
@@ -507,8 +508,8 @@ LIBS += $$join(BOOST_LIB_PATH,,-L,) $$join(BDB_LIB_PATH,,-L,) $$join(OPENSSL_LIB
 LIBS += -lssl -lcrypto -ldb_cxx$$BDB_LIB_SUFFIX
 # -lgdi32 has to happen after -lcrypto (see  #681)
 windows:LIBS += -lws2_32 -lshlwapi -lmswsock -lole32 -loleaut32 -luuid -lgdi32
-LIBS += -lboost_system$$BOOST_LIB_SUFFIX -lboost_filesystem$$BOOST_LIB_SUFFIX -lboost_program_options$$BOOST_LIB_SUFFIX -lboost_thread$$BOOST_THREAD_LIB_SUFFIX
-windows:LIBS += -lboost_chrono$$BOOST_LIB_SUFFIX
+LIBS += libboost_system$$BOOST_LIB_SUFFIX libboost_filesystem$$BOOST_LIB_SUFFIX libboost_program_options$$BOOST_LIB_SUFFIX libboost_thread$$BOOST_THREAD_LIB_SUFFIX
+windows:LIBS += libboost_chrono$$BOOST_LIB_SUFFIX
 
 contains(RELEASE, 1) {
     !windows:!macx {

@@ -11,7 +11,7 @@
 #include "sync.h"
 #include "txmempool.h"
 #include "net.h"
-#include "hashblock.h"
+#include "hmq1725/hashblock.h"
 #include "fork.h"
 #include "genesis.h"
 #include "mining.h"

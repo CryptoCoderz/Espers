@@ -1,6 +1,5 @@
 <RCC>
     <qresource prefix="/icons">
-        <file alias="bitcoin">res/icons/Espers_64x64.png</file>
         <file alias="address-book">res/icons/address-book.png</file>
         <file alias="quit">res/icons/quit.png</file>
         <file alias="send">res/icons/send.png</file>
@@ -23,7 +22,6 @@
         <file alias="editpaste">res/icons/editpaste.png</file>
         <file alias="editcopy">res/icons/editcopy.png</file>
         <file alias="add">res/icons/add.png</file>
-        <file alias="bitcoin_testnet">res/icons/Espers_64x64.png</file>
         <file alias="toolbar_testnet">res/icons/Espers_16x16.png</file>
         <file alias="edit">res/icons/edit.png</file>
         <file alias="history">res/icons/history.png</file>
@@ -49,6 +47,8 @@
         <file alias="generate">res/icons/generate.png</file>
         <file alias="ccs">res/icons/ccs.png</file>
         <file alias="notsynced">res/icons/notsynced.png</file>
+        <file alias="bitcoin">res/icons/Espers.png</file>
+        <file alias="bitcoin_testnet">res/icons/Espers_testnet.png</file>
     </qresource>
     <qresource prefix="/images">
         <file alias="about">res/images/about.png</file>
