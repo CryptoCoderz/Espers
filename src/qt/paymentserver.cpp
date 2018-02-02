@@ -22,8 +22,8 @@
 
 using namespace boost;
 
-const int BITCOIN_IPC_CONNECT_TIMEOUT = 1000; // milliseconds
-const QString BITCOIN_IPC_PREFIX("Espers:");
+const int ESPERS_IPC_CONNECT_TIMEOUT = 1000; // milliseconds
+const QString ESPERS_IPC_PREFIX("Espers:");
 
 //
 // Create a name that is unique for:
@@ -63,7 +63,7 @@ bool PaymentServer::ipcSendCommandLine()
     const QStringList& args = qApp->arguments();
     for (int i = 1; i < args.size(); i++)
     {
-        if (!args[i].startsWith(BITCOIN_IPC_PREFIX, Qt::CaseInsensitive))
+        if (!args[i].startsWith(ESPERS_IPC_PREFIX, Qt::CaseInsensitive))
             continue;
         savedPaymentRequests.append(args[i]);
     }
@@ -72,7 +72,7 @@ bool PaymentServer::ipcSendCommandLine()
     {
         QLocalSocket* socket = new QLocalSocket();
         socket->connectToServer(ipcServerName(), QIODevice::WriteOnly);
-        if (!socket->waitForConnected(BITCOIN_IPC_CONNECT_TIMEOUT))
+        if (!socket->waitForConnected(ESPERS_IPC_CONNECT_TIMEOUT))
             return false;
 
         QByteArray block;
@@ -83,7 +83,7 @@ bool PaymentServer::ipcSendCommandLine()
         socket->write(block);
         socket->flush();
 
-        socket->waitForBytesWritten(BITCOIN_IPC_CONNECT_TIMEOUT);
+        socket->waitForBytesWritten(ESPERS_IPC_CONNECT_TIMEOUT);
         socket->disconnectFromServer();
         delete socket;
         fResult = true;

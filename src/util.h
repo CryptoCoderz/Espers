@@ -3,8 +3,8 @@
 // Distributed under the MIT/X11 software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
-#ifndef BITCOIN_UTIL_H
-#define BITCOIN_UTIL_H
+#ifndef ESPERS_UTIL_H
+#define ESPERS_UTIL_H
 
 #ifndef WIN32
 #include <sys/types.h>
@@ -187,10 +187,6 @@ void SetMockTime(int64_t nMockTimeIn);
 std::string FormatFullVersion();
 std::string FormatSubVersion(const std::string& name, int nClientVersion, const std::vector<std::string>& comments);
 void runCommand(std::string strCommand);
-
-
-
-
 
 
 

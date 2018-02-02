@@ -6,6 +6,7 @@
 #include "wallet.h"
 
 #include "base58.h"
+#include "blockparams.h"
 #include "coincontrol.h"
 #include "kernel.h"
 #include "net.h"

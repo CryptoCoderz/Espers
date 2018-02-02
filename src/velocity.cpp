@@ -13,10 +13,9 @@ int VelocityI(int nHeight)
 {
     int i = 0;
     i --;
-    if(nHeight >= VELOCITY_HEIGHT[i])
-    {
-        i++;
-    }
+    BOOST_FOREACH(int h, VELOCITY_HEIGHT)
+    if( nHeight >= h )
+      i++;
     return i;
 }
 
@@ -28,10 +27,10 @@ bool Velocity_check(int nHeight)
     if(VelocityI(nHeight) >= 0)
     {
         LogPrintf("Velocity is currently Enabled\n");
-		return true;
-	}
+        return true;
+    }
     LogPrintf("Velocity is currently disabled\n");
-	return false;
+    return false;
 }
 
 /* Velocity(CBlockIndex* prevBlock, CBlock* block) ? true : false
@@ -48,12 +47,24 @@ bool Velocity(CBlockIndex* prevBlock, CBlock* block)
     int64_t TXcount = 0;
     int64_t TXlogic = 0;
     int64_t TXrate = 0;
+    int64_t CURvalstamp  = 0;
+    int64_t OLDvalstamp  = 0;
+    int64_t CURstamp = 0;
+    int64_t OLDstamp = 0;
+    int64_t TXstampC = 0;
+    int64_t TXstampO = 0;
     int nHeight = prevBlock->nHeight+1;
     int i = VelocityI(nHeight);
     int HaveCoins = false;
     // Set stanard values
     TXrate = block->GetBlockTime() - prevBlock->GetBlockTime();
- // TEMP PATCH : FIX VELOCITY REFERENCE IMPLEMENTATION PRIORITY 1
+    TXstampC = block->nTime;
+    TXstampO = prevBlock->nTime;
+    CURstamp = block->GetBlockTime();
+    OLDstamp = prevBlock->GetBlockTime();
+    CURvalstamp = prevBlock->GetBlockTime() + VELOCITY_MIN_RATE[i];
+    OLDvalstamp = prevBlock->pprev->GetBlockTime() + VELOCITY_MIN_RATE[i];
+ // TODO: Rework and activate below section for future releases
  // Factor in TXs for Velocity constraints only if there are TXs to do so with
  if(VELOCITY_FACTOR[i] == true && TXvalue > 0)
  {
@@ -118,6 +129,21 @@ bool Velocity(CBlockIndex* prevBlock, CBlock* block)
         LogPrintf("DENIED: Minimum block spacing not met for Velocity\n");
         return false;
     }
+    // Validate timestamp is logical
+    else if(CURstamp < CURvalstamp || TXstampC < CURvalstamp)
+    {
+        LogPrintf("DENIED: Block timestamp is not logical\n");
+        return false;
+    }
+    else if(OLDstamp < OLDvalstamp || TXstampO < OLDvalstamp)
+    {
+        if(nHeight != VELOCITY_HEIGHT[i])
+        {
+            LogPrintf("DENIED: Block timestamp is not logical\n");
+            return false;
+        }
+    }
+
     // Constrain Velocity
     if(VELOCITY_EXPLICIT[i])
     {

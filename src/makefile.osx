@@ -90,21 +90,36 @@ OBJS= \
     obj/script.o \
     obj/sync.o \
     obj/txmempool.o \
+    obj/blocksizecalculator.o \
     obj/util.o \
     obj/hash.o \
     obj/noui.o \
-    obj/pbkdf2.o \
     obj/kernel.o \
+    obj/pbkdf2.o \
     obj/scrypt.o \
+    obj/scrypt-arm.o \
     obj/scrypt-x86.o \
     obj/scrypt-x86_64.o \
+    obj/blockparams.o \
     obj/chainparams.o \
-    obj/blake.o \
-    obj/bmw.o \
-    obj/groestl.o \
-    obj/jh.o \
-    obj/keccak.o \
-    obj/skein.o
+    obj/hmq1725/blake.o\
+    obj/hmq1725/bmw.o\
+    obj/hmq1725/groestl.o\
+    obj/hmq1725/jh.o\
+    obj/hmq1725/keccak.o\
+    obj/hmq1725/skein.o\
+    obj/hmq1725/cubehash.o \
+    obj/hmq1725/luffa.o \
+    obj/hmq1725/aes_helper.o \
+    obj/hmq1725/echo.o \
+    obj/hmq1725/shavite.o \
+    obj/hmq1725/simd.o \
+    obj/hmq1725/hamsi.o \
+    obj/hmq1725/fugue.o \
+    obj/hmq1725/shabal.o \
+    obj/hmq1725/whirlpool.o \
+    obj/hmq1725/haval.o \
+    obj/hmq1725/sha2big.o
 
 ifeq (${USE_WALLET}, 1)
     DEFS += -DENABLE_WALLET

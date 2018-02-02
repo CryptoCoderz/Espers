@@ -1,12 +1,15 @@
 // Copyright (c) 2009-2010 Satoshi Nakamoto
 // Copyright (c) 2009-2012 The Bitcoin developers
 // Copyright (c) 2013 The NovaCoin developers
+// Copyright (c) 2016-2017 The CryptoCoderz Team / Espers
 // Distributed under the MIT/X11 software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
+#include "blockparams.h"
 #include "txdb.h"
 #include "miner.h"
 #include "kernel.h"
+#include "velocity.h"
 
 using namespace std;
 
@@ -443,6 +446,12 @@ bool CheckWork(CBlock* pblock, CWallet& wallet, CReserveKey& reservekey)
     uint256 hashProof = pblock->GetHash();
     uint256 hashTarget = CBigNum().SetCompact(pblock->nBits).getuint256();
 
+    // Velocity enforcement prior to final checks
+    //int nHeight_v = pindexBest->nHeight;
+    //int i = VelocityI(nHeight_v);
+    //if((pblock->GetBlockTime() - pindexBest->GetBlockTime()) < VELOCITY_MIN_RATE[i]) // Check for minimum spacing
+        //return error("CheckWork(): Velocity constraint failure, Not enough spacing from previous block");
+
     if(!pblock->IsProofOfWork())
         return error("CheckWork() : %s is not a proof-of-work block", hashBlock.GetHex());
 
@@ -481,6 +490,12 @@ bool CheckStake(CBlock* pblock, CWallet& wallet)
 {
     uint256 proofHash = 0, hashTarget = 0;
     uint256 hashBlock = pblock->GetHash();
+
+    // Velocity enforcement prior to final checks
+    //int nHeight_v = pindexBest->nHeight;
+    //int i = VelocityI(nHeight_v);
+    //if((pblock->GetBlockTime() - pindexBest->GetBlockTime()) < VELOCITY_MIN_RATE[i]) // Check for minimum spacing
+        //return error("CheckStake(): Velocity constraint failure, Not enough spacing from previous block");
 
     if(!pblock->IsProofOfStake())
         return error("CheckStake() : %s is not a proof-of-stake block", hashBlock.GetHex());

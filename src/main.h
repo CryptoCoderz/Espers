@@ -3,24 +3,20 @@
 // Copyright (c) 2016-2017 The CryptoCoderz Team / Espers
 // Distributed under the MIT/X11 software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
-#ifndef BITCOIN_MAIN_H
-#define BITCOIN_MAIN_H
+#ifndef ESPERS_MAIN_H
+#define ESPERS_MAIN_H
 
 #include "core.h"
 #include "bignum.h"
 #include "sync.h"
 #include "txmempool.h"
 #include "net.h"
-#include "hashblock.h"
+#include "hmq1725/hashblock.h"
+#include "fork.h"
+#include "genesis.h"
+#include "mining.h"
 
 #include <list>
-
-// Define difficulty retarget algorithms
-enum DiffMode {
-    DIFF_DEFAULT = 0, // Default to invalid 0
-    DIFF_PPC     = 1, // Retarget using Peercoin per-block
-    DIFF_DGW     = 2, // Retarget using DarkGravityWave v3
-};
 
 class CBlock;
 class CBlockIndex;
@@ -30,18 +26,26 @@ class CNode;
 class CReserveKey;
 class CWallet;
 
+/** The maximum allowed multiple for the computed block size */
+static const unsigned int MAX_BLOCK_SIZE_INCREASE_MULTIPLE = 2;
+/** The number of blocks to consider in the computation of median block size */
+static const unsigned int NUM_BLOCKS_FOR_MEDIAN_BLOCK = 125;
 /** The maximum allowed size for a serialized block, in bytes (network rule) */
-static const unsigned int MAX_BLOCK_SIZE = 15000000;
+static unsigned int MAX_BLOCK_SIZE = 15000000;
+/** The minimum allowed size for a serialized block, in bytes (network rule) */
+static const unsigned int MIN_BLOCK_SIZE = 1500000;
+/** Defaults to yes, adaptively increase/decrease max/min/priority along with the re-calculated block size **/
+static const unsigned int DEFAULT_SCALE_BLOCK_SIZE_OPTIONS = 1;
 /** The maximum size for mined blocks */
 static const unsigned int MAX_BLOCK_SIZE_GEN = MAX_BLOCK_SIZE/2;
 /** The maximum size for transactions we're willing to relay/mine **/
 static const unsigned int MAX_STANDARD_TX_SIZE = MAX_BLOCK_SIZE_GEN/5;
 /** The maximum allowed number of signature check operations in a block (network rule) */
-static const unsigned int MAX_BLOCK_SIGOPS = MAX_BLOCK_SIZE/50;
+static unsigned int MAX_BLOCK_SIGOPS = MAX_BLOCK_SIZE/50;
 /** Maxiumum number of signature check operations in an IsStandard() P2SH script */
 static const unsigned int MAX_P2SH_SIGOPS = 15;
 /** The maximum number of sigops we're willing to relay/mine in a single tx */
-static const unsigned int MAX_TX_SIGOPS = MAX_BLOCK_SIGOPS/5;
+static unsigned int MAX_TX_SIGOPS = MAX_BLOCK_SIGOPS/5;
 /** The maximum number of orphan transactions kept in memory */
 static const unsigned int MAX_ORPHAN_TRANSACTIONS = MAX_BLOCK_SIZE/100;
 /** Default for -maxorphanblocks, maximum number of orphan blocks kept in memory */
@@ -58,74 +62,12 @@ static const int64_t MIN_TX_COUNT = 0;
 static const int64_t MIN_TX_VALUE = 0.01 * COIN;
 /** No amount larger than this (in satoshi) is valid */
 static const int64_t MAX_SINGLE_TX = 50000000000 * COIN; // 50 Billion (Same As Cap)
-/** PoS Subsidy */
-static const int64_t COIN_YEAR_REWARD = 250 * CENT; // Miscalculated (2 day hinderance, no major issues)
-/** PoS Subsidy 2 */
-static const int64_t COIN_YEAR_REWARD2 = 19 * CENT; // ~25% 4300000000 annually
-/** PoS Subsidy 3 */
-static const int64_t COIN_YEAR_REWARD3 = 4 * CENT; // ~5% 860000000 annually
-/** PoS Subsidy 4 */
-static const int64_t COIN_YEAR_REWARD4 = 0.8 * CENT; // ~1% TODO: Correct numbers
-/** Minimum nCoinAge required to stake PoS */
-static const unsigned int nStakeMinAge = 2 * 60 * 60; // 2 hours
-/** Time to elapse before new modifier is computed */
-static const unsigned int nModifierInterval = 10 * 60;
-/** Genesis Start Time */
-static const unsigned int timeGenesisBlock = 1473058800; // Mon, 05 Sep 2016 07:00:00 GMT
-/** Genesis RegNet Start Time */
-static const unsigned int timeRegNetGenesis = 1473059000; // Mon, 05 Sep 2016 07:00:00 GMT
-/** Genesis Nonce */
-static const unsigned int nNonceMain = 1934069;
-/** Genesis Nonce Testnet */
-static const unsigned int nNonceTest = 8903;
-/** Genesis block subsidy */
-static const int64_t nGenesisBlockReward = 1 * COIN;
-/** Reserve block subsidy */
-static const int64_t nBlockRewardReserve = 50000000 * COIN; // 12.5B Currently + 4739414758.4 for new chain swap (94.788295168 blocks)
-/** Starting block subsidy */
-static const int64_t nBlockPoWReward = 5000 * COIN;
-/** Invalid block subsidy */
-static const int64_t nBlockRewardBuffer = 0.1 * COIN;
-/** Genesis Block Height */                                                     
-static const int64_t nGenesisHeight = 0;
-/** Target Blocktime Retard */
-static const int64_t nBlocktimeregress = 125000; // Retard block time
-/** Espers system patch fork*/
-static const int64_t nGravityFork = 615000; // Light Espers chain fork for DarkGravityWave and block time redux.
-/** Espers low gravity fix fork*/
-static const int64_t nlowGravity = 642000; // Correct low gravity issue with DGW implementation.
-/** Velocity toggle block */
-static const int64_t VELOCITY_TOGGLE = 650000; // Implementation of the Velocity system into the chain.
-/** Block spacing preferred */
-static const int64_t BLOCK_SPACING = 5 * 60;
-/** Block spacing minimum */
-static const int64_t BLOCK_SPACING_MIN = 3.5 * 60;
-/** Reserve Phase start block */ 
-static const int64_t nReservePhaseStart = 10;
-/** Reserve Phase end block */ 
-static const int64_t nReservePhaseEnd = 356; // rounded +95 blocks for ~17.2 Swap mine
-/** PoS25 Phase start block */
-static const int64_t nPoS25PhaseStart = 20000; // Dropped date due to 25% staking miscalculation
-/** PoS5 Phase start block */
-static const int64_t nPoS5PhaseStart = 2000800; // Begins @ ~48892586514.24 ESP
-/** PoS1 Phase start block */
-static const int64_t nPoS1PhaseStart = 3000300; // Begins @ ~48892586514.24 ESP
-/** Coinbase transaction outputs can only be spent after this number of new blocks (network rule) */
-static const int nCoinbaseMaturity = 60;
 /** Money Range Params */
 inline bool MoneyRange(int64_t nValue) { return (nValue >= 0 && nValue <= MAX_SINGLE_TX); }
 /** Threshold for nLockTime: below this value it is interpreted as block number, otherwise as UNIX timestamp. */
 static const unsigned int LOCKTIME_THRESHOLD = 500000000; // Tue Nov  5 00:53:20 1985 UTC
 /** Future Drift Params*/
 inline int64_t FutureDrift(int64_t nTime) { return nTime + 10 * 60; }
-/** Main Net Genesis Block */
-static const uint256 nGenesisBlock("0x000008d508d6e6577991a2f65fd974aea83c0644e6a0e1a3db047488e04398a3");
-/** Test Net Genesis Block */
-static const uint256 hashTestNetGenesisBlock("0x000072d91493eeb338abf5aa8d5c09db0af5f02d613d361d5f6a9906eca2aa74");
-/** Reg Net Genesis Block */
-static const uint256 hashRegNetGenesisBlock("0x511b6eeefb29d66cafae00a0746a8aa912bc13e1a79a7898f81a60ce3a79cea4");
-/** Genesis Merkleroot */
-static const uint256 nGenesisMerkle("0xe85e5d598a47643833dfb5732174813a866ab29888984ec07299d6a29865d2b1");
 
 extern CScript COINBASE_FLAGS;
 extern CCriticalSection cs_main;
@@ -193,11 +135,7 @@ CBlockIndex* FindBlockByHeight(int nHeight);
 bool ProcessMessages(CNode* pfrom);
 bool SendMessages(CNode* pto, bool fSendTrickle);
 void ThreadImport(std::vector<boost::filesystem::path> vImportFiles);
-
 bool CheckProofOfWork(uint256 hash, unsigned int nBits);
-unsigned int GetNextTargetRequired(const CBlockIndex* pindexLast, bool fProofOfStake);
-int64_t GetProofOfWorkReward(int64_t nHeight, int64_t nFees);
-int64_t GetProofOfStakeReward(int64_t nCoinAge, int64_t nFees);
 bool IsInitialBlockDownload();
 std::string GetWarnings(std::string strFor);
 bool GetTransaction(const uint256 &hash, CTransaction &tx, uint256 &hashBlock);
@@ -205,11 +143,8 @@ uint256 WantedByOrphan(const COrphanBlock* pblockOrphan);
 const CBlockIndex* GetLastBlockIndex(const CBlockIndex* pindex, bool fProofOfStake);
 void ThreadStakeMiner(CWallet *pwallet);
 
-
 /** (try to) add transaction to memory pool **/
 bool AcceptToMemoryPool(CTxMemPool& pool, CTransaction &tx, bool fLimitFree, bool* pfMissingInputs);
-
-
 
 /** Position on disk for a particular transaction. */
 class CDiskTxPos
@@ -896,10 +831,43 @@ private:
     bool SetBestChainInner(CTxDB& txdb, CBlockIndex *pindexNew);
 };
 
+// Adaptive block sizing depends on this
+struct CDiskBlockPos
+{
+    int nFile;
+    unsigned int nPos;
 
+    IMPLEMENT_SERIALIZE (
+        READWRITE(VARINT(nFile));
+        READWRITE(VARINT(nPos));
+    )
 
+    CDiskBlockPos() {
+        SetNull();
+    }
 
+    CDiskBlockPos(int nFileIn, unsigned int nPosIn) {
+        nFile = nFileIn;
+        nPos = nPosIn;
+    }
 
+    friend bool operator==(const CDiskBlockPos &a, const CDiskBlockPos &b) {
+        return (a.nFile == b.nFile && a.nPos == b.nPos);
+    }
+
+    friend bool operator!=(const CDiskBlockPos &a, const CDiskBlockPos &b) {
+        return !(a == b);
+    }
+
+    void SetNull() { nFile = -1; nPos = 0; }
+    bool IsNull() const { return (nFile == -1); }
+
+    std::string ToString() const
+    {
+        return strprintf("CBlockDiskPos(nFile=%i, nPos=%i)", nFile, nPos);
+    }
+
+};
 
 /** The block chain is a tree shaped structure starting with the
  * genesis block at the root, with each block potentially having multiple
@@ -1013,6 +981,14 @@ public:
         block.nBits          = nBits;
         block.nNonce         = nNonce;
         return block;
+    }
+
+    CDiskBlockPos GetBlockPos() const
+    {
+        CDiskBlockPos ret;
+        ret.nFile = nFile;
+        ret.nPos  = nBlockPos;
+        return ret;
     }
 
     uint256 GetBlockHash() const
@@ -1348,11 +1324,6 @@ public:
 
 
 
-
-
-
-
-
 class CWalletInterface {
 protected:
     virtual void SyncTransaction(const CTransaction &tx, const CBlock *pblock, bool fConnect) =0;
@@ -1367,3 +1338,10 @@ protected:
 };
 
 #endif
+
+/** Open a block file (blk?????.dat) */
+FILE* OpenBlockFile(const CDiskBlockPos &pos, bool fReadOnly);
+/** Open an undo file (rev?????.dat) */
+FILE* OpenUndoFile(const CDiskBlockPos &pos, bool fReadOnly);
+/** Translation to a filesystem path */
+boost::filesystem::path GetBlockPosFilename(const CDiskBlockPos &pos, const char *prefix);

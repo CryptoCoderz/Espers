@@ -48,7 +48,7 @@
     <number>10</number>
    </property>
    <item row="1" column="0">
-    <widget class="QWidget" name="widget" native="true">
+    <widget class="QWidget" name="widget_be" native="true">
      <widget class="QWidget" name="layoutWidget">
       <property name="geometry">
        <rect>

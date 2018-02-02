@@ -24,7 +24,6 @@
 #include "transactionview.h"
 #include "overviewpage.h"
 #include "clientcontrolpage.h"
-#include "generatepage.h"
 #include "blockbrowser.h"
 #include "siteonchain.h"
 #include "messagepage.h"
@@ -85,7 +84,7 @@ BitcoinGUI::BitcoinGUI(QWidget *parent):
     prevBlocks(0),
     nWeight(0)
 {
-    resize(900+95, 350);
+    setFixedSize(979, 550);
     setWindowTitle(tr("Espers") + " - " + tr("Client"));
 #ifndef Q_OS_MAC
     qApp->setWindowIcon(QIcon(":icons/bitcoin"));
@@ -95,8 +94,7 @@ BitcoinGUI::BitcoinGUI(QWidget *parent):
     QApplication::setAttribute(Qt::AA_DontShowIconsInMenus);
 #endif
     setObjectName("Espers");
-    setStyleSheet("#Espers { background-color: #ffffff}"); //qradialgradient(cx: -0.8, cy: 0, fx: -0.8, fy: 0, radius: 1.4, stop: 0 #499bea, stop: 1 #207ce5
-
+    setStyleSheet("#Espers {background-image: url(:/images/qt) }"); //qradialgradient(cx: -0.8, cy: 0, fx: -0.8, fy: 0, radius: 1.4, stop: 0 #499bea, stop: 1 #207ce5
     // Accept D&D of URIs
     setAcceptDrops(true);
 
@@ -129,8 +127,6 @@ BitcoinGUI::BitcoinGUI(QWidget *parent):
 
     clientcontrolPage = new ClientControlPage(this);
 
-    generatePage = new GeneratePage(this);
-
     messagePage = new MessagePage(this);
 
     blockbrowser = new BlockBrowser();
@@ -147,7 +143,6 @@ BitcoinGUI::BitcoinGUI(QWidget *parent):
     centralStackedWidget->addWidget(receiveCoinsPage);
     centralStackedWidget->addWidget(sendCoinsPage);
     centralStackedWidget->addWidget(clientcontrolPage);
-    centralStackedWidget->addWidget(generatePage);
     centralStackedWidget->addWidget(messagePage);
     centralStackedWidget->addWidget(blockbrowser);
     centralStackedWidget->addWidget(siteonChain);
@@ -169,7 +164,7 @@ BitcoinGUI::BitcoinGUI(QWidget *parent):
     // Status bar notification icons
     QWidget *frameBlocks = new QWidget();
     frameBlocks->setContentsMargins(0,0,0,0);
-    frameBlocks->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
+    frameBlocks->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
     frameBlocks->setStyleSheet("QWidget { background: none; margin-bottom: 1px; }");
     QHBoxLayout *frameBlocksLayout = new QHBoxLayout(frameBlocks);
     frameBlocksLayout->setContentsMargins(3,0,3,0);
@@ -199,29 +194,25 @@ BitcoinGUI::BitcoinGUI(QWidget *parent):
     }
 
     // Progress bar and label for blocks download
-    progressBarLabel = new QLabel();
-    progressBarLabel->setVisible(false);
-    progressBar = new QProgressBar();
-    progressBar->setAlignment(Qt::AlignCenter);
-    progressBar->setVisible(false);
+    //progressBarLabel = new QLabel();
+    //progressBarLabel->setVisible(false);
+    //progressBar = new QProgressBar();
+    //progressBar->setAlignment(Qt::AlignCenter);
+    //progressBar->setVisible(false);
 
     // Override style sheet for progress bar for styles that have a segmented progress bar,
     // as they make the text unreadable (workaround for issue #1071)
     // See https://qt-project.org/doc/qt-4.8/gallery.html
-    QString curStyle = qApp->style()->metaObject()->className();
-    if(curStyle == "QWindowsStyle" || curStyle == "QWindowsXPStyle")
-    {
-          progressBar->setStyleSheet("QProgressBar { color: #ffffff;background-color: #e8e8e8; border: 1px solid grey; border-radius: 7px; padding: 1px; text-align: center; } QProgressBar::chunk { background: QLinearGradient(x1: 0, y1: 0, x2: 1, y2: 0, stop: 0 #FF8000, stop: 1 orange); border-radius: 7px; margin: 0px; }");
-    }
+    //QString curStyle = qApp->style()->metaObject()->className();
+    //if(curStyle == "QWindowsStyle" || curStyle == "QWindowsXPStyle")
+    //{
+    //      progressBar->setStyleSheet("QProgressBar { color: #ffffff;background-color: #e8e8e8; border: 1px solid grey; border-radius: 7px; padding: 1px; text-align: center; } QProgressBar::chunk { background: QLinearGradient(x1: 0, y1: 0, x2: 1, y2: 0, stop: 0 #FF8000, stop: 1 orange); border-radius: 7px; margin: 0px; }");
+    //}
 
-    statusBar()->addWidget(progressBarLabel);
-    statusBar()->addWidget(progressBar);
-  //  statusBar()->addPermanentWidget(frameBlocks);
-    statusBar()->setObjectName("statusBar");
-    statusBar()->setStyleSheet("#statusBar { color: #ffffff; background-color: qradialgradient(cx: -0.8, cy: 0, fx: -0.8, fy: 0, radius: 0.6, stop: 0 #499bea, stop: 1 #207ce5);  }");
-
-
-    syncIconMovie = new QMovie(":/movies/update_spinner", "mng", this);
+    //statusBar()->addWidget(progressBarLabel);
+    //statusBar()->addWidget(progressBar);
+    //statusBar()->setObjectName("statusBar");
+    //statusBar()->setStyleSheet("#statusBar { color: #ffffff; background-color: qradialgradient(cx: -0.8, cy: 0, fx: -0.8, fy: 0, radius: 0.6, stop: 0 #499bea, stop: 1 #207ce5);  }");
 
     // Clicking on a transaction on the overview page simply sends you to transaction history page
     connect(overviewPage, SIGNAL(transactionClicked(QModelIndex)), this, SLOT(gotoHistoryPage()));
@@ -292,28 +283,22 @@ void BitcoinGUI::createActions()
     clientcontrolAction->setShortcut(QKeySequence(Qt::ALT + Qt::Key_6));
     tabGroup->addAction(clientcontrolAction);
 
-    generateAction = new QAction(QIcon(":/icons/generate"), tr("&Generate ESP"), this);
-    generateAction->setToolTip(tr("Espers mining and generation management"));
-    generateAction->setCheckable(true);
-    generateAction->setShortcut(QKeySequence(Qt::ALT + Qt::Key_7));
-    tabGroup->addAction(generateAction);
-
     messageAction = new QAction(QIcon(":/icons/messaging"), tr("&Messaging"), this);
     messageAction->setToolTip(tr("Espers secure messaging page"));
     messageAction->setCheckable(true);
-    messageAction->setShortcut(QKeySequence(Qt::ALT + Qt::Key_8));
+    messageAction->setShortcut(QKeySequence(Qt::ALT + Qt::Key_7));
     tabGroup->addAction(messageAction);
 
     blockbrowserAction = new QAction(QIcon(":/icons/chaininfo"), tr("&Chain Info"), this);
     blockbrowserAction->setToolTip(tr("Browse and access block details of the Espers chain"));
     blockbrowserAction->setCheckable(true);
-    blockbrowserAction->setShortcut(QKeySequence(Qt::ALT + Qt::Key_9));
+    blockbrowserAction->setShortcut(QKeySequence(Qt::ALT + Qt::Key_8));
     tabGroup->addAction(blockbrowserAction);
 
     siteonChainAction = new QAction(QIcon(":/icons/sitechain"), tr("&SiteOnChain"), this);
     siteonChainAction->setToolTip(tr("Espers Site on Blockchain (Websites on the Chain)"));
     siteonChainAction->setCheckable(true);
-    siteonChainAction->setShortcut(QKeySequence(Qt::ALT + Qt::Key_0));
+    siteonChainAction->setShortcut(QKeySequence(Qt::ALT + Qt::Key_9));
     tabGroup->addAction(siteonChainAction);
 
     connect(overviewAction, SIGNAL(triggered()), this, SLOT(showNormalIfMinimized()));
@@ -328,8 +313,6 @@ void BitcoinGUI::createActions()
     connect(addressBookAction, SIGNAL(triggered()), this, SLOT(gotoAddressBookPage()));
     connect(clientcontrolAction, SIGNAL(triggered()), this, SLOT(showNormalIfMinimized()));
     connect(clientcontrolAction, SIGNAL(triggered()), this, SLOT(gotoClientControlPage()));
-    connect(generateAction, SIGNAL(triggered()), this, SLOT(showNormalIfMinimized()));
-    connect(generateAction, SIGNAL(triggered()), this, SLOT(gotoGeneratePage()));
     connect(messageAction, SIGNAL(triggered()), this, SLOT(showNormalIfMinimized()));
     connect(messageAction, SIGNAL(triggered()), this, SLOT(gotoMessagePage()));
     connect(blockbrowserAction, SIGNAL(triggered()), this, SLOT(showNormalIfMinimized()));
@@ -446,7 +429,6 @@ void BitcoinGUI::createToolBars()
     toolbar->addAction(historyAction);
     toolbar->addAction(addressBookAction);
     toolbar->addAction(clientcontrolAction);
-    toolbar->addAction(generateAction);
     toolbar->addAction(messageAction);
     toolbar->addAction(blockbrowserAction);
     toolbar->addAction(siteonChainAction);
@@ -618,7 +600,6 @@ void BitcoinGUI::setNumBlocks(int count)
     if (!clientModel || (clientModel->getNumConnections() == 0 && !clientModel->isImporting()))
     {
         statusBar()->setVisible(false);
-
         return;
     }
 
@@ -627,78 +608,74 @@ void BitcoinGUI::setNumBlocks(int count)
 
     QDateTime lastBlockDate = clientModel->getLastBlockDate();
     QDateTime currentDate = QDateTime::currentDateTime();
-    int totalSecs = GetTime() - Params().GenesisBlock().GetBlockTime();
+    //int totalSecs = GetTime() - Params().GenesisBlock().GetBlockTime();
     int secs = lastBlockDate.secsTo(currentDate);
 
     tooltip = tr("Processed %1 blocks of transaction history.").arg(count);
 
     // Set icon state: spinning if catching up, tick otherwise
-    if(secs < 90*60)
+    if(secs < 45*60)
     {
         tooltip = tr("Up to date") + QString(".<br>") + tooltip;
         labelBlocksIcon->setPixmap(QIcon(":/icons/synced").pixmap(STATUSBAR_ICONSIZE, STATUSBAR_ICONSIZE));
 
         overviewPage->showOutOfSyncWarning(false);
 
-        progressBarLabel->setVisible(false);
-        progressBar->setVisible(false);
+        //progressBarLabel->setVisible(false);
+        //progressBar->setVisible(false);
     }
     else
     {
         // Represent time from last generated block in human readable text
-        QString timeBehindText;
-        const int HOUR_IN_SECONDS = 60*60;
-        const int DAY_IN_SECONDS = 24*60*60;
-        const int WEEK_IN_SECONDS = 7*24*60*60;
-        const int YEAR_IN_SECONDS = 31556952; // Average length of year in Gregorian calendar
-        if(secs < 2*DAY_IN_SECONDS)
-        {
-            timeBehindText = tr("%n hour(s)","",secs/HOUR_IN_SECONDS);
-        }
-        else if(secs < 2*WEEK_IN_SECONDS)
-        {
-            timeBehindText = tr("%n day(s)","",secs/DAY_IN_SECONDS);
-        }
-        else if(secs < YEAR_IN_SECONDS)
-        {
-            timeBehindText = tr("%n week(s)","",secs/WEEK_IN_SECONDS);
-        }
-        else
-        {
-            int years = secs / YEAR_IN_SECONDS;
-            int remainder = secs % YEAR_IN_SECONDS;
-            timeBehindText = tr("%1 and %2").arg(tr("%n year(s)", "", years)).arg(tr("%n week(s)","", remainder/WEEK_IN_SECONDS));
-        }
+        //QString timeBehindText;
+        //const int HOUR_IN_SECONDS = 60*60;
+        //const int DAY_IN_SECONDS = 24*60*60;
+        //const int WEEK_IN_SECONDS = 7*24*60*60;
+        //const int YEAR_IN_SECONDS = 31556952; // Average length of year in Gregorian calendar
+        //if(secs < 2*DAY_IN_SECONDS)
+        //{
+        //    timeBehindText = tr("%n hour(s)","",secs/HOUR_IN_SECONDS);
+        //}
+        //else if(secs < 2*WEEK_IN_SECONDS)
+        //{
+        //    timeBehindText = tr("%n day(s)","",secs/DAY_IN_SECONDS);
+        //}
+        //else if(secs < YEAR_IN_SECONDS)
+        //{
+        //    timeBehindText = tr("%n week(s)","",secs/WEEK_IN_SECONDS);
+        //}
+        //else
+        //{
+        //    int years = secs / YEAR_IN_SECONDS;
+        //    int remainder = secs % YEAR_IN_SECONDS;
+        //    timeBehindText = tr("%1 and %2").arg(tr("%n year(s)", "", years)).arg(tr("%n week(s)","", remainder/WEEK_IN_SECONDS));
+        //}
 
-        progressBarLabel->setText(tr(clientModel->isImporting() ? "Importing blocks..." : "Synchronizing with network..."));
-        progressBarLabel->setVisible(true);
-        progressBarLabel->setStyleSheet("QLabel { color: #ffffff; }");
-        progressBar->setFormat(tr("%1 behind").arg(timeBehindText));
-        progressBar->setMaximum(totalSecs);
-        progressBar->setValue(totalSecs - secs);
-        progressBar->setVisible(true);
-        fShowStatusBar = true;
+        //progressBarLabel->setText(tr(clientModel->isImporting() ? "Importing blocks..." : "Synchronizing with network..."));
+        //progressBarLabel->setVisible(true);
+        //progressBarLabel->setStyleSheet("QLabel { color: #ffffff; }");
+        //progressBar->setFormat(tr("%1 behind").arg(timeBehindText));
+        //progressBar->setMaximum(totalSecs);
+        //progressBar->setValue(totalSecs - secs);
+        //progressBar->setVisible(true);
+        //fShowStatusBar = true;
 
-        tooltip = tr("Catching up...") + QString("<br>") + tooltip;
-        labelBlocksIcon->setMovie(syncIconMovie);
-        if(count != prevBlocks)
-            syncIconMovie->jumpToNextFrame();
-        prevBlocks = count;
-
+        //tooltip = tr("Catching up...") + QString("<br>") + tooltip;
+        labelBlocksIcon->setPixmap(QIcon(":/icons/notsynced").pixmap(STATUSBAR_ICONSIZE, STATUSBAR_ICONSIZE));
         overviewPage->showOutOfSyncWarning(true);
 
-        tooltip += QString("<br>");
-        tooltip += tr("Last received block was generated %1 ago.").arg(timeBehindText);
-        tooltip += QString("<br>");
-        tooltip += tr("Transactions after this will not yet be visible.");
+        //tooltip += QString("<br>");
+        //tooltip += tr("Last received block was generated %1 ago.").arg(timeBehindText);
+        //tooltip += QString("<br>");
+        //tooltip += tr("Transactions after this will not yet be visible.");
     }
 
     // Don't word-wrap this (fixed-width) tooltip
-    tooltip = QString("<nobr>") + tooltip + QString("</nobr>");
+    //tooltip = QString("<nobr>") + tooltip + QString("</nobr>");
 
-    labelBlocksIcon->setToolTip(tooltip);
-    progressBarLabel->setToolTip(tooltip);
-    progressBar->setToolTip(tooltip);
+    //labelBlocksIcon->setToolTip(tooltip);
+    //progressBarLabel->setToolTip(tooltip);
+    //progressBar->setToolTip(tooltip);
 
     statusBar()->setVisible(fShowStatusBar);
 }
@@ -884,15 +861,6 @@ void BitcoinGUI::gotoClientControlPage()
 {
     clientcontrolAction->setChecked(true);
     centralStackedWidget->setCurrentWidget(clientcontrolPage);
-
-    exportAction->setEnabled(false);
-    disconnect(exportAction, SIGNAL(triggered()), 0, 0);
-}
-
-void BitcoinGUI::gotoGeneratePage()
-{
-    generateAction->setChecked(true);
-    centralStackedWidget->setCurrentWidget(generatePage);
 
     exportAction->setEnabled(false);
     disconnect(exportAction, SIGNAL(triggered()), 0, 0);

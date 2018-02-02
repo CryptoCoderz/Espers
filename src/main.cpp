@@ -1,19 +1,25 @@
 // Copyright (c) 2009-2010 Satoshi Nakamoto
 // Copyright (c) 2009-2012 The Bitcoin developers
+// Copyright (c) 2016-2017 The CryptoCoderz Team / Espers
 // Distributed under the MIT/X11 software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
 #include <boost/algorithm/string/replace.hpp>
 #include <boost/filesystem.hpp>
 #include <boost/filesystem/fstream.hpp>
+#include <boost/lexical_cast.hpp>
+#include <boost/random/mersenne_twister.hpp>
+#include <boost/random/uniform_int_distribution.hpp>
 
 #include "alert.h"
+#include "blocksizecalculator.h"
 #include "chainparams.h"
 #include "checkpoints.h"
 #include "db.h"
 #include "init.h"
 #include "kernel.h"
 #include "net.h"
+#include "blockparams.h"
 #include "txdb.h"
 #include "txmempool.h"
 #include "velocity.h"
@@ -952,207 +958,12 @@ void static PruneOrphanBlocks()
     mapOrphanBlocks.erase(hash);
 }
 
-// miner's coin base reward
-int64_t GetProofOfWorkReward(int64_t nHeight, int64_t nFees)
-{
-    int64_t nSubsidy = nBlockPoWReward;
-
-    // Genesis block subsidy
-    if(nHeight == nGenesisHeight) {
-        return  nGenesisBlockReward;
-    }
-
-    // Block Buffer
-    else if (nHeight <= nReservePhaseStart) {
-        nSubsidy = nBlockRewardBuffer;
-    }
-
-    // Reserved for Swap from Initial Espers Chain Launch
-    else if(nHeight > nReservePhaseStart) {
-        if(nHeight < nReservePhaseEnd){
-        nSubsidy = nBlockRewardReserve;
-        }
-    }
-    // hardCap v2.1
-    else if(pindexBest->nMoneySupply > MAX_SINGLE_TX)
-    {
-        LogPrint("MINEOUT", "GetProofOfWorkReward(): create=%s nFees=%d\n", FormatMoney(nFees), nFees);
-        return nFees;
-    }
-   
-
-   return nSubsidy + nFees;
-
-    LogPrint("creation", "GetProofOfWorkReward() : create=%s nSubsidy=%d\n", FormatMoney(nSubsidy), nSubsidy);
-}
-
-// miner's coin stake reward based on coin age spent (coin-days)
-int64_t GetProofOfStakeReward(int64_t nCoinAge, int64_t nFees)
-{
-    int64_t nSubsidy = nCoinAge * COIN_YEAR_REWARD * 33 / (365 * 33 + 8);
-
-      if(pindexBest->nHeight > nPoS1PhaseStart){
-      nSubsidy = nCoinAge * COIN_YEAR_REWARD4 * 33 / (365 * 33 + 8);
-      }
-      // Previously nBestHeight
-      else if(pindexBest->nHeight > nPoS5PhaseStart){
-      nSubsidy = nCoinAge * COIN_YEAR_REWARD3 * 33 / (365 * 33 + 8);
-      }
-      // Previously nBestHeight
-      else if(pindexBest->nHeight > nPoS25PhaseStart){
-      nSubsidy = nCoinAge * COIN_YEAR_REWARD2 * 33 / (365 * 33 + 8);
-      }
-      // hardCap v2.1
-      else if(pindexBest->nMoneySupply > MAX_SINGLE_TX)
-      {
-        LogPrint("MINEOUT", "GetProofOfStakeReward(): create=%s nFees=%d\n", FormatMoney(nFees), nFees);
-        return nFees;
-      }
-
-    LogPrint("creation", "GetProofOfStakeReward(): create=%s nCoinAge=%d\n", FormatMoney(nSubsidy), nCoinAge);
-
-    return nSubsidy + nFees;
-}
-
 // ppcoin: find last block index up to pindex
 const CBlockIndex* GetLastBlockIndex(const CBlockIndex* pindex, bool fProofOfStake)
 {
     while (pindex && pindex->pprev && (pindex->IsProofOfStake() != fProofOfStake))
         pindex = pindex->pprev;
     return pindex;
-}
-
-unsigned int PeercoinDiff(const CBlockIndex* pindexLast, bool fProofOfStake)
-{
-    // Standard PPC retarget system, similiar to BTC's
-    CBigNum bnTargetLimit = fProofOfStake ? Params().ProofOfStakeLimit() : Params().ProofOfWorkLimit();
-
-    if (pindexLast == NULL)
-        return bnTargetLimit.GetCompact(); // genesis block
-
-    const CBlockIndex* pindexPrev = GetLastBlockIndex(pindexLast, fProofOfStake);
-    if (pindexPrev->pprev == NULL)
-        return bnTargetLimit.GetCompact(); // first block
-    const CBlockIndex* pindexPrevPrev = GetLastBlockIndex(pindexPrev->pprev, fProofOfStake);
-    if (pindexPrevPrev->pprev == NULL)
-        return bnTargetLimit.GetCompact(); // second block
-
-    int64_t nActualSpacing = pindexPrev->GetBlockTime() - pindexPrevPrev->GetBlockTime();
-    if (nActualSpacing < 0)
-        nActualSpacing = Params().TargetSpacing();
-
-    // ppcoin: target change every block
-    // ppcoin: retarget with exponential moving toward target spacing
-    CBigNum bnNew;
-    bnNew.SetCompact(pindexPrev->nBits);
-    int64_t nInterval = Params().TargetTimespan() / Params().TargetSpacing();
-    bnNew *= ((nInterval - 1) * Params().TargetSpacing() + nActualSpacing + nActualSpacing);
-    bnNew /= ((nInterval + 1) * Params().TargetSpacing());
-
-    if (bnNew <= 0 || bnNew > bnTargetLimit)
-        bnNew = bnTargetLimit;
-
-    return bnNew.GetCompact();
-}
-
-unsigned int DarkGravityWave(const CBlockIndex* pindexLast, bool fProofOfStake)
-{
-        // DarkGravityWave v3.1, written by Evan Duffield - evan@dashpay.io
-        // Modified & revised by bitbandi for PoW support [implementation (fork) cleanup done by CryptoCoderz]
-        const CBigNum nProofOfWorkLimit = fProofOfStake ? Params().ProofOfStakeLimit() : Params().ProofOfWorkLimit();
-        const CBlockIndex *BlockLastSolved = pindexLast;
-        const CBlockIndex *BlockLastSolved_lgf = GetLastBlockIndex(pindexLast, fProofOfStake);
-        const CBlockIndex *BlockReading = pindexLast;
-        // Low Gravity fix (PoW support)
-        if(pindexBest->nHeight > nlowGravity)
-        {
-            BlockReading = BlockLastSolved_lgf;
-        }
-        int64_t nActualTimespan = 0;
-        int64_t LastBlockTime = 0;
-        int64_t PastBlocksMin = 7;
-        int64_t PastBlocksMax = 24;
-        int64_t CountBlocks = 0;
-        CBigNum PastDifficultyAverage;
-        CBigNum PastDifficultyAveragePrev;
-
-        if (BlockLastSolved == NULL || BlockLastSolved->nHeight == 0 || BlockLastSolved->nHeight < PastBlocksMax) {
-            return nProofOfWorkLimit.GetCompact();
-        }
-
-        for (unsigned int i = 1; BlockReading && BlockReading->nHeight > 0; i++) {
-            if (PastBlocksMax > 0 && i > PastBlocksMax) { break; }
-            CountBlocks++;
-
-            if(CountBlocks <= PastBlocksMin) {
-                if (CountBlocks == 1) { PastDifficultyAverage.SetCompact(BlockReading->nBits); }
-                else { PastDifficultyAverage = ((PastDifficultyAveragePrev * CountBlocks) + (CBigNum().SetCompact(BlockReading->nBits))) / (CountBlocks + 1); }
-                PastDifficultyAveragePrev = PastDifficultyAverage;
-            }
-
-            if(LastBlockTime > 0){
-                int64_t Diff = (LastBlockTime - BlockReading->GetBlockTime());
-                nActualTimespan += Diff;
-            }
-            LastBlockTime = BlockReading->GetBlockTime();
-            // Low Gravity chain support (Pre-fix)
-            if(pindexBest->nHeight <= nlowGravity)
-            {
-                if (BlockReading->pprev == NULL) { assert(BlockReading); break; }
-                    BlockReading = BlockReading->pprev;
-            }
-            // Low Gravity fix (PoW support)
-            else if(pindexBest->nHeight > nlowGravity)
-            {
-                BlockReading = GetLastBlockIndex(BlockReading->pprev, fProofOfStake);
-            }
-        }
-
-        CBigNum bnNew(PastDifficultyAverage);
-
-        int64_t _nTargetTimespan = CountBlocks * Params().TargetSpacing();
-
-        if (nActualTimespan < _nTargetTimespan/3)
-            nActualTimespan = _nTargetTimespan/3;
-        if (nActualTimespan > _nTargetTimespan*3)
-            nActualTimespan = _nTargetTimespan*3;
-
-        // Retarget
-        bnNew *= nActualTimespan;
-        bnNew /= _nTargetTimespan;
-
-        if (bnNew > nProofOfWorkLimit){
-            bnNew = nProofOfWorkLimit;
-        }
-
-        return bnNew.GetCompact();
-}
-
-unsigned int GetNextTargetRequired(const CBlockIndex* pindexLast, bool fProofOfStake)
-{
-    unsigned int retarget = DIFF_DGW;
-
-    /* Chain starts with Peercoin per-block restarget,
-       PPC retarget difficulty runs for the initial 615k (thousand) blocks */
-    if(pindexBest->nHeight < nGravityFork)
-    {
-        retarget = DIFF_PPC;
-        // debug info for testing
-        // LogPrintf("PPC per-block retarget selected \n");
-    }
-    // Retarget using PPC
-    if (retarget == DIFF_PPC)
-    {
-        // debug info for testing
-        //LogPrintf("Espers retargetted using: PPC difficulty algo \n");
-        return PeercoinDiff(pindexLast, fProofOfStake);
-    }
-    // Retarget using Dark Gravity Wave v3
-    // debug info for testing
-    // LogPrintf("DarkGravityWave retarget selected \n");
-    //LogPrintf("Espers retargetted using: DGW-v3 difficulty algo \n");
-    return DarkGravityWave(pindexLast, fProofOfStake);
-
 }
 
 bool CheckProofOfWork(uint256 hash, unsigned int nBits)
@@ -1522,6 +1333,14 @@ bool CBlock::ConnectBlock(CTxDB& txdb, CBlockIndex* pindex, bool fJustCheck)
     int64_t nValueOut = 0;
     int64_t nStakeReward = 0;
     unsigned int nSigOps = 0;
+
+    if(nBestHeight > sysUpgrade_01)
+    {
+        MAX_BLOCK_SIZE = BlockSizeCalculator::ComputeBlockSize(pindex);
+        MAX_BLOCK_SIGOPS = MAX_BLOCK_SIZE/50;
+        MAX_TX_SIGOPS = MAX_BLOCK_SIGOPS/5;
+    }
+
     BOOST_FOREACH(CTransaction& tx, vtx)
     {
         uint256 hashTx = tx.GetHash();
@@ -2105,11 +1924,7 @@ bool CBlock::AcceptBlock()
         return DoS(100, error("AcceptBlock() : reject too new nVersion = %d", nVersion));
 
     // Check block against Velocity parameters
-#ifdef __APPLE__
-    if(650000 > nHeight)
-#else	
     if(Velocity_check(nHeight))
-#endif
     {
         // Announce Velocity constraint failure
         if(!Velocity(pindexPrev, this))
@@ -2966,12 +2781,22 @@ bool static ProcessMessage(CNode* pfrom, string strCommand, CDataStream& vRecv, 
         CAddress addrFrom;
         uint64_t nNonce = 1;
         vRecv >> pfrom->nVersion >> pfrom->nServices >> nTime >> addrMe;
-        if (pfrom->nVersion < MIN_PEER_PROTO_VERSION)
+        if(pfrom->nVersion <= (PROTOCOL_VERSION - 1))
         {
-            // disconnect from peers older than this proto version
-            LogPrintf("partner %s using obsolete version %i; disconnecting\n", pfrom->addr.ToString(), pfrom->nVersion);
-            pfrom->fDisconnect = true;
-            return false;
+            if(pindexBest->GetBlockTime() > HRD_LEGACY_CUTOFF)
+            {
+                // disconnect from peers older than legacy cutoff allows : Disconnect message 02
+                LogPrintf("partner %s using obsolete version %i; disconnecting DCM:02\n", pfrom->addr.ToString(), pfrom->nVersion);
+                pfrom->fDisconnect = true;
+                return false;
+            }
+            else if(pfrom->nVersion < MIN_PEER_PROTO_VERSION)
+            {
+                // disconnect from peers older than this proto version : Disconnect message 01
+                LogPrintf("partner %s using obsolete version %i; disconnecting DCM:01\n", pfrom->addr.ToString(), pfrom->nVersion);
+                pfrom->fDisconnect = true;
+                return false;
+            }
         }
 
         if (pfrom->nVersion == 10300)
@@ -3549,6 +3374,43 @@ bool static ProcessMessage(CNode* pfrom, string strCommand, CDataStream& vRecv, 
 
 
     return true;
+}
+
+// Adaptive block sizing depends on this
+FILE* OpenDiskFile(const CDiskBlockPos &pos, const char *prefix, bool fReadOnly)
+{
+    if (pos.IsNull())
+        return NULL;
+    boost::filesystem::path path = GetBlockPosFilename(pos, prefix);
+    boost::filesystem::create_directories(path.parent_path());
+    FILE* file = fopen(path.string().c_str(), "rb+");
+    if (!file && !fReadOnly)
+        file = fopen(path.string().c_str(), "wb+");
+    if (!file) {
+        LogPrintf("Unable to open file %s\n", path.string());
+        return NULL;
+    }
+    if (pos.nPos) {
+        if (fseek(file, pos.nPos, SEEK_SET)) {
+            LogPrintf("Unable to seek to position %u of %s\n", pos.nPos, path.string());
+            fclose(file);
+            return NULL;
+        }
+    }
+    return file;
+}
+
+FILE* OpenBlockFile(const CDiskBlockPos &pos, bool fReadOnly) {
+    return OpenDiskFile(pos, "blk", fReadOnly);
+}
+
+FILE* OpenUndoFile(const CDiskBlockPos &pos, bool fReadOnly) {
+    return OpenDiskFile(pos, "rev", fReadOnly);
+}
+
+boost::filesystem::path GetBlockPosFilename(const CDiskBlockPos &pos, const char *prefix)
+{
+    return GetDataDir() / "blocks" / strprintf("%s%05u.dat", prefix, pos.nFile);
 }
 
 // requires LOCK(cs_vRecvMsg)

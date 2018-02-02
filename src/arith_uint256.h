@@ -1,5 +1,5 @@
-#ifndef BITCOIN_ARITH_UINT256_H
-#define BITCOIN_ARITH_UINT256_H
+#ifndef ESPERS_ARITH_UINT256_H
+#define ESPERS_ARITH_UINT256_H
 
 // Temporary for migration to opaque uint160/256
 #include "uint256.h"
@@ -16,4 +16,4 @@ public:
 #define ArithToUint256(x) (x)
 #define UintToArith256(x) (x)
 
-#endif // BITCOIN_UINT256_H
+#endif // ESPERS_UINT256_H

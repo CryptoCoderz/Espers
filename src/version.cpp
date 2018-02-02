@@ -11,7 +11,7 @@
 const std::string CLIENT_NAME("Espers");
 
 // Client version number
-#define CLIENT_VERSION_SUFFIX   ""
+#define CLIENT_VERSION_SUFFIX   " Alpha"
 
 
 // The following part of the code determines the CLIENT_BUILD variable.
@@ -36,8 +36,8 @@ const std::string CLIENT_NAME("Espers");
 // git will put "#define GIT_ARCHIVE 1" on the next line inside archives. 
 #define GIT_ARCHIVE 1
 #ifdef GIT_ARCHIVE
-#    define GIT_COMMIT_ID "Patch 6"
-#    define GIT_COMMIT_DATE "Mar 02, 2017" //$Format:%cD
+#    define GIT_COMMIT_ID "Patch 2"
+#    define GIT_COMMIT_DATE "Jan 25, 2018" //$Format:%cD
 #endif
 
 #define BUILD_DESC_FROM_COMMIT(maj,min,rev,build,commit) \
