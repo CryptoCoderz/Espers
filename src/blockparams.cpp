@@ -439,7 +439,7 @@ unsigned int VRX_Retarget(const CBlockIndex* pindexLast, bool fProofOfStake)
     // Depricated as of DEC/15/2017 until futher notice
     if(nBestHeight < 729000) // ON -- TODO - ADJUST DATE!
     {
-        if(nBestHeight > 704195)
+        if(nBestHeight >= 704195)
         {
             // LogPrintf("Diff restarted DUE TO STALL \n");
             return bnVelocity.GetCompact(); // restart thread diff
