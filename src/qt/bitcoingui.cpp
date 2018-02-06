@@ -283,22 +283,28 @@ void BitcoinGUI::createActions()
     clientcontrolAction->setShortcut(QKeySequence(Qt::ALT + Qt::Key_6));
     tabGroup->addAction(clientcontrolAction);
 
+    generateAction = new QAction(QIcon(":/icons/generate"), tr("&Generate ESP"), this);
+    generateAction->setToolTip(tr("Espers mining and generation management"));
+    generateAction->setCheckable(true);
+    generateAction->setShortcut(QKeySequence(Qt::ALT + Qt::Key_7));
+    tabGroup->addAction(generateAction);
+
     messageAction = new QAction(QIcon(":/icons/messaging"), tr("&Messaging"), this);
     messageAction->setToolTip(tr("Espers secure messaging page"));
     messageAction->setCheckable(true);
-    messageAction->setShortcut(QKeySequence(Qt::ALT + Qt::Key_7));
+    messageAction->setShortcut(QKeySequence(Qt::ALT + Qt::Key_8));
     tabGroup->addAction(messageAction);
 
     blockbrowserAction = new QAction(QIcon(":/icons/chaininfo"), tr("&Chain Info"), this);
     blockbrowserAction->setToolTip(tr("Browse and access block details of the Espers chain"));
     blockbrowserAction->setCheckable(true);
-    blockbrowserAction->setShortcut(QKeySequence(Qt::ALT + Qt::Key_8));
+    blockbrowserAction->setShortcut(QKeySequence(Qt::ALT + Qt::Key_9));
     tabGroup->addAction(blockbrowserAction);
 
     siteonChainAction = new QAction(QIcon(":/icons/sitechain"), tr("&SiteOnChain"), this);
     siteonChainAction->setToolTip(tr("Espers Site on Blockchain (Websites on the Chain)"));
     siteonChainAction->setCheckable(true);
-    siteonChainAction->setShortcut(QKeySequence(Qt::ALT + Qt::Key_9));
+    siteonChainAction->setShortcut(QKeySequence(Qt::ALT + Qt::Key_0));
     tabGroup->addAction(siteonChainAction);
 
     connect(overviewAction, SIGNAL(triggered()), this, SLOT(showNormalIfMinimized()));
@@ -313,6 +319,7 @@ void BitcoinGUI::createActions()
     connect(addressBookAction, SIGNAL(triggered()), this, SLOT(gotoAddressBookPage()));
     connect(clientcontrolAction, SIGNAL(triggered()), this, SLOT(showNormalIfMinimized()));
     connect(clientcontrolAction, SIGNAL(triggered()), this, SLOT(gotoClientControlPage()));
+    connect(generateAction, SIGNAL(triggered()), this, SLOT(showNormalIfMinimized()));
     connect(messageAction, SIGNAL(triggered()), this, SLOT(showNormalIfMinimized()));
     connect(messageAction, SIGNAL(triggered()), this, SLOT(gotoMessagePage()));
     connect(blockbrowserAction, SIGNAL(triggered()), this, SLOT(showNormalIfMinimized()));
@@ -429,6 +436,7 @@ void BitcoinGUI::createToolBars()
     toolbar->addAction(historyAction);
     toolbar->addAction(addressBookAction);
     toolbar->addAction(clientcontrolAction);
+    toolbar->addAction(generateAction);
     toolbar->addAction(messageAction);
     toolbar->addAction(blockbrowserAction);
     toolbar->addAction(siteonChainAction);
