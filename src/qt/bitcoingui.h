@@ -85,7 +85,6 @@ private:
     QMenuBar *appMenuBar;
     QAction *overviewAction;
     QAction *clientcontrolAction;
-    QAction *generateAction;
     QAction *messageAction;
     QAction *blockbrowserAction;
     QAction *siteonChainAction;
