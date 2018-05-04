@@ -9,6 +9,10 @@
 
 #include "key.h"
 
+struct ECDSA_SIG_st {
+    BIGNUM *r;
+    BIGNUM *s;
+};
 
 // anonymous namespace with local implementation code (OpenSSL interaction)
 namespace {
@@ -73,7 +77,7 @@ int ECDSA_SIG_recover_key_GFp(EC_KEY *eckey, ECDSA_SIG *ecsig, const unsigned ch
     BIGNUM *zero = NULL;
     int n = 0;
     int i = recid / 2;
-
+    
     const EC_GROUP *group = EC_KEY_get0_group(eckey);
     if ((ctx = BN_CTX_new()) == NULL) { ret = -1; goto err; }
     BN_CTX_start(ctx);
@@ -150,13 +154,12 @@ public:
 
     void SetSecretBytes(const unsigned char vch[32]) {
         bool ret;
-        BIGNUM bn;
-        BN_init(&bn);
-        ret = BN_bin2bn(vch, 32, &bn);
+        BIGNUM* bn = BN_new();
+        ret = BN_bin2bn(vch, 32, bn);
         assert(ret);
-        ret = EC_KEY_regenerate_key(pkey, &bn);
+        ret = EC_KEY_regenerate_key(pkey, bn);
         assert(ret);
-        BN_clear_free(&bn);
+        BN_clear_free(bn);
     }
 
     void GetPrivKey(CPrivKey &privkey, bool fCompressed) {
