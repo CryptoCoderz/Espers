@@ -61,8 +61,17 @@ protected:
 
 	void init()
 	{
-		if(bn) BN_clear_free(bn);
-		bn = BN_new();
+        // TODO: v0.8.7.2 OpenSSL 1.1.0 support causes function to become uninitialized, update method!
+
+        // Attempted fix 1 for v0.8.7.3 RC
+        // bn = BN_new();
+        // if(bn) BN_clear_free(bn);
+        // bn = BN_new();
+
+        // Attempted fix 2 for v0.8.7.3 RC
+        BN_clear_free(bn); // NULL safe: https://github.com/openssl/openssl/blob/9e5b50b54d1032634979c224f2dd11c84f2900b7/crypto/bn/bn_lib.c#L153
+        bn = BN_new();
+
 		if(!bn)
 			throw bignum_error("CBigNum::init() : BN_new() returned NULL");
 	}
@@ -546,7 +555,9 @@ public:
     */
     bool isPrime(const int checks=BN_prime_checks) const {
         CAutoBN_CTX pctx;
-        int ret = BN_is_prime(bn, checks, NULL, pctx, NULL);
+        // TODO: v0.8.7.2 OpenSSL 1.1.0 support depricates this method, update method!
+        // Attempted fix 1 for v0.8.7.3 RC
+        int ret = BN_is_prime_ex(bn, checks, pctx, NULL);
         if(ret < 0){
             throw bignum_error("CBigNum::isPrime :BN_is_prime");
         }
