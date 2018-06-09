@@ -66,8 +66,11 @@ static const int64_t MAX_SINGLE_TX = 50000000000 * COIN; // 50 Billion (Same As 
 inline bool MoneyRange(int64_t nValue) { return (nValue >= 0 && nValue <= MAX_SINGLE_TX); }
 /** Threshold for nLockTime: below this value it is interpreted as block number, otherwise as UNIX timestamp. */
 static const unsigned int LOCKTIME_THRESHOLD = 500000000; // Tue Nov  5 00:53:20 1985 UTC
-/** Future Drift Params*/
-inline int64_t FutureDrift(int64_t nTime) { return nTime + 10 * 60; }
+/** Future Drift Params*/ // inline int64_t FutureDrift(int64_t nTime) { return nTime + 10 * 60; }
+inline int64_t TimeDrift() { return 10 * 60; } // Default time drift window
+inline int64_t FutureDriftV1(int64_t nTime) { return nTime + TimeDrift(); } // Initial future drift | Protocol-v2
+inline int64_t FutureDriftV2(int64_t nTime) { return nTime + (TimeDrift() / 2); } // Tightened future drift | Protocol-v3
+inline int64_t FutureDrift(int64_t nTime, int nHeight) { return IsProtocolV3(nHeight) ? FutureDriftV2(nTime) : FutureDriftV1(nTime); }
 
 extern CScript COINBASE_FLAGS;
 extern CCriticalSection cs_main;
