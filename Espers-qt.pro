@@ -1,6 +1,6 @@
 TEMPLATE = app
 TARGET = Espers-qt
-VERSION = 0.8.7.2
+VERSION = 0.8.7.3
 INCLUDEPATH += src src/json src/qt
 QT += core gui widgets network
 DEFINES += ENABLE_WALLET
@@ -23,13 +23,13 @@ greaterThan(QT_MAJOR_VERSION, 4) {
 # as a reference refer to the below section
 
 win32{
-BOOST_LIB_SUFFIX=-mgw63-mt-s-x32-1_66
-BOOST_INCLUDE_PATH=C:/deps/boost_1_66_0
-BOOST_LIB_PATH=C:/deps/boost_1_66_0/stage/lib
+BOOST_LIB_SUFFIX=-mgw81-mt-s-x32-1_67
+BOOST_INCLUDE_PATH=C:/deps/boost_1_67_0
+BOOST_LIB_PATH=C:/deps/boost_1_67_0/stage/lib
 BDB_INCLUDE_PATH=C:/deps/db-6.2.32.NC/build_unix
 BDB_LIB_PATH=C:/deps/db-6.2.32.NC/build_unix
-OPENSSL_INCLUDE_PATH=C:/deps/openssl-1.0.2n/include
-OPENSSL_LIB_PATH=C:/deps/openssl-1.0.2n
+OPENSSL_INCLUDE_PATH=C:/deps/openssl-1.0.2o/include
+OPENSSL_LIB_PATH=C:/deps/openssl-1.0.2o
 MINIUPNPC_INCLUDE_PATH=C:/deps/
 MINIUPNPC_LIB_PATH=C:/deps/miniupnpc-1.9
 QRENCODE_INCLUDE_PATH=C:/deps/qrencode-3.4.4
