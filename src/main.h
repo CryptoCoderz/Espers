@@ -36,6 +36,8 @@ static unsigned int MAX_BLOCK_SIZE = 15000000;
 static const unsigned int MIN_BLOCK_SIZE = 1500000;
 /** Defaults to yes, adaptively increase/decrease max/min/priority along with the re-calculated block size **/
 static const unsigned int DEFAULT_SCALE_BLOCK_SIZE_OPTIONS = 1;
+/** The maximum outbound connection we want to support (default) */
+static const int64_t DEFAULT_MAX_OUTBOUND_CONNECTIONS = 23;
 /** The maximum size for mined blocks */
 static const unsigned int MAX_BLOCK_SIZE_GEN = MAX_BLOCK_SIZE/2;
 /** The maximum size for transactions we're willing to relay/mine **/
@@ -50,8 +52,6 @@ static unsigned int MAX_TX_SIGOPS = MAX_BLOCK_SIGOPS/5;
 static const unsigned int MAX_ORPHAN_TRANSACTIONS = MAX_BLOCK_SIZE/100;
 /** Default for -maxorphanblocks, maximum number of orphan blocks kept in memory */
 static const unsigned int DEFAULT_MAX_ORPHAN_BLOCKS = 750;
-/** The maximum number of entries in an 'inv' protocol message */
-static const unsigned int MAX_INV_SZ = 50000;
 /** Fees smaller than this (in satoshi) are considered zero fee (for transaction creation) */
 static const int64_t MIN_TX_FEE = 10000;
 /** Fees smaller than this (in satoshi) are considered zero fee (for relaying) */
@@ -66,6 +66,10 @@ static const int64_t MAX_SINGLE_TX = 50000000000 * COIN; // 50 Billion (Same As 
 inline bool MoneyRange(int64_t nValue) { return (nValue >= 0 && nValue <= MAX_SINGLE_TX); }
 /** Threshold for nLockTime: below this value it is interpreted as block number, otherwise as UNIX timestamp. */
 static const unsigned int LOCKTIME_THRESHOLD = 500000000; // Tue Nov  5 00:53:20 1985 UTC
+/** Number of blocks that can be requested at any given time from a single peer. */
+static const int MAX_BLOCKS_IN_TRANSIT_PER_PEER = 128;
+/** Timeout in seconds before considering a block download peer unresponsive. */
+static const unsigned int BLOCK_DOWNLOAD_TIMEOUT = 60;
 /** Future Drift Params*/ // inline int64_t FutureDrift(int64_t nTime) { return nTime + 10 * 60; }
 inline int64_t TimeDrift() { return 10 * 60; } // Default time drift window
 inline int64_t FutureDriftV1(int64_t nTime) { return nTime + TimeDrift(); } // Initial future drift | Protocol-v2
@@ -109,6 +113,7 @@ class CReserveKey;
 class CTxDB;
 class CTxIndex;
 class CWalletInterface;
+struct CNodeStateStats;
 
 /** Register a wallet to receive updates from core */
 void RegisterWallet(CWalletInterface* pwalletIn);
@@ -149,6 +154,19 @@ void ThreadStakeMiner(CWallet *pwallet);
 
 /** (try to) add transaction to memory pool **/
 bool AcceptToMemoryPool(CTxMemPool& pool, CTransaction &tx, bool fLimitFree, bool* pfMissingInputs);
+
+/** Abort with a message */
+bool AbortNode(const std::string &msg, const std::string &userMessage="");
+/** Get statistics from node state */
+bool GetNodeStateStats(NodeId nodeid, CNodeStateStats &stats);
+/** Increase a node's misbehavior score. */
+void Misbehaving(NodeId nodeid, int howmuch);
+
+
+struct CNodeStateStats {
+    int nMisbehavior;
+};
+
 
 /** Position on disk for a particular transaction. */
 class CDiskTxPos
@@ -917,6 +935,8 @@ public:
     unsigned int nTime;
     unsigned int nBits;
     unsigned int nNonce;
+    // (memory only) Sequencial id assigned to distinguish order in which blocks are received.
+    uint32_t nSequenceId;
 
     CBlockIndex()
     {
@@ -935,6 +955,7 @@ public:
         hashProof = 0;
         prevoutStake.SetNull();
         nStakeTime = 0;
+        nSequenceId = 0;
 
         nVersion       = 0;
         hashMerkleRoot = 0;
@@ -958,6 +979,7 @@ public:
         nStakeModifier = 0;
         bnStakeModifierV2 = 0;
         hashProof = 0;
+        nSequenceId = 0;
         if (block.IsProofOfStake())
         {
             SetProofOfStake();

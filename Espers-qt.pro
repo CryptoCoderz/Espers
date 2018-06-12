@@ -292,6 +292,7 @@ HEADERS += src/qt/bitcoingui.h \
     src/clientversion.h \
     src/threadsafety.h \
     src/tinyformat.h \
+    src/limitedmap.h \
     src/qt/siteonchain.h \
     src/hmq1725/hashblock.h \
     src/hmq1725/sph_blake.h \
