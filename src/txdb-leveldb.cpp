@@ -358,24 +358,25 @@ bool CTxDB::LoadBlockIndex()
         uint256 blockHash = diskindex.GetBlockHash();
 
         // Construct block index object
-        CBlockIndex* pindexNew    = InsertBlockIndex(blockHash);
-        pindexNew->pprev          = InsertBlockIndex(diskindex.hashPrev);
-        pindexNew->pnext          = InsertBlockIndex(diskindex.hashNext);
-        pindexNew->nFile          = diskindex.nFile;
-        pindexNew->nBlockPos      = diskindex.nBlockPos;
-        pindexNew->nHeight        = diskindex.nHeight;
-        pindexNew->nMint          = diskindex.nMint;
-        pindexNew->nMoneySupply   = diskindex.nMoneySupply;
-        pindexNew->nFlags         = diskindex.nFlags;
-        pindexNew->nStakeModifier = diskindex.nStakeModifier;
-        pindexNew->prevoutStake   = diskindex.prevoutStake;
-        pindexNew->nStakeTime     = diskindex.nStakeTime;
-        pindexNew->hashProof      = diskindex.hashProof;
-        pindexNew->nVersion       = diskindex.nVersion;
-        pindexNew->hashMerkleRoot = diskindex.hashMerkleRoot;
-        pindexNew->nTime          = diskindex.nTime;
-        pindexNew->nBits          = diskindex.nBits;
-        pindexNew->nNonce         = diskindex.nNonce;
+        CBlockIndex* pindexNew       = InsertBlockIndex(blockHash);
+        pindexNew->pprev             = InsertBlockIndex(diskindex.hashPrev);
+        pindexNew->pnext             = InsertBlockIndex(diskindex.hashNext);
+        pindexNew->nFile             = diskindex.nFile;
+        pindexNew->nBlockPos         = diskindex.nBlockPos;
+        pindexNew->nHeight           = diskindex.nHeight;
+        pindexNew->nMint             = diskindex.nMint;
+        pindexNew->nMoneySupply      = diskindex.nMoneySupply;
+        pindexNew->nFlags            = diskindex.nFlags;
+        pindexNew->nStakeModifier    = diskindex.nStakeModifier;
+        pindexNew->bnStakeModifierV2 = diskindex.bnStakeModifierV2;
+        pindexNew->prevoutStake      = diskindex.prevoutStake;
+        pindexNew->nStakeTime        = diskindex.nStakeTime;
+        pindexNew->hashProof         = diskindex.hashProof;
+        pindexNew->nVersion          = diskindex.nVersion;
+        pindexNew->hashMerkleRoot    = diskindex.hashMerkleRoot;
+        pindexNew->nTime             = diskindex.nTime;
+        pindexNew->nBits             = diskindex.nBits;
+        pindexNew->nNonce            = diskindex.nNonce;
 
         // Watch for genesis block
         if (pindexGenesisBlock == NULL && blockHash == Params().HashGenesisBlock())

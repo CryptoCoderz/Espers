@@ -75,7 +75,8 @@ Value getpeerinfo(const Array& params, bool fHelp)
 
     BOOST_FOREACH(const CNodeStats& stats, vstats) {
         Object obj;
-
+        CNodeStateStats statestats;
+        bool fStateStats = GetNodeStateStats(stats.nodeid, statestats);
         obj.push_back(Pair("addr", stats.addrName));
         if (!(stats.addrLocal.empty()))
             obj.push_back(Pair("addrlocal", stats.addrLocal));
@@ -92,7 +93,9 @@ Value getpeerinfo(const Array& params, bool fHelp)
         obj.push_back(Pair("subver", stats.strSubVer));
         obj.push_back(Pair("inbound", stats.fInbound));
         obj.push_back(Pair("startingheight", stats.nStartingHeight));
-        obj.push_back(Pair("banscore", stats.nMisbehavior));
+        if (fStateStats) {
+            obj.push_back(Pair("banscore", statestats.nMisbehavior));
+        }
         obj.push_back(Pair("syncnode", stats.fSyncNode));
 
         ret.push_back(obj);

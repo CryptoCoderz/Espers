@@ -34,5 +34,7 @@ static const int64_t STALL_PULL = 1515153600; // Revision to swing patch | Frida
 static const int64_t VELOCITY_TOGGLE = 650000; // Implementation of the Velocity system into the chain.
 /** Velocity retarget toggle block */
 static const int64_t VELOCITY_TDIFF = 667350; // Use Velocity's retargetting method.
+/** Proof-of-Stake Version 3.0 implementation fork */
+inline bool IsProtocolV3(int64_t nTime) { return TestNet() || nTime > 9994028400; } // OFF (NOT TOGGLED)
 
 #endif

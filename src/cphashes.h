@@ -32,6 +32,11 @@ static const uint256 CheckBlock_0021("0x9a26fc52cdab2b863e4cebbfe2a8889209be938f
 // Swing Patch
 static const uint256 CheckBlock_0022("0x45681988b0e9bc1275c0186160e913b13972083025f02dd35ce13a8d2835192c");
 static const uint256 CheckBlock_0023("0x5ee5e4319108aca517f15574165887b97a7ce078e683b51d6d5decd0f74f3cd9");
+// PoS-v3/Peer-Handling/Security upgrade
+static const uint256 CheckBlock_0024("0x000003af3506ec5ad72b13de9d242432946797b0f495fd38b6d08ed15bdd7d45");
+static const uint256 CheckBlock_0025("0x00000000030d685da8aae697b3d373b6a41b181d2f5c1e72b62ab9eb3d3aee01");
+static const uint256 CheckBlock_0026("0x66d9ef5c9d3025516f7389cfa6bedbb0d0184f86b231d686f0ba87f8fd5d40ea");
+static const uint256 CheckBlock_0027("0x0000000002d36834fed8602c4eee5fe439051673096197e0b0605d8d23642c5b");
 
 
 static const int64_t CheckHeight_0001 = 10;
@@ -60,5 +65,10 @@ static const int64_t CheckHeight_0021 = 669750;
 // Swing Patch
 static const int64_t CheckHeight_0022 = 704190;
 static const int64_t CheckHeight_0023 = 704195;
+// PoS-v3/Peer-Handling/Security upgrade
+static const int64_t CheckHeight_0024 = 725500;
+static const int64_t CheckHeight_0025 = 746215;
+static const int64_t CheckHeight_0026 = 767500;
+static const int64_t CheckHeight_0027 = 769000;
 
 #endif

@@ -52,6 +52,13 @@ enum
     SCRIPT_VERIFY_DISCOURAGE_UPGRADABLE_NOPS = (1U << 2),
 
     SCRIPT_VERIFY_STRICTENC = (1U << 3),
+
+    SCRIPT_VERIFY_ALLOW_EMPTY_SIG = (1U << 4),
+    SCRIPT_VERIFY_FIX_HASHTYPE = (1U << 5),
+
+    // Verify CHECKLOCKTIMEVERIFY (BIP65)
+    //
+    SCRIPT_VERIFY_CHECKLOCKTIMEVERIFY = (1U << 6),
 };
 
 // Mandatory script verification flags that all new blocks must comply with for
@@ -59,14 +66,16 @@ enum
 //
 // Failing one of these tests may trigger a DoS ban - see ConnectInputs() for
 // details.
-static const unsigned int MANDATORY_SCRIPT_VERIFY_FLAGS = SCRIPT_VERIFY_NONE;
+static const unsigned int MANDATORY_SCRIPT_VERIFY_FLAGS = SCRIPT_VERIFY_NULLDUMMY |
+                                                          SCRIPT_VERIFY_STRICTENC |
+                                                          SCRIPT_VERIFY_ALLOW_EMPTY_SIG |
+                                                          SCRIPT_VERIFY_FIX_HASHTYPE |
+                                                          SCRIPT_VERIFY_CHECKLOCKTIMEVERIFY;
 
 // Standard script verification flags that standard transactions will comply
 // with. However scripts violating these flags may still be present in valid
 // blocks and we must accept those blocks.
 static const unsigned int STANDARD_SCRIPT_VERIFY_FLAGS = MANDATORY_SCRIPT_VERIFY_FLAGS |
-                                                         SCRIPT_VERIFY_STRICTENC |
-                                                         SCRIPT_VERIFY_NULLDUMMY |
                                                          SCRIPT_VERIFY_DISCOURAGE_UPGRADABLE_NOPS;
 
 // For convenience, standard but not mandatory verify flags.
@@ -224,7 +233,8 @@ enum opcodetype
 
     // expansion
     OP_NOP1 = 0xb0,
-    OP_NOP2 = 0xb1,
+    OP_CHECKLOCKTIMEVERIFY = 0xb1,
+    OP_NOP2 = OP_CHECKLOCKTIMEVERIFY,
     OP_NOP3 = 0xb2,
     OP_NOP4 = 0xb3,
     OP_NOP5 = 0xb4,
@@ -701,6 +711,8 @@ public:
 
 
 bool IsDERSignature(const valtype &vchSig, bool haveHashType = true);
+bool IsLowDERSignature(const valtype &vchSig, bool haveHashType = true);
+bool IsCompressedOrUncompressedPubKey(const valtype &vchPubKey);
 bool EvalScript(std::vector<std::vector<unsigned char> >& stack, const CScript& script, const CTransaction& txTo, unsigned int nIn, unsigned int flags, int nHashType);
 bool Solver(const CScript& scriptPubKey, txnouttype& typeRet, std::vector<std::vector<unsigned char> >& vSolutionsRet);
 int ScriptSigArgsExpected(txnouttype t, const std::vector<std::vector<unsigned char> >& vSolutions);

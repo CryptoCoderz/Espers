@@ -6,8 +6,10 @@
 
 #include "bignum.h"
 
-/** Minimum nCoinAge required to stake PoS */
+/** Minimum nCoinAge required to stake PoS (v2) */
 static const unsigned int nStakeMinAge = 2 * 60 * 60; // 2 hours
+/** Minimum nCoinAge required to stake PoS (v3) */
+static const int nStakeMinConfirmations = 90; // 5(minutes) × 90(confirms) ÷ 60(minutes) = 7.5 hours
 /** Time to elapse before new modifier is computed */
 static const unsigned int nModifierInterval = 10 * 60;
 /** PoS Subsidy */
