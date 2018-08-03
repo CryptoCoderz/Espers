@@ -35,6 +35,6 @@ static const int64_t VELOCITY_TOGGLE = 650000; // Implementation of the Velocity
 /** Velocity retarget toggle block */
 static const int64_t VELOCITY_TDIFF = 667350; // Use Velocity's retargetting method.
 /** Proof-of-Stake Version 3.0 implementation fork */
-inline bool IsProtocolV3(int64_t nTime) { return TestNet() || nTime > 9994028400; } // OFF (NOT TOGGLED)
+inline bool IsProtocolV3(int64_t nTime) { return TestNet() || nTime > 1535673600; } // ON (TOGGLED Fri, 31 Aug 2018 00:00:00 GMT)
 
 #endif
