@@ -203,40 +203,6 @@ uint256 ComputeStakeModifierV2(const CBlockIndex* pindexPrev, const uint256& ker
     return Hash(ss.begin(), ss.end());
 }
 
-// The stake modifier used to hash for a stake kernel is chosen as the stake
-// modifier about a selection interval later than the coin generating the kernel
-static bool GetKernelStakeModifier(uint256 hashBlockFrom, uint64_t& nStakeModifier, int& nStakeModifierHeight, int64_t& nStakeModifierTime, bool fPrintProofOfStake)
-{
-    nStakeModifier = 0;
-    if (!mapBlockIndex.count(hashBlockFrom))
-        return error("GetKernelStakeModifier() : block not indexed");
-    const CBlockIndex* pindexFrom = mapBlockIndex[hashBlockFrom];
-    nStakeModifierHeight = pindexFrom->nHeight;
-    nStakeModifierTime = pindexFrom->GetBlockTime();
-    int64_t nStakeModifierSelectionInterval = GetStakeModifierSelectionInterval();
-    const CBlockIndex* pindex = pindexFrom;
-    // loop to find the stake modifier later by a selection interval
-    while (nStakeModifierTime < pindexFrom->GetBlockTime() + nStakeModifierSelectionInterval)
-    {
-        if (!pindex->pnext)
-        {   // reached best block; may happen if node is behind on block chain
-            if (fPrintProofOfStake || (pindex->GetBlockTime() + nStakeMinAge - nStakeModifierSelectionInterval > GetAdjustedTime()))
-                return error("GetKernelStakeModifier() : reached best block %s at height %d from block %s",
-                    pindex->GetBlockHash().ToString(), pindex->nHeight, hashBlockFrom.ToString());
-            else
-                return false;
-        }
-        pindex = pindex->pnext;
-        if (pindex->GeneratedStakeModifier())
-        {
-            nStakeModifierHeight = pindex->nHeight;
-            nStakeModifierTime = pindex->GetBlockTime();
-        }
-    }
-    nStakeModifier = pindex->nStakeModifier;
-    return true;
-}
-
 // Espers kernel protocol
 // coinstake must meet hash target according to the protocol:
 // kernel (input 0) must meet the formula
@@ -284,10 +250,12 @@ bool CheckStakeKernelHash(CBlockIndex* pindexPrev, unsigned int nBits, const CBl
 
     // Calculate hash
     CDataStream ss(SER_GETHASH, 0);
+
     if (IsProtocolV3(nTimeTx))
         ss << bnStakeModifierV2;
     else
         ss << nStakeModifier << nTimeBlockFrom;
+
     ss << txPrev.nTime << prevout.hash << prevout.n << nTimeTx;
     hashProofOfStake = Hash(ss.begin(), ss.end());
 
