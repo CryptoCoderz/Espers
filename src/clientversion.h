@@ -12,7 +12,7 @@
 #define CLIENT_VERSION_BUILD       3
 
 // Set to true for release, false for prerelease or test build
-#define CLIENT_VERSION_IS_RELEASE  false
+#define CLIENT_VERSION_IS_RELEASE  true
 
 // Converts the parameter X to a string after macro replacement on X has been performed.
 // Don't merge these into one macro!
