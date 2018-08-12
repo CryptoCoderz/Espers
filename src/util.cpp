@@ -1165,6 +1165,8 @@ void ShrinkDebugFile()
             fclose(file);
         }
     }
+    else if (file != NULL)
+        fclose(file);
 }
 
 static int64_t nMockTime = 0;  // For unit testing

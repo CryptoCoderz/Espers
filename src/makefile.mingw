@@ -88,24 +88,24 @@ OBJS= \
     obj/scrypt-x86_64.o \
     obj/blockparams.o \
     obj/chainparams.o \
-    obj/hmq1725/blake.o\
-    obj/hmq1725/bmw.o\
-    obj/hmq1725/groestl.o\
-    obj/hmq1725/jh.o\
-    obj/hmq1725/keccak.o\
-    obj/hmq1725/skein.o\
-    obj/hmq1725/cubehash.o \
-    obj/hmq1725/luffa.o \
-    obj/hmq1725/aes_helper.o \
-    obj/hmq1725/echo.o \
-    obj/hmq1725/shavite.o \
-    obj/hmq1725/simd.o \
-    obj/hmq1725/hamsi.o \
-    obj/hmq1725/fugue.o \
-    obj/hmq1725/shabal.o \
-    obj/hmq1725/whirlpool.o \
-    obj/hmq1725/haval.o \
-    obj/hmq1725/sha2big.o
+    obj/crypto/hmq/common/blake.o\
+    obj/crypto/hmq/common/bmw.o\
+    obj/crypto/hmq/common/groestl.o\
+    obj/crypto/hmq/common/jh.o\
+    obj/crypto/hmq/common/keccak.o\
+    obj/crypto/hmq/common/skein.o\
+    obj/crypto/hmq/common/cubehash.o \
+    obj/crypto/hmq/common/luffa.o \
+    obj/crypto/hmq/common/aes_helper.o \
+    obj/crypto/hmq/common/echo.o \
+    obj/crypto/hmq/common/shavite.o \
+    obj/crypto/hmq/common/simd.o \
+    obj/crypto/hmq/common/hamsi.o \
+    obj/crypto/hmq/common/fugue.o \
+    obj/crypto/hmq/common/shabal.o \
+    obj/crypto/hmq/common/whirlpool.o \
+    obj/crypto/hmq/common/haval.o \
+    obj/crypto/hmq/common/sha2big.o
 
 ifeq (${USE_WALLET}, 1)
     DEFS += -DENABLE_WALLET

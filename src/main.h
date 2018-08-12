@@ -11,7 +11,7 @@
 #include "sync.h"
 #include "txmempool.h"
 #include "net.h"
-#include "hmq1725/hashblock.h"
+#include "crypto/hmq/hmq1725.h"
 #include "fork.h"
 #include "genesis.h"
 #include "mining.h"
@@ -667,7 +667,7 @@ public:
 
     uint256 GetHash() const
     {
-        return HMQ1725(BEGIN(nVersion), END(nNonce));
+        return Hash_hmq1725(BEGIN(nVersion), END(nNonce));
     }
 
     int64_t GetBlockTime() const

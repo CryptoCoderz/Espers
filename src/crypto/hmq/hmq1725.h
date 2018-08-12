@@ -2,24 +2,24 @@
 #define HASHBLOCK_H
 
 #include "uint256.h"
-#include "sph_blake.h"
-#include "sph_bmw.h"
-#include "sph_groestl.h"
-#include "sph_jh.h"
-#include "sph_keccak.h"
-#include "sph_skein.h"
+#include "common/sph_blake.h"
+#include "common/sph_bmw.h"
+#include "common/sph_groestl.h"
+#include "common/sph_jh.h"
+#include "common/sph_keccak.h"
+#include "common/sph_skein.h"
 /** ADDED FOR HMQ1725 */
-#include "sph_luffa.h"
-#include "sph_cubehash.h"
-#include "sph_shavite.h"
-#include "sph_simd.h"
-#include "sph_echo.h"
-#include "sph_hamsi.h"
-#include "sph_fugue.h"
-#include "sph_shabal.h"
-#include "sph_whirlpool.h"
-#include "sph_sha2.h"
-#include "sph_haval.h"
+#include "common/sph_luffa.h"
+#include "common/sph_cubehash.h"
+#include "common/sph_shavite.h"
+#include "common/sph_simd.h"
+#include "common/sph_echo.h"
+#include "common/sph_hamsi.h"
+#include "common/sph_fugue.h"
+#include "common/sph_shabal.h"
+#include "common/sph_whirlpool.h"
+#include "common/sph_sha2.h"
+#include "common/sph_haval.h"
 
 #ifndef QT_NO_DEBUG
 #include <string>
@@ -86,7 +86,7 @@ GLOBAL sph_haval256_5_context   z_haval;
 #define ZHAVAL (memcpy(&ctx_haval, &z_haval, sizeof(z_haval)))
 
 template<typename T1>
-inline uint256 HMQ1725(const T1 pbegin, const T1 pend)
+inline uint256 Hash_hmq1725(const T1 pbegin, const T1 pend)
 
 {
     sph_blake512_context     ctx_blake;

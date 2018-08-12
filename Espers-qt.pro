@@ -1,6 +1,6 @@
 TEMPLATE = app
 TARGET = Espers-qt
-VERSION = 0.8.7.3
+VERSION = 0.8.7.4
 INCLUDEPATH += src src/json src/qt
 QT += core gui widgets network
 DEFINES += ENABLE_WALLET
@@ -128,24 +128,24 @@ contains(ESPERS_NEED_QT_PLUGINS, 1) {
 INCLUDEPATH += src/leveldb/include src/leveldb/helpers
 LIBS += $$PWD/src/leveldb/libleveldb.a $$PWD/src/leveldb/libmemenv.a
 SOURCES += src/txdb-leveldb.cpp \
-    src/hmq1725/aes_helper.c \
-    src/hmq1725/blake.c \
-    src/hmq1725/bmw.c \
-    src/hmq1725/groestl.c \
-    src/hmq1725/jh.c \
-    src/hmq1725/keccak.c \
-    src/hmq1725/skein.c \
-    src/hmq1725/luffa.c \
-    src/hmq1725/cubehash.c \
-    src/hmq1725/shavite.c \
-    src/hmq1725/echo.c \
-    src/hmq1725/simd.c \
-    src/hmq1725/hamsi.c \
-    src/hmq1725/fugue.c \
-    src/hmq1725/shabal.c \
-    src/hmq1725/whirlpool.c \
-    src/hmq1725/haval.c \
-    src/hmq1725/sha2big.c
+    src/crypto/hmq/common/aes_helper.c \
+    src/crypto/hmq/common/blake.c \
+    src/crypto/hmq/common/bmw.c \
+    src/crypto/hmq/common/groestl.c \
+    src/crypto/hmq/common/jh.c \
+    src/crypto/hmq/common/keccak.c \
+    src/crypto/hmq/common//skein.c \
+    src/crypto/hmq/common/luffa.c \
+    src/crypto/hmq/common/cubehash.c \
+    src/crypto/hmq/common/shavite.c \
+    src/crypto/hmq/common/echo.c \
+    src/crypto/hmq/common/simd.c \
+    src/crypto/hmq/common/hamsi.c \
+    src/crypto/hmq/common/fugue.c \
+    src/crypto/hmq/common/shabal.c \
+    src/crypto/hmq/common/whirlpool.c \
+    src/crypto/hmq/common/haval.c \
+    src/crypto/hmq/common/sha2big.c
 !win32 {
     # we use QMAKE_CXXFLAGS_RELEASE even without RELEASE=1 because we use RELEASE to indicate linking preferences not -O preferences
     genleveldb.commands = cd $$PWD/src/leveldb && CC=$$QMAKE_CC CXX=$$QMAKE_CXX $(MAKE) OPT=\"$$QMAKE_CXXFLAGS $$QMAKE_CXXFLAGS_RELEASE\" libleveldb.a libmemenv.a
@@ -294,27 +294,27 @@ HEADERS += src/qt/bitcoingui.h \
     src/tinyformat.h \
     src/limitedmap.h \
     src/qt/siteonchain.h \
-    src/hmq1725/hashblock.h \
-    src/hmq1725/sph_blake.h \
-    src/hmq1725/sph_bmw.h \
-    src/hmq1725/sph_groestl.h \
-    src/hmq1725/sph_jh.h \
-    src/hmq1725/sph_keccak.h \
-    src/hmq1725/sph_skein.h \
-    src/hmq1725/sph_types.h \
+    src/crypto/hmq/hmq1725.h \
+    src/crypto/hmq/common/sph_blake.h \
+    src/crypto/hmq/common/sph_bmw.h \
+    src/crypto/hmq/common/sph_groestl.h \
+    src/crypto/hmq/common/sph_jh.h \
+    src/crypto/hmq/common/sph_keccak.h \
+    src/crypto/hmq/common/sph_skein.h \
+    src/crypto/hmq/common/sph_types.h \
     src/qt/macnotificationhandler.h \
     #ADDED FOR HMQ1725
-    src/hmq1725/sph_luffa.h \
-    src/hmq1725/sph_cubehash.h \
-    src/hmq1725/sph_echo.h \
-    src/hmq1725/sph_shavite.h \
-    src/hmq1725/sph_simd.h \
-    src/hmq1725/sph_hamsi.h \
-    src/hmq1725/sph_fugue.h \
-    src/hmq1725/sph_shabal.h \
-    src/hmq1725/sph_whirlpool.h \
-    src/hmq1725/sph_haval.h \
-    src/hmq1725/sph_sha2.h
+    src/crypto/hmq/common/sph_luffa.h \
+    src/crypto/hmq/common/sph_cubehash.h \
+    src/crypto/hmq/common/sph_echo.h \
+    src/crypto/hmq/common/sph_shavite.h \
+    src/crypto/hmq/common/sph_simd.h \
+    src/crypto/hmq/common/sph_hamsi.h \
+    src/crypto/hmq/common/sph_fugue.h \
+    src/crypto/hmq/common/sph_shabal.h \
+    src/crypto/hmq/common/sph_whirlpool.h \
+    src/crypto/hmq/common/sph_haval.h \
+    src/crypto/hmq/common/sph_sha2.h
 
 SOURCES += src/qt/bitcoin.cpp src/qt/bitcoingui.cpp \
     src/qt/transactiontablemodel.cpp \
