@@ -5,7 +5,7 @@
 #ifndef ESPERS_TXMEMPOOL_H
 #define ESPERS_TXMEMPOOL_H
 
-#include "core.h"
+#include "chain.h"
 
 /*
  * CTxMemPool stores valid-according-to-the-current-best-chain
