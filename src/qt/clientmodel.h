@@ -25,6 +25,7 @@ public:
     OptionsModel *getOptionsModel();
 
     int getNumConnections() const;
+    QString getXNodeCountString() const;
     int getNumBlocks() const;
     int getNumBlocksAtStartup();
 
@@ -52,10 +53,11 @@ private:
     OptionsModel *optionsModel;
 
     int cachedNumBlocks;
-
     int numBlocksAtStartup;
+    QString cachedXNodeCountString;
 
     QTimer *pollTimer;
+    QTimer *pollXnTimer;
 
     void subscribeToCoreSignals();
     void unsubscribeFromCoreSignals();
@@ -63,6 +65,7 @@ private:
 signals:
     void numConnectionsChanged(int count);
     void numBlocksChanged(int count);
+    void strXNodesChanged(const QString &strXNodes);
     void alertsChanged(const QString &warnings);
     void bytesChanged(quint64 totalBytesIn, quint64 totalBytesOut);
 
@@ -71,6 +74,7 @@ signals:
 
 public slots:
     void updateTimer();
+    void updateXnTimer();
     void updateNumConnections(int numConnections);
     void updateAlert(const QString &hash, int status);
 };

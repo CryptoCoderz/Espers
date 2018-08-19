@@ -84,7 +84,10 @@ inline void MilliSleep(int64_t n)
 }
 
 
-
+extern bool fXnode;
+extern int64_t enforceXNodePaymentsTime;
+extern std::string strXnodeAddr;
+extern int nXNodeMinProtocol;
 extern std::map<std::string, std::string> mapArgs;
 extern std::map<std::string, std::vector<std::string> > mapMultiArgs;
 extern bool fDebug;
@@ -170,6 +173,7 @@ bool RenameOver(boost::filesystem::path src, boost::filesystem::path dest);
 boost::filesystem::path GetDefaultDataDir();
 const boost::filesystem::path &GetDataDir(bool fNetSpecific = true);
 boost::filesystem::path GetConfigFile();
+boost::filesystem::path GetXNodeConfigFile();
 boost::filesystem::path GetPidFile();
 #ifndef WIN32
 void CreatePidFile(const boost::filesystem::path &path, pid_t pid);

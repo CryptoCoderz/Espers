@@ -269,6 +269,9 @@ void RPCConsole::setClientModel(ClientModel *model)
         setNumBlocks(model->getNumBlocks());
         connect(model, SIGNAL(numBlocksChanged(int)), this, SLOT(setNumBlocks(int)));
 
+        setXNodeCount(model->getXNodeCountString());
+        connect(model, SIGNAL(strXNodesChanged(QString)), this, SLOT(setXNodeCount(QString)));
+
         updateTrafficStats(model->getTotalBytesRecv(), model->getTotalBytesSent());
         connect(model, SIGNAL(bytesChanged(quint64,quint64)), this, SLOT(updateTrafficStats(quint64, quint64)));
 
@@ -353,6 +356,11 @@ void RPCConsole::setNumBlocks(int count)
     ui->numberOfBlocks->setText(QString::number(count));
     if(clientModel)
         ui->lastBlockTime->setText(clientModel->getLastBlockDate().toString());
+}
+
+void RPCConsole::setXNodeCount(const QString &strXNodes)
+{
+    ui->xnodeCount->setText(strXNodes);
 }
 
 void RPCConsole::on_lineEdit_returnPressed()
