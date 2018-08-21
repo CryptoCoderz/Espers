@@ -69,7 +69,7 @@ void CActiveXNode::ManageStatus()
         // Choose coins to use
         CPubKey pubKeyCollateralAddress;
         CKey keyCollateralAddress;
-
+/*
         if(GetXnodeVin(vin, pubKeyCollateralAddress, keyCollateralAddress)) {
 
             if(GetInputAge(vin) < XNODE_MIN_CONFIRMATIONS){
@@ -79,7 +79,7 @@ void CActiveXNode::ManageStatus()
                 status = XNODE_INPUT_TOO_NEW;
                 return;
             }
-
+*/
             LogPrintf("CActiveXNode::ManageStatus() - Is capable xnode!\n");
 
             status = XNODE_IS_CAPABLE;
@@ -106,10 +106,10 @@ void CActiveXNode::ManageStatus()
             }
 
             return;
-        } else {
-            notCapableReason = "Could not find suitable coins!";
-        	LogPrintf("CActiveXNode::ManageStatus() - Could not find suitable coins!\n");
-        }
+       // } else {
+       //     notCapableReason = "Could not find suitable coins!";
+       // 	LogPrintf("CActiveXNode::ManageStatus() - Could not find suitable coins!\n");
+       // }
     }
 
     //send to all peers
