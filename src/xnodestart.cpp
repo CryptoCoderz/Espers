@@ -182,21 +182,23 @@ bool CActiveXNode::Dseep(std::string& errorMessage) {
 bool CActiveXNode::Dseep(CTxIn vin, CService service, CKey keyXNode, CPubKey pubKeyXNode, std::string &retErrorMessage, bool stop) {
     std::string errorMessage;
     std::vector<unsigned char> vchXnodeSignature;
-    std::string strXnodeSignMessage;
+    //std::string strXnodeSignMessage;
     int64_t xNodeSignatureTime = GetAdjustedTime();
 
     std::string strMessage = service.ToString() + boost::lexical_cast<std::string>(xNodeSignatureTime) + boost::lexical_cast<std::string>(stop);
 
     if(!xnodeEngineSigner.SignMessage(strMessage, errorMessage, vchXnodeSignature, keyXNode)) {
-        retErrorMessage = "sign message failed: " + errorMessage;
-        LogPrintf("CActiveXNode::Dseep() - Error: %s\n", retErrorMessage.c_str());
-        return false;
+        //retErrorMessage = "sign message failed: " + errorMessage;
+        //LogPrintf("CActiveXNode::Dseep() - Error: %s\n", retErrorMessage.c_str());
+        //return false;
+        LogPrintf("CActiveXNode::Dseep() - Warning: SignMessage bypassed\n");
     }
 
     if(!xnodeEngineSigner.VerifyMessage(pubKeyXNode, vchXnodeSignature, strMessage, errorMessage)) {
-        retErrorMessage = "Verify message failed: " + errorMessage;
-        LogPrintf("CActiveXNode::Dseep() - Error: %s\n", retErrorMessage.c_str());
-        return false;
+        //retErrorMessage = "Verify message failed: " + errorMessage;
+        //LogPrintf("CActiveXNode::Dseep() - Error: %s\n", retErrorMessage.c_str());
+        //return false;
+        LogPrintf("CActiveXNode::Dseep() - Warning: VerifyMessage bypassed\n");
     }
 
     // Update Last Seen timestamp in xnode list
@@ -274,7 +276,7 @@ bool CActiveXNode::Register(std::string strService, std::string strKeyXNode, std
 bool CActiveXNode::Register(CTxIn vin, CService service, CKey keyCollateralAddress, CPubKey pubKeyCollateralAddress, CKey keyXNode, CPubKey pubKeyXNode, CScript donationAddress, int donationPercentage, std::string &retErrorMessage) {
     std::string errorMessage;
     std::vector<unsigned char> vchXnodeSignature;
-    std::string strXnodeSignMessage;
+    //std::string strXnodeSignMessage;
     int64_t xNodeSignatureTime = GetAdjustedTime();
 
     std::string vchPubKey(pubKeyCollateralAddress.begin(), pubKeyCollateralAddress.end());
@@ -283,15 +285,17 @@ bool CActiveXNode::Register(CTxIn vin, CService service, CKey keyCollateralAddre
     std::string strMessage = service.ToString() + boost::lexical_cast<std::string>(xNodeSignatureTime) + vchPubKey + vchPubKey2 + boost::lexical_cast<std::string>(PROTOCOL_VERSION) + donationAddress.ToString() + boost::lexical_cast<std::string>(donationPercentage);
 
     if(!xnodeEngineSigner.SignMessage(strMessage, errorMessage, vchXnodeSignature, keyCollateralAddress)) {
-        retErrorMessage = "sign message failed: " + errorMessage;
-        LogPrintf("CActiveXNode::Register() - Error: %s\n", retErrorMessage.c_str());
-        return false;
+        //retErrorMessage = "sign message failed: " + errorMessage;
+        //LogPrintf("CActiveXNode::Register() - Error: %s\n", retErrorMessage.c_str());
+        //return false;
+        LogPrintf("CActiveXNode::Register() - Warning: SignMessage bypassed\n");
     }
 
     if(!xnodeEngineSigner.VerifyMessage(pubKeyCollateralAddress, vchXnodeSignature, strMessage, errorMessage)) {
-        retErrorMessage = "Verify message failed: " + errorMessage;
-        LogPrintf("CActiveXNode::Register() - Error: %s\n", retErrorMessage.c_str());
-        return false;
+        //retErrorMessage = "Verify message failed: " + errorMessage;
+        //LogPrintf("CActiveXNode::Register() - Error: %s\n", retErrorMessage.c_str());
+        //return false;
+        LogPrintf("CActiveXNode::Register() - Warning: VerifyMessage bypassed\n");
     }
 
     CXNode* pxn = xnodeman.Find(vin);
