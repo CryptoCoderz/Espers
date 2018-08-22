@@ -199,15 +199,15 @@ void CXNode::Check()
 
     if(!unitTest){
         //CValidationState state;
-        CTransaction tx = CTransaction();
+        //CTransaction tx = CTransaction();
         //CTxOut vout = CTxOut(XNODEENGINE_POOL_MAX, xnodeEnginePool.collateralPubKey);
         //tx.vin.push_back(vin);
         //tx.vout.push_back(vout);
 
-    if(!AcceptableInputs(mempool, tx, false, NULL)){
-            activeState = XNODE_VIN_SPENT;
-            return;
-        }
+    //if(!AcceptableInputs(mempool, tx, false, NULL)){
+    //        activeState = XNODE_VIN_SPENT;
+    //        return;
+    //    }
     }
 
     activeState = XNODE_ENABLED; // OK
