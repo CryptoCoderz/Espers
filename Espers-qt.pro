@@ -10,6 +10,7 @@ CONFIG += thread
 CONFIG += widgets
 CONFIG += static
 CONFIG += openssl
+CONFIG += c++11
 
 QMAKE_CXXFLAGS += -fpermissive
 

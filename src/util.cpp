@@ -112,7 +112,12 @@ public:
 
 #ifdef WIN32
         // Seed OpenSSL PRNG with current contents of the screen
-        RAND_screen();
+
+        // TODO: v0.8.7.2 OpenSSL 1.1.0 support causes function to become depricated, update method!
+        // Attempted fix 1 for v0.8.7.3 RC
+
+        // RAND_screen(); - Depricated
+        RAND_poll();
 #endif
 
         // Seed OpenSSL PRNG with performance counter
