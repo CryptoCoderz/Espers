@@ -13,13 +13,18 @@
 #include <string>
 #include <vector>
 
+extern const signed char p_util_hexdigit[256]; // defined in util.cpp
+
 typedef long long  int64;
 typedef unsigned long long  uint64;
 
 
 inline int Testuint256AdHoc(std::vector<std::string> vArg);
 
-
+inline signed char HexDigit(char c)
+{
+    return p_util_hexdigit[(unsigned char)c];
+}
 
 /** Base class without constructors for uint256 and uint160.
  * This makes the compiler let you use it in a union.

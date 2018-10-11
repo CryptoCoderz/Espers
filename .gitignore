@@ -13,6 +13,7 @@ src/build.h
 .Espers
 #compilation and Qt preprocessor part
 *.qm
+.qmake.stash
 Makefile
 Espers-qt
 #resources cpp
