@@ -6,7 +6,6 @@
 #include "crypto/bmw/bmw512.h"
 //#include "hash.h"
 
-
 using namespace std;
 
 int CAddrInfo::GetTriedBucket(const std::vector<unsigned char> &nKey) const
@@ -43,7 +42,7 @@ int CAddrInfo::GetNewBucket(const std::vector<unsigned char> &nKey, const CNetAd
 //    std::vector<unsigned char> vchKey = GetKey();
 //    std::vector<unsigned char> vchBucket = nBucket;
 //    ss1 << nKey << (fNew ? 'N' : 'K') << vchBucket << vchKey;
-//    uint64_t hash1 = Hash_hmq1725(ss2.begin(), ss2.end()).Get64();
+//    uint64_t hash1 = Hash_bmw512(ss2.begin(), ss2.end()).Get64();
 //    return hash1 % ADDRMAN_BUCKET_SIZE;
 //}
 
