@@ -9,6 +9,7 @@
 #include "alert.h"
 #include "main.h"
 #include "ui_interface.h"
+#include "xnodemngr.h"
 
 #include <QDateTime>
 #include <QTimer>
@@ -18,12 +19,17 @@ static const int64_t nClientStartupTime = GetTime();
 
 ClientModel::ClientModel(OptionsModel *optionsModel, QObject *parent) :
     QObject(parent), optionsModel(optionsModel),
-    cachedNumBlocks(0), numBlocksAtStartup(-1), pollTimer(0)
+    cachedNumBlocks(0), numBlocksAtStartup(-1), cachedXNodeCountString(""), pollTimer(0)
 {
     pollTimer = new QTimer(this);
     pollTimer->setInterval(MODEL_UPDATE_DELAY);
     pollTimer->start();
     connect(pollTimer, SIGNAL(timeout()), this, SLOT(updateTimer()));
+
+    pollXnTimer = new QTimer(this);
+    connect(pollXnTimer, SIGNAL(timeout()), this, SLOT(updateXnTimer()));
+    // no need to update as frequent as data for balances/txes/blocks
+    pollXnTimer->start(MODEL_UPDATE_DELAY * 4);
 
     subscribeToCoreSignals();
 }
@@ -36,6 +42,11 @@ ClientModel::~ClientModel()
 int ClientModel::getNumConnections() const
 {
     return vNodes.size();
+}
+
+QString ClientModel::getXNodeCountString() const
+{
+    return QString::number((int)xnodeman.CountEnabled()) + " / " + QString::number((int)xnodeman.size());
 }
 
 int ClientModel::getNumBlocks() const
@@ -90,6 +101,24 @@ void ClientModel::updateTimer()
     }
 
     emit bytesChanged(getTotalBytesRecv(), getTotalBytesSent());
+}
+
+void ClientModel::updateXnTimer()
+{
+    // Get required lock upfront. This avoids the GUI from getting stuck on
+    // periodical polls if the core is holding the locks for a longer time -
+    // for example, during a wallet rescan.
+    TRY_LOCK(cs_main, lockMain);
+    if(!lockMain)
+        return;
+    QString newXNodeCountString = getXNodeCountString();
+
+    if (cachedXNodeCountString != newXNodeCountString)
+    {
+        cachedXNodeCountString = newXNodeCountString;
+
+        emit strXNodesChanged(cachedXNodeCountString);
+    }
 }
 
 void ClientModel::updateNumConnections(int numConnections)

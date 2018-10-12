@@ -179,4 +179,8 @@ extern json_spirit::Value getblock(const json_spirit::Array& params, bool fHelp)
 extern json_spirit::Value getblockbynumber(const json_spirit::Array& params, bool fHelp);
 extern json_spirit::Value getcheckpoint(const json_spirit::Array& params, bool fHelp);
 
+extern json_spirit::Value spork(const json_spirit::Array& params, bool fHelp);
+extern json_spirit::Value xnode(const json_spirit::Array& params, bool fHelp);
+extern json_spirit::Value xnodelist(const json_spirit::Array& params, bool fHelp);
+
 #endif

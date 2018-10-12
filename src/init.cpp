@@ -12,6 +12,14 @@
 #include "util.h"
 #include "ui_interface.h"
 #include "checkpoints.h"
+#include "xnodestart.h"
+#include "xnodereward.h"
+#include "xnodecomponent.h"
+#include "xnodemngr.h"
+#include "xnodesettings.h"
+#include "xnodecrypter.h"
+#include "fork.h"
+
 #ifdef ENABLE_WALLET
 #include "wallet.h"
 #include "walletdb.h"
@@ -23,6 +31,11 @@
 #include <boost/interprocess/sync/file_lock.hpp>
 #include <boost/algorithm/string/predicate.hpp>
 #include <openssl/crypto.h>
+
+#include <boost/thread.hpp>
+#include <boost/algorithm/string/replace.hpp>
+#include <boost/bind.hpp>
+#include <boost/function.hpp>
 
 #ifndef WIN32
 #include <signal.h>
@@ -108,6 +121,8 @@ void Shutdown()
         bitdb.Flush(false);
 #endif
     StopNode();
+    DumpXNodes();
+    DumpXNodePayments();
     {
         LOCK(cs_main);
 #ifdef ENABLE_WALLET
@@ -268,6 +283,14 @@ std::string HelpMessage()
     strUsage += "  -rpcsslprivatekeyfile=<file.pem>         " + _("Server private key (default: server.pem)") + "\n";
     strUsage += "  -rpcsslciphers=<ciphers>                 " + _("Acceptable ciphers (default: TLSv1.2+HIGH:TLSv1+HIGH:!SSLv2:!aNULL:!eNULL:!3DES:@STRENGTH)") + "\n";
 
+    strUsage += "\n" + _("XNode options:") + "\n";
+    strUsage += "  -xnode=<n>            " + _("Enable the client to act as a xnode (0-1, default: 0)") + "\n";
+    strUsage += "  -xnconf=<file>             " + _("Specify xnode configuration file (default: xnode.conf)") + "\n";
+    strUsage += "  -xnconflock=<n>            " + _("Lock xnodes from xnode configuration file (default: 1)") + "\n";
+    strUsage += "  -xnodeprivkey=<n>     " + _("Set the xnode private key") + "\n";
+    strUsage += "  -xnodeaddr=<n>        " + _("Set external address:port to get to this xnode (example: address:port)") + "\n";
+    strUsage += "  -xnodeminprotocol=<n> " + _("Ignore xnodes less than version (example: 61401; default : 0)") + "\n";
+
     return strUsage;
 }
 
@@ -365,6 +388,9 @@ bool AppInit2(boost::thread_group& threadGroup)
         if (SoftSetBoolArg("-listen", true))
             LogPrintf("AppInit2 : parameter interaction: -bind set -> setting -listen=1\n");
     }
+
+    // Process xnode config
+    xnodeConfig.read(GetXNodeConfigFile());
 
     if (mapArgs.count("-connect") && mapMultiArgs["-connect"].size() > 0) {
         // when only connecting to trusted nodes, do not seed via DNS, or listen by default
@@ -505,6 +531,17 @@ bool AppInit2(boost::thread_group& threadGroup)
     LogPrintf("Default data directory %s\n", GetDefaultDataDir().string());
     LogPrintf("Used data directory %s\n", strDataDir);
     std::ostringstream strErrors;
+
+    if (mapArgs.count("-xnodepaymentskey")) // xnode payments priv key
+    {
+        if (!xnodePayments.SetPrivKey(GetArg("-xnodepaymentskey", "")))
+            return InitError(_("Unable to sign xnode payment winner, wrong key?"));
+        if (!sporkManager.SetPrivKey(GetArg("-xnodepaymentskey", "")))
+            return InitError(_("Unable to sign spork message, wrong key?"));
+    }
+
+    //ignore xnodes below protocol version
+    nXNodeMinProtocol = GetArg("-xnodeminprotocol", MIN_PEER_PROTO_VERSION);
 
     if (fDaemon)
         fprintf(stdout, "Espers server starting\n");
@@ -848,7 +885,105 @@ bool AppInit2(boost::thread_group& threadGroup)
     if (!strErrors.str().empty())
         return InitError(strErrors.str());
 
+    uiInterface.InitMessage(_("Loading xnode cache..."));
+
+    CXNodeDB xndb;
+    CXNodeDB::ReadResult readResult = xndb.Read(xnodeman);
+    if (readResult == CXNodeDB::FileError)
+        LogPrintf("Missing xnode cache file - xnodelist.dat, will try to recreate\n");
+    else if (readResult != CXNodeDB::Ok)
+    {
+        LogPrintf("Error reading xnodelist.dat: ");
+        if(readResult == CXNodeDB::IncorrectFormat)
+            LogPrintf("magic is ok but data has invalid format, will try to recreate\n");
+        else
+            LogPrintf("file format is unknown or invalid, please fix it manually\n");
+    }
+
+    uiInterface.InitMessage(_("Loading xnode payment cache..."));
+
+    CXNodePaymentDB xnoderewards;
+    CXNodePaymentDB::ReadResult readResult2 = xnoderewards.Read(xnodePayments);
+
+    if (readResult2 == CXNodePaymentDB::FileError)
+        LogPrintf("Missing XNode payment cache - xnoderewards.dat, will try to recreate\n");
+    else if (readResult2 != CXNodePaymentDB::Ok)
+    {
+        LogPrintf("Error reading xnoderewards.dat: ");
+        if(readResult2 == CXNodePaymentDB::IncorrectFormat)
+            LogPrintf("magic is ok but data has invalid format, will try to recreate\n");
+        else
+            LogPrintf("file format is unknown or invalid, please fix it manually\n");
+    }
+
+
+    fXnode = GetBoolArg("-xnode", false);
+    if(fXnode) {
+        LogPrintf("IS XNODE\n");
+        strXnodeAddr = GetArg("-xnodeaddr", "");
+
+        LogPrintf(" addr %s\n", strXnodeAddr.c_str());
+
+        if(!strXnodeAddr.empty()){
+            CService addrTest = CService(strXnodeAddr, fNameLookup);
+            if (!addrTest.IsValid()) {
+                return InitError("Invalid -xnodeaddr address: " + strXnodeAddr);
+            }
+        }
+
+        strXnodePrivKey = GetArg("-xnodeprivkey", "");
+        if(!strXnodePrivKey.empty()){
+            std::string errorMessage;
+
+            CKey key;
+            CPubKey pubkey;
+
+            if(!xnodeEngineSigner.SetKey(strXnodePrivKey, errorMessage, key, pubkey))
+            {
+                return InitError(_("Invalid xnodeprivkey. Please see documenation."));
+            }
+
+            activeXNode.pubKeyXNode = pubkey;
+
+        } else {
+            return InitError(_("You must specify a xnodeprivkey in the configuration. Please see documentation for help."));
+        }
+
+        activeXNode.ManageStatus();
+    }
+
+    if(GetBoolArg("-xnconflock", false)) {
+        LogPrintf("Locking XNodes:\n");
+        uint256 xnTxHash;
+        BOOST_FOREACH(CXNodeConfig::CXNodeEntry xne, xnodeConfig.getEntries()) {
+            LogPrintf("  %s %s\n", xne.getTxHash(), xne.getOutputIndex());
+            xnTxHash.SetHex(xne.getTxHash());
+            //COutPoint outpoint = COutPoint(xnTxHash, boost::lexical_cast<unsigned int>(xne.getOutputIndex()));
+            //pwalletMain->LockCoin(outpoint);
+        }
+    }
+
+    threadGroup.create_thread(boost::bind(&ThreadCheckXNodeEnginePool));
+
     RandAddSeedPerfmon();
+
+    // reindex addresses found in blockchain
+    // TODO: Finish implementation
+    //if(GetBoolArg("-reindexaddr", false))
+    //{
+    //    uiInterface.InitMessage(_("Rebuilding address index..."));
+    //    CBlockIndex *pblockAddrIndex = pindexBest;
+    //CTxDB txdbAddr("rw");
+    //while(pblockAddrIndex)
+    //{
+    //    uiInterface.InitMessage(strprintf("Rebuilding address index, block %i", pblockAddrIndex->nHeight));
+    //    bool ReadFromDisk(const CBlockIndex* pindex, bool fReadTransactions=true);
+    //    CBlock pblockAddr;
+    //    if(pblockAddr.ReadFromDisk(pblockAddrIndex, true))
+    //        pblockAddr.RebuildAddressIndex(txdbAddr);
+    //    pblockAddrIndex = pblockAddrIndex->pprev;
+    //}
+    //}
 
     //// debug print
     LogPrintf("mapBlockIndex.size() = %u\n",   mapBlockIndex.size());

@@ -345,7 +345,7 @@ CNode* FindNode(const CService& addr)
     return NULL;
 }
 
-CNode* ConnectNode(CAddress addrConnect, const char *pszDest)
+CNode* ConnectNode(CAddress addrConnect, const char *pszDest, bool xnodeConnection)
 {
     if (pszDest == NULL) {
         if (IsLocal(addrConnect))
@@ -355,6 +355,9 @@ CNode* ConnectNode(CAddress addrConnect, const char *pszDest)
         CNode* pnode = FindNode((CService)addrConnect);
         if (pnode)
         {
+            if(xnodeConnection)
+                pnode->fXNodeConnection = true;
+
             pnode->AddRef();
             return pnode;
         }
