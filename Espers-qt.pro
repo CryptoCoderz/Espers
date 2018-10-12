@@ -23,9 +23,9 @@ greaterThan(QT_MAJOR_VERSION, 4) {
 # as a reference refer to the below section
 
 win32{
-BOOST_LIB_SUFFIX=-mgw81-mt-s-x32-1_67
-BOOST_INCLUDE_PATH=C:/deps/boost_1_67_0
-BOOST_LIB_PATH=C:/deps/boost_1_67_0/stage/lib
+BOOST_LIB_SUFFIX=-mgw81-mt-s-x32-1_68
+BOOST_INCLUDE_PATH=C:/deps/boost_1_68_0
+BOOST_LIB_PATH=C:/deps/boost_1_68_0/stage/lib
 BDB_INCLUDE_PATH=C:/deps/db-6.2.32.NC/build_unix
 BDB_LIB_PATH=C:/deps/db-6.2.32.NC/build_unix
 OPENSSL_INCLUDE_PATH=C:/deps/openssl-1.0.2o/include
@@ -128,24 +128,24 @@ contains(ESPERS_NEED_QT_PLUGINS, 1) {
 INCLUDEPATH += src/leveldb/include src/leveldb/helpers
 LIBS += $$PWD/src/leveldb/libleveldb.a $$PWD/src/leveldb/libmemenv.a
 SOURCES += src/txdb-leveldb.cpp \
-    src/crypto/hmq/common/aes_helper.c \
-    src/crypto/hmq/common/blake.c \
-    src/crypto/hmq/common/bmw.c \
-    src/crypto/hmq/common/groestl.c \
-    src/crypto/hmq/common/jh.c \
-    src/crypto/hmq/common/keccak.c \
-    src/crypto/hmq/common//skein.c \
-    src/crypto/hmq/common/luffa.c \
-    src/crypto/hmq/common/cubehash.c \
-    src/crypto/hmq/common/shavite.c \
-    src/crypto/hmq/common/echo.c \
-    src/crypto/hmq/common/simd.c \
-    src/crypto/hmq/common/hamsi.c \
-    src/crypto/hmq/common/fugue.c \
-    src/crypto/hmq/common/shabal.c \
-    src/crypto/hmq/common/whirlpool.c \
-    src/crypto/hmq/common/haval.c \
-    src/crypto/hmq/common/sha2big.c
+    src/crypto/common/aes_helper.c \
+    src/crypto/common/blake.c \
+    src/crypto/common/bmw.c \
+    src/crypto/common/groestl.c \
+    src/crypto/common/jh.c \
+    src/crypto/common/keccak.c \
+    src/crypto/common//skein.c \
+    src/crypto/common/luffa.c \
+    src/crypto/common/cubehash.c \
+    src/crypto/common/shavite.c \
+    src/crypto/common/echo.c \
+    src/crypto/common/simd.c \
+    src/crypto/common/hamsi.c \
+    src/crypto/common/fugue.c \
+    src/crypto/common/shabal.c \
+    src/crypto/common/whirlpool.c \
+    src/crypto/common/haval.c \
+    src/crypto/common/sha2big.c
 !win32 {
     # we use QMAKE_CXXFLAGS_RELEASE even without RELEASE=1 because we use RELEASE to indicate linking preferences not -O preferences
     genleveldb.commands = cd $$PWD/src/leveldb && CC=$$QMAKE_CC CXX=$$QMAKE_CXX $(MAKE) OPT=\"$$QMAKE_CXXFLAGS $$QMAKE_CXXFLAGS_RELEASE\" libleveldb.a libmemenv.a
@@ -230,7 +230,7 @@ HEADERS += src/qt/bitcoingui.h \
     src/scrypt.h \
     src/pbkdf2.h \
     src/serialize.h \
-    src/core.h \
+    src/chain.h \
     src/main.h \
     src/miner.h \
     src/mining.h \
@@ -294,27 +294,27 @@ HEADERS += src/qt/bitcoingui.h \
     src/tinyformat.h \
     src/limitedmap.h \
     src/qt/siteonchain.h \
-    src/crypto/hmq/hmq1725.h \
-    src/crypto/hmq/common/sph_blake.h \
-    src/crypto/hmq/common/sph_bmw.h \
-    src/crypto/hmq/common/sph_groestl.h \
-    src/crypto/hmq/common/sph_jh.h \
-    src/crypto/hmq/common/sph_keccak.h \
-    src/crypto/hmq/common/sph_skein.h \
-    src/crypto/hmq/common/sph_types.h \
     src/qt/macnotificationhandler.h \
-    #ADDED FOR HMQ1725
-    src/crypto/hmq/common/sph_luffa.h \
-    src/crypto/hmq/common/sph_cubehash.h \
-    src/crypto/hmq/common/sph_echo.h \
-    src/crypto/hmq/common/sph_shavite.h \
-    src/crypto/hmq/common/sph_simd.h \
-    src/crypto/hmq/common/sph_hamsi.h \
-    src/crypto/hmq/common/sph_fugue.h \
-    src/crypto/hmq/common/sph_shabal.h \
-    src/crypto/hmq/common/sph_whirlpool.h \
-    src/crypto/hmq/common/sph_haval.h \
-    src/crypto/hmq/common/sph_sha2.h
+    src/crypto/hmq/hmq1725.h \
+    src/crypto/bmw/bmw512.h \
+    src/crypto/common/sph_blake.h \
+    src/crypto/common/sph_bmw.h \
+    src/crypto/common/sph_groestl.h \
+    src/crypto/common/sph_jh.h \
+    src/crypto/common/sph_keccak.h \
+    src/crypto/common/sph_skein.h \
+    src/crypto/common/sph_types.h \
+    src/crypto/common/sph_luffa.h \
+    src/crypto/common/sph_cubehash.h \
+    src/crypto/common/sph_echo.h \
+    src/crypto/common/sph_shavite.h \
+    src/crypto/common/sph_simd.h \
+    src/crypto/common/sph_hamsi.h \
+    src/crypto/common/sph_fugue.h \
+    src/crypto/common/sph_shabal.h \
+    src/crypto/common/sph_whirlpool.h \
+    src/crypto/common/sph_haval.h \
+    src/crypto/common/sph_sha2.h
 
 SOURCES += src/qt/bitcoin.cpp src/qt/bitcoingui.cpp \
     src/qt/transactiontablemodel.cpp \
@@ -340,7 +340,7 @@ SOURCES += src/qt/bitcoin.cpp src/qt/bitcoingui.cpp \
     src/netbase.cpp \
     src/key.cpp \
     src/script.cpp \
-    src/core.cpp \
+    src/chain.cpp \
     src/main.cpp \
     src/miner.cpp \
     src/init.cpp \

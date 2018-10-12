@@ -6,7 +6,7 @@
 #ifndef ESPERS_MAIN_H
 #define ESPERS_MAIN_H
 
-#include "core.h"
+#include "chain.h"
 #include "bignum.h"
 #include "sync.h"
 #include "txmempool.h"
