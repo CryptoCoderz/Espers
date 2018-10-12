@@ -98,24 +98,24 @@ OBJS= \
     obj/scrypt-x86_64.o \
     obj/blockparams.o \
     obj/chainparams.o \
-    obj/crypto/hmq/common/blake.o\
-    obj/crypto/hmq/common/bmw.o\
-    obj/crypto/hmq/common/groestl.o\
-    obj/crypto/hmq/common/jh.o\
-    obj/crypto/hmq/common/keccak.o\
-    obj/crypto/hmq/common/skein.o\
-    obj/crypto/hmq/common/cubehash.o \
-    obj/crypto/hmq/common/luffa.o \
-    obj/crypto/hmq/common/aes_helper.o \
-    obj/crypto/hmq/common/echo.o \
-    obj/crypto/hmq/common/shavite.o \
-    obj/crypto/hmq/common/simd.o \
-    obj/crypto/hmq/common/hamsi.o \
-    obj/crypto/hmq/common/fugue.o \
-    obj/crypto/hmq/common/shabal.o \
-    obj/crypto/hmq/common/whirlpool.o \
-    obj/crypto/hmq/common/haval.o \
-    obj/crypto/hmq/common/sha2big.o
+    obj/crypto/common/blake.o\
+    obj/crypto/common/bmw.o\
+    obj/crypto/common/groestl.o\
+    obj/crypto/common/jh.o\
+    obj/crypto/common/keccak.o\
+    obj/crypto/common/skein.o\
+    obj/crypto/common/cubehash.o \
+    obj/crypto/common/luffa.o \
+    obj/crypto/common/aes_helper.o \
+    obj/crypto/common/echo.o \
+    obj/crypto/common/shavite.o \
+    obj/crypto/common/simd.o \
+    obj/crypto/common/hamsi.o \
+    obj/crypto/common/fugue.o \
+    obj/crypto/common/shabal.o \
+    obj/crypto/common/whirlpool.o \
+    obj/crypto/common/haval.o \
+    obj/crypto/common/sha2big.o
 
 ifeq (${USE_WALLET}, 1)
     DEFS += -DENABLE_WALLET

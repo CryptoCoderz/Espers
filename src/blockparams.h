@@ -5,7 +5,7 @@
 #define ESPERS_BLOCKPARAMS_H
 
 #include "net.h"
-#include "core.h"
+#include "chain.h"
 #include "bignum.h"
 
 // Define difficulty retarget algorithms
