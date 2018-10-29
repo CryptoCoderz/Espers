@@ -19,6 +19,7 @@
 #include "script.h"
 #include "ui_interface.h"
 #include "util.h"
+#include "base58.h"
 
 // Settings
 extern int64_t nTransactionFee;
@@ -33,6 +34,8 @@ class CWalletTx;
 class CReserveKey;
 class COutput;
 class CWalletDB;
+
+extern int64_t GetStakeCombineThreshold();
 
 /** (client) version numbers for particular wallet features */
 enum WalletFeature
@@ -166,7 +169,7 @@ public:
     bool AddCScript(const CScript& redeemScript);
     bool LoadCScript(const CScript& redeemScript);
 
-    bool Unlock(const SecureString& strWalletPassphrase);
+    bool Unlock(const SecureString& strWalletPassphrase, bool stakingOnly = false);
     bool ChangeWalletPassphrase(const SecureString& strOldWalletPassphrase, const SecureString& strNewWalletPassphrase);
     bool EncryptWallet(const SecureString& strWalletPassphrase);
 
@@ -737,6 +740,11 @@ public:
     std::string ToString() const
     {
         return strprintf("COutput(%s, %d, %d) [%s]", tx->GetHash().ToString(), i, nDepth, FormatMoney(tx->vout[i].nValue));
+    }
+
+    void print() const
+    {
+        LogPrintf("%s\n", ToString().c_str());
     }
 };
 

@@ -196,6 +196,7 @@ DEPENDPATH += src src/json src/qt
 HEADERS += src/qt/bitcoingui.h \
     src/qt/transactiontablemodel.h \
     src/qt/addresstablemodel.h \
+    src/qt/bantablemodel.h \
     src/qt/optionsdialog.h \
     src/qt/coincontroldialog.h \
     src/qt/coincontroltreewidget.h \
@@ -207,6 +208,7 @@ HEADERS += src/qt/bitcoingui.h \
     src/qt/signverifymessagedialog.h \
     src/qt/aboutdialog.h \
     src/qt/editaddressdialog.h \
+    src/qt/editconfigdialog.h \
     src/qt/bitcoinaddressvalidator.h \
     src/alert.h \
     src/blocksizecalculator.h \
@@ -260,6 +262,7 @@ HEADERS += src/qt/bitcoingui.h \
     src/qt/guiconstants.h \
     src/qt/optionsmodel.h \
     src/qt/monitoreddatamapper.h \
+    src/qt/peertablemodel.h \
     src/qt/trafficgraphwidget.h \
     src/qt/transactiondesc.h \
     src/qt/transactiondescdialog.h \
@@ -319,6 +322,7 @@ HEADERS += src/qt/bitcoingui.h \
 SOURCES += src/qt/bitcoin.cpp src/qt/bitcoingui.cpp \
     src/qt/transactiontablemodel.cpp \
     src/qt/addresstablemodel.cpp \
+    src/qt/bantablemodel.cpp \
     src/qt/optionsdialog.cpp \
     src/qt/sendcoinsdialog.cpp \
     src/qt/coincontroldialog.cpp \
@@ -327,6 +331,7 @@ SOURCES += src/qt/bitcoin.cpp src/qt/bitcoingui.cpp \
     src/qt/signverifymessagedialog.cpp \
     src/qt/aboutdialog.cpp \
     src/qt/editaddressdialog.cpp \
+    src/qt/editconfigdialog.cpp \
     src/qt/bitcoinaddressvalidator.cpp \
     src/alert.cpp \
     src/blocksizecalculator.cpp \
@@ -359,6 +364,7 @@ SOURCES += src/qt/bitcoin.cpp src/qt/bitcoingui.cpp \
     src/qt/transactionrecord.cpp \
     src/qt/optionsmodel.cpp \
     src/qt/monitoreddatamapper.cpp \
+    src/qt/peertablemodel.cpp \
     src/qt/trafficgraphwidget.cpp \
     src/qt/transactiondesc.cpp \
     src/qt/transactiondescdialog.cpp \

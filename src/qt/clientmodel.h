@@ -5,6 +5,8 @@
 
 class OptionsModel;
 class AddressTableModel;
+class BanTableModel;
+class PeerTableModel;
 class TransactionTableModel;
 class CWallet;
 
@@ -23,6 +25,8 @@ public:
     ~ClientModel();
 
     OptionsModel *getOptionsModel();
+    PeerTableModel *getPeerTableModel();
+    BanTableModel *getBanTableModel();
 
     int getNumConnections() const;
     int getNumBlocks() const;
@@ -48,8 +52,14 @@ public:
     QString clientName() const;
     QString formatClientStartupTime() const;
 
+    //! Get and set the content of the Espers.conf file
+    QString getConfigFileContent() const;
+    void setConfigFileContent(const QString &content);
+
 private:
     OptionsModel *optionsModel;
+    PeerTableModel *peerTableModel;
+    BanTableModel *banTableModel;
 
     int cachedNumBlocks;
 
@@ -73,6 +83,7 @@ public slots:
     void updateTimer();
     void updateNumConnections(int numConnections);
     void updateAlert(const QString &hash, int status);
+    void updateBanlist();
 };
 
 #endif // CLIENTMODEL_H

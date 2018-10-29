@@ -1343,6 +1343,14 @@ Value walletpassphrase(const Array& params, bool fHelp)
     pwalletMain->TopUpKeyPool();
 
     int64_t nSleepTime = params[1].get_int64();
+    // If the timeout value is too large or negative, the conversion from nSleepTime to seconds
+    // results in a negative value and the wallet unlocking will fail.
+    if (nSleepTime > INT32_MAX || nSleepTime < 0)
+    {
+        pwalletMain->Lock();
+        throw JSONRPCError(RPC_INVALID_PARAMETER, "Error: The timeout value entered was incorrect.");
+    }
+
     LOCK(cs_nWalletUnlockTime);
     nWalletUnlockTime = GetTime() + nSleepTime;
     RPCRunLater("lockwallet", boost::bind(LockWallet, pwalletMain), nSleepTime);
