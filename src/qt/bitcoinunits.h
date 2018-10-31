@@ -1,6 +1,8 @@
 #ifndef BITCOINUNITS_H
 #define BITCOINUNITS_H
 
+#include "util.h"
+
 #include <QString>
 #include <QAbstractListModel>
 
@@ -19,9 +21,9 @@ public:
      */
     enum Unit
     {
-        BTC,
-        mBTC,
-        uBTC
+        ESP,
+        mESP,
+        uESP
     };
 
     //! @name Static API

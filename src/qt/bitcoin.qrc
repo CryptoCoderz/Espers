@@ -41,6 +41,8 @@
         <file alias="debugwindow">res/icons/debugwindow.png</file>
         <file alias="staking_off">res/icons/staking_off.png</file>
         <file alias="staking_on">res/icons/staking_on.png</file>
+        <file alias="editconf">res/icons/editconf.png</file>
+        <file alias="folder">res/icons/folder.png</file>
         <file alias="chaininfo">res/icons/chaininfo.png</file>
         <file alias="messaging">res/icons/messaging.png</file>
         <file alias="sitechain">res/icons/siteonchain.png</file>

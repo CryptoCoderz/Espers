@@ -1,8 +1,10 @@
 #include "clientmodel.h"
 
+#include "bantablemodel.h"
 #include "guiconstants.h"
 #include "optionsmodel.h"
 #include "addresstablemodel.h"
+#include "peertablemodel.h"
 #include "transactiontablemodel.h"
 
 #include "chainparams.h"
@@ -13,13 +15,21 @@
 #include <QDateTime>
 #include <QTimer>
 #include <QDebug>
+#include <QFile>
 
 static const int64_t nClientStartupTime = GetTime();
 
 ClientModel::ClientModel(OptionsModel *optionsModel, QObject *parent) :
-    QObject(parent), optionsModel(optionsModel),
-    cachedNumBlocks(0), numBlocksAtStartup(-1), pollTimer(0)
+    QObject(parent),
+    optionsModel(optionsModel),
+    peerTableModel(0),
+    banTableModel(0),
+    cachedNumBlocks(0),
+    numBlocksAtStartup(-1),
+    pollTimer(0)
 {
+    peerTableModel = new PeerTableModel(this);
+    banTableModel = new BanTableModel(this);
     pollTimer = new QTimer(this);
     pollTimer->setInterval(MODEL_UPDATE_DELAY);
     pollTimer->start();
@@ -139,6 +149,16 @@ OptionsModel *ClientModel::getOptionsModel()
     return optionsModel;
 }
 
+PeerTableModel *ClientModel::getPeerTableModel()
+{
+    return peerTableModel;
+}
+
+BanTableModel *ClientModel::getBanTableModel()
+{
+    return banTableModel;
+}
+
 QString ClientModel::formatFullVersion() const
 {
     return QString::fromStdString(FormatFullVersion());
@@ -164,6 +184,52 @@ QString ClientModel::formatClientStartupTime() const
     return QDateTime::fromTime_t(nClientStartupTime).toString();
 }
 
+QString ClientModel::getConfigFileContent() const
+{
+    QString result;
+
+    boost::filesystem::path path = GetConfigFile();
+    QString pathString = QString::fromStdString(path.string());
+    QFile file(pathString);
+
+    if (file.exists())
+    {
+        QString line;
+        if (file.open(QIODevice::ReadOnly | QIODevice::Text))
+        {
+            QTextStream stream(&file);
+            while (!stream.atEnd())
+            {
+                line = stream.readLine();
+                result += line + "\n";
+            }
+        }
+    }
+
+    file.close();
+    return result;
+}
+
+void ClientModel::setConfigFileContent(const QString &content)
+{
+    boost::filesystem::path path = GetConfigFile();
+    QString pathString = QString::fromStdString(path.string());
+    QFile file(pathString);
+
+    if (file.open(QIODevice::WriteOnly | QIODevice::Text))
+    {
+        QTextStream stream(&file);
+        stream << content;
+    }
+
+    file.close();
+}
+
+void ClientModel::updateBanlist()
+{
+    banTableModel->refresh();
+}
+
 static void NotifyNumConnectionsChanged(ClientModel *clientmodel, int newNumConnections)
 {
     // Too noisy: qDebug() << "NotifyNumConnectionsChanged : " + QString::number(newNumConnections);
@@ -179,6 +245,12 @@ static void NotifyAlertChanged(ClientModel *clientmodel, const uint256 &hash, Ch
                               Q_ARG(int, status));
 }
 
+static void BannedListChanged(ClientModel *clientmodel)
+{
+    qDebug() << QString("%1: Requesting update for peer banlist").arg(__func__);
+    QMetaObject::invokeMethod(clientmodel, "updateBanlist", Qt::QueuedConnection);
+}
+
 void ClientModel::subscribeToCoreSignals()
 {
     // Connect signals to client
@@ -191,4 +263,5 @@ void ClientModel::unsubscribeFromCoreSignals()
     // Disconnect signals from client
     uiInterface.NotifyNumConnectionsChanged.disconnect(boost::bind(NotifyNumConnectionsChanged, this, _1));
     uiInterface.NotifyAlertChanged.disconnect(boost::bind(NotifyAlertChanged, this, _1, _2));
+    uiInterface.BannedListChanged.disconnect(boost::bind(BannedListChanged, this));
 }

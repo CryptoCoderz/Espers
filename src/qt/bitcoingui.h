@@ -106,6 +106,10 @@ private:
     QAction *lockWalletAction;
     QAction *aboutQtAction;
     QAction *openRPCConsoleAction;
+    QAction *showBackupsAction;
+    QAction *editConfigAction;
+    QAction *editConfigExtAction;
+    QAction *openDataDirAction;
 
     QSystemTrayIcon *trayIcon;
     Notificator *notificator;
@@ -126,6 +130,8 @@ private:
     void createToolBars();
     /** Create system tray (notification) icon */
     void createTrayIcon();
+
+    void clearWidgets();
 
 public slots:
     /** Set number of connections shown in the UI */
@@ -203,15 +209,21 @@ private slots:
     void changePassphrase();
     /** Ask for passphrase to unlock wallet temporarily */
     void unlockWallet();
-
+    /** Lock local wallet */
     void lockWallet();
-
+    /** Edit the Espers.conf file (internally) */
+    void editConfig();
+    /** Edit the Espers.conf file (externally) */
+    void editConfigExt();
+    /** Open the data directory */
+    void openDataDir();
     /** Show window if hidden, unminimize when minimized, rise when obscured or show if hidden and fToggleHidden is true */
     void showNormalIfMinimized(bool fToggleHidden = false);
     /** simply calls showNormalIfMinimized(true) for use in SLOT() macro */
     void toggleHidden();
-
+    /** Update local wallet weight */
     void updateWeight();
+    /** Update local wallet staking icon */
     void updateStakingIcon();
 
     /** called by a timer to check if fRequestShutdown has been set **/

@@ -155,6 +155,8 @@ Value getstakinginfo(const Array& params, bool fHelp)
 
     obj.push_back(Pair("expectedtime", nExpectedTime));
 
+    obj.push_back(Pair("stakethreshold", GetStakeCombineThreshold() / COIN));
+    
     return obj;
 }
 
@@ -618,6 +620,7 @@ Value getblocktemplate(const Array& params, bool fHelp)
         aMutable.push_back("time");
         aMutable.push_back("transactions");
         aMutable.push_back("prevblock");
+        aMutable.push_back("version/force");
     }
 
     Object result;

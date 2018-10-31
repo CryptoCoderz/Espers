@@ -144,12 +144,22 @@ AddressTableModel::AddressTableModel(CWallet *wallet, WalletModel *parent) :
 {
     columns << tr("Label") << tr("Address");
     priv = new AddressTablePriv(wallet, this);
-    priv->refreshAddressTable();
+    refresh(false);
 }
 
 AddressTableModel::~AddressTableModel()
 {
     delete priv;
+}
+
+void AddressTableModel::refresh(bool emitSignal)
+{
+    priv->refreshAddressTable();
+    if (emitSignal) {
+        QModelIndex topLeft = index(0, 0, QModelIndex());
+        QModelIndex bottomRight = index(priv->size()-1, columns.length()-1, QModelIndex());
+        emit dataChanged(topLeft, bottomRight);
+    }
 }
 
 int AddressTableModel::rowCount(const QModelIndex &parent) const
