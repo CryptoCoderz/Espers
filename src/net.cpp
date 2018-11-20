@@ -875,15 +875,19 @@ void RefreshRecentConnections(int RefreshMinutes)
 
     void IdleNodeCheck(CNode *pnode)
     {
-        // Disconnect node/peer if send/recv data becomes idle
-        if (GetTime() - pnode->nTimeConnected > 60)
+        // Verify advanced feature compatibilty of node/peer
+        if(pnode->nVersion > MIN_ADV_PEER_PROTO_VERSION)
         {
-            if (GetTime() - pnode->nLastRecv > 60)
+            // Disconnect node/peer if send/recv data becomes idle
+            if (GetTime() - pnode->nTimeConnected > IDLE_TIMEOUT)
             {
-                if (GetTime() - pnode->nLastSend < 60)
+                if (GetTime() - pnode->nLastRecv > DATA_TIMEOUT)
                 {
-                    LogPrintf("Error: Unexpected idle interruption %s\n", pnode->addrName);
-                        pnode->CloseSocketDisconnect();
+                    if (GetTime() - pnode->nLastSend < DATA_TIMEOUT)
+                    {
+                        LogPrintf("Error: Unexpected idle interruption %s\n", pnode->addrName);
+                            pnode->CloseSocketDisconnect();
+                    }
                 }
             }
         }
@@ -1203,29 +1207,43 @@ void ThreadSocketHandler()
             //
             // Inactivity checking
             //
-            int64_t nTime = GetTime();
-            if (GetTime() - pnode->nTimeConnected > IDLE_TIMEOUT)
+            // Verify advanced feature compatibilty of node/peer
+            if(pnode->nVersion > MIN_ADV_PEER_PROTO_VERSION)
             {
-                if (pnode->nLastRecv == 0 || pnode->nLastSend == 0)
+                int64_t nTime = GetTime();
+                if (GetTime() - pnode->nTimeConnected > IDLE_TIMEOUT)
                 {
-                    LogPrint("net", "socket no message in timeout, %d %d\n", pnode->nLastRecv != 0, pnode->nLastSend != 0);
-                    pnode->fDisconnect = true;
-                }
-                else if (nTime - pnode->nLastSend > DATA_TIMEOUT)
-                {
-                    LogPrintf("socket sending timeout: %ds\n", nTime - pnode->nLastSend);
-                    pnode->fDisconnect = true;
-                }
-                else if (nTime - pnode->nLastRecv > (pnode->nVersion > BIP0031_VERSION ? TIMEOUT_INTERVAL : DATA_TIMEOUT))
-                {
-                    LogPrintf("socket receive timeout: %ds\n", nTime - pnode->nLastRecv);
-                    pnode->fDisconnect = true;
-                }
-                else if (pnode->nPingNonceSent && pnode->nPingUsecStart + TIMEOUT_INTERVAL * 1000000 < GetTimeMicros())
-                {
-                    LogPrintf("ping timeout: %fs\n", 0.000001 * (GetTimeMicros() - pnode->nPingUsecStart));
-                    pnode->fDisconnect = true;
-                    pnode->CloseSocketDisconnect();
+                    // First see if we've received anything
+                    if (pnode->nLastRecv == 0)
+                    {
+                        // Then see if we've sent anything
+                        if (pnode->nLastSend == 0)
+                        {
+                            // Disconnect if we have a completely stale connection
+                            LogPrintf("net", "socket message I/O timeout, %d %d\n", pnode->nLastRecv != 0, pnode->nLastSend != 0);
+                            pnode->fDisconnect = true;
+                        }
+                    }
+                    // Send timeout
+                    else if (nTime - pnode->nLastSend > DATA_TIMEOUT)
+                    {
+                        LogPrintf("socket sending timeout: %ds\n", nTime - pnode->nLastSend);
+                        pnode->fDisconnect = true;
+                    }
+                    // Receive timeout
+                    else if (nTime - pnode->nLastRecv > DATA_TIMEOUT)
+                    {
+                        LogPrintf("socket receive timeout: %ds\n", nTime - pnode->nLastRecv);
+                        pnode->fDisconnect = true;
+                    }
+                    // Ping timeout
+                    // TODO: Correct overflow integer warning
+                    else if (pnode->nPingNonceSent && pnode->nPingUsecStart + TIMEOUT_INTERVAL * 1000000 < GetTimeMicros())
+                    {
+                        LogPrintf("ping timeout: %fs\n", 0.000001 * (GetTimeMicros() - pnode->nPingUsecStart));
+                        pnode->fDisconnect = true;
+                        pnode->CloseSocketDisconnect();
+                    }
                 }
             }
         }
@@ -1736,20 +1754,22 @@ void ThreadMessageHandler()
                     {
                         pnode->CloseSocketDisconnect();
                     }
-
-                    // Disconnect node/peer if send/recv data becomes idle
-                    if (GetTime() - pnode->nTimeConnected > 90)
+                    // Verify advanced feature compatibilty of node/peer
+                    if(pnode->nVersion > MIN_ADV_PEER_PROTO_VERSION)
                     {
-                        if (GetTime() - pnode->nLastRecv > 60)
+                        // Disconnect node/peer if send/recv data becomes idle
+                        if (GetTime() - pnode->nTimeConnected > IDLE_TIMEOUT)
                         {
-                            if (GetTime() - pnode->nLastSend < 30)
+                            if (GetTime() - pnode->nLastRecv > DATA_TIMEOUT)
                             {
-                                LogPrintf("Error: Unexpected idle interruption %s\n", pnode->addrName);
-                                pnode->CloseSocketDisconnect();
+                                if (GetTime() - pnode->nLastSend < DATA_TIMEOUT)
+                                {
+                                    LogPrintf("Error: Unexpected idle interruption %s\n", pnode->addrName);
+                                    pnode->CloseSocketDisconnect();
+                                }
                             }
                         }
                     }
-
                     if (pnode->nSendSize < SendBufferSize())
                     {
                         if (!pnode->vRecvGetData.empty() || (!pnode->vRecvMsg.empty() && pnode->vRecvMsg[0].complete()))
