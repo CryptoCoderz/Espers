@@ -227,7 +227,20 @@ Value checkkernel(const Array& params, bool fHelp)
         return result;
 
     int64_t nFees;
+#ifdef __GNUC__
+#define GCC_VERSION (__GNUC__ * 10000 \
+                     + __GNUC_MINOR__ * 100 \
+                     + __GNUC_PATCHLEVEL__)
+
+/* Test for GCC < 6.3.0 */
+#if GCC_VERSION > 60300
     unique_ptr<CBlock> pblock(CreateNewBlock(*pMiningKey, true, &nFees));
+#else
+    auto_ptr<CBlock> pblock(CreateNewBlock(*pMiningKey, true, &nFees));
+#endif
+#else
+    unique_ptr<CBlock> pblock(CreateNewBlock(*pMiningKey, true, &nFees));
+#endif
 
     pblock->nTime = pblock->vtx[0].nTime = nTime;
 
