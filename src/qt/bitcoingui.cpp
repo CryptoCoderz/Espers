@@ -990,9 +990,9 @@ void BitcoinGUI::setEncryptionStatus(int status)
 {
     if(fWalletUnlockStakingOnly)
     {
-    labelEncryptionIcon->setPixmap(QIcon(":/icons/lock_open").pixmap(STATUSBAR_ICONSIZE,STATUSBAR_ICONSIZE));
+        labelEncryptionIcon->setPixmap(QIcon(":/icons/lock_open").pixmap(STATUSBAR_ICONSIZE,STATUSBAR_ICONSIZE));
         labelEncryptionIcon->setToolTip(tr("Wallet is <b>encrypted</b> and currently <b>unlocked for staking only</b>"));
-        changePassphraseAction->setEnabled(false);
+        changePassphraseAction->setEnabled(true);
         unlockWalletAction->setVisible(true);
         lockWalletAction->setVisible(true);
         encryptWalletAction->setEnabled(false);
@@ -1000,35 +1000,33 @@ void BitcoinGUI::setEncryptionStatus(int status)
     }
     else
     {
-
-    switch(status)
-    {
-    case WalletModel::Unencrypted:
-        labelEncryptionIcon->setPixmap(QIcon(":/icons/lock_open").pixmap(STATUSBAR_ICONSIZE,STATUSBAR_ICONSIZE));
-        labelEncryptionIcon->setToolTip(tr("Wallet is <b>not encrypted</b>"));
-        changePassphraseAction->setEnabled(false);
-        unlockWalletAction->setVisible(false);
-        lockWalletAction->setVisible(false);
-        encryptWalletAction->setEnabled(true);
-        break;
-    case WalletModel::Unlocked:
-        labelEncryptionIcon->setPixmap(QIcon(":/icons/lock_open").pixmap(STATUSBAR_ICONSIZE,STATUSBAR_ICONSIZE));
-        labelEncryptionIcon->setToolTip(tr("Wallet is <b>encrypted</b> and currently <b>unlocked</b>"));
-        changePassphraseAction->setEnabled(true);
-        unlockWalletAction->setVisible(false);
-        lockWalletAction->setVisible(true);
-        encryptWalletAction->setEnabled(false); // TODO: decrypt currently not supported
-        break;
-    case WalletModel::Locked:
-        labelEncryptionIcon->setPixmap(QIcon(":/icons/lock_closed").pixmap(STATUSBAR_ICONSIZE,STATUSBAR_ICONSIZE));
-        labelEncryptionIcon->setToolTip(tr("Wallet is <b>encrypted</b> and currently <b>locked</b>"));
-        changePassphraseAction->setEnabled(true);
-        unlockWalletAction->setVisible(true);
-        lockWalletAction->setVisible(false);
-        encryptWalletAction->setEnabled(false); // TODO: decrypt currently not supported
-        break;
-    }
-
+        switch(status)
+        {
+            case WalletModel::Unencrypted:
+                labelEncryptionIcon->setPixmap(QIcon(":/icons/lock_open").pixmap(STATUSBAR_ICONSIZE,STATUSBAR_ICONSIZE));
+                labelEncryptionIcon->setToolTip(tr("Wallet is <b>not encrypted</b>"));
+                changePassphraseAction->setEnabled(false);
+                unlockWalletAction->setVisible(false);
+                lockWalletAction->setVisible(false);
+                encryptWalletAction->setEnabled(true);
+            break;
+            case WalletModel::Unlocked:
+                labelEncryptionIcon->setPixmap(QIcon(":/icons/lock_open").pixmap(STATUSBAR_ICONSIZE,STATUSBAR_ICONSIZE));
+                labelEncryptionIcon->setToolTip(tr("Wallet is <b>encrypted</b> and currently <b>unlocked</b>"));
+                changePassphraseAction->setEnabled(true);
+                unlockWalletAction->setVisible(false);
+                lockWalletAction->setVisible(true);
+                encryptWalletAction->setEnabled(false); // TODO: decrypt currently not supported
+            break;
+            case WalletModel::Locked:
+                labelEncryptionIcon->setPixmap(QIcon(":/icons/lock_closed").pixmap(STATUSBAR_ICONSIZE,STATUSBAR_ICONSIZE));
+                labelEncryptionIcon->setToolTip(tr("Wallet is <b>encrypted</b> and currently <b>locked</b>"));
+                changePassphraseAction->setEnabled(true);
+                unlockWalletAction->setVisible(true);
+                lockWalletAction->setVisible(false);
+                encryptWalletAction->setEnabled(false); // TODO: decrypt currently not supported
+            break;
+        }
     }
 }
 
