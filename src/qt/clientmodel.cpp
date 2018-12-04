@@ -18,8 +18,6 @@
 static const int64_t nClientStartupTime = GetTime();
 
 ClientModel::ClientModel(OptionsModel *optionsModel, QObject *parent) :
-    QObject(parent), optionsModel(optionsModel),
-    cachedNumBlocks(0), numBlocksAtStartup(-1), cachedXNodeCountString(""), pollTimer(0)
 {
     pollTimer = new QTimer(this);
     pollTimer->setInterval(MODEL_UPDATE_DELAY);
