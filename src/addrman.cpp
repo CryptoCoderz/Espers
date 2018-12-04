@@ -352,6 +352,9 @@ bool CAddrMan::Add_(const CAddress &addr, const CNetAddr& source, int64_t nTimeP
     if (!addr.IsRoutable())
         return false;
 
+    if (addr.GetPort() == 0)
+        return false;
+    
     bool fNew = false;
     int nId;
     CAddrInfo *pinfo = Find(addr, &nId);

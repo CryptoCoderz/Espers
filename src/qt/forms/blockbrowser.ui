@@ -49,7 +49,7 @@
    </property>
    <item row="1" column="0">
     <widget class="QWidget" name="widget_be" native="true">
-     <widget class="QWidget" name="layoutWidget">
+     <widget class="QWidget" name="layoutWidget00">
       <property name="geometry">
        <rect>
         <x>0</x>
@@ -89,7 +89,7 @@
        </item>
       </layout>
      </widget>
-     <widget class="QWidget" name="layoutWidget_2">
+     <widget class="QWidget" name="layoutWidget01">
       <property name="geometry">
        <rect>
         <x>0</x>
@@ -633,7 +633,7 @@
        </item>
       </layout>
      </widget>
-     <widget class="QWidget" name="layoutWidget">
+     <widget class="QWidget" name="layoutWidget02">
       <property name="geometry">
        <rect>
         <x>505</x>

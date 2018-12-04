@@ -11,6 +11,8 @@
 #include "ui_interface.h"
 #include "uint256.h"
 #include "version.h"
+#include "netbase.h"
+#include "allocators.h"
 
 #include <algorithm>
 
@@ -38,6 +40,7 @@ namespace boost {
 #include <boost/thread.hpp>
 #include <openssl/crypto.h>
 #include <openssl/rand.h>
+#include <openssl/err.h>
 #include <stdarg.h>
 
 #ifdef WIN32
@@ -138,12 +141,14 @@ public:
 }
 instance_of_cinit;
 
-
-
-
-
-
-
+bool GetRandBytes(unsigned char *buf, int num)
+{
+    if (RAND_bytes(buf, num) == 0) {
+        LogPrint("rand", "%s : OpenSSL RAND_bytes() failed with error: %s\n", __func__, ERR_error_string(ERR_get_error(), NULL));
+        return false;
+    }
+    return true;
+}
 
 void RandAddSeed()
 {
@@ -189,9 +194,9 @@ uint64_t GetRand(uint64_t nMax)
     // to give every possible output value an equal possibility
     uint64_t nRange = (std::numeric_limits<uint64_t>::max() / nMax) * nMax;
     uint64_t nRand = 0;
-    do
-        RAND_bytes((unsigned char*)&nRand, sizeof(nRand));
-    while (nRand >= nRange);
+    do {
+        GetRandBytes((unsigned char*)&nRand, sizeof(nRand));
+    } while (nRand >= nRange);
     return (nRand % nMax);
 }
 
@@ -203,7 +208,7 @@ int GetRandInt(int nMax)
 uint256 GetRandHash()
 {
     uint256 hash;
-    RAND_bytes((unsigned char*)&hash, sizeof(hash));
+    GetRandBytes((unsigned char*)&hash, sizeof(hash));
     return hash;
 }
 
@@ -405,7 +410,7 @@ string SanitizeString(const string& str)
     return strResult;
 }
 
-static const signed char phexdigit[256] =
+const signed char p_util_hexdigit[256] =
 { -1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,
   -1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,
   -1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,
@@ -425,9 +430,9 @@ static const signed char phexdigit[256] =
 
 bool IsHex(const string& str)
 {
-    BOOST_FOREACH(unsigned char c, str)
+    BOOST_FOREACH(char c, str)
     {
-        if (phexdigit[c] < 0)
+        if (HexDigit(c) < 0)
             return false;
     }
     return (str.size() > 0) && (str.size()%2 == 0);
@@ -441,11 +446,11 @@ vector<unsigned char> ParseHex(const char* psz)
     {
         while (isspace(*psz))
             psz++;
-        signed char c = phexdigit[(unsigned char)*psz++];
+        signed char c = HexDigit(*psz++);
         if (c == (signed char)-1)
             break;
         unsigned char n = (c << 4);
-        c = phexdigit[(unsigned char)*psz++];
+        c = HexDigit(*psz++);
         if (c == (signed char)-1)
             break;
         n |= c;
@@ -919,6 +924,19 @@ bool WildcardMatch(const string& str, const string& mask)
 }
 
 
+bool ParseInt32(const std::string& str, int32_t *out)
+{
+    char *endp = NULL;
+    errno = 0; // strtol will not set errno if valid
+    long int n = strtol(str.c_str(), &endp, 10);
+    if(out) *out = (int)n;
+    // Note that strtol returns a *long int*, so even if strtol doesn't report a over/underflow
+    // we still have to check that the returned value is within the range of an *int32_t*. On 64-bit
+    // platforms the size of these types may be different.
+    return endp && *endp == 0 && !errno &&
+        n >= std::numeric_limits<int32_t>::min() &&
+        n <= std::numeric_limits<int32_t>::max();
+}
 
 
 
@@ -1067,8 +1085,7 @@ void ReadConfigFile(map<string, string>& mapSettingsRet,
                }
 
                std::string str(s, 34);
-               std::string rpcpass = "rpcpassword=" + str + "\n";
-               fprintf(ConfFile, rpcpass.c_str());
+               fprintf(ConfFile, "rpcpassword=%s\n", str.c_str());
                fprintf(ConfFile, "port=22448\n");
                fprintf(ConfFile, "rpcport=22442\n");
                fprintf(ConfFile, "rpcconnect=127.0.0.1\n");

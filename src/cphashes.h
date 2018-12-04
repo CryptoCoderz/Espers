@@ -37,6 +37,9 @@ static const uint256 CheckBlock_0024("0x000003af3506ec5ad72b13de9d242432946797b0
 static const uint256 CheckBlock_0025("0x00000000030d685da8aae697b3d373b6a41b181d2f5c1e72b62ab9eb3d3aee01");
 static const uint256 CheckBlock_0026("0x66d9ef5c9d3025516f7389cfa6bedbb0d0184f86b231d686f0ba87f8fd5d40ea");
 static const uint256 CheckBlock_0027("0x0000000002d36834fed8602c4eee5fe439051673096197e0b0605d8d23642c5b");
+// OpenSSL-1.1 Support/Security upgrade
+static const uint256 CheckBlock_0028("0x00000000002c279a35355039733c81278b109a9aa9e6b943ade5345e4271f175");
+static const uint256 CheckBlock_0029("0x24839e0efac44bc0fd76b2d64ebe04ac28a56feb7992a8cf63b44d104db62b79");
 
 
 static const int64_t CheckHeight_0001 = 10;
@@ -70,5 +73,8 @@ static const int64_t CheckHeight_0024 = 725500;
 static const int64_t CheckHeight_0025 = 746215;
 static const int64_t CheckHeight_0026 = 767500;
 static const int64_t CheckHeight_0027 = 769000;
+// OpenSSL-1.1 Support/Security upgrade
+static const int64_t CheckHeight_0028 = 777000;
+static const int64_t CheckHeight_0029 = 786250;
 
 #endif

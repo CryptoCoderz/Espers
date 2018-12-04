@@ -152,6 +152,8 @@ static const CRPCConvertParam vRPCConvertParams[] =
     { "importprivkey", 2 },
     { "checkkernel", 0 },
     { "checkkernel", 1 },
+    { "setban", 2 },
+    { "setban", 3 },
 };
 
 class CRPCConvertTable

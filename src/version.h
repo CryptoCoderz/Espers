@@ -59,8 +59,8 @@ static const int BIP0031_VERSION = 60000;
 static const int MEMPOOL_GD_VERSION = 60002;
 
 // reject blocks with non-canonical signatures starting from this version
-static const int CANONICAL_BLOCK_SIG_VERSION = 60035;
-static const int CANONICAL_BLOCK_SIG_LOW_S_VERSION = 60036;
+static const int CANONICAL_BLOCK_SIG_VERSION = 60045;
+static const int CANONICAL_BLOCK_SIG_LOW_S_VERSION = 60046;
 
 // minimum peer version that can receive xnode payments
 // V1 - Last protocol version before update

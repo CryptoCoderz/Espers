@@ -107,7 +107,21 @@ public:
 CBlock* CreateNewBlock(CReserveKey& reservekey, bool fProofOfStake, int64_t* pFees)
 {
     // Create new block
+#ifdef __GNUC__
+#define GCC_VERSION (__GNUC__ * 10000 \
+                     + __GNUC_MINOR__ * 100 \
+                     + __GNUC_PATCHLEVEL__)
+
+/* Test for GCC < 6.3.0 */
+#if GCC_VERSION > 60300
+    unique_ptr<CBlock> pblock(new CBlock());
+#else
     auto_ptr<CBlock> pblock(new CBlock());
+#endif
+#else
+    unique_ptr<CBlock> pblock(new CBlock());
+#endif
+
     if (!pblock.get())
         return NULL;
 
@@ -571,7 +585,20 @@ void ThreadStakeMiner(CWallet *pwallet)
         // Create new block
         //
         int64_t nFees;
+    #ifdef __GNUC__
+    #define GCC_VERSION (__GNUC__ * 10000 \
+                         + __GNUC_MINOR__ * 100 \
+                         + __GNUC_PATCHLEVEL__)
+
+    /* Test for GCC < 6.3.0 */
+    #if GCC_VERSION > 60300
+        unique_ptr<CBlock> pblock(CreateNewBlock(reservekey, true, &nFees));
+    #else
         auto_ptr<CBlock> pblock(CreateNewBlock(reservekey, true, &nFees));
+    #endif
+    #else
+        unique_ptr<CBlock> pblock(CreateNewBlock(reservekey, true, &nFees));
+    #endif
         if (!pblock.get())
             return;
 

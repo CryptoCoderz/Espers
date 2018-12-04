@@ -481,7 +481,7 @@ bool EvalScript(vector<vector<unsigned char> >& stack, const CScript& script, co
                 // Control
                 //
                 case OP_NOP:
-                    break;
+                break;
 
                 case OP_CHECKLOCKTIMEVERIFY:
                 {

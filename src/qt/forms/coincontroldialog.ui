@@ -396,6 +396,22 @@
          </property>
         </widget>
        </item>
+         <item>
+         <widget class="QPushButton" name="pushButtonToggleLock">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="text">
+           <string>toggle lock state</string>
+          </property>
+          <property name="autoDefault">
+           <bool>false</bool>
+          </property>
+         </widget>
+        </item>
        <item>
         <widget class="QRadioButton" name="radioTreeMode">
          <property name="sizePolicy">
@@ -425,6 +441,13 @@
          </property>
         </widget>
        </item>
+        <item>
+         <widget class="QLabel" name="labelLocked">
+          <property name="text">
+           <string>(1 locked)</string>
+          </property>
+         </widget>
+        </item>
        <item>
         <spacer name="horizontalSpacer">
          <property name="orientation">

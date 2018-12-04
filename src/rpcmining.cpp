@@ -155,6 +155,8 @@ Value getstakinginfo(const Array& params, bool fHelp)
 
     obj.push_back(Pair("expectedtime", nExpectedTime));
 
+    obj.push_back(Pair("stakethreshold", GetStakeCombineThreshold() / COIN));
+    
     return obj;
 }
 
@@ -225,7 +227,20 @@ Value checkkernel(const Array& params, bool fHelp)
         return result;
 
     int64_t nFees;
+#ifdef __GNUC__
+#define GCC_VERSION (__GNUC__ * 10000 \
+                     + __GNUC_MINOR__ * 100 \
+                     + __GNUC_PATCHLEVEL__)
+
+/* Test for GCC < 6.3.0 */
+#if GCC_VERSION > 60300
+    unique_ptr<CBlock> pblock(CreateNewBlock(*pMiningKey, true, &nFees));
+#else
     auto_ptr<CBlock> pblock(CreateNewBlock(*pMiningKey, true, &nFees));
+#endif
+#else
+    unique_ptr<CBlock> pblock(CreateNewBlock(*pMiningKey, true, &nFees));
+#endif
 
     pblock->nTime = pblock->vtx[0].nTime = nTime;
 
@@ -622,6 +637,7 @@ Value getblocktemplate(const Array& params, bool fHelp)
         aMutable.push_back("time");
         aMutable.push_back("transactions");
         aMutable.push_back("prevblock");
+        aMutable.push_back("version/force");
     }
 
     Object result;
