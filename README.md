@@ -44,8 +44,8 @@ General Info:
 
 		Block Spacing: 5 Minutes
 		Stake Minimum Age: 90 Confirmations (PoS-v3) | 2 Hours (PoS-v2)
-		Port: 22442
-		RPC Port: 22447
+		Port: 22448
+		RPC Port: 22442
 
 Compiling Espers daemon on Ubunutu 18.04 LTS Bionic
 ---------------------------
@@ -83,7 +83,7 @@ cd ~; cd ~/Espers/src; chmod a+x obj; chmod a+x leveldb/build_detect_platform; c
 
 ### Create config file for daemon
 ```
-cd ~; sudo ufw allow 22447/tcp; sudo ufw allow 22442/tcp; sudo mkdir ~/.ESP; cat << "CONFIG" >> ~/.ESP/Espers.conf
+cd ~; sudo ufw allow 22448/tcp; sudo ufw allow 22442/tcp; sudo mkdir ~/.ESP; cat << "CONFIG" >> ~/.ESP/Espers.conf
 listen=1
 server=1
 daemon=1
@@ -91,7 +91,7 @@ testnet=0
 rpcuser=espersuser
 rpcpassword=SomeCrazyVeryVerySecurePasswordHere
 rpcport=22442
-port=22447
+port=22448
 rpcconnect=127.0.0.1
 rpcallowip=127.0.0.1
 addnode=198.50.180.207
