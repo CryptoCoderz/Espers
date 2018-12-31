@@ -4,8 +4,8 @@ Espers [ESP] 2016-2019 integration/staging tree
 https://espers.io/
 
 What is the Espers [ESP] Blockchain?
----------------------------
-TODO: Update documentation regarding implemented tech as this section is out of date and much progress and upgrades have been made to mentioned sections...
+------------------------------------
+*TODO: Update documentation regarding implemented tech as this section is out of date and much progress and upgrades have been made to mentioned sections...*
 
 ### Overview
 Espers is a blockchain project with the goal of offering secured messaging, websites on the chain and an overall pleasing experience to the user.
@@ -30,43 +30,59 @@ We use an custom internal algorithm known as HMQ1725 to sign blocks and conduct 
 
 Specifications and General info
 ------------------
-Espers uses   Boost1.68,
-			  OR Boost1.58,  
-			  OpenSSL1.02o,
-			  OR OpenSSL1.1x,
-			  Berkeley DB 6.2.32,
-			  QT5.11 to compile
+Espers uses:
+
+		Boost1.68,
+		OR Boost1.58,
+		OpenSSL1.02o,
+		OR OpenSSL1.1x,
+		Berkeley DB 6.2.32,
+		QT5.11 to compile
+
+General Info:
 
 
-Block Spacing: 5 Minutes
-Stake Minimum Age: 90 Confirmations (PoS-v3) | 2 Hours (PoS-v2)
-
-Port: 22442
-RPC Port: 22447
+		Block Spacing: 5 Minutes
+		Stake Minimum Age: 90 Confirmations (PoS-v3) | 2 Hours (PoS-v2)
+		Port: 22442
+		RPC Port: 22447
 
 Compiling Espers daemon on Ubunutu 18.04 LTS Bionic
 ---------------------------
 ### Note: guide should be compatible with other Ubuntu versions from 14.04+
 
 ### Become poweruser
+```
 sudo -i
+```
 
 ### Dependencies install
+```
 cd ~; sudo apt-get install ntp git build-essential libssl-dev libdb-dev libdb++-dev libboost-all-dev libqrencode-dev libcurl4-openssl-dev curl libzip-dev; apt-get update; apt-get upgrade; apt-get install git make automake build-essential libboost-all-dev; apt-get install yasm binutils libcurl4-openssl-dev openssl libssl-dev; sudo apt-get install libgmp-dev;
+```
 
 ### Dependencies build and link
+```
 cd ~; wget http://download.oracle.com/berkeley-db/db-6.2.32.NC.tar.gz; tar zxf db-6.2.32.NC.tar.gz; cd db-6.2.32.NC/build_unix; ../dist/configure --enable-cxx; make; sudo make install; sudo ln -s /usr/local/BerkeleyDB.6.2/lib/libdb-6.2.so /usr/lib/libdb-6.2.so; sudo ln -s /usr/local/BerkeleyDB.6.2/lib/libdb_cxx-6.2.so /usr/lib/libdb_cxx-6.2.so; export BDB_INCLUDE_PATH="/usr/local/BerkeleyDB.6.2/include"; export BDB_LIB_PATH="/usr/local/BerkeleyDB.6.2/lib"; cd~;
+```
 
 ### Personal upload EXAMPLE
+```
 cd ~; sudo cp -r /home/ftpuser/ftp/files/ESP-clean/. ~/Espers
+```
 
 ### GitHub pull RECOMMENDED
+```
 cd ~; git clone https://github.com/CryptoCoderz/Espers
+```
 
 ### Build Espers daemon
+```
 cd ~; cd ~/Espers/src; chmod a+x obj; chmod a+x leveldb/build_detect_platform; chmod a+x leveldb; chmod a+x ~/Espers/src; chmod a+x ~/Espers; make -f makefile.unix USE_UPNP=-; cd ~; cp ~/Espers/src/Espersd /usr/local/bin;
+```
 
 ### Create config file for daemon
+```
 cd ~; sudo ufw allow 22447/tcp; sudo ufw allow 22442/tcp; sudo mkdir ~/.ESP; cat << "CONFIG" >> ~/.ESP/Espers.conf
 listen=1
 server=1
@@ -97,16 +113,20 @@ addnode=159.89.114.40
 
 CONFIG
 chmod 700 ~/.ESP/Espers.conf; chmod 700 ~/.ESP; ls -la ~/.ESP
+```
 
 ### Run Espers daemon
+```
 cd ~; Espersd; Espersd getinfo
+```
 
 ### Troubleshooting
 ### for basic troubleshooting run the following commands when compiling:
 ### this is for minupnpc errors compiling
-
+```
 make clean -f makefile.unix USE_UPNP=-
 make -f makefile.unix USE_UPNP=-
+```
 
 License
 -------
