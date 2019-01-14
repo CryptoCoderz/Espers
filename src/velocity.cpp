@@ -53,6 +53,8 @@ bool Velocity(CBlockIndex* prevBlock, CBlock* block)
     int64_t OLDstamp = 0;
     int64_t TXstampC = 0;
     int64_t TXstampO = 0;
+    int64_t SYScrntstamp = 0;
+    int64_t SYSbaseStamp = 0;
     int nHeight = prevBlock->nHeight+1;
     int i = VelocityI(nHeight);
     int HaveCoins = false;
@@ -64,73 +66,78 @@ bool Velocity(CBlockIndex* prevBlock, CBlock* block)
     OLDstamp = prevBlock->GetBlockTime();
     CURvalstamp = prevBlock->GetBlockTime() + VELOCITY_MIN_RATE[i];
     OLDvalstamp = prevBlock->pprev->GetBlockTime() + VELOCITY_MIN_RATE[i];
- // TODO: Rework and activate below section for future releases
- // Factor in TXs for Velocity constraints only if there are TXs to do so with
- if(VELOCITY_FACTOR[i] == true && TXvalue > 0)
- {
-    // Set factor values
-    BOOST_FOREACH(const CTransaction& tx, block->vtx)
-    {
-        TXvalue = tx.GetValueOut();
-        TXinput = tx.GetValueIn(mapInputs);
-        TXfee = TXinput - TXvalue;
-        TXcount = block->vtx.size();
-        TXlogic = GetPrevAccountBalance - TXinput;
-        // TXrate = block->GetBlockTime() - prevBlock->GetBlockTime();
-    }
-        // Set Velocity logic value
-    if(TXlogic > 0)
-    {
-       HaveCoins = true;
-    }
-    // Check for and enforce minimum TXs per block (Minimum TXs are disabled for Espers)
-    if(VELOCITY_MIN_TX[i] > 0 && TXcount < VELOCITY_MIN_TX[i])
-    {
-       LogPrintf("DENIED: Not enough TXs in block\n");
-       return false;
-    }
-    // Authenticate submitted block's TXs
-    if(VELOCITY_MIN_VALUE[i] > 0 || VELOCITY_MIN_FEE[i] > 0)
-    {
-       // Make sure we accept only blocks that sent an amount
-       // NOT being more than available coins to send
-       if(VELOCITY_MIN_FEE[i] > 0 && TXinput > 0)
-       {
-          if(HaveCoins == false)
-          {
-             LogPrintf("DENIED: Balance has insuficient funds for attempted TX with Velocity\n");
-             return false;
-          }
-       }
+    SYScrntstamp = GetAdjustedTime() + VELOCITY_MIN_RATE[i];
+    SYSbaseStamp = GetTime() + VELOCITY_MIN_RATE[i];
 
-          if(VELOCITY_MIN_VALUE[i] > 0 && TXvalue < VELOCITY_MIN_VALUE[i])
-          {
-             LogPrintf("DENIED: Invalid TX value found by Velocity\n");
-             return false;
-          }
-          if(VELOCITY_MIN_FEE[i] > 0 && TXinput > 0)
-          {
-             if(TXfee < VELOCITY_MIN_FEE[i])
-             {
-                LogPrintf("DENIED: Invalid network fee found by Velocity\n");
-                return false;
-             }
-          }
-     }
-  }
-    // Verify minimum Velocity rate
-    if( VELOCITY_RATE[i] > 0 && TXrate > VELOCITY_RATE[i] )
+    // TODO: Rework and activate below section for future releases
+    // Factor in TXs for Velocity constraints only if there are TXs to do so with
+    if(VELOCITY_FACTOR[i] == true && TXvalue > 0)
     {
-        LogPrintf("ACCEPTED: block has met Velocity constraints\n");
+        // Set factor values
+        BOOST_FOREACH(const CTransaction& tx, block->vtx)
+        {
+            TXvalue = tx.GetValueOut();
+            TXinput = tx.GetValueIn(mapInputs);
+            TXfee = TXinput - TXvalue;
+            TXcount = block->vtx.size();
+            TXlogic = GetPrevAccountBalance - TXinput;
+            // TXrate = block->GetBlockTime() - prevBlock->GetBlockTime();
+        }
+        // Set Velocity logic value
+        if(TXlogic > 0)
+        {
+            HaveCoins = true;
+        }
+        // Check for and enforce minimum TXs per block (Minimum TXs are disabled for Espers)
+        if(VELOCITY_MIN_TX[i] > 0 && TXcount < VELOCITY_MIN_TX[i])
+        {
+            LogPrintf("DENIED: Not enough TXs in block\n");
+            return false;
+        }
+        // Authenticate submitted block's TXs
+        if(VELOCITY_MIN_VALUE[i] > 0 || VELOCITY_MIN_FEE[i] > 0)
+        {
+            // Make sure we accept only blocks that sent an amount
+            // NOT being more than available coins to send
+            if(VELOCITY_MIN_FEE[i] > 0 && TXinput > 0)
+            {
+                if(HaveCoins == false)
+                {
+                    LogPrintf("DENIED: Balance has insuficient funds for attempted TX with Velocity\n");
+                    return false;
+                }
+            }
+
+            if(VELOCITY_MIN_VALUE[i] > 0 && TXvalue < VELOCITY_MIN_VALUE[i])
+            {
+                LogPrintf("DENIED: Invalid TX value found by Velocity\n");
+                return false;
+            }
+            if(VELOCITY_MIN_FEE[i] > 0 && TXinput > 0)
+            {
+                if(TXfee < VELOCITY_MIN_FEE[i])
+                {
+                    LogPrintf("DENIED: Invalid network fee found by Velocity\n");
+                    return false;
+                }
+            }
+        }
+    }
+
+    // Verify minimum Velocity rate
+    if( VELOCITY_RATE[i] > 0 && TXrate >= VELOCITY_MIN_RATE[i] )
+    {
+        LogPrintf("CHECK_PASSED: block spacing has met Velocity constraints\n");
     }
     // Rates that are too rapid are rejected without exception
-    else if( VELOCITY_MIN_RATE[i] > 0 && TXrate < VELOCITY_MIN_RATE[i] )
+    else if( VELOCITY_RATE[i] > 0 && TXrate < VELOCITY_MIN_RATE[i] )
     {
         LogPrintf("DENIED: Minimum block spacing not met for Velocity\n");
         return false;
     }
-    // Validate timestamp is logical
-    else if(CURstamp < CURvalstamp || TXstampC < CURvalstamp)
+
+    // Validate timestamp is logical based on previous block history
+    if(CURstamp < CURvalstamp || TXstampC < CURvalstamp)
     {
         LogPrintf("DENIED: Block timestamp is not logical\n");
         return false;
@@ -142,6 +149,18 @@ bool Velocity(CBlockIndex* prevBlock, CBlock* block)
             LogPrintf("DENIED: Block timestamp is not logical\n");
             return false;
         }
+    }
+
+    // Validate timestamp is logical based on system time
+    if(CURstamp > SYSbaseStamp || CURstamp > SYScrntstamp)
+    {
+        LogPrintf("DENIED: Block timestamp is not logical\n");
+        return false;
+    }
+    else if(TXstampC > SYSbaseStamp || TXstampC > SYScrntstamp)
+    {
+        LogPrintf("DENIED: Block timestamp is not logical\n");
+        return false;
     }
 
     // Constrain Velocity
