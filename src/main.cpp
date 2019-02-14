@@ -23,6 +23,8 @@
 #include "txdb.h"
 #include "txmempool.h"
 #include "velocity.h"
+#include "xnodemngr.h"
+#include "xnodereward.h"
 #include "ui_interface.h"
 
 using namespace std;
@@ -923,6 +925,145 @@ bool AcceptToMemoryPool(CTxMemPool& pool, CTransaction &tx, bool fLimitFree,
     return true;
 }
 
+bool AcceptableInputs(CTxMemPool& pool, CTransaction &tx, bool fLimitFree,
+                        bool* pfMissingInputs)
+{
+    AssertLockHeld(cs_main);
+    if (pfMissingInputs)
+        *pfMissingInputs = false;
+
+    if (!tx.CheckTransaction())
+        return error("AcceptableInputs : CheckTransaction failed");
+
+    // Coinbase is only valid in a block, not as a loose transaction
+    if (tx.IsCoinBase())
+        return tx.DoS(100, error("AcceptableInputs : coinbase as individual tx"));
+
+    // ppcoin: coinstake is also only valid in a block, not as a loose transaction
+    if (tx.IsCoinStake())
+        return tx.DoS(100, error("AcceptableInputs : coinstake as individual tx"));
+
+    // Rather not work on nonstandard transactions (unless -testnet)
+    string reason;
+    if (!TestNet() && !IsStandardTx(tx, reason))
+        return error("AcceptableInputs : nonstandard transaction: %s",
+                     reason);
+
+    // is it already in the memory pool?
+    uint256 hash = tx.GetHash();
+    if (pool.exists(hash))
+        return false;
+
+    // Check for conflicts with in-memory transactions
+    {
+    LOCK(pool.cs); // protect pool.mapNextTx
+    for (unsigned int i = 0; i < tx.vin.size(); i++)
+    {
+        COutPoint outpoint = tx.vin[i].prevout;
+        if (pool.mapNextTx.count(outpoint))
+        {
+            // Disable replacement feature for now
+            return false;
+        }
+    }
+    }
+
+    {
+        CTxDB txdb("r");
+
+        // do we already have it?
+        if (txdb.ContainsTx(hash))
+            return false;
+
+        MapPrevTx mapInputs;
+        map<uint256, CTxIndex> mapUnused;
+        bool fInvalid = false;
+        if (!tx.FetchInputs(txdb, mapUnused, false, false, mapInputs, fInvalid))
+        {
+            if (fInvalid)
+                return error("AcceptableInputs : FetchInputs found invalid tx %s", hash.ToString());
+            if (pfMissingInputs)
+                *pfMissingInputs = true;
+            return false;
+        }
+
+        // Check for non-standard pay-to-script-hash in inputs
+        if (!TestNet() && !AreInputsStandard(tx, mapInputs))
+            return error("AcceptableInputs : nonstandard transaction input");
+
+        // Check that the transaction doesn't have an excessive number of
+        // sigops, making it impossible to mine. Since the coinbase transaction
+        // itself can contain sigops MAX_TX_SIGOPS is less than
+        // MAX_BLOCK_SIGOPS; we still consider this an invalid rather than
+        // merely non-standard transaction.
+        unsigned int nSigOps = GetLegacySigOpCount(tx);
+        nSigOps += GetP2SHSigOpCount(tx, mapInputs);
+        if (nSigOps > MAX_TX_SIGOPS)
+            return tx.DoS(0,
+                          error("AcceptableInputs : too many sigops %s, %d > %d",
+                                hash.ToString(), nSigOps, MAX_TX_SIGOPS));
+
+        int64_t nFees = tx.GetValueIn(mapInputs)-tx.GetValueOut();
+        unsigned int nSize = ::GetSerializeSize(tx, SER_NETWORK, PROTOCOL_VERSION);
+
+        // Don't accept it if it can't get into a block
+        int64_t txMinFee = GetMinFee(tx, 1000, GMF_RELAY, nSize);
+        if ((fLimitFree && nFees < txMinFee) || (!fLimitFree && nFees < MIN_TX_FEE))
+            return error("AcceptableInputs : not enough fees %s, %d < %d",
+                         hash.ToString(),
+                         nFees, txMinFee);
+
+        // Continuously rate-limit free transactions
+        // This mitigates 'penny-flooding' -- sending thousands of free transactions just to
+        // be annoying or make others' transactions take longer to confirm.
+        if (fLimitFree && nFees < MIN_RELAY_TX_FEE)
+        {
+            static CCriticalSection csFreeLimiter;
+            static double dFreeCount;
+            static int64_t nLastTime;
+            int64_t nNow = GetTime();
+
+            LOCK(csFreeLimiter);
+
+            // Use an exponentially decaying ~10-minute window:
+            dFreeCount *= pow(1.0 - 1.0/600.0, (double)(nNow - nLastTime));
+            nLastTime = nNow;
+            // -limitfreerelay unit is thousand-bytes-per-minute
+            // At default rate it would take over a month to fill 1GB
+            if (dFreeCount > GetArg("-limitfreerelay", 15)*10*1000)
+                return error("AcceptableInputs : free transaction rejected by rate limiter");
+            LogPrint("mempool", "Rate limit dFreeCount: %g => %g\n", dFreeCount, dFreeCount+nSize);
+            dFreeCount += nSize;
+        }
+
+        // Check against previous transactions
+        // This is done last to help prevent CPU exhaustion denial-of-service attacks.
+        if (!tx.ConnectInputs(txdb, mapInputs, mapUnused, CDiskTxPos(1,1,1), pindexBest, false, false, STANDARD_SCRIPT_VERIFY_FLAGS))
+        {
+            return error("AcceptableInputs : ConnectInputs failed %s", hash.ToString());
+        }
+
+        // Check again against just the consensus-critical mandatory script
+        // verification flags, in case of bugs in the standard flags that cause
+        // transactions to pass as valid when they're actually invalid. For
+        // instance the STRICTENC flag was incorrectly allowing certain
+        // CHECKSIG NOT scripts to pass, even though they were invalid.
+        //
+        // There is a similar check in CreateNewBlock() to prevent creating
+        // invalid blocks, however allowing such transactions into the mempool
+        // can be exploited as a DoS attack.
+        if (!tx.ConnectInputs(txdb, mapInputs, mapUnused, CDiskTxPos(1,1,1), pindexBest, false, false, MANDATORY_SCRIPT_VERIFY_FLAGS))
+        {
+            return error("AcceptableInputs: : BUG! PLEASE REPORT THIS! ConnectInputs failed against MANDATORY but not STANDARD flags %s", hash.ToString());
+        }
+    }
+
+    //LogPrint("mempool", "AcceptableInputs : accepted %s (poolsz %u)\n",
+    //       hash.ToString(),
+    //       pool.mapTx.size());
+    return true;
+}
+
 
 
 
@@ -1000,6 +1141,25 @@ bool CWalletTx::AcceptWalletTransaction()
 {
     CTxDB txdb("r");
     return AcceptWalletTransaction(txdb);
+}
+
+int GetInputAge(CTxIn& vin)
+{
+    const uint256& prevHash = vin.prevout.hash;
+    CTransaction tx;
+    uint256 hashBlock;
+    bool fFound = GetTransaction(prevHash, tx, hashBlock);
+    if(fFound)
+    {
+    if(mapBlockIndex.find(hashBlock) != mapBlockIndex.end())
+    {
+        return pindexBest->nHeight - mapBlockIndex[hashBlock]->nHeight;
+    }
+    else
+        return 0;
+    }
+    else
+        return 0;
 }
 
 int CTxIndex::GetDepthInMainChain() const
@@ -2088,6 +2248,75 @@ bool CBlock::CheckBlock(bool fCheckPOW, bool fCheckMerkleRoot, bool fCheckSig) c
     if (fCheckSig && !CheckBlockSignature())
         return DoS(100, error("CheckBlock() : bad proof-of-stake block signature"));
 
+    // ----------- xnode payments -----------
+
+    bool XNodePayments = false;
+    bool fIsInitialDownload = IsInitialBlockDownload();
+
+    if(nTime > START_XNODE_PAYMENTS) XNodePayments = true;
+    if (!fIsInitialDownload)
+    {
+        if(XNodePayments)
+        {
+            LOCK2(cs_main, mempool.cs);
+
+            CBlockIndex *pindex = pindexBest;
+            if(IsProofOfStake() && pindex != NULL){
+                if(pindex->GetBlockHash() == hashPrevBlock){
+                    // If we don't already have its previous block, skip xnode payment step
+                    // TODO: elaborate on payment catch, currently unused and throws warning
+                    int64_t xnodePaymentAmount;
+                    for (int i = vtx[1].vout.size(); i--> 0; ) {
+                        xnodePaymentAmount = vtx[1].vout[i].nValue;
+                        break;
+                    }
+                    int64_t definedXNoderewardAmount = GetXNodePayment(pindexBest->nHeight+1, nPoSageReward);
+                    bool foundPaymentAmount = false;
+                    bool foundPayee = false;
+                    bool foundPaymentAndPayee = false;
+
+                    CScript payee;
+                    CTxIn vin;
+                    if(!xnodePayments.GetBlockPayee(pindexBest->nHeight+1, payee, vin) || payee == CScript()){
+                        foundPayee = true; //doesn't require a specific payee
+                        foundPaymentAmount = true;
+                        foundPaymentAndPayee = true;
+                        if(fDebug) { LogPrintf("CheckBlock() : Using non-specific xnode payments %d\n", pindexBest->nHeight+1); }
+                    }
+
+                    for (unsigned int i = 0; i < vtx[1].vout.size(); i++) {
+                        if(vtx[1].vout[i].nValue == definedXNoderewardAmount )
+                            foundPaymentAmount = true;
+                        if(vtx[1].vout[i].scriptPubKey == payee )
+                            foundPayee = true;
+                        if(vtx[1].vout[i].nValue == definedXNoderewardAmount && vtx[1].vout[i].scriptPubKey == payee)
+                            foundPaymentAndPayee = true;
+                    }
+
+                    CTxDestination address1;
+                    ExtractDestination(payee, address1);
+                    //CXNodeAddress address2(address1);
+                    CBitcoinAddress address2(address1);
+
+                    if(!foundPaymentAndPayee) {
+                        if(fDebug) { LogPrintf("CheckBlock() : Couldn't find xnode payment(%d|%d) or payee(%d|%s) nHeight %d. \n", foundPaymentAmount, definedXNoderewardAmount, foundPayee, address2.ToString().c_str(), pindexBest->nHeight+1); }
+                        return DoS(100, error("CheckBlock() : Couldn't find xnode payment or payee"));
+                    } else {
+                        LogPrintf("CheckBlock() : Found payment(%d|%d) or payee(%d|%s) nHeight %d. \n", foundPaymentAmount, definedXNoderewardAmount, foundPayee, address2.ToString().c_str(), pindexBest->nHeight+1);
+                    }
+                } else {
+                    if(fDebug) { LogPrintf("CheckBlock() : Skipping xnode payment check - nHeight %d Hash %s\n", pindexBest->nHeight+1, GetHash().ToString().c_str()); }
+                }
+            } else {
+                if(fDebug) { LogPrintf("CheckBlock() : pindex is null, skipping xnode payment check\n"); }
+            }
+        } else {
+            if(fDebug) { LogPrintf("CheckBlock() : skipping xnode payment checks\n"); }
+        }
+    } else {
+        if(fDebug) { LogPrintf("CheckBlock() : Is initial download, skipping xnode payment check %d\n", pindexBest->nHeight+1); }
+    }
+
     // Check transactions
     BOOST_FOREACH(const CTransaction& tx, vtx)
     {
@@ -2446,6 +2675,24 @@ bool ProcessBlock(CNode* pfrom, CBlock* pblock)
             delete mi->second;
         }
         mapOrphanBlocksByPrev.erase(hashPrev);
+    }
+
+    if (!IsInitialBlockDownload())
+    {
+        CScript payee;
+        CTxIn vin;
+
+        if(xnodePayments.GetBlockPayee(pindexBest->nHeight, payee, vin)){
+            //UPDATE XNODE LAST PAID TIME
+            CXNode* pxn = xnodeman.Find(vin);
+            if(pxn != NULL) {
+                pxn->nLastPaid = GetAdjustedTime();
+            }
+
+            LogPrintf("ProcessBlock() : Update XNode Last Paid Time - %d\n", pindexBest->nHeight);
+        }
+
+        xnodePayments.ProcessBlock(GetHeight()+10);
     }
 
     LogPrintf("ProcessBlock: ACCEPTED\n");
@@ -2944,6 +3191,10 @@ bool static AlreadyHave(CTxDB& txdb, const CInv& inv)
     case MSG_BLOCK:
         return mapBlockIndex.count(inv.hash) ||
                mapOrphanBlocks.count(inv.hash);
+    case MSG_SPORK:
+        return mapSporks.count(inv.hash);
+    case MSG_XNODE_WINNER:
+        return mapSeenXNodeVotes.count(inv.hash);
     }
     // Don't know what it is, just say we already got one
     return true;
@@ -3019,6 +3270,24 @@ void static ProcessGetData(CNode* pfrom)
                         ss.reserve(1000);
                         ss << tx;
                         pfrom->PushMessage("tx", ss);
+                        pushed = true;
+                    }
+                }
+                if (!pushed && inv.type == MSG_SPORK) {
+                    if(mapSporks.count(inv.hash)){
+                        CDataStream ss(SER_NETWORK, PROTOCOL_VERSION);
+                        ss.reserve(1000);
+                        ss << mapSporks[inv.hash];
+                        pfrom->PushMessage("spork", ss);
+                        pushed = true;
+                    }
+                }
+                if (!pushed && inv.type == MSG_XNODE_WINNER) {
+                    if(mapSeenXNodeVotes.count(inv.hash)){
+                        CDataStream ss(SER_NETWORK, PROTOCOL_VERSION);
+                        ss.reserve(1000);
+                        ss << mapSeenXNodeVotes[inv.hash];
+                        pfrom->PushMessage("xnw", ss);
                         pushed = true;
                     }
                 }
@@ -3457,9 +3726,15 @@ bool static ProcessMessage(CNode* pfrom, string strCommand, CDataStream& vRecv, 
         vector<uint256> vWorkQueue;
         vector<uint256> vEraseQueue;
         CTransaction tx;
-        vRecv >> tx;
 
+        //CTxDB txdb("r");
+
+        vRecv >> tx;
         CInv inv(MSG_TX, tx.GetHash());
+        // Check for recently rejected (and do other quick existence checks) (OFF)
+        //if (AlreadyHave(txdb, inv))
+        //    return true;
+
         pfrom->AddInventoryKnown(inv);
 
         LOCK(cs_main);
@@ -3689,6 +3964,10 @@ bool static ProcessMessage(CNode* pfrom, string strCommand, CDataStream& vRecv, 
 
     else
     {
+        xnodeman.ProcessMessage(pfrom, strCommand, vRecv);
+        ProcessMessageXNodePayments(pfrom, strCommand, vRecv);
+        ProcessSpork(pfrom, strCommand, vRecv);
+
         // Ignore unknown commands for extensibility
     }
 

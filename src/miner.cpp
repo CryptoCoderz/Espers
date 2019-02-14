@@ -10,6 +10,8 @@
 #include "miner.h"
 #include "kernel.h"
 #include "velocity.h"
+#include "xnodemngr.h"
+#include "xnodereward.h"
 
 using namespace std;
 

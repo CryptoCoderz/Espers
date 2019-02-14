@@ -570,3 +570,14 @@ int64_t GetProofOfStakeReward(int64_t nCoinAge, int64_t nFees)
     LogPrint("creation", "GetProofOfStakeReward(): create=%s nCoinAge=%d\n", FormatMoney(nSubsidy), nCoinAge);
     return nSubsidy + nFees;
 }
+
+//
+// Xnode coin base reward
+//
+int64_t GetXNodePayment(int nHeight, int64_t blockValue)
+{
+    int64_t ret = 1 * COIN;
+    ret = (blockValue * 85) / 100; // 85% TODO: Implement adaptive (scaling) rewards
+
+    return ret;
+}

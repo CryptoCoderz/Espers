@@ -16,6 +16,10 @@
 #include "util.h"
 #include "walletdb.h"
 
+#include "fork.h"
+#include "xnodemngr.h"
+#include "xnodereward.h"
+
 #include <boost/algorithm/string/replace.hpp>
 #include <boost/range/algorithm.hpp>
 #include <boost/numeric/ublas/matrix.hpp>
@@ -26,6 +30,7 @@ using namespace std;
 int64_t nTransactionFee = MIN_TX_FEE;
 int64_t nReserveBalance = 0;
 int64_t nMinimumInputValue = 0;
+int64_t nPoSageReward = 0;
 
 static unsigned int GetStakeSplitAge() { return 8 * 24 * 60 * 60; }
 int64_t GetStakeCombineThreshold() { return GetArg("-stakethreshold", 1000) * COIN; }
@@ -1148,6 +1153,41 @@ void CWallet::AvailableCoins(vector<COutput>& vCoins, bool fOnlyConfirmed, const
     }
 }
 
+void CWallet::AvailableCoinsXN(vector<COutput>& vCoins, bool fOnlyConfirmed, const CCoinControl *coinControl) const
+{
+    vCoins.clear();
+
+    {
+        LOCK2(cs_main, cs_wallet);
+        for (map<uint256, CWalletTx>::const_iterator it = mapWallet.begin(); it != mapWallet.end(); ++it)
+        {
+            const CWalletTx* pcoin = &(*it).second;
+
+            if (!IsFinalTx(*pcoin))
+                continue;
+
+            if (fOnlyConfirmed && !pcoin->IsTrusted())
+                continue;
+
+            if (pcoin->IsCoinBase() && pcoin->GetBlocksToMaturity() > 0)
+                continue;
+
+            if(pcoin->IsCoinStake() && pcoin->GetBlocksToMaturity() > 0)
+                continue;
+
+            int nDepth = pcoin->GetDepthInMainChain();
+            if (nDepth < 0)
+                continue;
+
+            for (unsigned int i = 0; i < pcoin->vout.size(); i++)
+                if (!(pcoin->IsSpent(i)) && IsMine(pcoin->vout[i]) && pcoin->vout[i].nValue >= nMinimumInputValue &&
+                (!coinControl || !coinControl->HasSelected() || coinControl->IsSelected((*it).first, i)))
+                    vCoins.push_back(COutput(pcoin, i, nDepth));
+
+        }
+    }
+}
+
 void CWallet::AvailableCoinsForStaking(vector<COutput>& vCoins, unsigned int nSpendTime) const
 {
     vCoins.clear();
@@ -2018,24 +2058,108 @@ bool CWallet::CreateCoinStake(const CKeyStore& keystore, unsigned int nBits, int
     }
 
     // Calculate coin age reward
+    int64_t nReward;
     {
         uint64_t nCoinAge;
         CTxDB txdb("r");
         if (!txNew.GetCoinAge(txdb, pindexPrev, nCoinAge))
             return error("CreateCoinStake : failed to calculate coin age");
 
-        int64_t nReward = GetProofOfStakeReward(nCoinAge, nFees);
+        nReward = GetProofOfStakeReward(nCoinAge, nFees);
         if (nReward <= 0)
             return false;
 
         nCredit += nReward;
     }
 
+    // Set TX values
+    CScript payee;
+    CTxIn vin;
+    nPoSageReward = nReward;
+
+    // XNode Payments
+    int payments = 1;
+    // start xnode payments
+    bool bXnodePayment = false;
+
+    if ( Params().NetworkID() == CChainParams::TESTNET ){
+        if (GetTime() > START_XNODE_PAYMENTS_TESTNET ){
+            bXnodePayment = true;
+        }
+    }else{
+        if (GetTime() > START_XNODE_PAYMENTS){
+            bXnodePayment = true;
+        }
+    }
+    // stop xnode payments (for testing)
+    if ( Params().NetworkID() == CChainParams::TESTNET ){
+        if (GetTime() > STOP_XNODE_PAYMENTS_TESTNET ){
+            bXnodePayment = false;
+        }
+    }else{
+        if (GetTime() > STOP_XNODE_PAYMENTS){
+            bXnodePayment = false;
+        }
+    }
+
+    bool hasPayment = true;
+    if(bXnodePayment) {
+        //spork
+        if(!xnodePayments.GetBlockPayee(pindexPrev->nHeight+1, payee, vin)){
+            CXNode* winningNode = xnodeman.GetCurrentXnode(1);
+            if(winningNode){
+                payee = GetScriptForDestination(winningNode->pubkey.GetID());
+            } else {
+                return error("CreateCoinStake: Failed to detect xnode to pay\n");
+            }
+        }
+    } else {
+        hasPayment = false;
+    }
+
+    if(hasPayment){
+        payments = txNew.vout.size() + 1;
+        txNew.vout.resize(payments);
+
+        txNew.vout[payments-1].scriptPubKey = payee;
+        txNew.vout[payments-1].nValue = 0;
+
+        CTxDestination address1;
+        ExtractDestination(payee, address1);
+        //CXNodeAddress address2(address1);
+        CBitcoinAddress address2(address1);
+
+        LogPrintf("XNode payment to %s\n", address2.ToString().c_str());
+    }
+
+    int64_t blockValue = nCredit;
+    int64_t xnodePayment = GetXNodePayment(pindexPrev->nHeight+1, nReward);
+
     // Set output amount
-    if (txNew.vout.size() == 3)
+    // Standard stake (no XNode payments)
+    if (!hasPayment)
     {
-        txNew.vout[1].nValue = (nCredit / 2 / CENT) * CENT;
-        txNew.vout[2].nValue = nCredit - txNew.vout[1].nValue;
+        if(txNew.vout.size() == 3){ // 2 stake outputs, stake was split, no xnode payment
+            txNew.vout[1].nValue = (blockValue / 2 / CENT) * CENT;
+            txNew.vout[2].nValue = blockValue - txNew.vout[1].nValue;
+        }
+        else if(txNew.vout.size() == 2){ // only 1 stake output, was not split, no xnode payment
+            txNew.vout[1].nValue = blockValue;
+        }
+    }
+    else if(hasPayment)
+    {
+        if(txNew.vout.size() == 4){ // 2 stake outputs, stake was split, plus a xnode payment
+            txNew.vout[payments-1].nValue = xnodePayment;
+            blockValue -= xnodePayment;
+            txNew.vout[1].nValue = (blockValue / 2 / CENT) * CENT;
+            txNew.vout[2].nValue = blockValue - txNew.vout[1].nValue;
+        }
+        else if(txNew.vout.size() == 3){ // only 1 stake output, was not split, plus a xnode payment
+            txNew.vout[payments-1].nValue = xnodePayment;
+            blockValue -= xnodePayment;
+            txNew.vout[1].nValue = blockValue;
+        }
     }
     else
         txNew.vout[1].nValue = nCredit;

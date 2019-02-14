@@ -42,10 +42,8 @@ public:
         return !(a == b);
     }
 
-    std::string ToString() const
-    {
-        return strprintf("COutPoint(%s, %u)", hash.ToString().substr(0,10), n);
-    }
+    std::string ToString() const;
+    std::string ToStringShort() const;
 };
 
 /** An inpoint - a combination of a transaction and an index n into its vin */

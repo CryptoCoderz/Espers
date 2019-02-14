@@ -75,6 +75,10 @@ static const char alphanum[] =
       "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
       "abcdefghijklmnopqrstuvwxyz";
 
+bool fXnode = false;
+string strXnodePrivKey = "";
+string strXnodeAddr = "";
+
 map<string, string> mapArgs;
 map<string, vector<string> > mapMultiArgs;
 bool fDebug = false;
@@ -87,6 +91,9 @@ string strMiscWarning;
 bool fNoListen = false;
 bool fLogTimestamps = false;
 volatile bool fReopenDebugLog = false;
+int64_t enforceXNodePaymentsTime = 4085657524;
+int nXNodeMinProtocol = 0;
+bool fSucessfullyLoaded = false;
 
 // Init OpenSSL library multithreading support
 static CCriticalSection** ppmutexOpenSSL;
@@ -1045,6 +1052,13 @@ boost::filesystem::path GetConfigFile()
     boost::filesystem::path pathConfigFile(GetArg("-conf", "Espers.conf"));
     if (!pathConfigFile.is_complete()) pathConfigFile = GetDataDir(false) / pathConfigFile;
 
+    return pathConfigFile;
+}
+
+boost::filesystem::path GetXNodeConfigFile()
+{
+    boost::filesystem::path pathConfigFile(GetArg("-xnconf", "xnode.conf"));
+    if (!pathConfigFile.is_complete()) pathConfigFile = GetDataDir() / pathConfigFile;
     return pathConfigFile;
 }
 

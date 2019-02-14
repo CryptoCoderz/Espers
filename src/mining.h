@@ -36,5 +36,7 @@ static const int64_t nBlockPoWReward = 5000 * COIN;
 static const int64_t nBlockRewardBuffer = 0.1 * COIN;
 /** Coinbase transaction outputs can only be spent after this number of new blocks (network rule) */
 static const int nCoinbaseMaturity = 60;
+/** Xnode required collateral */
+inline int64_t XNodeCollateral(int nHeight) { return 5000; } // 5K ESP required as collateral
 
 #endif

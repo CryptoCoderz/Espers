@@ -317,7 +317,14 @@ HEADERS += src/qt/bitcoingui.h \
     src/crypto/common/sph_shabal.h \
     src/crypto/common/sph_whirlpool.h \
     src/crypto/common/sph_haval.h \
-    src/crypto/common/sph_sha2.h
+    src/crypto/common/sph_sha2.h \
+    src/xnodecomponent.h \
+    src/xnodemngr.h \
+    src/xnodereward.h \
+    src/xnodesettings.h \
+    src/xnodestart.h \
+    src/xnodesync.h \
+    src/xnodecrypter.h
 
 SOURCES += src/qt/bitcoin.cpp src/qt/bitcoingui.cpp \
     src/qt/transactiontablemodel.cpp \
@@ -356,6 +363,7 @@ SOURCES += src/qt/bitcoin.cpp src/qt/bitcoingui.cpp \
     src/addrman.cpp \
     src/db.cpp \
     src/walletdb.cpp \
+    src/fork.cpp \
     src/qt/clientmodel.cpp \
     src/qt/clientcontrolpage.cpp \
     src/qt/messagepage.cpp \
@@ -385,6 +393,7 @@ SOURCES += src/qt/bitcoin.cpp src/qt/bitcoingui.cpp \
     src/rpcwallet.cpp \
     src/rpcblockchain.cpp \
     src/rpcrawtransaction.cpp \
+    src/xnoderpc.cpp \
     src/timedata.cpp \
     src/qt/overviewpage.cpp \
     src/qt/csvmodelwriter.cpp \
@@ -405,7 +414,14 @@ SOURCES += src/qt/bitcoin.cpp src/qt/bitcoingui.cpp \
     src/scrypt-x86_64.S \
     src/scrypt.cpp \
     src/pbkdf2.cpp \
-    src/qt/siteonchain.cpp
+    src/qt/siteonchain.cpp \
+    src/xnodecomponent.cpp \
+    src/xnodemngr.cpp \
+    src/xnodereward.cpp \
+    src/xnodesettings.cpp \
+    src/xnodestart.cpp \
+    src/xnodesync.cpp \
+    src/xnodecrypter.cpp
 
 RESOURCES += \
     src/qt/bitcoin.qrc
