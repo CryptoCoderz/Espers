@@ -1,6 +1,6 @@
 // Copyright (c) 2009-2010 Satoshi Nakamoto
 // Copyright (c) 2009-2012 The Bitcoin developers
-// Copyright (c) 2016-2018 The CryptoCoderz Team / Espers
+// Copyright (c) 2016-2019 The CryptoCoderz Team / Espers
 // Distributed under the MIT/X11 software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 #ifndef ESPERS_MAIN_H
@@ -125,7 +125,7 @@ void UnregisterWallet(CWalletInterface* pwalletIn);
 /** Unregister all wallets from core */
 void UnregisterAllWallets();
 /** Push an updated transaction to all registered wallets */
-void SyncWithWallets(const CTransaction& tx, const CBlock* pblock = NULL, bool fConnect = true);
+void SyncWithWallets(const CTransaction& tx, const CBlock* pblock = NULL, bool fConnect = true, bool fFixSpentCoins = false);
 /** Ask wallets to resend their transactions */
 void ResendWalletTransactions(bool fForce = false);
 
@@ -157,7 +157,7 @@ void ThreadStakeMiner(CWallet *pwallet);
 int GetInputAge(CTxIn& vin);
 
 /** (try to) add transaction to memory pool **/
-bool AcceptToMemoryPool(CTxMemPool& pool, CTransaction &tx, bool fLimitFree, bool* pfMissingInputs);
+bool AcceptToMemoryPool(CTxMemPool& pool, CTransaction &tx, bool fLimitFree, bool* pfMissingInputs, bool fFixSpentCoins=false);
 /** (try to) add transaction to acceptable inputs **/
 bool AcceptableInputs(CTxMemPool& pool, CTransaction &tx, bool fLimitFree, bool* pfMissingInputs);
 
@@ -1423,7 +1423,7 @@ public:
 
 class CWalletInterface {
 protected:
-    virtual void SyncTransaction(const CTransaction &tx, const CBlock *pblock, bool fConnect) =0;
+    virtual void SyncTransaction(const CTransaction &tx, const CBlock *pblock, bool fConnect, bool fFixSpentCoins) =0;
     virtual void EraseFromWallet(const uint256 &hash) =0;
     virtual void SetBestChain(const CBlockLocator &locator) =0;
     virtual void UpdatedTransaction(const uint256 &hash) =0;

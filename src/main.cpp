@@ -1,6 +1,6 @@
 // Copyright (c) 2009-2010 Satoshi Nakamoto
 // Copyright (c) 2009-2012 The Bitcoin developers
-// Copyright (c) 2016-2018 The CryptoCoderz Team / Espers
+// Copyright (c) 2016-2019 The CryptoCoderz Team / Espers
 // Distributed under the MIT/X11 software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -111,7 +111,7 @@ map<uint256, pair<NodeId, list<uint256>::iterator> > mapBlocksToDownload;
 namespace {
 struct CMainSignals {
     // Notifies listeners of updated transaction data (passing hash, transaction, and optionally the block it is found in.
-    boost::signals2::signal<void (const CTransaction &, const CBlock *, bool)> SyncTransaction;
+    boost::signals2::signal<void (const CTransaction &, const CBlock *, bool, bool)> SyncTransaction;
     // Notifies listeners of an erased transaction (currently disabled, requires transaction replacement).
     boost::signals2::signal<void (const uint256 &)> EraseTransaction;
     // Notifies listeners of an updated transaction without new data (for now: a coinbase potentially becoming visible).
@@ -126,7 +126,7 @@ struct CMainSignals {
 }
 
 void RegisterWallet(CWalletInterface* pwalletIn) {
-    g_signals.SyncTransaction.connect(boost::bind(&CWalletInterface::SyncTransaction, pwalletIn, _1, _2, _3));
+    g_signals.SyncTransaction.connect(boost::bind(&CWalletInterface::SyncTransaction, pwalletIn, _1, _2, _3, _4));
     g_signals.EraseTransaction.connect(boost::bind(&CWalletInterface::EraseFromWallet, pwalletIn, _1));
     g_signals.UpdatedTransaction.connect(boost::bind(&CWalletInterface::UpdatedTransaction, pwalletIn, _1));
     g_signals.SetBestChain.connect(boost::bind(&CWalletInterface::SetBestChain, pwalletIn, _1));
@@ -140,7 +140,7 @@ void UnregisterWallet(CWalletInterface* pwalletIn) {
     g_signals.SetBestChain.disconnect(boost::bind(&CWalletInterface::SetBestChain, pwalletIn, _1));
     g_signals.UpdatedTransaction.disconnect(boost::bind(&CWalletInterface::UpdatedTransaction, pwalletIn, _1));
     g_signals.EraseTransaction.disconnect(boost::bind(&CWalletInterface::EraseFromWallet, pwalletIn, _1));
-    g_signals.SyncTransaction.disconnect(boost::bind(&CWalletInterface::SyncTransaction, pwalletIn, _1, _2, _3));
+    g_signals.SyncTransaction.disconnect(boost::bind(&CWalletInterface::SyncTransaction, pwalletIn, _1, _2, _3, _4));
 }
 
 void UnregisterAllWallets() {
@@ -152,8 +152,8 @@ void UnregisterAllWallets() {
     g_signals.SyncTransaction.disconnect_all_slots();
 }
 
-void SyncWithWallets(const CTransaction &tx, const CBlock *pblock, bool fConnect) {
-    g_signals.SyncTransaction(tx, pblock, fConnect);
+void SyncWithWallets(const CTransaction &tx, const CBlock *pblock, bool fConnect, bool fFixSpentCoins) {
+    g_signals.SyncTransaction(tx, pblock, fConnect, fFixSpentCoins);
 }
 
 void ResendWalletTransactions(bool fForce) {
@@ -782,7 +782,7 @@ int64_t GetMinFee(const CTransaction& tx, unsigned int nBlockSize, enum GetMinFe
 
 
 bool AcceptToMemoryPool(CTxMemPool& pool, CTransaction &tx, bool fLimitFree,
-                        bool* pfMissingInputs)
+                        bool* pfMissingInputs, bool fFixSpentCoins)
 {
     AssertLockHeld(cs_main);
     if (pfMissingInputs)
@@ -917,7 +917,7 @@ bool AcceptToMemoryPool(CTxMemPool& pool, CTransaction &tx, bool fLimitFree,
     // Store transaction in memory
     pool.addUnchecked(hash, tx);
 
-    SyncWithWallets(tx, NULL);
+    SyncWithWallets(tx, NULL, true, fFixSpentCoins);
 
     LogPrint("mempool", "AcceptToMemoryPool : accepted %s (poolsz %u)\n",
            hash.ToString(),
