@@ -1,4 +1,4 @@
-#include "coincontroldialog.h"
+#include "wallet/coincontroldialog.h"
 #include "ui_coincontroldialog.h"
 
 #include "addresstablemodel.h"
@@ -8,10 +8,10 @@
 #include "guiutil.h"
 #include "init.h"
 #include "optionsmodel.h"
-#include "walletmodel.h"
+#include "wallet/walletmodel.h"
 
-#include "coincontrol.h"
-#include "wallet.h"
+#include "wallet/coincontrol.h"
+#include "wallet/wallet.h"
 
 #include <ctime>
 #include <QMessageBox>

@@ -7,9 +7,9 @@
 
 #include <deque>
 #include <set>
-#include "db/dbformat.h"
-#include "db/log_writer.h"
-#include "db/snapshot.h"
+#include "wallet/db/dbformat.h"
+#include "wallet/db/log_writer.h"
+#include "wallet/db/snapshot.h"
 #include "leveldb/db.h"
 #include "leveldb/env.h"
 #include "port/port.h"

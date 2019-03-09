@@ -9,7 +9,7 @@
 
 #include "leveldb/db.h"
 #include "leveldb/write_batch.h"
-#include "util/testharness.h"
+#include "util/util/testharness.h"
 
 namespace {
 

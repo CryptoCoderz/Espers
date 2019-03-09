@@ -5,7 +5,7 @@
 #include "blockparams.h"
 #include "chainparams.h"
 #include "checkpoints.h"
-#include "db.h"
+#include "wallet/db.h"
 #include "fork.h"
 #include "init.h"
 #include "kernel.h"

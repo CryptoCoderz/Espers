@@ -7,7 +7,7 @@
 // mutation has been added just before the current key.
 
 #include "leveldb/db.h"
-#include "util/testharness.h"
+#include "util/util/testharness.h"
 
 namespace leveldb {
 

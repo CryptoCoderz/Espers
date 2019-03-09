@@ -4,14 +4,14 @@
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
 #include "base58.h"
-#include "rpcserver.h"
+#include "rpc/server.h"
 #include "init.h"
 #include "net.h"
 #include "netbase.h"
 #include "timedata.h"
-#include "util.h"
-#include "wallet.h"
-#include "walletdb.h"
+#include "util/util.h"
+#include "wallet/wallet.h"
+#include "wallet/walletdb.h"
 
 using namespace std;
 using namespace json_spirit;

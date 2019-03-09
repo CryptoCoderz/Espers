@@ -11,8 +11,8 @@
 #include "leveldb/filter_policy.h"
 #include "leveldb/slice.h"
 #include "leveldb/table_builder.h"
-#include "util/coding.h"
-#include "util/logging.h"
+#include "util/util/coding.h"
+#include "util/util/logging.h"
 
 namespace leveldb {
 

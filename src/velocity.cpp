@@ -5,7 +5,7 @@
 
 #include "main.h"
 #include "velocity.h"
-#include "rpcserver.h"
+#include "rpc/server.h"
 
 /* VelocityI(int nHeight) ? i : -1
    Returns i or -1 if not found */

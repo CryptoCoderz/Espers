@@ -5,16 +5,16 @@
 #include "ui_blockbrowser.h"
 
 #include "clientmodel.h"
-#include "walletmodel.h"
+#include "wallet/walletmodel.h"
 #include "main.h"
-#include "wallet.h"
+#include "wallet/wallet.h"
 #include "base58.h"
 #include "transactionrecord.h"
 #include "optionsmodel.h"
 #include "guiutil.h"
 #include "guiconstants.h"
 #include "init.h"
-#include "rpcserver.h"
+#include "rpc/server.h"
 
 using namespace json_spirit;
 

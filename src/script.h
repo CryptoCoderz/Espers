@@ -16,7 +16,7 @@
 
 #include "keystore.h"
 #include "bignum.h"
-#include "util.h"
+#include "util/util.h"
 
 typedef std::vector<unsigned char> valtype;
 

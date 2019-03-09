@@ -7,7 +7,7 @@
 #include "netbase.h"
 #include "sync.h"
 #include "ui_interface.h"
-#include "util.h"
+#include "util/util.h"
 
 #include <boost/foreach.hpp>
 

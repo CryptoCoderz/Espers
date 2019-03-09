@@ -5,7 +5,7 @@
 #include "ui_clientcontrolpage.h"
 
 #include "clientmodel.h"
-#include "walletmodel.h"
+#include "wallet/walletmodel.h"
 #include "optionsmodel.h"
 #include "guiutil.h"
 #include "guiconstants.h"

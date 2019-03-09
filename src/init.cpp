@@ -9,17 +9,17 @@
 #include "main.h"
 #include "chainparams.h"
 #include "txdb.h"
-#include "rpcserver.h"
+#include "rpc/server.h"
 #include "net.h"
 #include "key.h"
 #include "main.h"
-#include "util.h"
+#include "util/util.h"
 #include "ui_interface.h"
 #include "checkpoints.h"
 #ifdef ENABLE_WALLET
-#include "db.h"
-#include "wallet.h"
-#include "walletdb.h"
+#include "wallet/db.h"
+#include "wallet/wallet.h"
+#include "wallet/walletdb.h"
 #endif
 
 #include <boost/algorithm/string/predicate.hpp>

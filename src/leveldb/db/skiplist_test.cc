@@ -2,13 +2,13 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file. See the AUTHORS file for names of contributors.
 
-#include "db/skiplist.h"
+#include "wallet/db/skiplist.h"
 #include <set>
 #include "leveldb/env.h"
-#include "util/arena.h"
-#include "util/hash.h"
-#include "util/random.h"
-#include "util/testharness.h"
+#include "util/util/arena.h"
+#include "util/util/hash.h"
+#include "util/util/random.h"
+#include "util/util/testharness.h"
 
 namespace leveldb {
 

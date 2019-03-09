@@ -1,4 +1,4 @@
-#include "rpcconsole.h"
+#include "rpc/console.h"
 #include "ui_rpcconsole.h"
 
 #include "bantablemodel.h"
@@ -8,11 +8,11 @@
 
 #include "main.h"
 #include "chainparams.h"
-#include "util.h"
+#include "util/util.h"
 #include "timedata.h"
 
-#include "rpcserver.h"
-#include "rpcclient.h"
+#include "rpc/server.h"
+#include "rpc/client.h"
 
 #include <QClipboard>
 #include <QTime>
@@ -60,7 +60,7 @@ signals:
     void reply(int category, const QString &command);
 };
 
-#include "rpcconsole.moc"
+#include "rpc/console.moc"
 
 void RPCExecutor::start()
 {

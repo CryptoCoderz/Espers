@@ -5,9 +5,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <sqlite3.h>
-#include "util/histogram.h"
-#include "util/random.h"
-#include "util/testutil.h"
+#include "util/util/histogram.h"
+#include "util/util/random.h"
+#include "util/util/testutil.h"
 
 // Comma-separated list of operations to run in the specified order
 //   Actual benchmarks:

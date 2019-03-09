@@ -7,8 +7,8 @@
 #include "init.h"
 #include "main.h"
 #include "optionsmodel.h"
-#include "walletmodel.h"
-#include "wallet.h"
+#include "wallet/walletmodel.h"
+#include "wallet/wallet.h"
 
 #include <QClipboard>
 

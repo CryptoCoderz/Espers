@@ -5,11 +5,11 @@
 #include "table/filter_block.h"
 
 #include "leveldb/filter_policy.h"
-#include "util/coding.h"
-#include "util/hash.h"
-#include "util/logging.h"
-#include "util/testharness.h"
-#include "util/testutil.h"
+#include "util/util/coding.h"
+#include "util/util/hash.h"
+#include "util/util/logging.h"
+#include "util/util/testharness.h"
+#include "util/util/testutil.h"
 
 namespace leveldb {
 

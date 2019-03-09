@@ -16,10 +16,10 @@
 #include "leveldb/write_batch.h"
 
 #include "leveldb/db.h"
-#include "db/dbformat.h"
-#include "db/memtable.h"
-#include "db/write_batch_internal.h"
-#include "util/coding.h"
+#include "wallet/db/dbformat.h"
+#include "wallet/db/memtable.h"
+#include "wallet/db/write_batch_internal.h"
+#include "util/util/coding.h"
 
 namespace leveldb {
 

@@ -5,7 +5,7 @@
 #ifndef ESPERS_WALLETDB_H
 #define ESPERS_WALLETDB_H
 
-#include "db.h"
+#include "wallet/db.h"
 #include "key.h"
 
 #include <list>

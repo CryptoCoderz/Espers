@@ -7,8 +7,8 @@
 #include "leveldb/env.h"
 #include "port/port.h"
 #include "table/block.h"
-#include "util/coding.h"
-#include "util/crc32c.h"
+#include "util/util/coding.h"
+#include "util/util/crc32c.h"
 
 namespace leveldb {
 

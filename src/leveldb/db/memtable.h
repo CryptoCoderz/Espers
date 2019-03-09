@@ -7,9 +7,9 @@
 
 #include <string>
 #include "leveldb/db.h"
-#include "db/dbformat.h"
-#include "db/skiplist.h"
-#include "util/arena.h"
+#include "wallet/db/dbformat.h"
+#include "wallet/db/skiplist.h"
+#include "util/util/arena.h"
 
 namespace leveldb {
 

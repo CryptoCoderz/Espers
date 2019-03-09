@@ -15,7 +15,7 @@
 #include "blocksizecalculator.h"
 #include "chainparams.h"
 #include "checkpoints.h"
-#include "db.h"
+#include "wallet/db.h"
 #include "init.h"
 #include "kernel.h"
 #include "net.h"

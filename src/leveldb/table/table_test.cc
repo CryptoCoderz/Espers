@@ -6,9 +6,9 @@
 
 #include <map>
 #include <string>
-#include "db/dbformat.h"
-#include "db/memtable.h"
-#include "db/write_batch_internal.h"
+#include "wallet/db/dbformat.h"
+#include "wallet/db/memtable.h"
+#include "wallet/db/write_batch_internal.h"
 #include "leveldb/db.h"
 #include "leveldb/env.h"
 #include "leveldb/iterator.h"
@@ -16,9 +16,9 @@
 #include "table/block.h"
 #include "table/block_builder.h"
 #include "table/format.h"
-#include "util/random.h"
-#include "util/testharness.h"
-#include "util/testutil.h"
+#include "util/util/random.h"
+#include "util/util/testharness.h"
+#include "util/util/testutil.h"
 
 namespace leveldb {
 

@@ -6,13 +6,13 @@
 
 #include "bitcoingui.h"
 #include "clientmodel.h"
-#include "walletmodel.h"
+#include "wallet/walletmodel.h"
 #include "optionsmodel.h"
 #include "guiutil.h"
 #include "guiconstants.h"
 #include "init.h"
-#include "util.h"
-#include "wallet.h"
+#include "util/util.h"
+#include "wallet/wallet.h"
 #include "ui_interface.h"
 #include "paymentserver.h"
 #ifdef Q_OS_MAC

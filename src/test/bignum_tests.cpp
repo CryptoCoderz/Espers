@@ -2,7 +2,7 @@
 #include <limits>
 
 #include "bignum.h"
-#include "util.h"
+#include "util/util.h"
 
 BOOST_AUTO_TEST_SUITE(bignum_tests)
 

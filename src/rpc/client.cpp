@@ -4,10 +4,10 @@
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
 #include <set>
-#include "rpcclient.h"
+#include "rpc/client.h"
 
-#include "rpcprotocol.h"
-#include "util.h"
+#include "rpc/protocol.h"
+#include "util/util.h"
 #include "ui_interface.h"
 #include "chainparams.h" // for Params().RPCPort()
 

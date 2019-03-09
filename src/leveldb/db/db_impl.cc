@@ -2,7 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file. See the AUTHORS file for names of contributors.
 
-#include "db/db_impl.h"
+#include "wallet/db/db_impl.h"
 
 #include <algorithm>
 #include <set>
@@ -10,16 +10,16 @@
 #include <stdint.h>
 #include <stdio.h>
 #include <vector>
-#include "db/builder.h"
-#include "db/db_iter.h"
-#include "db/dbformat.h"
-#include "db/filename.h"
-#include "db/log_reader.h"
-#include "db/log_writer.h"
-#include "db/memtable.h"
-#include "db/table_cache.h"
-#include "db/version_set.h"
-#include "db/write_batch_internal.h"
+#include "wallet/db/builder.h"
+#include "wallet/db/db_iter.h"
+#include "wallet/db/dbformat.h"
+#include "wallet/db/filename.h"
+#include "wallet/db/log_reader.h"
+#include "wallet/db/log_writer.h"
+#include "wallet/db/memtable.h"
+#include "wallet/db/table_cache.h"
+#include "wallet/db/version_set.h"
+#include "wallet/db/write_batch_internal.h"
 #include "leveldb/db.h"
 #include "leveldb/env.h"
 #include "leveldb/status.h"
@@ -29,9 +29,9 @@
 #include "table/block.h"
 #include "table/merger.h"
 #include "table/two_level_iterator.h"
-#include "util/coding.h"
-#include "util/logging.h"
-#include "util/mutexlock.h"
+#include "util/util/coding.h"
+#include "util/util/logging.h"
+#include "util/util/mutexlock.h"
 
 namespace leveldb {
 

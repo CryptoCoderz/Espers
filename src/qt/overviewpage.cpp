@@ -2,9 +2,9 @@
 #include "ui_overviewpage.h"
 #include "bitcoinunits.h"
 #include "clientmodel.h"
-#include "walletmodel.h"
+#include "wallet/walletmodel.h"
 #include "main.h"
-#include "wallet.h"
+#include "wallet/wallet.h"
 #include "base58.h"
 #include "transactionrecord.h"
 #include "transactiontablemodel.h"
@@ -13,8 +13,8 @@
 #include "guiutil.h"
 #include "guiconstants.h"
 #include "init.h"
-#include "rpcserver.h"
-#include "rpcclient.h"
+#include "rpc/server.h"
+#include "rpc/client.h"
 #include "kernel.h"
 
 using namespace json_spirit;

@@ -12,7 +12,7 @@
 
 #include "port/port.h"
 #include "leveldb/slice.h"
-#include "util/logging.h"
+#include "util/util/logging.h"
 
 #include <shlwapi.h>
 #include <process.h>

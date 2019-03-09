@@ -2,7 +2,7 @@
 #include "ui_askpassphrasedialog.h"
 
 #include "guiconstants.h"
-#include "walletmodel.h"
+#include "wallet/walletmodel.h"
 
 #include <QMessageBox>
 #include <QPushButton>

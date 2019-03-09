@@ -3,7 +3,7 @@
 // Distributed under the MIT/X11 software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 #include "main.h"
-#include "rpcvelocity.h"
+#include "rpc/velocity.h"
 #include <boost/assign/list_of.hpp>
 
 using namespace std;
@@ -13,7 +13,7 @@ using namespace json_spirit;
 
 /* Patches
    - bitcoinrpc.cpp:
-      #include "rpcvelocity.h"
+      #include "rpc/velocity.h"
       CRPCCommand:
        { "getvelocityinfo",           &getvelocityinfo,           true,      false },
 */

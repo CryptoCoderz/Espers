@@ -5,7 +5,7 @@
 #include "table/filter_block.h"
 
 #include "leveldb/filter_policy.h"
-#include "util/coding.h"
+#include "util/util/coding.h"
 
 namespace leveldb {
 

@@ -17,7 +17,7 @@
 #include "kernel.h"
 #include "checkpoints.h"
 #include "txdb.h"
-#include "util.h"
+#include "util/util.h"
 #include "main.h"
 #include "chainparams.h"
 

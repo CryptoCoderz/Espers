@@ -2,7 +2,7 @@
 
 #include "base58.h"
 #include "timedata.h"
-#include "wallet.h"
+#include "wallet/wallet.h"
 
 /* Return positive answer if transaction should be shown in list.
  */

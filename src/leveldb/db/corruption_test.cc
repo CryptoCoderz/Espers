@@ -12,13 +12,13 @@
 #include "leveldb/env.h"
 #include "leveldb/table.h"
 #include "leveldb/write_batch.h"
-#include "db/db_impl.h"
-#include "db/filename.h"
-#include "db/log_format.h"
-#include "db/version_set.h"
-#include "util/logging.h"
-#include "util/testharness.h"
-#include "util/testutil.h"
+#include "wallet/db/db_impl.h"
+#include "wallet/db/filename.h"
+#include "wallet/db/log_format.h"
+#include "wallet/db/version_set.h"
+#include "util/util/logging.h"
+#include "util/util/testharness.h"
+#include "util/util/testutil.h"
 
 namespace leveldb {
 

@@ -18,8 +18,8 @@
 #include <map>
 #include <set>
 #include <vector>
-#include "db/dbformat.h"
-#include "db/version_edit.h"
+#include "wallet/db/dbformat.h"
+#include "wallet/db/version_edit.h"
 #include "port/port.h"
 #include "port/thread_annotations.h"
 

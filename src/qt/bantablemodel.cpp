@@ -9,7 +9,7 @@
 #include "guiutil.h"
 
 #include "sync.h"
-#include "util.h"
+#include "util/util.h"
 
 #include <QDebug>
 #include <QList>

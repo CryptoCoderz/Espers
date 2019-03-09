@@ -9,7 +9,7 @@
 #include "net.h"
 #include "timedata.h"
 #include "ui_interface.h"
-#include "util.h"
+#include "util/util.h"
 
 #include <stdint.h>
 #include <algorithm>

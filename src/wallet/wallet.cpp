@@ -3,18 +3,18 @@
 // Distributed under the MIT/X11 software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
-#include "wallet.h"
+#include "wallet/wallet.h"
 
 #include "base58.h"
 #include "blockparams.h"
-#include "coincontrol.h"
+#include "wallet/coincontrol.h"
 #include "kernel.h"
 #include "net.h"
 #include "timedata.h"
 #include "txdb.h"
 #include "ui_interface.h"
-#include "util.h"
-#include "walletdb.h"
+#include "util/util.h"
+#include "wallet/walletdb.h"
 
 #include <boost/algorithm/string/replace.hpp>
 #include <boost/range/algorithm.hpp>

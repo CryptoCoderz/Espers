@@ -21,9 +21,9 @@
 #include "leveldb/env.h"
 #include "leveldb/slice.h"
 #include "port/port.h"
-#include "util/logging.h"
-#include "util/mutexlock.h"
-#include "util/posix_logger.h"
+#include "util/util/logging.h"
+#include "util/util/mutexlock.h"
+#include "util/util/posix_logger.h"
 
 namespace leveldb {
 

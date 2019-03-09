@@ -15,7 +15,7 @@
 #include "protocol.h"
 #include "sync.h"
 #include "uint256.h"
-#include "util.h"
+#include "util/util.h"
 
 #include <deque>
 #include <stdint.h>

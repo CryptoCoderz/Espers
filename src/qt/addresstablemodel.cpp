@@ -1,9 +1,9 @@
 #include "addresstablemodel.h"
 
 #include "guiutil.h"
-#include "walletmodel.h"
+#include "wallet/walletmodel.h"
 
-#include "wallet.h"
+#include "wallet/wallet.h"
 #include "base58.h"
 
 #include <QFont>

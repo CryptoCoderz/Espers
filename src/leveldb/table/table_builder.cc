@@ -12,8 +12,8 @@
 #include "table/block_builder.h"
 #include "table/filter_block.h"
 #include "table/format.h"
-#include "util/coding.h"
-#include "util/crc32c.h"
+#include "util/util/coding.h"
+#include "util/util/crc32c.h"
 
 namespace leveldb {
 

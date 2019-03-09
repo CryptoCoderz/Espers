@@ -16,7 +16,7 @@ using namespace boost;
 #include "key.h"
 #include "main.h"
 #include "sync.h"
-#include "util.h"
+#include "util/util.h"
 
 bool CheckSig(vector<unsigned char> vchSig, const vector<unsigned char> &vchPubKey, const CScript &scriptCode, const CTransaction& txTo, unsigned int nIn, int nHashType, int flags);
 

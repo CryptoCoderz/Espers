@@ -13,7 +13,7 @@
 #include "table/filter_block.h"
 #include "table/format.h"
 #include "table/two_level_iterator.h"
-#include "util/coding.h"
+#include "util/util/coding.h"
 
 namespace leveldb {
 

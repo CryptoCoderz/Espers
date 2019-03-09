@@ -5,7 +5,7 @@
 #ifndef ESPERS_INIT_H
 #define ESPERS_INIT_H
 
-#include "wallet.h"
+#include "wallet/wallet.h"
 
 namespace boost {
     class thread_group;

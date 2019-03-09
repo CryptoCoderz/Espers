@@ -7,7 +7,7 @@
 
 #include "uint256.h"
 #include "serialize.h"
-#include "util.h"
+#include "util/util.h"
 #include "script.h"
 
 #include <stdio.h>

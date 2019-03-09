@@ -7,7 +7,7 @@
 
 #include <stdint.h>
 #include "leveldb/db.h"
-#include "db/dbformat.h"
+#include "wallet/db/dbformat.h"
 
 namespace leveldb {
 

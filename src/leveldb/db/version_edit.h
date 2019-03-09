@@ -8,7 +8,7 @@
 #include <set>
 #include <utility>
 #include <vector>
-#include "db/dbformat.h"
+#include "wallet/db/dbformat.h"
 
 namespace leveldb {
 

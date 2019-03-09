@@ -2,13 +2,13 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file. See the AUTHORS file for names of contributors.
 
-#include "db/log_reader.h"
-#include "db/log_writer.h"
+#include "wallet/db/log_reader.h"
+#include "wallet/db/log_writer.h"
 #include "leveldb/env.h"
-#include "util/coding.h"
-#include "util/crc32c.h"
-#include "util/random.h"
-#include "util/testharness.h"
+#include "util/util/coding.h"
+#include "util/util/crc32c.h"
+#include "util/util/random.h"
+#include "util/util/testharness.h"
 
 namespace leveldb {
 namespace log {

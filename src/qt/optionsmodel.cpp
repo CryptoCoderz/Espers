@@ -2,8 +2,8 @@
 
 #include "bitcoinunits.h"
 #include "init.h"
-#include "wallet.h"
-#include "walletdb.h"
+#include "wallet/wallet.h"
+#include "wallet/walletdb.h"
 #include "guiutil.h"
 
 #include <QSettings>

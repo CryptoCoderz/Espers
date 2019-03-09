@@ -4,10 +4,10 @@
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
 #include "blockparams.h"
-#include "rpcserver.h"
+#include "rpc/server.h"
 #include "chainparams.h"
 #include "main.h"
-#include "db.h"
+#include "wallet/db.h"
 #include "txdb.h"
 #include "init.h"
 #include "miner.h"

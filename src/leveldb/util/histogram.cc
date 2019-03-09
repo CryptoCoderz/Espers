@@ -5,7 +5,7 @@
 #include <math.h>
 #include <stdio.h>
 #include "port/port.h"
-#include "util/histogram.h"
+#include "util/util/histogram.h"
 
 namespace leveldb {
 

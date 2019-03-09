@@ -5,20 +5,20 @@
 #ifndef ESPERS_WALLET_H
 #define ESPERS_WALLET_H
 
-#include "walletdb.h"
+#include "wallet/walletdb.h"
 
 #include <string>
 #include <vector>
 
 #include <stdlib.h>
 
-#include "crypter.h"
+#include "wallet/crypter.h"
 #include "main.h"
 #include "key.h"
 #include "keystore.h"
 #include "script.h"
 #include "ui_interface.h"
-#include "util.h"
+#include "util/util.h"
 #include "base58.h"
 
 // Settings

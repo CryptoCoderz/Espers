@@ -2,7 +2,7 @@
 
 #include "transactionfilterproxy.h"
 #include "transactionrecord.h"
-#include "walletmodel.h"
+#include "wallet/walletmodel.h"
 #include "addresstablemodel.h"
 #include "transactiontablemodel.h"
 #include "bitcoinunits.h"
