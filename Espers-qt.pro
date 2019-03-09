@@ -223,13 +223,13 @@ HEADERS += src/qt/bitcoingui.h \
     src/fork.h \
     src/genesis.h \
     src/compat.h \
-    src/coincontrol.h \
+    src/wallet/coincontrol.h \
     src/sync.h \
-    src/util.h \
+    src/util/util.h \
     src/hash.h \
     src/uint256.h \
     src/kernel.h \
-    src/scrypt.h \
+    src/crypto/scrypt/scrypt.h \
     src/pbkdf2.h \
     src/serialize.h \
     src/chain.h \
@@ -238,15 +238,15 @@ HEADERS += src/qt/bitcoingui.h \
     src/mining.h \
     src/net.h \
     src/key.h \
-    src/db.h \
+    src/wallet/db.h \
     src/txdb.h \
     src/txmempool.h \
-    src/walletdb.h \
+    src/wallet/walletdb.h \
     src/script.h \
     src/init.h \
     src/mruset.h \
-    src/velocity.h \
-    src/rpcvelocity.h \
+    src/velocity/velocity.h \
+    src/velocity/rpc.h \
     src/json/json_spirit_writer_template.h \
     src/json/json_spirit_writer.h \
     src/json/json_spirit_value.h \
@@ -267,18 +267,18 @@ HEADERS += src/qt/bitcoingui.h \
     src/qt/transactiondesc.h \
     src/qt/transactiondescdialog.h \
     src/qt/bitcoinamountfield.h \
-    src/wallet.h \
+    src/wallet/wallet.h \
     src/keystore.h \
     src/qt/transactionfilterproxy.h \
     src/qt/transactionview.h \
     src/qt/walletmodel.h \
-    src/rpcclient.h \
-    src/rpcprotocol.h \
-    src/rpcserver.h \
+    src/rpc/client.h \
+    src/rpc/protocol.h \
+    src/rpc/server.h \
     src/timedata.h \
     src/qt/overviewpage.h \
     src/qt/csvmodelwriter.h \
-    src/crypter.h \
+    src/wallet/crypter.h \
     src/qt/sendcoinsentry.h \
     src/qt/qvalidatedlineedit.h \
     src/qt/bitcoinunits.h \
@@ -340,7 +340,7 @@ SOURCES += src/qt/bitcoin.cpp src/qt/bitcoingui.cpp \
     src/version.cpp \
     src/sync.cpp \
     src/txmempool.cpp \
-    src/util.cpp \
+    src/util/util.cpp \
     src/hash.cpp \
     src/netbase.cpp \
     src/key.cpp \
@@ -351,11 +351,11 @@ SOURCES += src/qt/bitcoin.cpp src/qt/bitcoingui.cpp \
     src/init.cpp \
     src/net.cpp \
     src/velocity.cpp \
-    src/rpcvelocity.cpp \
+    src/velocity/rpc.cpp \
     src/checkpoints.cpp \
     src/addrman.cpp \
-    src/db.cpp \
-    src/walletdb.cpp \
+    src/wallet/db.cpp \
+    src/wallet/walletdb.cpp \
     src/qt/clientmodel.cpp \
     src/qt/clientcontrolpage.cpp \
     src/qt/messagepage.cpp \
@@ -370,25 +370,25 @@ SOURCES += src/qt/bitcoin.cpp src/qt/bitcoingui.cpp \
     src/qt/transactiondescdialog.cpp \
     src/qt/bitcoinstrings.cpp \
     src/qt/bitcoinamountfield.cpp \
-    src/wallet.cpp \
+    src/wallet/wallet.cpp \
     src/keystore.cpp \
     src/qt/transactionfilterproxy.cpp \
     src/qt/transactionview.cpp \
     src/qt/walletmodel.cpp \
-    src/rpcclient.cpp \
-    src/rpcprotocol.cpp \
-    src/rpcserver.cpp \
-    src/rpcdump.cpp \
-    src/rpcmisc.cpp \
-    src/rpcnet.cpp \
-    src/rpcmining.cpp \
-    src/rpcwallet.cpp \
-    src/rpcblockchain.cpp \
-    src/rpcrawtransaction.cpp \
+    src/rpc/client.cpp \
+    src/rpc/protocol.cpp \
+    src/rpc/server.cpp \
+    src/wallet/rpcdump.cpp \
+    src/rpc/misc.cpp \
+    src/rpc/net.cpp \
+    src/rpc/mining.cpp \
+    src/rpc/wallet.cpp \
+    src/rpc/blockchain.cpp \
+    src/rpc/rawtransaction.cpp \
     src/timedata.cpp \
     src/qt/overviewpage.cpp \
     src/qt/csvmodelwriter.cpp \
-    src/crypter.cpp \
+    src/wallet/crypter.cpp \
     src/qt/sendcoinsentry.cpp \
     src/qt/qvalidatedlineedit.cpp \
     src/qt/bitcoinunits.cpp \
@@ -400,10 +400,10 @@ SOURCES += src/qt/bitcoin.cpp src/qt/bitcoingui.cpp \
     src/qt/rpcconsole.cpp \
     src/noui.cpp \
     src/kernel.cpp \
-    src/scrypt-arm.S \
-    src/scrypt-x86.S \
-    src/scrypt-x86_64.S \
-    src/scrypt.cpp \
+    src/crypto/scrypt/scrypt-arm.S \
+    src/crypto/scrypt/scrypt-x86.S \
+    src/crypto/scrypt/scrypt-x86_64.S \
+    src/crypto/scrypt/scrypt.cpp \
     src/pbkdf2.cpp \
     src/qt/siteonchain.cpp
 

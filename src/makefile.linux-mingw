@@ -73,29 +73,29 @@ OBJS= \
     obj/main.o \
     obj/net.o \
     obj/protocol.o \
-    obj/velocity.o \
-    obj/rpcvelocity.o \
-    obj/rpcclient.o \
-    obj/rpcprotocol.o \
-    obj/rpcserver.o \
-    obj/rpcmisc.o \
-    obj/rpcnet.o \
-    obj/rpcblockchain.o \
-    obj/rpcrawtransaction.o \
+    obj/velocity/velocity.o \
+    obj/velocity/rpc.o \
+    obj/rpc/client.o \
+    obj/rpc/protocol.o \
+    obj/rpc/server.o \
+    obj/rpc/misc.o \
+    obj/rpc/net.o \
+    obj/rpc/blockchain.o \
+    obj/rpc/rawtransaction.o \
     obj/timedata.o \
     obj/script.o \
     obj/sync.o \
     obj/txmempool.o \
     obj/blocksizecalculator.o \
-    obj/util.o \
+    obj/util/util.o \
     obj/hash.o \
     obj/noui.o \
     obj/kernel.o \
     obj/pbkdf2.o \
-    obj/scrypt.o \
-    obj/scrypt-arm.o \
-    obj/scrypt-x86.o \
-    obj/scrypt-x86_64.o \
+    obj/crypto/scrypt/scrypt.o \
+    obj/crypto/scrypt/scrypt-arm.o \
+    obj/crypto/scrypt/scrypt-x86.o \
+    obj/crypto/scrypt/scrypt-x86_64.o \
     obj/blockparams.o \
     obj/chainparams.o \
     obj/crypto/common/blake.o\
@@ -122,11 +122,11 @@ ifeq (${USE_WALLET}, 1)
     OBJS += \
         obj/db.o \
         obj/miner.o \
-        obj/rpcdump.o \
-        obj/rpcmining.o \
-        obj/rpcwallet.o \
-        obj/wallet.o \
-        obj/walletdb.o
+        obj/wallet/rpcdump.o \
+        obj/rpc/mining.o \
+        obj/rpc/wallet.o \
+        obj/wallet/wallet.o \
+        obj/wallet/walletdb.o
 endif
 
 all: Espersd.exe
@@ -151,10 +151,10 @@ Espersd.exe: $(OBJS:obj/%=obj/%)
 	$(CXX) $(CFLAGS) $(LDFLAGS) -o $@ $(LIBPATHS) $^ $(LIBS) -lshlwapi
 	$(STRIP) Espersd.exe
 
-obj/scrypt-x86.o: scrypt-x86.S
+obj/crypto/scrypt/scrypt-x86.o: scrypt-x86.S
 	$(CXX) -c $(CFLAGS) -MMD -o $@ $<
 
-obj/scrypt-x86_64.o: scrypt-x86_64.S
+obj/crypto/scrypt/scrypt-x86_64.o: scrypt-x86_64.S
 	$(CXX) -c $(CFLAGS) -MMD -o $@ $<
 
 clean:
