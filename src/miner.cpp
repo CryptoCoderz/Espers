@@ -9,7 +9,7 @@
 #include "txdb.h"
 #include "miner.h"
 #include "kernel.h"
-#include "velocity.h"
+#include "velocity/velocity.h"
 
 using namespace std;
 

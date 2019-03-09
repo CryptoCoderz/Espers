@@ -11,7 +11,7 @@
 #include "kernel.h"
 #include "net.h"
 #include "txdb.h"
-#include "velocity.h"
+#include "velocity/velocity.h"
 #include "main.h"
 
 using namespace std;

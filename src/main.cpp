@@ -22,7 +22,7 @@
 #include "blockparams.h"
 #include "txdb.h"
 #include "txmempool.h"
-#include "velocity.h"
+#include "velocity/velocity.h"
 #include "ui_interface.h"
 
 using namespace std;

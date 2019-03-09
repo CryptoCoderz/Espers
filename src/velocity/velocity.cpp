@@ -4,7 +4,7 @@
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
 #include "main.h"
-#include "velocity.h"
+#include "velocity/velocity.h"
 #include "rpc/server.h"
 
 /* VelocityI(int nHeight) ? i : -1

@@ -9,7 +9,7 @@
 #include "json/json_spirit_reader_template.h"
 #include "json/json_spirit_writer_template.h"
 #include "json/json_spirit_utils.h"
-#include "velocity.h"
+#include "velocity/velocity.h"
 
 extern json_spirit::Value getvelocityinfo(const json_spirit::Array& params, bool fHelp);
 

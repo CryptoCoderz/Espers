@@ -11,7 +11,7 @@
 #include "sync.h"
 #include "base58.h"
 #include "wallet/db.h"
-#include "rpc/velocity.h"
+#include "velocity/velocity/rpc.h"
 #include "ui_interface.h"
 #ifdef ENABLE_WALLET
 #include "wallet/wallet.h"
