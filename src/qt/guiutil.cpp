@@ -6,9 +6,9 @@
 #include "bitcoinunits.h"
 #include "walletmodel.h"
 
-#include "init.h"
-#include "protocol.h"
-#include "util.h"
+#include "util/init.h"
+#include "subcore/protocol.h"
+#include "util/util.h"
 
 #ifdef WIN32
 #ifdef _WIN32_WINNT

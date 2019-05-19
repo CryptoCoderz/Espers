@@ -4,9 +4,9 @@
 #include <QWidget>
 
 #include "clientmodel.h"
-#include "main.h"
-#include "wallet.h"
-#include "base58.h"
+#include "core/main.h"
+#include "core/wallet.h"
+#include "primitives/base58.h"
 
 #include <QDir>
 #include <QFile>

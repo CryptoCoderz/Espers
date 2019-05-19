@@ -6,13 +6,12 @@
 #include "guiutil.h"
 #include "peertablemodel.h"
 
-#include "main.h"
-#include "chainparams.h"
-#include "util.h"
-#include "timedata.h"
-
-#include "rpcserver.h"
-#include "rpcclient.h"
+#include "core/main.h"
+#include "core/chainparams.h"
+#include "util/util.h"
+#include "subcore/timedata.h"
+#include "rpc/rpcserver.h"
+#include "rpc/rpcclient.h"
 
 #include <QClipboard>
 #include <QTime>

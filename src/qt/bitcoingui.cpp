@@ -34,10 +34,10 @@
 #include "notificator.h"
 #include "guiutil.h"
 #include "rpcconsole.h"
-#include "wallet.h"
-#include "main.h"
-#include "init.h"
-#include "ui_interface.h"
+#include "core/wallet.h"
+#include "core/main.h"
+#include "util/init.h"
+#include "ui/ui_interface.h"
 
 #ifdef Q_OS_MAC
 #include "macdockiconhandler.h"

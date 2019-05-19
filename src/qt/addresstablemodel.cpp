@@ -3,8 +3,8 @@
 #include "guiutil.h"
 #include "walletmodel.h"
 
-#include "wallet.h"
-#include "base58.h"
+#include "core/wallet.h"
+#include "primitives/base58.h"
 
 #include <QFont>
 #include <QDebug>

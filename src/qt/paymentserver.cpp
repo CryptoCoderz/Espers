@@ -7,8 +7,8 @@
 #include "paymentserver.h"
 
 #include "guiconstants.h"
-#include "ui_interface.h"
-#include "util.h"
+#include "ui/ui_interface.h"
+#include "util/util.h"
 
 #include <QByteArray>
 #include <QDataStream>

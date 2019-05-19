@@ -2,7 +2,7 @@
 #include "ui_editconfigdialog.h"
 #include "clientmodel.h"
 
-#include "version.h"
+#include "consensus/version.h"
 
 EditConfigDialog::EditConfigDialog(QWidget *parent) :
     QDialog(parent),

@@ -1,8 +1,8 @@
 #ifndef HASHBLOCK_H
 #define HASHBLOCK_H
 
-#include "uint256.h"
-#include "../common/sph_bmw.h"
+#include "primitives/uint256.h"
+#include "crypto/common/sph_bmw.h"
 
 #ifndef QT_NO_DEBUG
 #include <string>

@@ -5,7 +5,7 @@
 #include <vector>
 #include <map>
 
-#include "allocators.h" /* for SecureString */
+#include "primitives/allocators.h" /* for SecureString */
 
 class OptionsModel;
 class AddressTableModel;

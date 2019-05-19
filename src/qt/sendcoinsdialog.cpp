@@ -12,8 +12,8 @@
 #include "guiutil.h"
 #include "askpassphrasedialog.h"
 
-#include "base58.h"
-#include "coincontrol.h"
+#include "primitives/base58.h"
+#include "subcore/coincontrol.h"
 #include "coincontroldialog.h"
 
 #include <QMessageBox>
