@@ -282,6 +282,9 @@ std::string HelpMessage()
     strUsage += "  -rpcsslciphers=<ciphers>                 " + _("Acceptable ciphers (default: TLSv1.2+HIGH:TLSv1+HIGH:!SSLv2:!aNULL:!eNULL:!3DES:@STRENGTH)") + "\n";
     strUsage += "  -stakethreshold=<n> " + _("This will set the output size of your stakes to never be below this number (default: 100)") + "\n";
 
+    strUsage += "\n" + _("Experimental feature toggle:") + "\n";
+    strUsage += "  -liveforktoggle=<n> " + _("Toggle experimental features via block height testing fork, (example: -command=<fork_height>)") + "\n";
+
     return strUsage;
 }
 
@@ -964,6 +967,32 @@ bool AppInit2(boost::thread_group& threadGroup)
 
     if (!strErrors.str().empty())
         return InitError(strErrors.str());
+
+    // Check toggle switch for experimental feature testing fork
+    uiInterface.InitMessage(_("Checking experimental feature toggle..."));
+    strLiveForkToggle = GetArg("-liveforktoggle", "");
+    LogPrintf("Checking for experimental testing feature fork toggle...\n");
+    if(!strLiveForkToggle.empty()){
+        LogPrintf("Verifying height selection for experimental testing feature fork toggle...\n");
+        std::istringstream(strLiveForkToggle) >> nLiveForkToggle;
+        if(nLiveForkToggle == 0)
+        {
+            LogPrintf("Continuing with fork toggle manually disabled by user...\n");
+        }
+        else if(nLiveForkToggle < nBestHeight)
+        {
+            return InitError(_("Invalid experimental testing feature fork toggle, please select a higher block than currently sync'd height\n"));
+        }
+        else
+        {
+            LogPrintf("Continuing with fork toggle set for block: %s | Happy testing!\n", strLiveForkToggle.c_str());
+        }
+
+    }
+    else {
+        nLiveForkToggle = 0;
+        LogPrintf("No experimental testing feature fork toggle detected... skipping...\n");
+    }
 
     RandAddSeedPerfmon();
 

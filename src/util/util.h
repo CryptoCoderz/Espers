@@ -99,6 +99,9 @@ extern std::string strMiscWarning;
 extern bool fNoListen;
 extern bool fLogTimestamps;
 extern volatile bool fReopenDebugLog;
+//Live fork toggle
+extern std::string strLiveForkToggle;
+extern int64_t nLiveForkToggle;
 
 void RandAddSeed();
 void RandAddSeedPerfmon();

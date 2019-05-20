@@ -86,6 +86,9 @@ string strMiscWarning;
 bool fNoListen = false;
 bool fLogTimestamps = false;
 volatile bool fReopenDebugLog = false;
+//Live fork toggle
+string strLiveForkToggle = "";
+int64_t nLiveForkToggle = 0;
 
 // Init OpenSSL library multithreading support
 static CCriticalSection** ppmutexOpenSSL;
