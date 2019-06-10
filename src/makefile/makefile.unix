@@ -100,64 +100,64 @@ xCXXFLAGS=-O2 $(EXT_OPTIONS) -pthread -Wall -Wextra -Wno-ignored-qualifiers -Wfo
 xLDFLAGS=$(LDHARDENING) $(LDFLAGS)
 
 OBJS= \
-    leveldb/libleveldb.a \
-    obj/alert.o \
-    obj/version.o \
-    obj/checkpoints.o \
-    obj/netbase.o \
-    obj/addrman.o \
-    obj/crypter.o \
-    obj/key.o \
-    obj/init.o \
-    obj/bitcoind.o \
-    obj/keystore.o \
-    obj/chain.o \
-    obj/main.o \
-    obj/net.o \
-    obj/protocol.o \
-    obj/velocity.o \
-    obj/rpcvelocity.o \
-    obj/rpcclient.o \
-    obj/rpcprotocol.o \
-    obj/rpcserver.o \
-    obj/rpcmisc.o \
-    obj/rpcnet.o \
-    obj/rpcblockchain.o \
-    obj/rpcrawtransaction.o \
-    obj/timedata.o \
-    obj/script.o \
-    obj/sync.o \
-    obj/txmempool.o \
-    obj/blocksizecalculator.o \
-    obj/util.o \
-    obj/hash.o \
-    obj/noui.o \
-    obj/kernel.o \
-    obj/pbkdf2.o \
-    obj/scrypt.o \
-    obj/scrypt-arm.o \
-    obj/scrypt-x86.o \
-    obj/scrypt-x86_64.o \
-    obj/chainparams.o \
-    obj/blockparams.o \
-    obj/crypto/common/blake.o\
-    obj/crypto/common/bmw.o\
-    obj/crypto/common/groestl.o\
-    obj/crypto/common/jh.o\
-    obj/crypto/common/keccak.o\
-    obj/crypto/common/skein.o\
-    obj/crypto/common/cubehash.o \
-    obj/crypto/common/luffa.o \
-    obj/crypto/common/aes_helper.o \
-    obj/crypto/common/echo.o \
-    obj/crypto/common/shavite.o \
-    obj/crypto/common/simd.o \
-    obj/crypto/common/hamsi.o \
-    obj/crypto/common/fugue.o \
-    obj/crypto/common/shabal.o \
-    obj/crypto/common/whirlpool.o \
-    obj/crypto/common/haval.o \
-    obj/crypto/common/sha2big.o
+    ../leveldb/libleveldb.a \
+    obj/../node/alert.o \
+    obj/../consensus/version.o \
+    obj/../consensus/checkpoints.o \
+    obj/../node/netbase.o \
+    obj/../node/addrman.o \
+    obj/../subcore/crypter.o \
+    obj/../subcore/key.o \
+    obj/../util.init.o \
+    obj/../daemon/bitcoind.o \
+    obj/../subcore/keystore.o \
+    obj/../core/chain.o \
+    obj/../core/main.o \
+    obj/../node/net.o \
+    obj/../subcore/protocol.o \
+    obj/../consensus/velocity.o \
+    obj/../rpc/rpcvelocity.o \
+    obj/../rpc/rpcclient.o \
+    obj/../rpc/rpcprotocol.o \
+    obj/../rpc/rpcserver.o \
+    obj/../rpc/rpcmisc.o \
+    obj/../rpc/rpcnet.o \
+    obj/../rpc/rpcblockchain.o \
+    obj/../rpc/rpcrawtransaction.o \
+    obj/../subcore/timedata.o \
+    obj/../subcore/script.o \
+    obj/../core/sync.o \
+    obj/../subcore/txmempool.o \
+    obj/../core/blocksizecalculator.o \
+    obj/../util/util.o \
+    obj/../subcore/hash.o \
+    obj/../subcore/noui.o \
+    obj/../consensus/kernel.o \
+    obj/../primitives/pbkdf2.o \
+    obj/../crypto/scrypt/scrypt.o \
+    obj/../crypto/scrypt/scrypt-arm.o \
+    obj/../crypto/scrypt/scrypt-x86.o \
+    obj/../crypto/scrypt/scrypt-x86_64.o \
+    obj/../core/chainparams.o \
+    obj/../core/blockparams.o \
+    obj/../crypto/common/blake.o\
+    obj/../crypto/common/bmw.o\
+    obj/../crypto/common/groestl.o\
+    obj/../crypto/common/jh.o\
+    obj/../crypto/common/keccak.o\
+    obj/../crypto/common/skein.o\
+    obj/../crypto/common/cubehash.o \
+    obj/../crypto/common/luffa.o \
+    obj/../crypto/common/aes_helper.o \
+    obj/../crypto/common/echo.o \
+    obj/../crypto/common/shavite.o \
+    obj/../crypto/common/simd.o \
+    obj/../crypto/common/hamsi.o \
+    obj/../crypto/common/fugue.o \
+    obj/../crypto/common/shabal.o \
+    obj/../crypto/common/whirlpool.o \
+    obj/../crypto/common/haval.o \
+    obj/../crypto/common/sha2big.o
 
 ifeq (${USE_WALLET}, 1)
     DEFS += -DENABLE_WALLET
