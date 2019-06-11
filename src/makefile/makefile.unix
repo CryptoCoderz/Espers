@@ -100,7 +100,7 @@ xCXXFLAGS=-O2 $(EXT_OPTIONS) -pthread -Wall -Wextra -Wno-ignored-qualifiers -Wfo
 xLDFLAGS=$(LDHARDENING) $(LDFLAGS)
 
 OBJS= \
-    ../leveldb/libleveldb.a \
+    leveldb/libleveldb.a \
     ../obj/node/alert.o \
     ../obj/consensus/version.o \
     ../obj/consensus/checkpoints.o \
