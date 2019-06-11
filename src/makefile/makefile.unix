@@ -101,7 +101,7 @@ xLDFLAGS=$(LDHARDENING) $(LDFLAGS)
 
 OBJS= \
     ../leveldb/libleveldb.a \
-    ../obj/node/alert.o \
+    obj/node/alert.o \
     ../obj/consensus/version.o \
     ../obj/consensus/checkpoints.o \
     ../obj/node/netbase.o \
