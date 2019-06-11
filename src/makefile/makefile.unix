@@ -10,7 +10,7 @@ ARCH:=$(system lscpu | head -n 1 | awk '{print $2}')
 
 DEFS=-DBOOST_SPIRIT_THREADSAFE
 
-DEFS += $(addprefix -I,$(CURDIR) $(CURDIR)/cd ~/Espers/src/obj $(BOOST_INCLUDE_PATH) $(BDB_INCLUDE_PATH) $(OPENSSL_INCLUDE_PATH))
+DEFS += $(addprefix -I,$(CURDIR) $(CURDIR)/obj $(BOOST_INCLUDE_PATH) $(BDB_INCLUDE_PATH) $(OPENSSL_INCLUDE_PATH))
 LIBS = $(addprefix -L,$(BOOST_LIB_PATH) $(BDB_LIB_PATH) $(OPENSSL_LIB_PATH))
 
 LMODE = dynamic
@@ -100,75 +100,75 @@ xCXXFLAGS=-O2 $(EXT_OPTIONS) -pthread -Wall -Wextra -Wno-ignored-qualifiers -Wfo
 xLDFLAGS=$(LDHARDENING) $(LDFLAGS)
 
 OBJS= \
-    cd ~/Espers/src/leveldb/libleveldb.a \
-    cd ~/Espers/src/obj/node/alert.o \
-    cd ~/Espers/src/obj/consensus/version.o \
-    cd ~/Espers/src/obj/consensus/checkpoints.o \
-    cd ~/Espers/src/obj/node/netbase.o \
-    cd ~/Espers/src/obj/node/addrman.o \
-    cd ~/Espers/src/obj/subcore/crypter.o \
-    cd ~/Espers/src/obj/subcore/key.o \
-    cd ~/Espers/src/obj/util.init.o \
-    cd ~/Espers/src/obj/daemon/bitcoind.o \
-    cd ~/Espers/src/obj/subcore/keystore.o \
-    cd ~/Espers/src/obj/core/chain.o \
-    cd ~/Espers/src/obj/core/main.o \
-    cd ~/Espers/src/obj/node/net.o \
-    cd ~/Espers/src/obj/subcore/protocol.o \
-    cd ~/Espers/src/obj/consensus/velocity.o \
-    cd ~/Espers/src/obj/rpc/rpcvelocity.o \
-    cd ~/Espers/src/obj/rpc/rpcclient.o \
-    cd ~/Espers/src/obj/rpc/rpcprotocol.o \
-    cd ~/Espers/src/obj/rpc/rpcserver.o \
-    cd ~/Espers/src/obj/rpc/rpcmisc.o \
-    cd ~/Espers/src/obj/rpc/rpcnet.o \
-    cd ~/Espers/src/obj/rpc/rpcblockchain.o \
-    cd ~/Espers/src/obj/rpc/rpcrawtransaction.o \
-    cd ~/Espers/src/obj/subcore/timedata.o \
-    cd ~/Espers/src/obj/subcore/script.o \
-    cd ~/Espers/src/obj/core/sync.o \
-    cd ~/Espers/src/obj/subcore/txmempool.o \
-    cd ~/Espers/src/obj/core/blocksizecalculator.o \
-    cd ~/Espers/src/obj/util/util.o \
-    cd ~/Espers/src/obj/subcore/hash.o \
-    cd ~/Espers/src/obj/subcore/noui.o \
-    cd ~/Espers/src/obj/consensus/kernel.o \
-    cd ~/Espers/src/obj/primitives/pbkdf2.o \
-    cd ~/Espers/src/obj/crypto/scrypt/scrypt.o \
-    cd ~/Espers/src/obj/crypto/scrypt/scrypt-arm.o \
-    cd ~/Espers/src/obj/crypto/scrypt/scrypt-x86.o \
-    cd ~/Espers/src/obj/crypto/scrypt/scrypt-x86_64.o \
-    cd ~/Espers/src/obj/core/chainparams.o \
-    cd ~/Espers/src/obj/core/blockparams.o \
-    cd ~/Espers/src/obj/crypto/common/blake.o\
-    cd ~/Espers/src/obj/crypto/common/bmw.o\
-    cd ~/Espers/src/obj/crypto/common/groestl.o\
-    cd ~/Espers/src/obj/crypto/common/jh.o\
-    cd ~/Espers/src/obj/crypto/common/keccak.o\
-    cd ~/Espers/src/obj/crypto/common/skein.o\
-    cd ~/Espers/src/obj/crypto/common/cubehash.o \
-    cd ~/Espers/src/obj/crypto/common/luffa.o \
-    cd ~/Espers/src/obj/crypto/common/aes_helper.o \
-    cd ~/Espers/src/obj/crypto/common/echo.o \
-    cd ~/Espers/src/obj/crypto/common/shavite.o \
-    cd ~/Espers/src/obj/crypto/common/simd.o \
-    cd ~/Espers/src/obj/crypto/common/hamsi.o \
-    cd ~/Espers/src/obj/crypto/common/fugue.o \
-    cd ~/Espers/src/obj/crypto/common/shabal.o \
-    cd ~/Espers/src/obj/crypto/common/whirlpool.o \
-    cd ~/Espers/src/obj/crypto/common/haval.o \
-    cd ~/Espers/src/obj/crypto/common/sha2big.o
+    leveldb/libleveldb.a \
+    obj/node/alert.o \
+    obj/consensus/version.o \
+    obj/consensus/checkpoints.o \
+    obj/node/netbase.o \
+    obj/node/addrman.o \
+    obj/subcore/crypter.o \
+    obj/subcore/key.o \
+    obj/util.init.o \
+    obj/daemon/bitcoind.o \
+    obj/subcore/keystore.o \
+    obj/core/chain.o \
+    obj/core/main.o \
+    obj/node/net.o \
+    obj/subcore/protocol.o \
+    obj/consensus/velocity.o \
+    obj/rpc/rpcvelocity.o \
+    obj/rpc/rpcclient.o \
+    obj/rpc/rpcprotocol.o \
+    obj/rpc/rpcserver.o \
+    obj/rpc/rpcmisc.o \
+    obj/rpc/rpcnet.o \
+    obj/rpc/rpcblockchain.o \
+    obj/rpc/rpcrawtransaction.o \
+    obj/subcore/timedata.o \
+    obj/subcore/script.o \
+    obj/core/sync.o \
+    obj/subcore/txmempool.o \
+    obj/core/blocksizecalculator.o \
+    obj/util/util.o \
+    obj/subcore/hash.o \
+    obj/subcore/noui.o \
+    obj/consensus/kernel.o \
+    obj/primitives/pbkdf2.o \
+    obj/crypto/scrypt/scrypt.o \
+    obj/crypto/scrypt/scrypt-arm.o \
+    obj/crypto/scrypt/scrypt-x86.o \
+    obj/crypto/scrypt/scrypt-x86_64.o \
+    obj/core/chainparams.o \
+    obj/core/blockparams.o \
+    obj/crypto/common/blake.o\
+    obj/crypto/common/bmw.o\
+    obj/crypto/common/groestl.o\
+    obj/crypto/common/jh.o\
+    obj/crypto/common/keccak.o\
+    obj/crypto/common/skein.o\
+    obj/crypto/common/cubehash.o \
+    obj/crypto/common/luffa.o \
+    obj/crypto/common/aes_helper.o \
+    obj/crypto/common/echo.o \
+    obj/crypto/common/shavite.o \
+    obj/crypto/common/simd.o \
+    obj/crypto/common/hamsi.o \
+    obj/crypto/common/fugue.o \
+    obj/crypto/common/shabal.o \
+    obj/crypto/common/whirlpool.o \
+    obj/crypto/common/haval.o \
+    obj/crypto/common/sha2big.o
 
 ifeq (${USE_WALLET}, 1)
     DEFS += -DENABLE_WALLET
     OBJS += \
-        cd ~/Espers/src/obj/db.o \
-        cd ~/Espers/src/obj/miner.o \
-        cd ~/Espers/src/obj/rpcdump.o \
-        cd ~/Espers/src/obj/rpcmining.o \
-        cd ~/Espers/src/obj/rpcwallet.o \
-        cd ~/Espers/src/obj/wallet.o \
-        cd ~/Espers/src/obj/walletdb.o
+        obj/db.o \
+        obj/miner.o \
+        obj/rpcdump.o \
+        obj/rpcmining.o \
+        obj/rpcwallet.o \
+        obj/wallet.o \
+        obj/walletdb.o
 endif
 
 all: Espersd
@@ -176,49 +176,49 @@ all: Espersd
 LIBS += $(CURDIR)/leveldb/libleveldb.a $(CURDIR)/leveldb/libmemenv.a
 DEFS += $(addprefix -I,$(CURDIR)/leveldb/include)
 DEFS += $(addprefix -I,$(CURDIR)/leveldb/helpers)
-OBJS += cd ~/Espers/src/obj/txdb-leveldb.o
+OBJS += obj/txdb-leveldb.o
 leveldb/libleveldb.a:
 	@echo "Building LevelDB ..."; cd leveldb; make libleveldb.a libmemenv.a; cd ..;
-cd ~/Espers/src/obj/txdb-leveldb.o: leveldb/libleveldb.a
+obj/txdb-leveldb.o: leveldb/libleveldb.a
 
 # auto-generated dependencies:
--include cd ~/Espers/src/obj/*.P
+-include obj/*.P
 
-cd ~/Espers/src/obj/build.h: FORCE
-	/bin/sh ../share/genbuild.sh cd ~/Espers/src/obj/build.h
-version.cpp: cd ~/Espers/src/obj/build.h
+obj/build.h: FORCE
+	/bin/sh ../share/genbuild.sh obj/build.h
+version.cpp: obj/build.h
 DEFS += -DHAVE_BUILD_INFO
 
-cd ~/Espers/src/obj/scrypt-x86.o: scrypt-x86.S
+obj/scrypt-x86.o: scrypt-x86.S
 	$(CXX) -c $(xCXXFLAGS) -MMD -o $@ $<
 
-cd ~/Espers/src/obj/scrypt-x86_64.o: scrypt-x86_64.S
+obj/scrypt-x86_64.o: scrypt-x86_64.S
 	$(CXX) -c $(xCXXFLAGS) -MMD -o $@ $<
 
-cd ~/Espers/src/obj/scrypt-arm.o: scrypt-arm.S
+obj/scrypt-arm.o: scrypt-arm.S
 	$(CXX) -c $(xCXXFLAGS) -MMD -o $@ $<
 
-cd ~/Espers/src/obj/%.o: %.cpp
+obj/%.o: %.cpp
 	$(CXX) -c $(xCXXFLAGS) -MMD -MF $(@:%.o=%.d) -o $@ $<
 	@cp $(@:%.o=%.d) $(@:%.o=%.P); \
 	  sed -e 's/#.*//' -e 's/^[^:]*: *//' -e 's/ *\\$$//' \
 	      -e '/^$$/ d' -e 's/$$/ :/' < $(@:%.o=%.d) >> $(@:%.o=%.P); \
 	  rm -f $(@:%.o=%.d)
 
-cd ~/Espers/src/obj/%.o: %.c
+obj/%.o: %.c
 	$(CXX) -c $(xCXXFLAGS) -fpermissive -MMD -MF $(@:%.o=%.d) -o $@ $<
 	@cp $(@:%.o=%.d) $(@:%.o=%.P); \
 	  sed -e 's/#.*//' -e 's/^[^:]*: *//' -e 's/ *\\$$//' \
 	      -e '/^$$/ d' -e 's/$$/ :/' < $(@:%.o=%.d) >> $(@:%.o=%.P); \
 	  rm -f $(@:%.o=%.d)
 
-Espersd: $(OBJS:cd ~/Espers/src/obj/%=cd ~/Espers/src/obj/%)
+Espersd: $(OBJS:obj/%=obj/%)
 	$(LINK) $(xCXXFLAGS) -o $@ $^ $(xLDFLAGS) $(LIBS)
 
 clean:
 	-rm -f Espersd
-	-rm -f cd ~/Espers/src/obj/*.o
-	-rm -f cd ~/Espers/src/obj/*.P
-	-rm -f cd ~/Espers/src/obj/build.h
+	-rm -f obj/*.o
+	-rm -f obj/*.P
+	-rm -f obj/build.h
 
 FORCE:
