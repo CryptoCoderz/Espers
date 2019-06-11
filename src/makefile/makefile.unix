@@ -101,7 +101,7 @@ xLDFLAGS=$(LDHARDENING) $(LDFLAGS)
 
 OBJS= \
     ../leveldb/libleveldb.a \
-    obj/node/alert.o \
+    ../obj/node/alert.o \
     ../obj/consensus/version.o \
     ../obj/consensus/checkpoints.o \
     ../obj/node/netbase.o \
@@ -171,7 +171,7 @@ ifeq (${USE_WALLET}, 1)
         ../obj/walletdb.o
 endif
 
-all: ../Espersd
+all: Espersd
 
 LIBS += $(CURDIR)/../leveldb/libleveldb.a $(CURDIR)/../leveldb/libmemenv.a
 DEFS += $(addprefix -I,$(CURDIR)/../leveldb/include)
