@@ -212,7 +212,7 @@ DEFS += -DHAVE_BUILD_INFO
 	      -e '/^$$/ d' -e 's/$$/ :/' < $(@:%.o=%.d) >> $(@:%.o=%.P); \
 	  rm -f $(@:%.o=%.d)
 
-../Espersd: $(OBJS:obj/%=obj/%)
+../Espersd: $(OBJS:../obj/%=../obj/%)
 	$(LINK) $(xCXXFLAGS) -o $@ $^ $(xLDFLAGS) $(LIBS)
 
 clean:
