@@ -58,7 +58,7 @@ LIBS += -l mingwthrd -l kernel32 -l user32 -l gdi32 -l comdlg32 -l winspool -l w
 HEADERS = $(wildcard *.h)
 
 OBJS= \
-	leveldb/libleveldb.a \
+    leveldb/libleveldb.a \
     obj/node/alert.o \
     obj/consensus/version.o \
     obj/consensus/checkpoints.o \
@@ -66,7 +66,7 @@ OBJS= \
     obj/node/addrman.o \
     obj/subcore/crypter.o \
     obj/subcore/key.o \
-    obj/util.init.o \
+    obj/util/init.o \
     obj/daemon/bitcoind.o \
     obj/subcore/keystore.o \
     obj/core/chain.o \
@@ -120,13 +120,13 @@ OBJS= \
 ifeq (${USE_WALLET}, 1)
     DEFS += -DENABLE_WALLET
     OBJS += \
-        obj/db.o \
-        obj/miner.o \
-        obj/rpcdump.o \
-        obj/rpcmining.o \
-        obj/rpcwallet.o \
-        obj/wallet.o \
-        obj/walletdb.o
+        obj/database/db.o \
+        obj/consensus/miner.o \
+        obj/rpc/rpcdump.o \
+        obj/rpc/rpcmining.o \
+        obj/rpc/rpcwallet.o \
+        obj/core/wallet.o \
+        obj/database/walletdb.o
 endif
 
 all: Espersd.exe
@@ -134,14 +134,14 @@ all: Espersd.exe
 LIBS += $(CURDIR)/leveldb/libleveldb.a $(CURDIR)/leveldb/libmemenv.a
 DEFS += -I"$(CURDIR)/leveldb/include"
 DEFS += -I"$(CURDIR)/leveldb/helpers"
-OBJS += obj/txdb-leveldb.o
+OBJS += obj/database/txdb-leveldb.o
 leveldb/libleveldb.a:
-	@echo "Building LevelDB ..." && cd leveldb && CC=$(CC) CXX=$(CXX) TARGET_OS=OS_WINDOWS_CROSSCOMPILE CXXFLAGS="-I$(INCLUDEPATHS)" LDFLAGS="-L$(LIBPATHS)" $(MAKE) libleveldb.a libmemenv.a && $(RANLIB) libleveldb.a && $(RANLIB) libmemenv.a && cd ..
+	@echo "Building LevelDB ..." && cd leveldb && CC=$(CC) CXX=$(CXX) TARGET_OS=OS_WINDOWS_CROSSCOMPILE CXXFLAGS="-I$(INCLUDEPATHS)" LDFLAGS="-L$(LIBPATHS)" $(MAKE) libleveldb.a libmemenv.a && $(RANLIB) libleveldb.a && $(RANLIB) libmemenv.a && cd ..;
 obj/txdb-leveldb.o: leveldb/libleveldb.a
 
 obj/build.h: FORCE
 	/bin/sh ../share/genbuild.sh obj/build.h
-version.cpp: obj/build.h
+consensus/version.cpp: obj/build.h
 DEFS += -DHAVE_BUILD_INFO
 
 obj/%.o: %.cpp %.c $(HEADERS)
@@ -151,16 +151,16 @@ Espersd.exe: $(OBJS:obj/%=obj/%)
 	$(CXX) $(CFLAGS) $(LDFLAGS) -o $@ $(LIBPATHS) $^ $(LIBS) -lshlwapi
 	$(STRIP) Espersd.exe
 
-obj/scrypt-x86.o: scrypt-x86.S
+obj/crypto/scrypt/scrypt-x86.o: crypto/scrypt/scrypt-x86.S
 	$(CXX) -c $(CFLAGS) -MMD -o $@ $<
 
-obj/scrypt-x86_64.o: scrypt-x86_64.S
+obj/crypto/scrypt/scrypt-x86_64.o: crypto/scrypt/scrypt-x86_64.S
 	$(CXX) -c $(CFLAGS) -MMD -o $@ $<
 
 clean:
 	-rm -f obj/*.o
 	-rm -f Espersd.exe
 	-rm -f obj/build.h
-	cd leveldb && TARGET_OS=OS_WINDOWS_CROSSCOMPILE $(MAKE) clean && cd ..
+	cd leveldb && TARGET_OS=OS_WINDOWS_CROSSCOMPILE $(MAKE) clean && cd ..;
 
 FORCE:
