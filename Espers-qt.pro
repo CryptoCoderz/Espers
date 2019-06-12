@@ -2,21 +2,16 @@ TEMPLATE = app
 TARGET = Espers-qt
 VERSION = 0.8.7.5
 INCLUDEPATH += src src/json src/qt
-QT += core gui widgets network
+QT += core gui network
+greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 DEFINES += ENABLE_WALLET
 DEFINES += QT_GUI BOOST_THREAD_USE_LIB BOOST_SPIRIT_THREADSAFE
 CONFIG += no_include_pwd
 CONFIG += thread
-CONFIG += widgets
 CONFIG += static
 CONFIG += openssl
 
 QMAKE_CXXFLAGS += -fpermissive
-
-greaterThan(QT_MAJOR_VERSION, 4) {
-    QT += widgets
-    DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0
-}
 
 # WIN32 OS
 # for boost 1.66 on windows, add (MinGW_Version)-mt-s-x32-(Boost_Version)
