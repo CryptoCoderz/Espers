@@ -56,7 +56,7 @@ OBJS= \
     obj/node/addrman.o \
     obj/subcore/crypter.o \
     obj/subcore/key.o \
-    obj/util.init.o \
+    obj/util/init.o \
     obj/daemon/bitcoind.o \
     obj/subcore/keystore.o \
     obj/core/chain.o \
@@ -110,13 +110,13 @@ OBJS= \
 ifeq (${USE_WALLET}, 1)
     DEFS += -DENABLE_WALLET
     OBJS += \
-        obj/db.o \
-        obj/miner.o \
-        obj/rpcdump.o \
-        obj/rpcmining.o \
-        obj/rpcwallet.o \
-        obj/wallet.o \
-        obj/walletdb.o
+        obj/database/db.o \
+        obj/consensus/miner.o \
+        obj/rpc/rpcdump.o \
+        obj/rpc/rpcmining.o \
+        obj/rpc/rpcwallet.o \
+        obj/core/wallet.o \
+        obj/database/walletdb.o
 endif
 
 all: Espersd.exe
@@ -124,18 +124,18 @@ all: Espersd.exe
 LIBS += $(CURDIR)/leveldb/libleveldb.a $(CURDIR)/leveldb/libmemenv.a
 DEFS += $(addprefix -I,$(CURDIR)/leveldb/include)
 DEFS += $(addprefix -I,$(CURDIR)/leveldb/helpers)
-OBJS += obj/txdb-leveldb.o
+OBJS += obj/database/txdb-leveldb.o
 leveldb/libleveldb.a:
-	cd leveldb; make; cd ..
+	@echo "Building LevelDB ..."; cd leveldb; make libleveldb.a libmemenv.a; cd ..;
 obj/txdb-leveldb.o: leveldb/libleveldb.a
 
 obj/%.o: %.cpp %.c $(HEADERS)
 	g++ -c $(CFLAGS) -o $@ $<
 
-obj/scrypt-x86.o: scrypt-x86.S
+obj/crypto/scrypt/scrypt-x86.o: crypto/scrypt/scrypt-x86.S
 	$(CXX) -c $(xCXXFLAGS) -MMD -o $@ $<
 
-obj/scrypt-x86_64.o: scrypt-x86_64.S
+obj/crypto/scrypt/scrypt-x86_64.o: crypto/scrypt/scrypt-x86_64.S
 	$(CXX) -c $(xCXXFLAGS) -MMD -o $@ $<
 
 Espersd.exe: $(OBJS:obj/%=obj/%)
@@ -143,6 +143,7 @@ Espersd.exe: $(OBJS:obj/%=obj/%)
 
 clean:
 	-del /Q Espersd
-	-del /Q obj/*
+	-del /Q obj/**/*.o
+	-del /Q obj/**/*.P
 
 FORCE:

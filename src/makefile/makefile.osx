@@ -32,6 +32,7 @@ LIBS += \
  $(DEPSDIR)/lib/libboost_filesystem-mt.a \
  $(DEPSDIR)/lib/libboost_program_options-mt.a \
  $(DEPSDIR)/lib/libboost_thread-mt.a \
+ $(DEPSDIR)/lib/libboost_chrono-mt.a \
  $(DEPSDIR)/lib/libssl.a \
  $(DEPSDIR)/lib/libcrypto.a \
  -lz
@@ -42,6 +43,7 @@ LIBS += \
  -lboost_filesystem-mt \
  -lboost_program_options-mt \
  -lboost_thread-mt \
+ -l boost_chrono-mt \
  -lssl \
  -lcrypto \
  -lz
@@ -70,7 +72,7 @@ OBJS= \
     obj/node/addrman.o \
     obj/subcore/crypter.o \
     obj/subcore/key.o \
-    obj/util.init.o \
+    obj/util/init.o \
     obj/daemon/bitcoind.o \
     obj/subcore/keystore.o \
     obj/core/chain.o \
@@ -124,13 +126,13 @@ OBJS= \
 ifeq (${USE_WALLET}, 1)
     DEFS += -DENABLE_WALLET
     OBJS += \
-        obj/db.o \
-        obj/miner.o \
-        obj/rpcdump.o \
-        obj/rpcmining.o \
-        obj/rpcwallet.o \
-        obj/wallet.o \
-        obj/walletdb.o
+        obj/database/db.o \
+        obj/consensus/miner.o \
+        obj/rpc/rpcdump.o \
+        obj/rpc/rpcmining.o \
+        obj/rpc/rpcwallet.o \
+        obj/core/wallet.o \
+        obj/database/walletdb.o
 endif
 
 ifndef USE_UPNP
@@ -150,9 +152,9 @@ all: Espersd
 LIBS += $(CURDIR)/leveldb/libleveldb.a $(CURDIR)/leveldb/libmemenv.a
 DEFS += $(addprefix -I,$(CURDIR)/leveldb/include)
 DEFS += $(addprefix -I,$(CURDIR)/leveldb/helpers)
-OBJS += obj/txdb-leveldb.o
+OBJS += obj/database/txdb-leveldb.o
 leveldb/libleveldb.a:
-	@echo "Building LevelDB ..."; cd leveldb; make libleveldb.a libmemenv.a; cd ..
+	@echo "Building LevelDB ..."; cd leveldb; make libleveldb.a libmemenv.a; cd ..;
 obj/txdb-leveldb.o: leveldb/libleveldb.a
 
 # auto-generated dependencies:
@@ -160,11 +162,11 @@ obj/txdb-leveldb.o: leveldb/libleveldb.a
 
 obj/build.h: FORCE
 	/bin/sh ../share/genbuild.sh obj/build.h
-version.cpp: obj/build.h
+consensus/version.cpp: obj/build.h
 DEFS += -DHAVE_BUILD_INFO
 
 obj/%.o: %.cpp
-	$(CXX) -c $(CFLAGS) -MMD -MF $(@:%.o=%.d) -o $@ $<
+	$(CXX) -c $(xCXXFLAGS) -MMD -MF $(@:%.o=%.d) -o $@ $<
 	@cp $(@:%.o=%.d) $(@:%.o=%.P); \
 	  sed -e 's/#.*//' -e 's/^[^:]*: *//' -e 's/ *\\$$//' \
 	      -e '/^$$/ d' -e 's/$$/ :/' < $(@:%.o=%.d) >> $(@:%.o=%.P); \
@@ -184,12 +186,12 @@ obj/scrypt-x86_64.o: scrypt-x86_64.S
 	$(CXX) -c $(xCXXFLAGS) -MMD -o $@ $<
 
 Espersd: $(OBJS:obj/%=obj/%)
-	$(CXX) $(CFLAGS) -o $@ $(LIBPATHS) $^ $(LIBS)
+	$(LINK) $(xCXXFLAGS) -o $@ $^ $(xLDFLAGS) $(LIBS)
 
 clean:
 	-rm -f Espersd
-	-rm -f obj/*.o
-	-rm -f obj/*.P
+	-rm -f obj/**/*.o
+	-rm -f obj/**/*.P
 	-rm -f obj/build.h
 
 FORCE:
