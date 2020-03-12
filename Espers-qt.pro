@@ -18,13 +18,13 @@ QMAKE_CXXFLAGS += -fpermissive
 # as a reference refer to the below section
 
 win32{
-BOOST_LIB_SUFFIX=-mgw81-mt-s-x32-1_71
-BOOST_INCLUDE_PATH=C:/deps/boost_1_71_0
-BOOST_LIB_PATH=C:/deps/boost_1_71_0/stage/lib
+BOOST_LIB_SUFFIX=-mgw81-mt-s-x32-1_72
+BOOST_INCLUDE_PATH=C:/deps/boost_1_72_0
+BOOST_LIB_PATH=C:/deps/boost_1_72_0/stage/lib
 BDB_INCLUDE_PATH=C:/deps/db-6.2.32.NC/build_unix
 BDB_LIB_PATH=C:/deps/db-6.2.32.NC/build_unix
-OPENSSL_INCLUDE_PATH=C:/deps/openssl-1.0.2t/include
-OPENSSL_LIB_PATH=C:/deps/openssl-1.0.2t
+OPENSSL_INCLUDE_PATH=C:/deps/openssl-1.0.2u/include
+OPENSSL_LIB_PATH=C:/deps/openssl-1.0.2u
 MINIUPNPC_INCLUDE_PATH=C:/deps/
 MINIUPNPC_LIB_PATH=C:/deps/miniupnpc-2.1
 QRENCODE_INCLUDE_PATH=C:/deps/qrencode-4.0.2
