@@ -1,4 +1,4 @@
-// Copyright (c) 2016-2019 The CryptoCoderz Team / Espers
+// Copyright (c) 2016-2020 The CryptoCoderz Team / Espers
 // Distributed under the MIT/X11 software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 #include "messagepage.h"

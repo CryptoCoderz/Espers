@@ -1,4 +1,4 @@
-Espers [ESP] 2016-2019 integration/staging tree
+Espers [ESP] 2016-2020 integration/staging tree
 ===============================================
 
 https://espers.io/
@@ -32,12 +32,12 @@ Specifications and General info
 ------------------
 Espers uses:
 
-		Boost1.68,
+		Boost1.72,
 		OR Boost1.58,
-		OpenSSL1.02o,
+		OpenSSL1.02u,
 		OR OpenSSL1.1x,
 		Berkeley DB 6.2.32,
-		QT5.11 to compile
+		Qt5.14 to compile
 
 General Info:
 
