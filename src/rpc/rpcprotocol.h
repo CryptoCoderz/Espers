@@ -22,12 +22,26 @@
 #include "json/json_spirit_utils.h"
 #include "json/json_spirit_writer_template.h"
 
-// ====== BOOST SUCKS - AKA - v1.69 AND BELOW RETROCOMPATIBILITY ========
+// Boost Support for 1.70+ (Updated)
+// Thank you https://github.com/g1itch
 #if BOOST_VERSION >= 107000
-#define GET_IO_SERVICE(s) ((boost::asio::io_context&)(s).get_executor().context())
+    #define GetIOService(s) ((boost::asio::io_context&)(s).get_executor().context())
+    #define GetIOServiceFromPtr(s) ((boost::asio::io_context&)(s->get_executor().context())) // this one
+    typedef boost::asio::io_context ioContext;
+
 #else
-#define GET_IO_SERVICE(s) ((s).get_io_service())
+    #define GetIOService(s) ((s).get_io_service())
+    #define GetIOServiceFromPtr(s) ((s)->get_io_service())
+    typedef boost::asio::io_service ioContext;
 #endif
+
+// Boost Support for 1.70+ (Depricated)
+// ====== BOOST SUCKS - AKA - v1.69 AND BELOW RETROCOMPATIBILITY ========
+//#if BOOST_VERSION >= 107000
+//#define GET_IO_SERVICE(s) ((boost::asio::io_context&)(s).get_executor().context())
+//#else
+//#define GET_IO_SERVICE(s) ((s).get_io_service())
+//#endif
 // ===== RETROCOMPATIBILITY SHOULD NOT BE AN OPTION ======
 
 // HTTP status codes
@@ -113,9 +127,11 @@ public:
     }
     bool connect(const std::string& server, const std::string& port)
     {
-        // Boost Version < 1.70 handling - Thank you Mino#8171
+        // Boost Version < 1.70 handling (Updated) - Thank you https://github.com/g1itch
+        boost::asio::ip::tcp::resolver resolver(GetIOService(stream));
+        // Boost Version < 1.70 handling (Depricated) - Thank you Mino#8171
         // boost::asio::ip::tcp::resolver resolver(stream.get_io_service());
-        boost::asio::ip::tcp::resolver resolver(GET_IO_SERVICE(stream));
+        // boost::asio::ip::tcp::resolver resolver(GET_IO_SERVICE(stream));
         boost::asio::ip::tcp::resolver::query query(server.c_str(), port.c_str());
         boost::asio::ip::tcp::resolver::iterator endpoint_iterator = resolver.resolve(query);
         boost::asio::ip::tcp::resolver::iterator end;

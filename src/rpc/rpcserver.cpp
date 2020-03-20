@@ -31,12 +31,14 @@
 #include <boost/version.hpp>
 #include <list>
 
+// Boost Support for 1.70+ (Depricated)
+// TODO: Remove in next release! (not needed, clean this up!)
 // ====== BOOST SUCKS - AKA - v1.69 AND BELOW RETROCOMPATIBILITY ========
-#if BOOST_VERSION >= 107000
-#define GET_IO_SERVICE(s) ((boost::asio::io_context&)(s)->get_executor().context())
-#else
-#define GET_IO_SERVICE(s) ((s)->get_io_service())
-#endif
+//#if BOOST_VERSION >= 107000
+//#define GET_IO_SERVICE(s) ((boost::asio::io_context&)(s)->get_executor().context())
+//#else
+//#define GET_IO_SERVICE(s) ((s)->get_io_service())
+//#endif
 // ===== RETROCOMPATIBILITY SHOULD NOT BE AN OPTION ======
 
 using namespace std;
@@ -47,7 +49,7 @@ using namespace json_spirit;
 static std::string strRPCUserColonPass;
 
 // These are created by StartRPCThreads, destroyed in StopRPCThreads
-static asio::io_service* rpc_io_service = NULL;
+static ioContext* rpc_io_service = NULL;
 static map<string, boost::shared_ptr<deadline_timer> > deadlineTimers;
 static ssl::context* rpc_ssl_context = NULL;
 static boost::thread_group* rpc_worker_group = NULL;
@@ -393,10 +395,10 @@ class AcceptedConnectionImpl : public AcceptedConnection
 {
 public:
     AcceptedConnectionImpl(
-            asio::io_service& io_service,
+            ioContext& io_context,
             ssl::context &context,
             bool fUseSSL) :
-        sslStream(io_service, context),
+        sslStream(io_context, context),
         _d(sslStream, fUseSSL),
         _stream(_d)
     {
@@ -445,9 +447,10 @@ static void RPCListen(boost::shared_ptr< basic_socket_acceptor<Protocol> > accep
 {
     // Accept connection
     //
-    // Boost Version < 1.70 handling - Thank you Mino#8171
+    // Boost Version < 1.70 handling (Depricated) - Thank you Mino#8171
     //AcceptedConnectionImpl<Protocol>* conn = new AcceptedConnectionImpl<Protocol>(acceptor->get_io_service(), context, fUseSSL);
-    AcceptedConnectionImpl<Protocol>* conn = new AcceptedConnectionImpl<Protocol>(GET_IO_SERVICE(acceptor), context, fUseSSL);
+    // Boost Version < 1.70 handling (Updated) - Thank you https://github.com/g1itch
+    AcceptedConnectionImpl<Protocol>* conn = new AcceptedConnectionImpl<Protocol>(GetIOServiceFromPtr(acceptor), context, fUseSSL);
 
     acceptor->async_accept(
             conn->sslStream.lowest_layer(),
@@ -533,7 +536,7 @@ void StartRPCThreads()
     }
 
     assert(rpc_io_service == NULL);
-    rpc_io_service = new asio::io_service();
+    rpc_io_service = new ioContext();
     rpc_ssl_context = new ssl::context(ssl::context::sslv23);
 
     const bool fUseSSL = GetBoolArg("-rpcssl", false);
@@ -616,7 +619,7 @@ void StartRPCThreads()
 
     rpc_worker_group = new boost::thread_group();
     for (int i = 0; i < GetArg("-rpcthreads", 4); i++)
-        rpc_worker_group->create_thread(boost::bind(&asio::io_service::run, rpc_io_service));
+        rpc_worker_group->create_thread(boost::bind(&ioContext::run, rpc_io_service));
 }
 
 void StopRPCThreads()
