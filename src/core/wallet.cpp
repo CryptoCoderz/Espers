@@ -1281,7 +1281,7 @@ bool CWallet::SelectCoinsMinConfByCoinAge(int64_t nTargetValue, unsigned int nSp
     coinLowestLarger.second.first = NULL;
     vector<pair<pair<int64_t,int64_t>,pair<const CWalletTx*,unsigned int> > > vValue;
     int64_t nTotalLower = 0;
-    boost::sort(mCoins, boost::bind(&std::pair<COutput, uint64_t>::second, _1) < boost::bind(&std::pair<COutput, uint64_t>::second, _2));
+    boost::sort(mCoins, boost::bind(&std::pair<COutput, uint64_t>::second, boost::placeholders::_1) < boost::bind(&std::pair<COutput, uint64_t>::second, boost::placeholders::_2));
 
     BOOST_FOREACH(const PAIRTYPE(COutput, uint64_t)& output, mCoins)
     {
