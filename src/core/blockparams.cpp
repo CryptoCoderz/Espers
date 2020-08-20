@@ -62,6 +62,7 @@ int64_t scantime_1 = 0;
 int64_t scantime_2 = 0;
 int64_t prevPoW = 0; // hybrid value
 int64_t prevPoS = 0; // hybrid value
+uint64_t blkTime = 0;
 uint64_t cntTime = 0;
 uint64_t prvTime = 0;
 uint64_t difTime = 0;
@@ -70,6 +71,7 @@ uint64_t difCurve = 0;
 uint64_t debugHourRounds = 0;
 uint64_t debugDifCurve = 0;
 bool fDryRun;
+bool fCRVreset;
 const CBlockIndex* pindexPrev = 0;
 const CBlockIndex* BlockVelocityType = 0;
 CBigNum bnVelocity = 0;
@@ -103,6 +105,10 @@ void VRXswngdebug()
             debugTerminalAverage /= debugDifCurve;
             LogPrintf("diffTime%s is greater than %u Hours: %u \n",difType.c_str(),debugHourRounds,cntTime);
             LogPrintf("Difficulty will be multiplied by: %d \n",debugTerminalAverage);
+            // Break loop after 5 hours, otherwise time threshold will auto-break loop
+            if (debugHourRounds > 5){
+                break;
+            }
             debugDifCurve ++;
             debugHourRounds ++;
         }
@@ -399,11 +405,13 @@ void VRX_ThreadCurve(const CBlockIndex* pindexLast, bool fProofOfStake)
     if(pindexBest->GetBlockTime() > SWING_PATCH) // ON (TOGGLED Nov/01/2017)
     {
         // Define time values
+        blkTime = pindexLast->GetBlockTime();
         cntTime = BlockVelocityType->GetBlockTime();
         prvTime = BlockVelocityType->pprev->GetBlockTime();
         difTime = cntTime - prvTime;
         hourRounds = 1;
         difCurve = 2;
+        fCRVreset = false;
 
         // Debug print toggle
         if(fProofOfStake) {
@@ -415,15 +423,19 @@ void VRX_ThreadCurve(const CBlockIndex* pindexLast, bool fProofOfStake)
 
         // Version 1.2 Extended Curve Run Upgrade
         if(pindexLast->nHeight+1 >= nLiveForkToggle && nLiveForkToggle != 0) {
+            // Set unbiased comparison
+            difTime = blkTime - cntTime;
+            // Run Curve
             while(difTime > (hourRounds * 60 * 60)) {
+                // Break loop after 5 hours, otherwise time threshold will auto-break loop
+                if (hourRounds > 5){
+                    fCRVreset = true;
+                    break;
+                }
                 // Drop difficulty per round
                 TerminalAverage /= difCurve;
                 // Simulate retarget for sanity
                 VRX_Simulate_Retarget();
-                // Break loop on nbit limit, otherwise time threshold will auto-break loop
-                if (bnNew > bnVelocity){
-                    break;
-                }
                 // Increase Curve per round
                 difCurve ++;
                 // Move up an hour per round
@@ -458,6 +470,11 @@ void VRX_Dry_Run(const CBlockIndex* pindexLast)
         }
     }
 
+    // Test Fork
+    if (nLiveForkToggle != 0) {
+        // Do nothing
+    }// TODO setup next testing fork
+
     // Standard, non-Dry Run
     fDryRun = false;
     return;
@@ -477,6 +494,7 @@ unsigned int VRX_Retarget(const CBlockIndex* pindexLast, bool fProofOfStake)
 
     // Run VRX threadcurve
     VRX_ThreadCurve(pindexLast, fProofOfStake);
+    if (fCRVreset) { return bnVelocity.GetCompact(); }
 
     // Retarget using simulation
     VRX_Simulate_Retarget();
