@@ -3,19 +3,19 @@
 #include "bitcoinunits.h"
 #include "clientmodel.h"
 #include "walletmodel.h"
-#include "main.h"
-#include "wallet.h"
-#include "base58.h"
+#include "core/main.h"
+#include "core/wallet.h"
+#include "primitives/base58.h"
 #include "transactionrecord.h"
 #include "transactiontablemodel.h"
 #include "transactionfilterproxy.h"
 #include "optionsmodel.h"
 #include "guiutil.h"
 #include "guiconstants.h"
-#include "init.h"
-#include "rpcserver.h"
-#include "rpcclient.h"
-#include "kernel.h"
+#include "util/init.h"
+#include "rpc/rpcserver.h"
+#include "rpc/rpcclient.h"
+#include "consensus/kernel.h"
 
 using namespace json_spirit;
 
@@ -58,7 +58,11 @@ public:
         bool confirmed = index.data(TransactionTableModel::ConfirmedRole).toBool();
         QVariant value = index.data(Qt::ForegroundRole);
         QColor foreground = option.palette.color(QPalette::Text);
+#if QT_VERSION < 0x050000
         if(qVariantCanConvert<QColor>(value))
+#else
+        if(value.canConvert(QMetaType::QColor))
+#endif
         {
             foreground = qvariant_cast<QColor>(value);
         }

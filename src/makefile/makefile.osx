@@ -1,0 +1,197 @@
+# -*- mode: Makefile; -*-
+# Copyright (c) 2011 Bitcoin Developers
+# Distributed under the MIT/X11 software license, see the accompanying
+# file COPYING or http://www.opensource.org/licenses/mit-license.php.
+
+# Mac OS X makefile for Espers
+# Originally by Laszlo Hanyecz (solar@heliacal.net)
+
+CXX=llvm-g++
+DEPSDIR=/opt/local
+
+INCLUDEPATHS= \
+ -I"$(CURDIR)" \
+ -I"$(CURDIR)"/obj \
+ -I"$(DEPSDIR)/include" \
+ -I"$(DEPSDIR)/include/db48"
+
+LIBPATHS= \
+ -L"$(DEPSDIR)/lib" \
+ -L"$(DEPSDIR)/lib/db48"
+
+USE_UPNP:=1
+USE_WALLET:=1
+
+LIBS= -dead_strip
+
+ifdef STATIC
+# Build STATIC if you are redistributing the Espersd binary
+LIBS += \
+ $(DEPSDIR)/lib/db48/libdb_cxx-4.8.a \
+ $(DEPSDIR)/lib/libboost_system-mt.a \
+ $(DEPSDIR)/lib/libboost_filesystem-mt.a \
+ $(DEPSDIR)/lib/libboost_program_options-mt.a \
+ $(DEPSDIR)/lib/libboost_thread-mt.a \
+ $(DEPSDIR)/lib/libboost_chrono-mt.a \
+ $(DEPSDIR)/lib/libssl.a \
+ $(DEPSDIR)/lib/libcrypto.a \
+ -lz
+else
+LIBS += \
+ -ldb_cxx-4.8 \
+ -lboost_system-mt \
+ -lboost_filesystem-mt \
+ -lboost_program_options-mt \
+ -lboost_thread-mt \
+ -l boost_chrono-mt \
+ -lssl \
+ -lcrypto \
+ -lz
+endif
+
+DEFS=-DMAC_OSX -DMSG_NOSIGNAL=0 -DBOOST_SPIRIT_THREADSAFE
+
+ifdef RELEASE
+# Compile for maximum compatibility and smallest size.
+# This requires that dependencies are compiled
+# the same way.
+CFLAGS = -mmacosx-version-min=10.7 -arch x86_64 -O2 -msse2
+else
+CFLAGS = -g -msse2
+endif
+
+# ppc doesn't work because we don't support big-endian
+CFLAGS += -Wall -Wextra -Wformat -Wformat-security -Wno-unused-parameter \
+    $(DEBUGFLAGS) $(DEFS) $(INCLUDEPATHS)
+
+OBJS= \
+    obj/node/alert.o \
+    obj/consensus/version.o \
+    obj/consensus/checkpoints.o \
+    obj/node/netbase.o \
+    obj/node/addrman.o \
+    obj/subcore/crypter.o \
+    obj/subcore/key.o \
+    obj/util/init.o \
+    obj/daemon/bitcoind.o \
+    obj/subcore/keystore.o \
+    obj/core/chain.o \
+    obj/core/main.o \
+    obj/node/net.o \
+    obj/subcore/protocol.o \
+    obj/consensus/velocity.o \
+    obj/rpc/rpcvelocity.o \
+    obj/rpc/rpcclient.o \
+    obj/rpc/rpcprotocol.o \
+    obj/rpc/rpcserver.o \
+    obj/rpc/rpcmisc.o \
+    obj/rpc/rpcnet.o \
+    obj/rpc/rpcblockchain.o \
+    obj/rpc/rpcrawtransaction.o \
+    obj/subcore/timedata.o \
+    obj/subcore/script.o \
+    obj/core/sync.o \
+    obj/subcore/txmempool.o \
+    obj/core/blocksizecalculator.o \
+    obj/util/util.o \
+    obj/subcore/hash.o \
+    obj/subcore/noui.o \
+    obj/consensus/kernel.o \
+    obj/primitives/pbkdf2.o \
+    obj/crypto/scrypt/scrypt.o \
+    obj/crypto/scrypt/scrypt-arm.o \
+    obj/crypto/scrypt/scrypt-x86.o \
+    obj/crypto/scrypt/scrypt-x86_64.o \
+    obj/core/chainparams.o \
+    obj/core/blockparams.o \
+    obj/crypto/common/blake.o\
+    obj/crypto/common/bmw.o\
+    obj/crypto/common/groestl.o\
+    obj/crypto/common/jh.o\
+    obj/crypto/common/keccak.o\
+    obj/crypto/common/skein.o\
+    obj/crypto/common/cubehash.o \
+    obj/crypto/common/luffa.o \
+    obj/crypto/common/aes_helper.o \
+    obj/crypto/common/echo.o \
+    obj/crypto/common/shavite.o \
+    obj/crypto/common/simd.o \
+    obj/crypto/common/hamsi.o \
+    obj/crypto/common/fugue.o \
+    obj/crypto/common/shabal.o \
+    obj/crypto/common/whirlpool.o \
+    obj/crypto/common/haval.o \
+    obj/crypto/common/sha2big.o
+
+ifeq (${USE_WALLET}, 1)
+    DEFS += -DENABLE_WALLET
+    OBJS += \
+        obj/database/db.o \
+        obj/consensus/miner.o \
+        obj/rpc/rpcdump.o \
+        obj/rpc/rpcmining.o \
+        obj/rpc/rpcwallet.o \
+        obj/core/wallet.o \
+        obj/database/walletdb.o
+endif
+
+ifndef USE_UPNP
+	override USE_UPNP = -
+endif
+ifneq (${USE_UPNP}, -)
+	DEFS += -DUSE_UPNP=$(USE_UPNP)
+ifdef STATIC
+	LIBS += $(DEPSDIR)/lib/libminiupnpc.a
+else
+	LIBS += -lminiupnpc
+endif
+endif
+
+all: Espersd
+
+LIBS += $(CURDIR)/leveldb/libleveldb.a $(CURDIR)/leveldb/libmemenv.a
+DEFS += $(addprefix -I,$(CURDIR)/leveldb/include)
+DEFS += $(addprefix -I,$(CURDIR)/leveldb/helpers)
+OBJS += obj/database/txdb-leveldb.o
+leveldb/libleveldb.a:
+	@echo "Building LevelDB ..."; cd leveldb; make libleveldb.a libmemenv.a; cd ..;
+obj/txdb-leveldb.o: leveldb/libleveldb.a
+
+# auto-generated dependencies:
+-include obj/*.P
+
+obj/build.h: FORCE
+	/bin/sh ../share/genbuild.sh obj/build.h
+consensus/version.cpp: obj/build.h
+DEFS += -DHAVE_BUILD_INFO
+
+obj/%.o: %.cpp
+	$(CXX) -c $(xCXXFLAGS) -MMD -MF $(@:%.o=%.d) -o $@ $<
+	@cp $(@:%.o=%.d) $(@:%.o=%.P); \
+	  sed -e 's/#.*//' -e 's/^[^:]*: *//' -e 's/ *\\$$//' \
+	      -e '/^$$/ d' -e 's/$$/ :/' < $(@:%.o=%.d) >> $(@:%.o=%.P); \
+	  rm -f $(@:%.o=%.d)
+
+obj/%.o: %.c
+	$(CXX) -c $(xCXXFLAGS) -fpermissive -MMD -MF $(@:%.o=%.d) -o $@ $<
+	@cp $(@:%.o=%.d) $(@:%.o=%.P); \
+	  sed -e 's/#.*//' -e 's/^[^:]*: *//' -e 's/ *\\$$//' \
+	      -e '/^$$/ d' -e 's/$$/ :/' < $(@:%.o=%.d) >> $(@:%.o=%.P); \
+	  rm -f $(@:%.o=%.d)
+
+obj/scrypt-x86.o: scrypt-x86.S
+	$(CXX) -c $(xCXXFLAGS) -MMD -o $@ $<
+
+obj/scrypt-x86_64.o: scrypt-x86_64.S
+	$(CXX) -c $(xCXXFLAGS) -MMD -o $@ $<
+
+Espersd: $(OBJS:obj/%=obj/%)
+	$(LINK) $(xCXXFLAGS) -o $@ $^ $(xLDFLAGS) $(LIBS)
+
+clean:
+	-rm -f Espersd
+	-rm -f obj/**/*.o
+	-rm -f obj/**/*.P
+	-rm -f obj/build.h
+
+FORCE:

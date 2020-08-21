@@ -3,15 +3,14 @@
 
 #include "addresstablemodel.h"
 #include "bitcoinunits.h"
-#include "base58.h"
-#include "chain.h"
+#include "primitives/base58.h"
+#include "core/chain.h"
 #include "guiutil.h"
-#include "init.h"
+#include "util/init.h"
 #include "optionsmodel.h"
 #include "walletmodel.h"
-
-#include "coincontrol.h"
-#include "wallet.h"
+#include "subcore/coincontrol.h"
+#include "core/wallet.h"
 
 #include <ctime>
 #include <QMessageBox>
@@ -103,7 +102,11 @@ CoinControlDialog::CoinControlDialog(QWidget *parent) :
     connect(ui->treeWidget, SIGNAL(itemChanged( QTreeWidgetItem*, int)), this, SLOT(viewItemChanged( QTreeWidgetItem*, int)));
 
     // click on header
+#if QT_VERSION < 0x050000
     ui->treeWidget->header()->setClickable(true);
+#else
+    ui->treeWidget->header()->setSectionsClickable(true);
+#endif
     connect(ui->treeWidget->header(), SIGNAL(sectionClicked(int)), this, SLOT(headerSectionClicked(int)));
 
     // ok button

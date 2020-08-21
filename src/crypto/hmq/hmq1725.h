@@ -1,25 +1,25 @@
 #ifndef HASHBLOCK_H
 #define HASHBLOCK_H
 
-#include "uint256.h"
-#include "../common/sph_blake.h"
-#include "../common/sph_bmw.h"
-#include "../common/sph_groestl.h"
-#include "../common/sph_jh.h"
-#include "../common/sph_keccak.h"
-#include "../common/sph_skein.h"
+#include "primitives/uint256.h"
+#include "crypto/common/sph_blake.h"
+#include "crypto/common/sph_bmw.h"
+#include "crypto/common/sph_groestl.h"
+#include "crypto/common/sph_jh.h"
+#include "crypto/common/sph_keccak.h"
+#include "crypto/common/sph_skein.h"
 /** ADDED FOR HMQ1725 */
-#include "../common/sph_luffa.h"
-#include "../common/sph_cubehash.h"
-#include "../common/sph_shavite.h"
-#include "../common/sph_simd.h"
-#include "../common/sph_echo.h"
-#include "../common/sph_hamsi.h"
-#include "../common/sph_fugue.h"
-#include "../common/sph_shabal.h"
-#include "../common/sph_whirlpool.h"
-#include "../common/sph_sha2.h"
-#include "../common/sph_haval.h"
+#include "crypto/common/sph_luffa.h"
+#include "crypto/common/sph_cubehash.h"
+#include "crypto/common/sph_shavite.h"
+#include "crypto/common/sph_simd.h"
+#include "crypto/common/sph_echo.h"
+#include "crypto/common/sph_hamsi.h"
+#include "crypto/common/sph_fugue.h"
+#include "crypto/common/sph_shabal.h"
+#include "crypto/common/sph_whirlpool.h"
+#include "crypto/common/sph_sha2.h"
+#include "crypto/common/sph_haval.h"
 
 #ifndef QT_NO_DEBUG
 #include <string>

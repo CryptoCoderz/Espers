@@ -10,17 +10,19 @@
 #include "optionsmodel.h"
 #include "guiutil.h"
 #include "guiconstants.h"
-#include "init.h"
-#include "util.h"
-#include "wallet.h"
-#include "ui_interface.h"
+#include "util/init.h"
+#include "util/util.h"
+#include "core/wallet.h"
+#include "ui/ui_interface.h"
 #include "paymentserver.h"
 #ifdef Q_OS_MAC
 #include "macdockiconhandler.h"
 #endif
 
 #include <QMessageBox>
+#if QT_VERSION < 0x050000
 #include <QTextCodec>
+#endif
 #include <QLocale>
 #include <QTimer>
 #include <QTranslator>

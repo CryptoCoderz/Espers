@@ -6,15 +6,15 @@
 
 #include "clientmodel.h"
 #include "walletmodel.h"
-#include "main.h"
-#include "wallet.h"
-#include "base58.h"
+#include "core/main.h"
+#include "core/wallet.h"
+#include "primitives/base58.h"
 #include "transactionrecord.h"
 #include "optionsmodel.h"
 #include "guiutil.h"
 #include "guiconstants.h"
-#include "init.h"
-#include "rpcserver.h"
+#include "util/init.h"
+#include "rpc/rpcserver.h"
 
 using namespace json_spirit;
 

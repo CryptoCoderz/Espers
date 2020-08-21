@@ -12,8 +12,8 @@
 #include "guiutil.h"
 #include "askpassphrasedialog.h"
 
-#include "base58.h"
-#include "coincontrol.h"
+#include "primitives/base58.h"
+#include "subcore/coincontrol.h"
 #include "coincontroldialog.h"
 
 #include <QMessageBox>
@@ -145,7 +145,11 @@ void SendCoinsDialog::on_sendButton_clicked()
     QStringList formatted;
     foreach(const SendCoinsRecipient &rcp, recipients)
     {
+#if QT_VERSION < 0x050000
         formatted.append(tr("<b>%1</b> to %2 (%3)").arg(BitcoinUnits::formatWithUnit(model->getOptionsModel()->getDisplayUnit(), rcp.amount), Qt::escape(rcp.label), rcp.address));
+#else
+        formatted.append(tr("<b>%1</b> to %2 (%3)").arg(BitcoinUnits::formatWithUnit(model->getOptionsModel()->getDisplayUnit(), rcp.amount), rcp.label.toHtmlEscaped(), rcp.address));
+#endif
     }
 
     fNewRecipientAllowed = false;

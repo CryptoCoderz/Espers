@@ -1,0 +1,149 @@
+# Copyright (c) 2009-2010 Satoshi Nakamoto
+# Distributed under the MIT/X11 software license, see the accompanying
+# file COPYING or http://www.opensource.org/licenses/mit-license.php.
+
+USE_UPNP:=0
+USE_WALLET:=1
+
+INCLUDEPATHS= \
+ -I"C:\boost-1.50.0-mgw" \
+ -I"C:\db-4.8.30.NC-mgw\build_unix" \
+ -I"C:\openssl-1.0.1c-mgw\include"
+
+LIBPATHS= \
+ -L"C:\boost-1.50.0-mgw\stage\lib" \
+ -L"C:\db-4.8.30.NC-mgw\build_unix" \
+ -L"C:\openssl-1.0.1c-mgw"
+
+LIBS= \
+ -l boost_system-mgw44-mt-1_53 \
+ -l boost_filesystem-mgw44-mt-1_53 \
+ -l boost_program_options-mgw44-mt-1_53 \
+ -l boost_thread-mgw44-mt-1_53 \
+ -l boost_chrono-mgw44-mt-1_53 \
+ -l db_cxx \
+ -l ssl \
+ -l crypto
+
+DEFS=-DWIN32 -D_WINDOWS -DBOOST_THREAD_USE_LIB -DBOOST_SPIRIT_THREADSAFE
+DEBUGFLAGS=-g
+CFLAGS=-mthreads -O2 -msse2 -w -Wall -Wextra -Wno-ignored-qualifiers -Wformat -Wformat-security -Wno-unused-parameter $(DEBUGFLAGS) $(DEFS) $(INCLUDEPATHS)
+LDFLAGS=-Wl,--dynamicbase -Wl,--nxcompat
+
+TESTDEFS = -DTEST_DATA_DIR=$(abspath test/data)
+
+ifndef USE_UPNP
+	override USE_UPNP = -
+endif
+ifneq (${USE_UPNP}, -)
+ INCLUDEPATHS += -I"C:\miniupnpc-1.6-mgw"
+ LIBPATHS += -L"C:\miniupnpc-1.6-mgw"
+ LIBS += -l miniupnpc -l iphlpapi
+ DEFS += -DSTATICLIB -DUSE_UPNP=$(USE_UPNP)
+endif
+
+LIBS += -l kernel32 -l user32 -l gdi32 -l comdlg32 -l winspool -l winmm -l shell32 -l comctl32 -l ole32 -l oleaut32 -l uuid -l rpcrt4 -l advapi32 -l ws2_32 -l mswsock -l shlwapi
+
+# TODO: make the mingw builds smarter about dependencies, like the linux/osx builds are
+HEADERS = $(wildcard *.h)
+
+OBJS= \
+    leveldb/libleveldb.a \
+    obj/node/alert.o \
+    obj/consensus/version.o \
+    obj/consensus/checkpoints.o \
+    obj/node/netbase.o \
+    obj/node/addrman.o \
+    obj/subcore/crypter.o \
+    obj/subcore/key.o \
+    obj/util/init.o \
+    obj/daemon/bitcoind.o \
+    obj/subcore/keystore.o \
+    obj/core/chain.o \
+    obj/core/main.o \
+    obj/node/net.o \
+    obj/subcore/protocol.o \
+    obj/consensus/velocity.o \
+    obj/rpc/rpcvelocity.o \
+    obj/rpc/rpcclient.o \
+    obj/rpc/rpcprotocol.o \
+    obj/rpc/rpcserver.o \
+    obj/rpc/rpcmisc.o \
+    obj/rpc/rpcnet.o \
+    obj/rpc/rpcblockchain.o \
+    obj/rpc/rpcrawtransaction.o \
+    obj/subcore/timedata.o \
+    obj/subcore/script.o \
+    obj/core/sync.o \
+    obj/subcore/txmempool.o \
+    obj/core/blocksizecalculator.o \
+    obj/util/util.o \
+    obj/subcore/hash.o \
+    obj/subcore/noui.o \
+    obj/consensus/kernel.o \
+    obj/primitives/pbkdf2.o \
+    obj/crypto/scrypt/scrypt.o \
+    obj/crypto/scrypt/scrypt-arm.o \
+    obj/crypto/scrypt/scrypt-x86.o \
+    obj/crypto/scrypt/scrypt-x86_64.o \
+    obj/core/chainparams.o \
+    obj/core/blockparams.o \
+    obj/crypto/common/blake.o\
+    obj/crypto/common/bmw.o\
+    obj/crypto/common/groestl.o\
+    obj/crypto/common/jh.o\
+    obj/crypto/common/keccak.o\
+    obj/crypto/common/skein.o\
+    obj/crypto/common/cubehash.o \
+    obj/crypto/common/luffa.o \
+    obj/crypto/common/aes_helper.o \
+    obj/crypto/common/echo.o \
+    obj/crypto/common/shavite.o \
+    obj/crypto/common/simd.o \
+    obj/crypto/common/hamsi.o \
+    obj/crypto/common/fugue.o \
+    obj/crypto/common/shabal.o \
+    obj/crypto/common/whirlpool.o \
+    obj/crypto/common/haval.o \
+    obj/crypto/common/sha2big.o
+
+ifeq (${USE_WALLET}, 1)
+    DEFS += -DENABLE_WALLET
+    OBJS += \
+        obj/database/db.o \
+        obj/consensus/miner.o \
+        obj/rpc/rpcdump.o \
+        obj/rpc/rpcmining.o \
+        obj/rpc/rpcwallet.o \
+        obj/core/wallet.o \
+        obj/database/walletdb.o
+endif
+
+all: Espersd.exe
+
+LIBS += $(CURDIR)/leveldb/libleveldb.a $(CURDIR)/leveldb/libmemenv.a
+DEFS += $(addprefix -I,$(CURDIR)/leveldb/include)
+DEFS += $(addprefix -I,$(CURDIR)/leveldb/helpers)
+OBJS += obj/database/txdb-leveldb.o
+leveldb/libleveldb.a:
+	@echo "Building LevelDB ..."; cd leveldb; make libleveldb.a libmemenv.a; cd ..;
+obj/txdb-leveldb.o: leveldb/libleveldb.a
+
+obj/%.o: %.cpp %.c $(HEADERS)
+	g++ -c $(CFLAGS) -o $@ $<
+
+obj/crypto/scrypt/scrypt-x86.o: crypto/scrypt/scrypt-x86.S
+	$(CXX) -c $(xCXXFLAGS) -MMD -o $@ $<
+
+obj/crypto/scrypt/scrypt-x86_64.o: crypto/scrypt/scrypt-x86_64.S
+	$(CXX) -c $(xCXXFLAGS) -MMD -o $@ $<
+
+Espersd.exe: $(OBJS:obj/%=obj/%)
+	g++ $(CFLAGS) $(LDFLAGS) -o $@ $(LIBPATHS) $^ $(LIBS)
+
+clean:
+	-del /Q Espersd
+	-del /Q obj/**/*.o
+	-del /Q obj/**/*.P
+
+FORCE:

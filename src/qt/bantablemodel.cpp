@@ -8,8 +8,8 @@
 #include "guiconstants.h"
 #include "guiutil.h"
 
-#include "sync.h"
-#include "util.h"
+#include "core/sync.h"
+#include "util/util.h"
 
 #include <QDebug>
 #include <QList>

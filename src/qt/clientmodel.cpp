@@ -7,15 +7,18 @@
 #include "peertablemodel.h"
 #include "transactiontablemodel.h"
 
-#include "chainparams.h"
-#include "alert.h"
-#include "main.h"
-#include "ui_interface.h"
+#include "core/chainparams.h"
+#include "node/alert.h"
+#include "core/main.h"
+#include "ui/ui_interface.h"
 
 #include <QDateTime>
 #include <QTimer>
 #include <QDebug>
 #include <QFile>
+
+//TODO: cleanup linking
+#include <boost/bind.hpp>
 
 static const int64_t nClientStartupTime = GetTime();
 

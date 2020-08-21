@@ -1,9 +1,9 @@
 #include "optionsmodel.h"
 
 #include "bitcoinunits.h"
-#include "init.h"
-#include "wallet.h"
-#include "walletdb.h"
+#include "util/init.h"
+#include "core/wallet.h"
+#include "database/walletdb.h"
 #include "guiutil.h"
 
 #include <QSettings>

@@ -3,14 +3,14 @@
 #include "bitcoinunits.h"
 #include "guiutil.h"
 
-#include "base58.h"
-#include "main.h"
+#include "primitives/base58.h"
+#include "core/main.h"
 #include "paymentserver.h"
 #include "transactionrecord.h"
-#include "timedata.h"
-#include "ui_interface.h"
-#include "wallet.h"
-#include "txdb.h"
+#include "subcore/timedata.h"
+#include "ui/ui_interface.h"
+#include "core/wallet.h"
+#include "database/txdb.h"
 
 #include <string>
 
