@@ -31,23 +31,24 @@ ClientControlPage::ClientControlPage(QWidget *parent) :
 {
     ui->setupUi(this);
     // CHECK IF STANDALONE
-    QFileInfo check_standalone(QDir::currentPath());
+    QFileInfo check_standalone(QDir::currentPath() + "ESP.cfg");
     if(!check_standalone.exists())
     {
         // C.C.S
-      //  ui->chck4_upd8->setEnabled(false);
-      //  ui->dwngrd_opt->setEnabled(false);
-      // ui->checkBoxupd8->setEnabled(false);
-      //  ui->minCLIE->setEnabled(false);
-      //  ui->CS_submit->setEnabled(false);
-      //  ui->br_input->setEnabled(false);
-      //  ui->BR_submit->setEnabled(false);
-     //   ui->optin_test->setEnabled(false);
-     //   ui->AU_apply->setEnabled(false);
-
-        QMessageBox::warning(this, "Error",
-                           "Local directory not found... Somehow. Error 54",
+        ui->chck4_upd8->setEnabled(false);
+        ui->dwngrd_opt->setEnabled(false);
+        ui->checkBoxupd8->setEnabled(false);
+        ui->minCLIE->setEnabled(false);
+        ui->CS_submit->setEnabled(false);
+        ui->br_input->setEnabled(false);
+        ui->BR_submit->setEnabled(false);
+        ui->optin_test->setEnabled(false);
+        ui->AU_apply->setEnabled(false);
+#ifdef Q_OS_WIN
+        QMessageBox::warning(this, "Launcher not found",
+                           "The Espers Launcher is required for this feature to work, would you like to download it now?",
                            QMessageBox::Ok );
+#endif
     }
     else if(check_standalone.exists())
     {
@@ -163,7 +164,7 @@ void ClientControlPage::on_CS_submit_clicked()
 
 void ClientControlPage::on_BR_submit_clicked()
 {
-    QMessageBox::information(this, "Coming in v0.8.4.3",
+    QMessageBox::information(this, "Coming in v0.8.7.7",
                        "Please email your issues to CryptoCoderz@gmail.com",
                        QMessageBox::Ok );
 }
@@ -204,7 +205,7 @@ void ClientControlPage::on_minCLIE_clicked()
 {
     if(ui->minCLIE->isChecked())
     {
-    QPixmap pix(":/images/0840m");
+    QPixmap pix(":/images/0876m");
     this->ui->cliePREV->setPixmap(pix);
     }
     else

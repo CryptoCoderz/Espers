@@ -10,7 +10,6 @@
 #include <boost/lexical_cast.hpp>
 #include <boost/random/mersenne_twister.hpp>
 #include <boost/random/uniform_int_distribution.hpp>
-#include <boost/bind.hpp>
 
 #include "node/alert.h"
 #include "blocksizecalculator.h"
@@ -28,6 +27,8 @@
 
 using namespace std;
 using namespace boost;
+#include <boost/bind/bind.hpp>
+using namespace boost::placeholders;//TODO: Verify boost implementation upgrades
 
 #if defined(NDEBUG)
 # error "Espers cannot be compiled without assertions."
@@ -3100,7 +3101,7 @@ bool static ProcessMessage(CNode* pfrom, string strCommand, CDataStream& vRecv, 
             }
             else
             {
-                if(pindexBest->GetBlockTime() > HRD_FUTURE_CUTOFF)
+                if(pindexBest->GetBlockTime() < HRD_FUTURE_CUTOFF)
                 {
                     // log successfull future-peer-version connection : Connection attempt message 01
                     LogPrintf("partner %s using acceptable future version %i; connecting CAM:01\n", pfrom->addr.ToString(), pfrom->nVersion);

@@ -26,7 +26,7 @@
 #include "overviewpage.h"
 #include "clientcontrolpage.h"
 #include "blockbrowser.h"
-#include "siteonchain.h"
+#include "fractalui.h"
 #include "messagepage.h"
 #include "bitcoinunits.h"
 #include "guiconstants.h"
@@ -141,7 +141,7 @@ BitcoinGUI::BitcoinGUI(QWidget *parent):
 
     blockbrowser = new BlockBrowser();
 
-    siteonChain = new SiteOnChain(this);
+    fractalUI = new FractalUI(this);
 
     signVerifyMessageDialog = new SignVerifyMessageDialog(this);
 
@@ -155,7 +155,7 @@ BitcoinGUI::BitcoinGUI(QWidget *parent):
     centralStackedWidget->addWidget(clientcontrolPage);
     centralStackedWidget->addWidget(messagePage);
     centralStackedWidget->addWidget(blockbrowser);
-    centralStackedWidget->addWidget(siteonChain);
+    centralStackedWidget->addWidget(fractalUI);
 
     QWidget *centralWidget = new QWidget();
     QVBoxLayout *centralLayout = new QVBoxLayout(centralWidget);
@@ -311,11 +311,11 @@ void BitcoinGUI::createActions()
     blockbrowserAction->setShortcut(QKeySequence(Qt::ALT + Qt::Key_8));
     tabGroup->addAction(blockbrowserAction);
 
-    siteonChainAction = new QAction(QIcon(":/icons/sitechain"), tr("&SiteOnChain"), this);
-    siteonChainAction->setToolTip(tr("Espers Site on Blockchain (Websites on the Chain)"));
-    siteonChainAction->setCheckable(true);
-    siteonChainAction->setShortcut(QKeySequence(Qt::ALT + Qt::Key_9));
-    tabGroup->addAction(siteonChainAction);
+    fractalUIAction = new QAction(QIcon(":/icons/sitechain"), tr("&FractalUI"), this);
+    fractalUIAction->setToolTip(tr("Espers Site on Blockchain (Websites on the Chain)"));
+    fractalUIAction->setCheckable(true);
+    fractalUIAction->setShortcut(QKeySequence(Qt::ALT + Qt::Key_9));
+    tabGroup->addAction(fractalUIAction);
 
     showBackupsAction = new QAction(QIcon(":/icons/browse"), tr("Show Auto&Backups"), this);
     showBackupsAction->setStatusTip(tr("S"));
@@ -336,8 +336,8 @@ void BitcoinGUI::createActions()
     connect(messageAction, SIGNAL(triggered()), this, SLOT(gotoMessagePage()));
     connect(blockbrowserAction, SIGNAL(triggered()), this, SLOT(showNormalIfMinimized()));
     connect(blockbrowserAction, SIGNAL(triggered()), this, SLOT(gotoBlockBrowser()));
-    connect(siteonChainAction, SIGNAL(triggered()), this, SLOT(showNormalIfMinimized()));
-    connect(siteonChainAction, SIGNAL(triggered()), this, SLOT(gotoSiteOnChain()));
+    connect(fractalUIAction, SIGNAL(triggered()), this, SLOT(showNormalIfMinimized()));
+    connect(fractalUIAction, SIGNAL(triggered()), this, SLOT(gotoFractalUI()));
 
     quitAction = new QAction(QIcon(":icons/quit"), tr("E&xit"), this);
     quitAction->setToolTip(tr("Quit application"));
@@ -468,7 +468,7 @@ void BitcoinGUI::createToolBars()
     toolbar->addAction(clientcontrolAction);
     toolbar->addAction(messageAction);
     toolbar->addAction(blockbrowserAction);
-    toolbar->addAction(siteonChainAction);
+    toolbar->addAction(fractalUIAction);
 
     toolbar->addWidget(makeToolBarSpacer());
 
@@ -925,10 +925,10 @@ void BitcoinGUI::gotoBlockBrowser()
     disconnect(exportAction, SIGNAL(triggered()), 0, 0);
 }
 
-void BitcoinGUI::gotoSiteOnChain()
+void BitcoinGUI::gotoFractalUI()
 {
-    siteonChainAction->setChecked(true);
-    centralStackedWidget->setCurrentWidget(siteonChain);
+    fractalUIAction->setChecked(true);
+    centralStackedWidget->setCurrentWidget(fractalUI);
 
     exportAction->setEnabled(false);
     disconnect(exportAction, SIGNAL(triggered()), 0, 0);

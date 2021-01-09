@@ -14,7 +14,8 @@
 #include <QDebug>
 
 //TODO: cleanup linking
-#include <boost/bind.hpp>
+#include <boost/bind/bind.hpp>
+using namespace boost::placeholders;//TODO: Verify boost implementation upgrades
 
 WalletModel::WalletModel(CWallet *wallet, OptionsModel *optionsModel, QObject *parent) :
     QObject(parent), wallet(wallet), optionsModel(optionsModel), addressTableModel(0),
