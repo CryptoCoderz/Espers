@@ -1,6 +1,6 @@
 TEMPLATE = app
 TARGET = Espers-qt
-VERSION = 0.8.7.5
+VERSION = 0.8.7.6
 INCLUDEPATH += src src/json src/qt
 QT += core gui network
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
@@ -299,7 +299,7 @@ HEADERS += src/qt/bitcoingui.h \
     src/primitives/threadsafety.h \
     src/primitives/tinyformat.h \
     src/primitives/limitedmap.h \
-    src/qt/siteonchain.h \
+    src/qt/fractalui.h \
     src/qt/macnotificationhandler.h \
     src/crypto/hmq/hmq1725.h \
     src/crypto/bmw/bmw512.h \
@@ -320,7 +320,10 @@ HEADERS += src/qt/bitcoingui.h \
     src/crypto/common/sph_shabal.h \
     src/crypto/common/sph_whirlpool.h \
     src/crypto/common/sph_haval.h \
-    src/crypto/common/sph_sha2.h
+    src/crypto/common/sph_sha2.h \
+    src/fractal/fractalengine.h \
+    src/fractal/fractalcontract.h \
+    src/fractal/fractaltoken.h
 
 SOURCES += src/qt/bitcoin.cpp src/qt/bitcoingui.cpp \
     src/qt/transactiontablemodel.cpp \
@@ -408,7 +411,10 @@ SOURCES += src/qt/bitcoin.cpp src/qt/bitcoingui.cpp \
     src/crypto/scrypt/scrypt-x86_64.S \
     src/crypto/scrypt/scrypt.cpp \
     src/primitives/pbkdf2.cpp \
-    src/qt/siteonchain.cpp
+    src/qt/fractalui.cpp \
+    src/fractal/fractalengine.cpp \
+    src/fractal/fractalcontract.cpp \
+    src/fractal/fractaltoken.cpp
 
 RESOURCES += \
     src/qt/bitcoin.qrc
@@ -430,7 +436,7 @@ FORMS += \
     src/qt/forms/askpassphrasedialog.ui \
     src/qt/forms/rpcconsole.ui \
     src/qt/forms/optionsdialog.ui \
-    src/qt/forms/siteonchain.ui
+    src/qt/forms/fractalui.ui
 
 contains(USE_QRCODE, 1) {
 HEADERS += src/qt/qrcodedialog.h
