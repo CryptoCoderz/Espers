@@ -311,7 +311,7 @@ void BitcoinGUI::createActions()
     blockbrowserAction->setShortcut(QKeySequence(Qt::ALT + Qt::Key_8));
     tabGroup->addAction(blockbrowserAction);
 
-    fractalUIAction = new QAction(QIcon(":/icons/sitechain"), tr("&FractalUI"), this);
+    fractalUIAction = new QAction(QIcon(":/icons/sitechain"), tr("&Fractal UI"), this);
     fractalUIAction->setToolTip(tr("Espers Site on Blockchain (Websites on the Chain)"));
     fractalUIAction->setCheckable(true);
     fractalUIAction->setShortcut(QKeySequence(Qt::ALT + Qt::Key_9));

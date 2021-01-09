@@ -1,4 +1,4 @@
-// Copyright (c) 2016-2018 The Espers developers
+// Copyright (c) 2016-2021 The Espers developers
 // Distributed under the MIT/X11 software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 #include "blockbrowser.h"
