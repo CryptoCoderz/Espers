@@ -62,4 +62,10 @@ static const int MEMPOOL_GD_VERSION = 60002;
 static const int CANONICAL_BLOCK_SIG_VERSION = 60045;
 static const int CANONICAL_BLOCK_SIG_LOW_S_VERSION = 60046;
 
+// minimum peer version that can receive xnode payments
+// V1 - Last protocol version before update
+// V2 - Newest protocol version
+static const int MIN_XNODE_PAYMENT_PROTO_VERSION_1 = 60034;
+static const int MIN_XNODE_PAYMENT_PROTO_VERSION_2 = 60034;
+
 #endif

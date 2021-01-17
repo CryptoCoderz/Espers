@@ -16,6 +16,8 @@ static const char* ppszTypeName[] =
     "ERROR",
     "tx",
     "block",
+    "spork",
+    "xnode winner",
 };
 
 CMessageHeader::CMessageHeader()

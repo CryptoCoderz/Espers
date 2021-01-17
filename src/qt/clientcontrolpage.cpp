@@ -16,6 +16,7 @@
 #include <QClipboard>
 #include <QMessageBox>
 #include <QMenu>
+#include <QDesktopServices>
 
 // For reading client version
 #include <QDir>
@@ -45,9 +46,22 @@ ClientControlPage::ClientControlPage(QWidget *parent) :
         ui->optin_test->setEnabled(false);
         ui->AU_apply->setEnabled(false);
 #ifdef Q_OS_WIN
-        QMessageBox::warning(this, "Launcher not found",
-                           "The Espers Launcher is required for this feature to work, would you like to download it now?",
-                           QMessageBox::Ok );
+
+        QMessageBox::StandardButton retval = QMessageBox::question(this, tr("Launcher not found"),
+                 tr("The Espers Launcher is required for advanced features to work, would you like to download it now?"),
+                 QMessageBox::Yes|QMessageBox::No,
+                 QMessageBox::No);
+        if(retval == QMessageBox::Yes)
+        {
+            QString link="https://github.com/CryptoCoderz/Espers/releases";
+                QDesktopServices::openUrl(QUrl(link));
+        }
+        else
+        {
+            QMessageBox::warning(this, "Launcher not found",
+                               "Skipping Espers Launcher download, however it is recommended that you download and use it from now on!",
+                               QMessageBox::Ok );
+        }
 #endif
     }
     else if(check_standalone.exists())
@@ -132,7 +146,7 @@ void ClientControlPage::on_chck4_upd8_clicked()
 void ClientControlPage::on_dwngrd_opt_clicked()
 {
     QMessageBox::information(this, "No Available Versions",
-                       "v0.8.4.2 cannot be downgraded, only later versions can.",
+                       "v0.8.7.6 cannot be downgraded, only later versions can.",
                        QMessageBox::Ok );
 }
 

@@ -2301,3 +2301,11 @@ bool CScriptCompressor::Decompress(unsigned int nSize, const std::vector<unsigne
     }
     return false;
 }
+
+CScript GetScriptForDestination(const CTxDestination& dest)
+{
+    CScript script;
+
+    boost::apply_visitor(CScriptVisitor(&script), dest);
+    return script;
+}

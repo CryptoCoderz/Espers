@@ -74,6 +74,10 @@ static const char alphanum[] =
       "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
       "abcdefghijklmnopqrstuvwxyz";
 
+bool fXnode = false;
+string strXnodePrivKey = "";
+string strXnodeAddr = "";
+
 map<string, string> mapArgs;
 map<string, vector<string> > mapMultiArgs;
 bool fDebug = false;
@@ -89,6 +93,10 @@ volatile bool fReopenDebugLog = false;
 //Live fork toggle
 string strLiveForkToggle = "";
 int64_t nLiveForkToggle = 0;
+//Xnodes
+int64_t enforceXNodePaymentsTime = 4085657524;
+int nXNodeMinProtocol = 0;
+bool fSucessfullyLoaded = false;
 
 // Init OpenSSL library multithreading support
 static CCriticalSection** ppmutexOpenSSL;
@@ -1040,6 +1048,13 @@ void ClearDatadirCache()
 {
     std::fill(&pathCached[0], &pathCached[CChainParams::MAX_NETWORK_TYPES+1],
               boost::filesystem::path());
+}
+
+boost::filesystem::path GetXNodeConfigFile()
+{
+    boost::filesystem::path pathConfigFile(GetArg("-xnconf", "xnode.conf"));
+    if (!pathConfigFile.is_complete()) pathConfigFile = GetDataDir() / pathConfigFile;
+    return pathConfigFile;
 }
 
 boost::filesystem::path GetConfigFile()
