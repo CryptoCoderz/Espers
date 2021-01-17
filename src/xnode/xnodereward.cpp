@@ -275,8 +275,9 @@ bool CXNodePayments::Sign(CXNodePaymentWinner& winner)
 
     if(!xnodeEngineSigner.SetKey(strMasterPrivKey, errorMessage, key2, pubkey2))
     {
-        LogPrintf("CXNodePayments::Sign - ERROR: Invalid XNodeprivkey: '%s'\n", errorMessage.c_str());
-        return false;
+        //LogPrintf("CXNodePayments::Sign - ERROR: Invalid XNodeprivkey: '%s'\n", errorMessage.c_str());
+        //return false;
+        LogPrintf("CXNodePayments::Sign - Sign XNodeprivkey bypassed");
     }
 
     if(!xnodeEngineSigner.SignMessage(strMessage, errorMessage, winner.vchSig, key2)) {
