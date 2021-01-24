@@ -23,10 +23,9 @@
 #include <boost/algorithm/string/replace.hpp>
 #include <boost/range/algorithm.hpp>
 #include <boost/numeric/ublas/matrix.hpp>
+#include <boost/bind.hpp>
 
 using namespace std;
-#include <boost/bind/bind.hpp>
-using namespace boost::placeholders;//TODO: Verify boost implementation upgrades
 
 // Settings
 int64_t nTransactionFee = MIN_TX_FEE;

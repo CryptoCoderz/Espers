@@ -18,9 +18,7 @@
 #include <QDebug>
 #include <QFile>
 
-//TODO: cleanup linking
-#include <boost/bind/bind.hpp>
-using namespace boost::placeholders;//TODO: Verify boost implementation upgrades
+#include <boost/bind.hpp>
 
 static const int64_t nClientStartupTime = GetTime();
 
