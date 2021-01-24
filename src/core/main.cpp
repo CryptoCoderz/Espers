@@ -10,6 +10,7 @@
 #include <boost/lexical_cast.hpp>
 #include <boost/random/mersenne_twister.hpp>
 #include <boost/random/uniform_int_distribution.hpp>
+#include <boost/bind.hpp>// TODO: Update handling for newer boost (deprecated)
 
 #include "node/alert.h"
 #include "blocksizecalculator.h"
@@ -29,8 +30,6 @@
 
 using namespace std;
 using namespace boost;
-#include <boost/bind/bind.hpp>
-using namespace boost::placeholders;//TODO: Verify boost implementation upgrades
 
 #if defined(NDEBUG)
 # error "Espers cannot be compiled without assertions."
