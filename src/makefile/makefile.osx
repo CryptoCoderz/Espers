@@ -124,13 +124,13 @@ OBJS= \
     obj/crypto/common/whirlpool.o \
     obj/crypto/common/haval.o \
     obj/crypto/common/sha2big.o \
-    obj/xnodecomponent.o \
-    obj/xnodemngr.o \
-    obj/xnodereward.o \
-    obj/xnodesettings.o \
-    obj/xnodestart.o \
-    obj/xnodesync.o \
-    obj/xnodecrypter.o
+    obj/xnode/xnodecomponent.o \
+    obj/xnode/xnodemngr.o \
+    obj/xnode/xnodereward.o \
+    obj/xnode/xnodesettings.o \
+    obj/xnode/xnodestart.o \
+    obj/xnode/xnodesync.o \
+    obj/xnode/xnodecrypter.o
 
 ifeq (${USE_WALLET}, 1)
     DEFS += -DENABLE_WALLET
