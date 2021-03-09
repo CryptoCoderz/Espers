@@ -1,5 +1,5 @@
 TEMPLATE = app
-TARGET = Espers-qt
+TARGET = Espers-fractal-qt
 VERSION = 0.8.7.6
 INCLUDEPATH += src src/json src/qt
 QT += core gui network
@@ -300,6 +300,7 @@ HEADERS += src/qt/bitcoingui.h \
     src/primitives/tinyformat.h \
     src/primitives/limitedmap.h \
     src/qt/fractalui.h \
+    src/qt/tokenui.h \
     src/qt/macnotificationhandler.h \
     src/crypto/hmq/hmq1725.h \
     src/crypto/bmw/bmw512.h \
@@ -323,7 +324,15 @@ HEADERS += src/qt/bitcoingui.h \
     src/crypto/common/sph_sha2.h \
     src/fractal/fractalengine.h \
     src/fractal/fractalcontract.h \
-    src/fractal/fractaltoken.h
+    src/fractal/fractalparams.h \
+    src/fractal/fractaldataob.h \
+    src/xnode/xnodecomponent.h \
+    src/xnode/xnodemngr.h \
+    src/xnode/xnodereward.h \
+    src/xnode/xnodesettings.h \
+    src/xnode/xnodestart.h \
+    src/xnode/xnodesync.h \
+    src/xnode/xnodecrypter.h
 
 SOURCES += src/qt/bitcoin.cpp src/qt/bitcoingui.cpp \
     src/qt/transactiontablemodel.cpp \
@@ -359,6 +368,7 @@ SOURCES += src/qt/bitcoin.cpp src/qt/bitcoingui.cpp \
     src/consensus/velocity.cpp \
     src/rpc/rpcvelocity.cpp \
     src/consensus/checkpoints.cpp \
+    src/consensus/fork.cpp \
     src/node/addrman.cpp \
     src/database/db.cpp \
     src/database/walletdb.cpp \
@@ -412,9 +422,19 @@ SOURCES += src/qt/bitcoin.cpp src/qt/bitcoingui.cpp \
     src/crypto/scrypt/scrypt.cpp \
     src/primitives/pbkdf2.cpp \
     src/qt/fractalui.cpp \
+    src/qt/tokenui.cpp \
     src/fractal/fractalengine.cpp \
     src/fractal/fractalcontract.cpp \
-    src/fractal/fractaltoken.cpp
+    src/fractal/fractalparams.cpp \
+    src/fractal/fractaldataob.cpp \
+    src/xnode/xnoderpc.cpp \
+    src/xnode/xnodecomponent.cpp \
+    src/xnode/xnodemngr.cpp \
+    src/xnode/xnodereward.cpp \
+    src/xnode/xnodesettings.cpp \
+    src/xnode/xnodestart.cpp \
+    src/xnode/xnodesync.cpp \
+    src/xnode/xnodecrypter.cpp
 
 RESOURCES += \
     src/qt/bitcoin.qrc
@@ -436,7 +456,8 @@ FORMS += \
     src/qt/forms/askpassphrasedialog.ui \
     src/qt/forms/rpcconsole.ui \
     src/qt/forms/optionsdialog.ui \
-    src/qt/forms/fractalui.ui
+    src/qt/forms/fractalui.ui \
+    src/qt/forms/tokenui.ui
 
 contains(USE_QRCODE, 1) {
 HEADERS += src/qt/qrcodedialog.h

@@ -77,7 +77,7 @@ static const char alphanum[] =
 bool fXnode = false;
 string strXnodePrivKey = "";
 string strXnodeAddr = "";
-
+// Standard Arguments/toggles
 map<string, string> mapArgs;
 map<string, vector<string> > mapMultiArgs;
 bool fDebug = false;

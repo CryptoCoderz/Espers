@@ -33,6 +33,7 @@ private:
 
 private slots:
 
+        void on_pushButton_clicked();
 };
 
 #endif // FRACTALUI_H

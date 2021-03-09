@@ -423,7 +423,7 @@ font-family:'Open Sans,sans-serif';</string>
     </rect>
    </property>
    <property name="text">
-    <string>Create a Token</string>
+    <string>Create Contract</string>
    </property>
   </widget>
  </widget>
