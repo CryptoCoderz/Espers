@@ -30,7 +30,12 @@ FractalUI::~FractalUI()
     delete ui;
 }
 
-void FractalUI::on_pushButton_clicked()
+void FractalUI::on_cCON_clicked()
 {
-    create_smartCONTRACT("this is only a test", "testCONTRACT");
+    if (ui->contractTypeCombo->currentText() == "NFT")
+    {
+        create_smartCONTRACT("image.jpg", "nftGENESIS001", 3);
+    } else {
+        create_smartCONTRACT("this is only a test", "testCONTRACT", 1);
+    }
 }

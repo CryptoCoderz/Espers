@@ -59,25 +59,50 @@ static const char fractalSCRIPT_charset[] =
 // TXT - used in conjuction with DATATYP, this presets the parser to expect text data to be stored
 // DATA - used in conjuntction with SETTYPE, this presets the parser to expect a data contract type
 // TOKEN - used in conjuction with SETTYPE, this presets the parser to expect a token contract type
+// NFT - used in conjuction with SETTYPE, this presets the parser to expect a NFT contract type
+// NFTADDBURN - define total addition coins to burn into an NFT (optional, permanently associates coins/tokens to the NFT)
+// NFTPUB - define whether or not the NFT can be viewed publicly (ownership is stil controlled by a private key)
+// NFTTIER - define NFT feature tier (4 tier option for NFT size, 1 = 16x16, 2 = 32x32, 3 = 64x64, 4 = 128x128)
 // GENSC - flags the parser for new smart contract generation
 //
-std::string fractalSCRIPT_methods[26] = { "SETPARAMS", "OBFUSCATION", "SETALIAS", "SETTYPE",
+std::string fractalSCRIPT_methods[30] = { "SETPARAMS", "OBFUSCATION", "SETALIAS", "SETTYPE",
 "TOKENCOUNT", "TOKENPRMN", "TOKENPBLK", "TOKENMINING", "TOKENSTK", "DATATYP", "SETTXT", "EDITSC",
 "VIEWSC", "VIEWPRVSC", "ROLLBK", "TOKENNETADD", "USEMNET", "USEUNQ", "TERM", "LSTXT",
-"BKTXT", "TOKENBKSP", "TXT", "DATA", "TOKEN", "GENSC"
+"BKTXT", "TOKENBKSP", "TXT", "DATA", "TOKEN", "NFT", "NFTADDBURN", "NFTPUB", "NFTTIER", "GENSC"
 };
 
-void write_contractDATA(std::string obfuscated_write_string, std::string contract_alias) {
+void write_contractDATA(std::string obfuscated_write_string, std::string contract_alias, int contract_type) {
     //
     //obfuscated_write_string = Obfuscated_Combined_String;
     //contract_alias = selected_contract_alias;
-    boost::filesystem::path pathConfigFile("Fractal.conf");
+
+    boost::filesystem::path pathConfigFile(GetDataDir());
+    boost::filesystem::path pathConfigDir(GetDataDir());
+
+    if (contract_type == 3) {
+        pathConfigFile += "/" + contract_alias + ".ftl";// "/fractal/litContract"
+        //pathConfigDir += "/fractal/litContract/";
+    } else if (contract_type == 2) {
+        pathConfigFile += "/fractal/nftContract/" + contract_alias + ".ftl";
+        //pathConfigDir += "/fractal/nftContract/";
+    } else if (contract_type == 1) {
+        pathConfigFile += "/fractal/web3Contract/" + contract_alias + ".ftl";
+        //pathConfigDir += "/fractal/web3Contract/";
+    } else {
+        pathConfigFile += "/fractal/tknContract/" + contract_alias + ".ftl";
+        //pathConfigDir += "/fractal/tknContract/";
+    }
+
+    //if (!boost::filesystem::exists(pathConfigDir)) {
+        //
+        //boost::filesystem::create_directory(pathConfigDir);
+    //}
+
+    // dataContract, web3Contract, nftContract, tokenContract, literatureContract
     boost::filesystem::ifstream streamFractalConfig(pathConfigFile);
     if (!streamFractalConfig.good())
     {
-        boost::filesystem::path FractalConfPath;
-               FractalConfPath = GetDataDir() / "Fractal.conf";
-               FILE* ConfFile = fopen(FractalConfPath.string().c_str(), "w");
+               FILE* ConfFile = fopen(pathConfigFile.string().c_str(), "w");
                fprintf(ConfFile, "%s|%s\n", obfuscated_write_string.c_str(), contract_alias.c_str());
                //fprintf(ConfFile, "data\n");
                //fprintf(ConfFile, "data\n");
@@ -87,10 +112,8 @@ void write_contractDATA(std::string obfuscated_write_string, std::string contrac
                // Returns our config path, created config file is loaded during initial run...
                return ;
     } else {
-        boost::filesystem::path FractalConfPath;
-               FractalConfPath = GetDataDir() / "Fractal.conf";
-               FILE* ConfFile = fopen(FractalConfPath.string().c_str(), "w");
-               fprintf(ConfFile, "%s|%s\n", obfuscated_write_string.c_str(), contract_alias.c_str());
+               FILE* ConfFile = fopen(pathConfigFile.string().c_str(), "w");
+               fprintf(ConfFile, "\n%s|%s\n", obfuscated_write_string.c_str(), contract_alias.c_str());
                //fprintf(ConfFile, "data\n");
                //fprintf(ConfFile, "data\n");
 
@@ -101,7 +124,7 @@ void write_contractDATA(std::string obfuscated_write_string, std::string contrac
     }
 }
 
-void read_contractDATA(std::string obfuscated_read_string, std::string contract_alias) {
+void read_contractDATA(std::string obfuscated_read_string, std::string contract_alias, int contract_type) {
     //
     obfuscated_read_string = Obfuscated_Combined_String;
     contract_alias = selected_contract_alias;

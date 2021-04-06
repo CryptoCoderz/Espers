@@ -15,11 +15,11 @@ extern std::string Obfuscated_Combined_String;
 extern std::string Word_Letter_Count[];
 
 // Preliminary obfuscation proceedure
-void character_obfuscation(std::string contract_input, std::string contract_alias);// TODO: Refactor contract_alias to be able to write later as we want more than just character obbing
+void character_obfuscation(std::string contract_input, std::string contract_alias, int contract_type);// TODO: Refactor contract_alias to be able to write later as we want more than just character obbing
 // Determined obfuscation logic shifts
 void obfuscation_shift();
 // Setup the obfuscation engine
-void priming(std::string contract_input, std::string contract_alias);
+void priming(std::string contract_input, std::string contract_alias, int contract_type);
 // Ignition of obfuscation engine
 void ignition();
 // Flameout at obfuscation threshold

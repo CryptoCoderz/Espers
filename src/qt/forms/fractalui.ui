@@ -308,6 +308,16 @@ font-family:'Open Sans,sans-serif';</string>
      <string>Web3</string>
     </property>
    </item>
+   <item>
+    <property name="text">
+     <string>NFT</string>
+    </property>
+   </item>
+   <item>
+    <property name="text">
+     <string>LIT</string>
+    </property>
+   </item>
   </widget>
   <widget class="QLabel" name="ncCount">
    <property name="geometry">
@@ -413,7 +423,7 @@ font-family:'Open Sans,sans-serif';</string>
     <string>0</string>
    </property>
   </widget>
-  <widget class="QPushButton" name="pushButton">
+  <widget class="QPushButton" name="cCON">
    <property name="geometry">
     <rect>
      <x>20</x>
@@ -424,6 +434,84 @@ font-family:'Open Sans,sans-serif';</string>
    </property>
    <property name="text">
     <string>Create Contract</string>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="netNFTbtn">
+   <property name="geometry">
+    <rect>
+     <x>550</x>
+     <y>290</y>
+     <width>121</width>
+     <height>31</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>View NFTs</string>
+   </property>
+  </widget>
+  <widget class="QLabel" name="nftCount">
+   <property name="geometry">
+    <rect>
+     <x>400</x>
+     <y>250</y>
+     <width>71</width>
+     <height>16</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>0</string>
+   </property>
+  </widget>
+  <widget class="QLabel" name="nftLabel">
+   <property name="geometry">
+    <rect>
+     <x>270</x>
+     <y>250</y>
+     <width>111</width>
+     <height>16</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>NFT Contracts:</string>
+   </property>
+  </widget>
+  <widget class="QLabel" name="litCount">
+   <property name="geometry">
+    <rect>
+     <x>400</x>
+     <y>270</y>
+     <width>71</width>
+     <height>16</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>0</string>
+   </property>
+  </widget>
+  <widget class="QLabel" name="litLabel">
+   <property name="geometry">
+    <rect>
+     <x>270</x>
+     <y>270</y>
+     <width>111</width>
+     <height>16</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>LIT Contracts:</string>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="netLITbtn">
+   <property name="geometry">
+    <rect>
+     <x>550</x>
+     <y>330</y>
+     <width>121</width>
+     <height>31</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>View Literature (LIT)</string>
    </property>
   </widget>
  </widget>

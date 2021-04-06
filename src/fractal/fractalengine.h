@@ -6,8 +6,8 @@
 
 #include <string>
 
-void write_contractDATA(std::string obfuscated_write_string, std::string contract_alias);
-void read_contractDATA(std::string obfuscated_read_string, std::string contract_alias);
+void write_contractDATA(std::string obfuscated_write_string, std::string contract_alias, int contract_type);
+void read_contractDATA(std::string obfuscated_read_string, std::string contract_alias, int contract_type);
 void parse_fractalSCRIPT(std::string fractal_SCRIPT);
 
 #endif // FRACTALENGINE_H

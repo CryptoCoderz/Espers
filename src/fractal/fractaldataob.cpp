@@ -111,7 +111,7 @@ std::string blank_space[1] = { " " };
 std::string Word_Letter_Count[5000] = {};
 
 // Preliminary obfuscation proceedure
-void character_obfuscation(std::string contract_input, std::string contract_alias)// TODO: Refactor contract_alias to be able to write later as we want more than just character obbing
+void character_obfuscation(std::string contract_input, std::string contract_alias, int contract_type)// TODO: Refactor contract_alias to be able to write later as we want more than just character obbing
 { 
     // Set input string
     char Input_String[contract_input.length()+contract_alias.length()];
@@ -134,6 +134,7 @@ void character_obfuscation(std::string contract_input, std::string contract_alia
     { 
         // Print for debugging
         LogPrintf("CharacterObfuscation - current word total: %u, processing word: %s \n", word_total, wrdcount);
+
         // Word obfuscation
         //
         // Log letter count
@@ -207,6 +208,9 @@ void character_obfuscation(std::string contract_input, std::string contract_alia
         word_total ++;
     }
 
+    // Print for debugging
+    LogPrintf("CharacterObfuscation - finished \n");
+
     // Log total input
     input_length = word_total;
     // Log total character input
@@ -216,7 +220,7 @@ void character_obfuscation(std::string contract_input, std::string contract_alia
     // TEST FUNCTION
     // --
     // write obfuscated string to fractal engine
-    write_contractDATA(Obfuscated_Combined_String, contract_alias);
+    write_contractDATA(Obfuscated_Combined_String, contract_alias, contract_type);
   
     return; 
 }
@@ -244,10 +248,10 @@ void obfuscation_shift()
 } 
 
 // Setup the obfuscation engine
-void priming(std::string contract_input, std::string contract_alias)
+void priming(std::string contract_input, std::string contract_alias, int contract_type)
 {
     // Run Preliminary obfuscation proceedure
-    character_obfuscation(contract_input, contract_alias);
+    character_obfuscation(contract_input, contract_alias, contract_type);
     // Determine sifts/pivots
     obfuscation_shift();
 
