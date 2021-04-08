@@ -143,6 +143,8 @@ public:
     CPubKey vchDefaultKey;
     int64_t nTimeFirstKey;
 
+    std::set<COutPoint> setLockedCoins;
+
     // check whether we are allowed to upgrade (or already support) to the named feature
     bool CanSupportFeature(enum WalletFeature wf) { AssertLockHeld(cs_wallet); return nWalletMaxVersion >= wf; }
 
@@ -151,6 +153,12 @@ public:
     void AvailableCoinsXN(std::vector<COutput>& vCoins, bool fOnlyConfirmed=true, const CCoinControl *coinControl = NULL) const;
     bool SelectCoinsMinConf(int64_t nTargetValue, unsigned int nSpendTime, int nConfMine, int nConfTheirs, std::vector<COutput> vCoins, std::set<std::pair<const CWalletTx*,unsigned int> >& setCoinsRet, int64_t& nValueRet) const;
     bool SelectCoinsMinConfByCoinAge(int64_t nTargetValue, unsigned int nSpendTime, int nConfMine, int nConfTheirs, std::vector<COutput> vCoins, std::set<std::pair<const CWalletTx*,unsigned int> >& setCoinsRet, int64_t& nValueRet) const;
+
+    bool IsLockedCoin(uint256 hash, unsigned int n) const;
+    void LockCoin(COutPoint& output);
+    void UnlockCoin(COutPoint& output);
+    void UnlockAllCoins();
+    void ListLockedCoins(std::vector<COutPoint>& vOutpts);
 
     // keystore implementation
     // Generate a new key
@@ -201,11 +209,14 @@ public:
     int ScanForWalletTransactions(CBlockIndex* pindexStart, bool fUpdate = false);
     void ReacceptWalletTransactions();
     void ResendWalletTransactions(bool fForce = false);
+    bool ImportPrivateKey(CBitcoinSecret vchSecret, string strLabel = "", bool fRescan = true);
+
     int64_t GetBalance() const;
     int64_t GetUnconfirmedBalance() const;
     int64_t GetImmatureBalance() const;
     int64_t GetStake() const;
     int64_t GetNewMint() const;
+
     bool CreateTransaction(const std::vector<std::pair<CScript, int64_t> >& vecSend, CWalletTx& wtxNew, CReserveKey& reservekey, int64_t& nFeeRet, const CCoinControl *coinControl=NULL);
     bool CreateTransaction(CScript scriptPubKey, int64_t nValue, CWalletTx& wtxNew, CReserveKey& reservekey, int64_t& nFeeRet, const CCoinControl *coinControl=NULL);
     bool CommitTransaction(CWalletTx& wtxNew, CReserveKey& reservekey);

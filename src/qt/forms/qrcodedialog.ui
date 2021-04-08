@@ -7,11 +7,15 @@
     <x>0</x>
     <y>0</y>
     <width>340</width>
-    <height>530</height>
+    <height>535</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>QR Code Dialog</string>
+  </property>
+  <property name="styleSheet">
+   <string notr="true">background-color: rgb(32, 32, 32);
+    color: rgb(255, 255, 255);</string>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout_3">
    <item>
@@ -53,6 +57,11 @@
        <height>50</height>
       </size>
      </property>
+     <property name="font">
+      <font>
+       <pointsize>10</pointsize>
+      </font>
+     </property>
      <property name="tabChangesFocus">
       <bool>true</bool>
      </property>
@@ -69,6 +78,11 @@
         <property name="enabled">
          <bool>true</bool>
         </property>
+        <property name="font">
+         <font>
+          <pointsize>10</pointsize>
+         </font>
+        </property>
         <property name="text">
          <string>Request Payment</string>
         </property>
@@ -81,6 +95,11 @@
         </property>
         <item row="1" column="0">
          <widget class="QLabel" name="lblLabel">
+          <property name="font">
+           <font>
+            <pointsize>10</pointsize>
+           </font>
+          </property>
           <property name="text">
            <string>Label:</string>
           </property>
@@ -96,10 +115,21 @@
          </widget>
         </item>
         <item row="1" column="1">
-         <widget class="QLineEdit" name="lnLabel"/>
+         <widget class="QLineEdit" name="lnLabel">
+          <property name="font">
+           <font>
+            <pointsize>10</pointsize>
+           </font>
+          </property>
+         </widget>
         </item>
         <item row="2" column="0">
          <widget class="QLabel" name="lblMessage">
+          <property name="font">
+           <font>
+            <pointsize>10</pointsize>
+           </font>
+          </property>
           <property name="text">
            <string>Message:</string>
           </property>
@@ -115,7 +145,13 @@
          </widget>
         </item>
         <item row="2" column="1">
-         <widget class="QLineEdit" name="lnMessage"/>
+         <widget class="QLineEdit" name="lnMessage">
+          <property name="font">
+           <font>
+            <pointsize>10</pointsize>
+           </font>
+          </property>
+         </widget>
         </item>
         <item row="0" column="0">
          <widget class="QLabel" name="lblAmount">
@@ -124,6 +160,11 @@
             <horstretch>0</horstretch>
             <verstretch>0</verstretch>
            </sizepolicy>
+          </property>
+          <property name="font">
+           <font>
+            <pointsize>10</pointsize>
+           </font>
           </property>
           <property name="text">
            <string>Amount:</string>
@@ -150,6 +191,11 @@
             <height>0</height>
            </size>
           </property>
+          <property name="font">
+           <font>
+            <pointsize>10</pointsize>
+           </font>
+          </property>
          </widget>
         </item>
        </layout>
@@ -171,6 +217,11 @@
         </item>
         <item>
          <widget class="QPushButton" name="btnSaveAs">
+          <property name="font">
+           <font>
+            <pointsize>10</pointsize>
+           </font>
+          </property>
           <property name="text">
            <string>&amp;Save As...</string>
           </property>

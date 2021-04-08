@@ -1,6 +1,6 @@
 TEMPLATE = app
 TARGET = Espers-fractal-qt
-VERSION = 0.8.7.7
+VERSION = 0.8.7.8
 INCLUDEPATH += src src/json src/qt
 QT += core gui network
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
@@ -81,6 +81,7 @@ win32:QMAKE_LFLAGS *= -Wl,--large-address-aware -static
 win32:QMAKE_LFLAGS *= -static-libgcc -static-libstdc++
 # use: qmake "USE_QRCODE=1"
 # libqrencode (http://fukuchi.org/works/qrencode/index.en.html) must be installed for support
+USE_QRCODE=1
 contains(USE_QRCODE, 1) {
     message(Building with QRCode support)
     DEFINES += USE_QRCODE
@@ -208,10 +209,12 @@ HEADERS += src/qt/bitcoingui.h \
     src/qt/clientcontrolpage.h \
     src/qt/messagepage.h \
     src/qt/blockbrowser.h \
+    src/qt/settingspage.h \
     src/qt/signverifymessagedialog.h \
     src/qt/aboutdialog.h \
     src/qt/editaddressdialog.h \
     src/qt/editconfigdialog.h \
+    src/qt/importprivatekeydialog.h \
     src/qt/bitcoinaddressvalidator.h \
     src/node/alert.h \
     src/core/blocksizecalculator.h \
@@ -293,6 +296,7 @@ HEADERS += src/qt/bitcoingui.h \
     src/primitives/allocators.h \
     src/ui/ui_interface.h \
     src/qt/rpcconsole.h \
+    src/qt/rpcconsolesettings.h \
     src/consensus/version.h \
     src/node/netbase.h \
     src/consensus/clientversion.h \
@@ -349,6 +353,7 @@ SOURCES += src/qt/bitcoin.cpp src/qt/bitcoingui.cpp \
     src/qt/aboutdialog.cpp \
     src/qt/editaddressdialog.cpp \
     src/qt/editconfigdialog.cpp \
+    src/qt/importprivatekeydialog.cpp \
     src/qt/bitcoinaddressvalidator.cpp \
     src/node/alert.cpp \
     src/core/blocksizecalculator.cpp \
@@ -378,6 +383,7 @@ SOURCES += src/qt/bitcoin.cpp src/qt/bitcoingui.cpp \
     src/qt/clientcontrolpage.cpp \
     src/qt/messagepage.cpp \
     src/qt/blockbrowser.cpp \
+    src/qt/settingspage.cpp \
     src/qt/guiutil.cpp \
     src/qt/transactionrecord.cpp \
     src/qt/optionsmodel.cpp \
@@ -416,6 +422,7 @@ SOURCES += src/qt/bitcoin.cpp src/qt/bitcoingui.cpp \
     src/qt/notificator.cpp \
     src/qt/paymentserver.cpp \
     src/qt/rpcconsole.cpp \
+    src/qt/rpcconsolesettings.cpp \
     src/subcore/noui.cpp \
     src/consensus/kernel.cpp \
     src/crypto/scrypt/scrypt-arm.S \
@@ -450,14 +457,17 @@ FORMS += \
     src/qt/forms/aboutdialog.ui \
     src/qt/forms/editaddressdialog.ui \
     src/qt/forms/editconfigdialog.ui \
+    src/qt/forms/importprivatekeydialog.ui \
     src/qt/forms/transactiondescdialog.ui \
     src/qt/forms/overviewpage.ui \
     src/qt/forms/clientcontrolpage.ui \
     src/qt/forms/messagepage.ui \
     src/qt/forms/blockbrowser.ui \
+    src/qt/forms/settingspage.ui \
     src/qt/forms/sendcoinsentry.ui \
     src/qt/forms/askpassphrasedialog.ui \
     src/qt/forms/rpcconsole.ui \
+    src/qt/forms/rpcconsolesettings.ui \
     src/qt/forms/optionsdialog.ui \
     src/qt/forms/fractalui.ui \
     src/qt/forms/tokenui.ui

@@ -13,6 +13,9 @@
   <property name="windowTitle">
    <string>Form</string>
   </property>
+  <property name="styleSheet">
+   <string notr="true">background: transparent;</string>
+  </property>
   <property name="frameShape">
    <enum>QFrame::StyledPanel</enum>
   </property>
@@ -38,6 +41,15 @@
    </item>
    <item row="3" column="0">
     <widget class="QLabel" name="label_2">
+     <property name="font">
+      <font>
+       <pointsize>10</pointsize>
+      </font>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">background: transparent;
+        background-color:transparent;</string>
+     </property>
      <property name="text">
       <string>Pay &amp;To:</string>
      </property>
@@ -54,6 +66,15 @@
    </item>
    <item row="4" column="0">
     <widget class="QLabel" name="label_4">
+     <property name="font">
+      <font>
+       <pointsize>10</pointsize>
+      </font>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">background: transparent;
+        background-color:transparent;</string>
+     </property>
      <property name="text">
       <string>&amp;Label:</string>
      </property>
@@ -132,6 +153,11 @@
    </item>
    <item row="4" column="1">
     <widget class="QValidatedLineEdit" name="addAsLabel">
+     <property name="font">
+        <font>
+         <pointsize>10</pointsize>
+        </font>
+       </property>
      <property name="toolTip">
       <string>Enter a label for this address to add it to your address book</string>
      </property>

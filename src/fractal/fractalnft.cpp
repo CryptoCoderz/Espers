@@ -44,9 +44,6 @@ bool load_image(std::vector<unsigned char>& image, const std::string& filename, 
 
 void NFTparse(std::string filename)
 {
-    // Set image to parse
-    filename = "image.jpg";
-
     // Set base definitions
     nftOut_String = "";
     int width, height;

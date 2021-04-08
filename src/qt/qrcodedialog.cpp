@@ -44,7 +44,7 @@ void QRCodeDialog::setModel(OptionsModel *model)
     if (model)
         connect(model, SIGNAL(displayUnitChanged(int)), this, SLOT(updateDisplayUnit()));
 
-    // start the display unit, uses the default ("ESP")
+    // update the display unit, to not use the default ("ESP")
     updateDisplayUnit();
 }
 

@@ -104,6 +104,9 @@ extern volatile bool fReopenDebugLog;
 //Live fork toggle
 extern std::string strLiveForkToggle;
 extern int64_t nLiveForkToggle;
+//Logic for lock/unlock GUI icon
+//does not affect daemon operation
+extern bool settingsStatus;
 
 void RandAddSeed();
 void RandAddSeedPerfmon();

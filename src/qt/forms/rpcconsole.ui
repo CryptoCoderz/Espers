@@ -13,9 +13,18 @@
   <property name="windowTitle">
    <string>Espers - Debug window</string>
   </property>
+  <property name="styleSheet">
+   <string notr="true">background-color: rgb(32, 32, 32);
+color: rgb(255, 255, 255);</string>
+  </property>
   <layout class="QVBoxLayout" name="verticalLayout_2">
    <item>
     <widget class="QTabWidget" name="tabWidget">
+     <property name="font">
+      <font>
+       <pointsize>10</pointsize>
+      </font>
+     </property>
      <property name="currentIndex">
       <number>0</number>
      </property>
@@ -23,14 +32,12 @@
       <attribute name="title">
        <string>&amp;Information</string>
       </attribute>
-      <layout class="QGridLayout" name="gridLayout" columnstretch="0,1">
-       <property name="horizontalSpacing">
-        <number>12</number>
-       </property>
+      <layout class="QFormLayout" name="formLayout">
        <item row="0" column="0">
         <widget class="QLabel" name="label_9">
          <property name="font">
           <font>
+           <pointsize>10</pointsize>
            <weight>75</weight>
            <bold>true</bold>
           </font>
@@ -42,6 +49,11 @@
        </item>
        <item row="1" column="0">
         <widget class="QLabel" name="label_5">
+         <property name="font">
+          <font>
+           <pointsize>10</pointsize>
+          </font>
+         </property>
          <property name="text">
           <string>Client name</string>
          </property>
@@ -49,6 +61,11 @@
        </item>
        <item row="1" column="1">
         <widget class="QLabel" name="clientName">
+         <property name="font">
+          <font>
+           <pointsize>10</pointsize>
+          </font>
+         </property>
          <property name="cursor">
           <cursorShape>IBeamCursor</cursorShape>
          </property>
@@ -65,6 +82,11 @@
        </item>
        <item row="2" column="0">
         <widget class="QLabel" name="label_6">
+         <property name="font">
+          <font>
+           <pointsize>10</pointsize>
+          </font>
+         </property>
          <property name="text">
           <string>Client version</string>
          </property>
@@ -72,6 +94,11 @@
        </item>
        <item row="2" column="1">
         <widget class="QLabel" name="clientVersion">
+         <property name="font">
+          <font>
+           <pointsize>10</pointsize>
+          </font>
+         </property>
          <property name="cursor">
           <cursorShape>IBeamCursor</cursorShape>
          </property>
@@ -88,16 +115,26 @@
        </item>
        <item row="3" column="0">
         <widget class="QLabel" name="label_14">
+         <property name="font">
+          <font>
+           <pointsize>10</pointsize>
+          </font>
+         </property>
          <property name="text">
           <string>Using OpenSSL version</string>
          </property>
          <property name="indent">
-          <number>10</number>
+          <number>0</number>
          </property>
         </widget>
        </item>
        <item row="3" column="1">
         <widget class="QLabel" name="openSSLVersion">
+         <property name="font">
+          <font>
+           <pointsize>10</pointsize>
+          </font>
+         </property>
          <property name="cursor">
           <cursorShape>IBeamCursor</cursorShape>
          </property>
@@ -114,6 +151,11 @@
        </item>
        <item row="4" column="0">
         <widget class="QLabel" name="label_12">
+         <property name="font">
+          <font>
+           <pointsize>10</pointsize>
+          </font>
+         </property>
          <property name="text">
           <string>Build date</string>
          </property>
@@ -121,6 +163,11 @@
        </item>
        <item row="4" column="1">
         <widget class="QLabel" name="buildDate">
+         <property name="font">
+          <font>
+           <pointsize>10</pointsize>
+          </font>
+         </property>
          <property name="cursor">
           <cursorShape>IBeamCursor</cursorShape>
          </property>
@@ -137,6 +184,11 @@
        </item>
        <item row="5" column="0">
         <widget class="QLabel" name="label_13">
+         <property name="font">
+          <font>
+           <pointsize>10</pointsize>
+          </font>
+         </property>
          <property name="text">
           <string>Startup time</string>
          </property>
@@ -144,6 +196,11 @@
        </item>
        <item row="5" column="1">
         <widget class="QLabel" name="startupTime">
+         <property name="font">
+          <font>
+           <pointsize>10</pointsize>
+          </font>
+         </property>
          <property name="cursor">
           <cursorShape>IBeamCursor</cursorShape>
          </property>
@@ -162,6 +219,7 @@
         <widget class="QLabel" name="label_11">
          <property name="font">
           <font>
+           <pointsize>10</pointsize>
            <weight>75</weight>
            <bold>true</bold>
           </font>
@@ -173,6 +231,11 @@
        </item>
        <item row="7" column="0">
         <widget class="QLabel" name="label_7">
+         <property name="font">
+          <font>
+           <pointsize>10</pointsize>
+          </font>
+         </property>
          <property name="text">
           <string>Number of connections</string>
          </property>
@@ -180,6 +243,11 @@
        </item>
        <item row="7" column="1">
         <widget class="QLabel" name="numberOfConnections">
+         <property name="font">
+          <font>
+           <pointsize>10</pointsize>
+          </font>
+         </property>
          <property name="cursor">
           <cursorShape>IBeamCursor</cursorShape>
          </property>
@@ -196,6 +264,11 @@
        </item>
        <item row="8" column="0">
         <widget class="QLabel" name="label_15">
+         <property name="font">
+          <font>
+           <pointsize>10</pointsize>
+          </font>
+         </property>
          <property name="text">
           <string>Number of xnodes</string>
          </property>
@@ -203,6 +276,11 @@
        </item>
        <item row="8" column="1">
         <widget class="QLabel" name="xnodeCount">
+         <property name="font">
+          <font>
+           <pointsize>10</pointsize>
+          </font>
+         </property>
          <property name="cursor">
           <cursorShape>IBeamCursor</cursorShape>
          </property>
@@ -216,9 +294,14 @@
           <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
          </property>
         </widget>
-      </item>
+       </item>
        <item row="9" column="0">
         <widget class="QLabel" name="label_8">
+         <property name="font">
+          <font>
+           <pointsize>10</pointsize>
+          </font>
+         </property>
          <property name="text">
           <string>On testnet</string>
          </property>
@@ -229,6 +312,11 @@
          <property name="enabled">
           <bool>false</bool>
          </property>
+         <property name="font">
+          <font>
+           <pointsize>10</pointsize>
+          </font>
+         </property>
          <property name="text">
           <string/>
          </property>
@@ -238,6 +326,7 @@
         <widget class="QLabel" name="label_10">
          <property name="font">
           <font>
+           <pointsize>10</pointsize>
            <weight>75</weight>
            <bold>true</bold>
           </font>
@@ -249,6 +338,11 @@
        </item>
        <item row="11" column="0">
         <widget class="QLabel" name="label_3">
+         <property name="font">
+          <font>
+           <pointsize>10</pointsize>
+          </font>
+         </property>
          <property name="text">
           <string>Current number of blocks</string>
          </property>
@@ -256,6 +350,11 @@
        </item>
        <item row="11" column="1">
         <widget class="QLabel" name="numberOfBlocks">
+         <property name="font">
+          <font>
+           <pointsize>10</pointsize>
+          </font>
+         </property>
          <property name="cursor">
           <cursorShape>IBeamCursor</cursorShape>
          </property>
@@ -272,6 +371,11 @@
        </item>
        <item row="12" column="0">
         <widget class="QLabel" name="label_2">
+         <property name="font">
+          <font>
+           <pointsize>10</pointsize>
+          </font>
+         </property>
          <property name="text">
           <string>Last block time</string>
          </property>
@@ -279,6 +383,11 @@
        </item>
        <item row="12" column="1">
         <widget class="QLabel" name="lastBlockTime">
+         <property name="font">
+          <font>
+           <pointsize>10</pointsize>
+          </font>
+         </property>
          <property name="cursor">
           <cursorShape>IBeamCursor</cursorShape>
          </property>
@@ -301,7 +410,7 @@
          <property name="sizeHint" stdset="0">
           <size>
            <width>20</width>
-           <height>20</height>
+           <height>10</height>
           </size>
          </property>
         </spacer>
@@ -310,6 +419,7 @@
         <widget class="QLabel" name="labelDebugLogfile">
          <property name="font">
           <font>
+           <pointsize>10</pointsize>
            <weight>75</weight>
            <bold>true</bold>
           </font>
@@ -321,6 +431,11 @@
        </item>
        <item row="15" column="0">
         <widget class="QPushButton" name="openDebugLogfileButton">
+         <property name="font">
+          <font>
+           <pointsize>10</pointsize>
+          </font>
+         </property>
          <property name="toolTip">
           <string>Open the Espers debug log file from the current data directory. This can take a few seconds for large log files.</string>
          </property>
@@ -336,6 +451,7 @@
         <widget class="QLabel" name="labelCLOptions">
          <property name="font">
           <font>
+           <pointsize>10</pointsize>
            <weight>75</weight>
            <bold>true</bold>
           </font>
@@ -347,6 +463,11 @@
        </item>
        <item row="17" column="0">
         <widget class="QPushButton" name="showCLOptionsButton">
+         <property name="font">
+          <font>
+           <pointsize>10</pointsize>
+          </font>
+         </property>
          <property name="toolTip">
           <string>Show the Espers-Qt help message to get a list with possible Espers command-line options.</string>
          </property>
@@ -366,7 +487,7 @@
          <property name="sizeHint" stdset="0">
           <size>
            <width>20</width>
-           <height>40</height>
+           <height>20</height>
           </size>
          </property>
         </spacer>
@@ -377,17 +498,19 @@
       <attribute name="title">
        <string>&amp;Console</string>
       </attribute>
-      <layout class="QVBoxLayout" name="verticalLayout_3">
-       <property name="spacing">
-        <number>3</number>
-       </property>
-       <item>
+      <layout class="QGridLayout" name="gridLayout">
+       <item row="0" column="0">
         <widget class="QTextEdit" name="messagesWidget">
          <property name="minimumSize">
           <size>
            <width>0</width>
            <height>100</height>
           </size>
+         </property>
+         <property name="font">
+          <font>
+           <pointsize>10</pointsize>
+          </font>
          </property>
          <property name="readOnly">
           <bool>true</bool>
@@ -400,7 +523,7 @@
          </property>
         </widget>
        </item>
-       <item>
+       <item row="1" column="0">
         <layout class="QHBoxLayout" name="horizontalLayout">
          <property name="spacing">
           <number>3</number>
@@ -439,7 +562,13 @@
           </widget>
          </item>
          <item>
-          <widget class="QLineEdit" name="lineEdit"/>
+          <widget class="QLineEdit" name="lineEdit">
+           <property name="font">
+            <font>
+             <pointsize>10</pointsize>
+            </font>
+           </property>
+          </widget>
          </item>
          <item>
           <widget class="QToolButton" name="pasteButton">
@@ -478,27 +607,12 @@
          </item>
          <item>
           <widget class="QPushButton" name="clearButton">
-           <property name="maximumSize">
-            <size>
-             <width>24</width>
-             <height>24</height>
-            </size>
-           </property>
-           <property name="toolTip">
-            <string>Clear console</string>
-           </property>
            <property name="text">
             <string/>
            </property>
            <property name="icon">
             <iconset resource="../bitcoin.qrc">
-             <normaloff>:/icons/remove</normaloff>:/icons/remove</iconset>
-           </property>
-           <property name="shortcut">
-            <string notr="true">Ctrl+L</string>
-           </property>
-           <property name="autoDefault">
-            <bool>false</bool>
+             <normaloff>:/icons/dark/staking_off</normaloff>:/icons/dark/staking_off</iconset>
            </property>
           </widget>
          </item>
@@ -520,6 +634,11 @@
              <horstretch>0</horstretch>
              <verstretch>0</verstretch>
             </sizepolicy>
+           </property>
+           <property name="font">
+            <font>
+             <pointsize>10</pointsize>
+            </font>
            </property>
           </widget>
          </item>
@@ -559,6 +678,11 @@
            </item>
            <item>
             <widget class="QPushButton" name="btnClearTrafficGraph">
+             <property name="font">
+              <font>
+               <pointsize>10</pointsize>
+              </font>
+             </property>
              <property name="text">
               <string>&amp;Clear</string>
              </property>
@@ -572,6 +696,11 @@
         <layout class="QVBoxLayout" name="verticalLayout">
          <item>
           <widget class="QGroupBox" name="groupBox">
+           <property name="font">
+            <font>
+             <pointsize>10</pointsize>
+            </font>
+           </property>
            <property name="title">
             <string>Totals</string>
            </property>
@@ -595,17 +724,98 @@
                 <property name="palette">
                  <palette>
                   <active>
+                   <colorrole role="WindowText">
+                    <brush brushstyle="SolidPattern">
+                     <color alpha="255">
+                      <red>255</red>
+                      <green>255</green>
+                      <blue>255</blue>
+                     </color>
+                    </brush>
+                   </colorrole>
+                   <colorrole role="Button">
+                    <brush brushstyle="SolidPattern">
+                     <color alpha="255">
+                      <red>32</red>
+                      <green>32</green>
+                      <blue>32</blue>
+                     </color>
+                    </brush>
+                   </colorrole>
                    <colorrole role="Light">
                     <brush brushstyle="SolidPattern">
                      <color alpha="255">
                       <red>0</red>
                       <green>255</green>
                       <blue>0</blue>
+                     </color>
+                    </brush>
+                   </colorrole>
+                   <colorrole role="Text">
+                    <brush brushstyle="SolidPattern">
+                     <color alpha="255">
+                      <red>255</red>
+                      <green>255</green>
+                      <blue>255</blue>
+                     </color>
+                    </brush>
+                   </colorrole>
+                   <colorrole role="ButtonText">
+                    <brush brushstyle="SolidPattern">
+                     <color alpha="255">
+                      <red>255</red>
+                      <green>255</green>
+                      <blue>255</blue>
+                     </color>
+                    </brush>
+                   </colorrole>
+                   <colorrole role="Base">
+                    <brush brushstyle="SolidPattern">
+                     <color alpha="255">
+                      <red>32</red>
+                      <green>32</green>
+                      <blue>32</blue>
+                     </color>
+                    </brush>
+                   </colorrole>
+                   <colorrole role="Window">
+                    <brush brushstyle="SolidPattern">
+                     <color alpha="255">
+                      <red>32</red>
+                      <green>32</green>
+                      <blue>32</blue>
+                     </color>
+                    </brush>
+                   </colorrole>
+                   <colorrole role="PlaceholderText">
+                    <brush brushstyle="NoBrush">
+                     <color alpha="128">
+                      <red>255</red>
+                      <green>255</green>
+                      <blue>255</blue>
                      </color>
                     </brush>
                    </colorrole>
                   </active>
                   <inactive>
+                   <colorrole role="WindowText">
+                    <brush brushstyle="SolidPattern">
+                     <color alpha="255">
+                      <red>255</red>
+                      <green>255</green>
+                      <blue>255</blue>
+                     </color>
+                    </brush>
+                   </colorrole>
+                   <colorrole role="Button">
+                    <brush brushstyle="SolidPattern">
+                     <color alpha="255">
+                      <red>32</red>
+                      <green>32</green>
+                      <blue>32</blue>
+                     </color>
+                    </brush>
+                   </colorrole>
                    <colorrole role="Light">
                     <brush brushstyle="SolidPattern">
                      <color alpha="255">
@@ -615,14 +825,122 @@
                      </color>
                     </brush>
                    </colorrole>
+                   <colorrole role="Text">
+                    <brush brushstyle="SolidPattern">
+                     <color alpha="255">
+                      <red>255</red>
+                      <green>255</green>
+                      <blue>255</blue>
+                     </color>
+                    </brush>
+                   </colorrole>
+                   <colorrole role="ButtonText">
+                    <brush brushstyle="SolidPattern">
+                     <color alpha="255">
+                      <red>255</red>
+                      <green>255</green>
+                      <blue>255</blue>
+                     </color>
+                    </brush>
+                   </colorrole>
+                   <colorrole role="Base">
+                    <brush brushstyle="SolidPattern">
+                     <color alpha="255">
+                      <red>32</red>
+                      <green>32</green>
+                      <blue>32</blue>
+                     </color>
+                    </brush>
+                   </colorrole>
+                   <colorrole role="Window">
+                    <brush brushstyle="SolidPattern">
+                     <color alpha="255">
+                      <red>32</red>
+                      <green>32</green>
+                      <blue>32</blue>
+                     </color>
+                    </brush>
+                   </colorrole>
+                   <colorrole role="PlaceholderText">
+                    <brush brushstyle="NoBrush">
+                     <color alpha="128">
+                      <red>255</red>
+                      <green>255</green>
+                      <blue>255</blue>
+                     </color>
+                    </brush>
+                   </colorrole>
                   </inactive>
                   <disabled>
+                   <colorrole role="WindowText">
+                    <brush brushstyle="SolidPattern">
+                     <color alpha="255">
+                      <red>255</red>
+                      <green>255</green>
+                      <blue>255</blue>
+                     </color>
+                    </brush>
+                   </colorrole>
+                   <colorrole role="Button">
+                    <brush brushstyle="SolidPattern">
+                     <color alpha="255">
+                      <red>32</red>
+                      <green>32</green>
+                      <blue>32</blue>
+                     </color>
+                    </brush>
+                   </colorrole>
                    <colorrole role="Light">
                     <brush brushstyle="SolidPattern">
                      <color alpha="255">
                       <red>0</red>
                       <green>255</green>
                       <blue>0</blue>
+                     </color>
+                    </brush>
+                   </colorrole>
+                   <colorrole role="Text">
+                    <brush brushstyle="SolidPattern">
+                     <color alpha="255">
+                      <red>255</red>
+                      <green>255</green>
+                      <blue>255</blue>
+                     </color>
+                    </brush>
+                   </colorrole>
+                   <colorrole role="ButtonText">
+                    <brush brushstyle="SolidPattern">
+                     <color alpha="255">
+                      <red>255</red>
+                      <green>255</green>
+                      <blue>255</blue>
+                     </color>
+                    </brush>
+                   </colorrole>
+                   <colorrole role="Base">
+                    <brush brushstyle="SolidPattern">
+                     <color alpha="255">
+                      <red>32</red>
+                      <green>32</green>
+                      <blue>32</blue>
+                     </color>
+                    </brush>
+                   </colorrole>
+                   <colorrole role="Window">
+                    <brush brushstyle="SolidPattern">
+                     <color alpha="255">
+                      <red>32</red>
+                      <green>32</green>
+                      <blue>32</blue>
+                     </color>
+                    </brush>
+                   </colorrole>
+                   <colorrole role="PlaceholderText">
+                    <brush brushstyle="NoBrush">
+                     <color alpha="128">
+                      <red>255</red>
+                      <green>255</green>
+                      <blue>255</blue>
                      </color>
                     </brush>
                    </colorrole>
@@ -636,6 +954,11 @@
               </item>
               <item>
                <widget class="QLabel" name="label_16">
+                <property name="font">
+                 <font>
+                  <pointsize>10</pointsize>
+                 </font>
+                </property>
                 <property name="text">
                  <string>In:</string>
                 </property>
@@ -675,17 +998,98 @@
                 <property name="palette">
                  <palette>
                   <active>
+                   <colorrole role="WindowText">
+                    <brush brushstyle="SolidPattern">
+                     <color alpha="255">
+                      <red>255</red>
+                      <green>255</green>
+                      <blue>255</blue>
+                     </color>
+                    </brush>
+                   </colorrole>
+                   <colorrole role="Button">
+                    <brush brushstyle="SolidPattern">
+                     <color alpha="255">
+                      <red>32</red>
+                      <green>32</green>
+                      <blue>32</blue>
+                     </color>
+                    </brush>
+                   </colorrole>
                    <colorrole role="Light">
                     <brush brushstyle="SolidPattern">
                      <color alpha="255">
                       <red>255</red>
                       <green>0</green>
                       <blue>0</blue>
+                     </color>
+                    </brush>
+                   </colorrole>
+                   <colorrole role="Text">
+                    <brush brushstyle="SolidPattern">
+                     <color alpha="255">
+                      <red>255</red>
+                      <green>255</green>
+                      <blue>255</blue>
+                     </color>
+                    </brush>
+                   </colorrole>
+                   <colorrole role="ButtonText">
+                    <brush brushstyle="SolidPattern">
+                     <color alpha="255">
+                      <red>255</red>
+                      <green>255</green>
+                      <blue>255</blue>
+                     </color>
+                    </brush>
+                   </colorrole>
+                   <colorrole role="Base">
+                    <brush brushstyle="SolidPattern">
+                     <color alpha="255">
+                      <red>32</red>
+                      <green>32</green>
+                      <blue>32</blue>
+                     </color>
+                    </brush>
+                   </colorrole>
+                   <colorrole role="Window">
+                    <brush brushstyle="SolidPattern">
+                     <color alpha="255">
+                      <red>32</red>
+                      <green>32</green>
+                      <blue>32</blue>
+                     </color>
+                    </brush>
+                   </colorrole>
+                   <colorrole role="PlaceholderText">
+                    <brush brushstyle="NoBrush">
+                     <color alpha="128">
+                      <red>255</red>
+                      <green>255</green>
+                      <blue>255</blue>
                      </color>
                     </brush>
                    </colorrole>
                   </active>
                   <inactive>
+                   <colorrole role="WindowText">
+                    <brush brushstyle="SolidPattern">
+                     <color alpha="255">
+                      <red>255</red>
+                      <green>255</green>
+                      <blue>255</blue>
+                     </color>
+                    </brush>
+                   </colorrole>
+                   <colorrole role="Button">
+                    <brush brushstyle="SolidPattern">
+                     <color alpha="255">
+                      <red>32</red>
+                      <green>32</green>
+                      <blue>32</blue>
+                     </color>
+                    </brush>
+                   </colorrole>
                    <colorrole role="Light">
                     <brush brushstyle="SolidPattern">
                      <color alpha="255">
@@ -695,14 +1099,122 @@
                      </color>
                     </brush>
                    </colorrole>
+                   <colorrole role="Text">
+                    <brush brushstyle="SolidPattern">
+                     <color alpha="255">
+                      <red>255</red>
+                      <green>255</green>
+                      <blue>255</blue>
+                     </color>
+                    </brush>
+                   </colorrole>
+                   <colorrole role="ButtonText">
+                    <brush brushstyle="SolidPattern">
+                     <color alpha="255">
+                      <red>255</red>
+                      <green>255</green>
+                      <blue>255</blue>
+                     </color>
+                    </brush>
+                   </colorrole>
+                   <colorrole role="Base">
+                    <brush brushstyle="SolidPattern">
+                     <color alpha="255">
+                      <red>32</red>
+                      <green>32</green>
+                      <blue>32</blue>
+                     </color>
+                    </brush>
+                   </colorrole>
+                   <colorrole role="Window">
+                    <brush brushstyle="SolidPattern">
+                     <color alpha="255">
+                      <red>32</red>
+                      <green>32</green>
+                      <blue>32</blue>
+                     </color>
+                    </brush>
+                   </colorrole>
+                   <colorrole role="PlaceholderText">
+                    <brush brushstyle="NoBrush">
+                     <color alpha="128">
+                      <red>255</red>
+                      <green>255</green>
+                      <blue>255</blue>
+                     </color>
+                    </brush>
+                   </colorrole>
                   </inactive>
                   <disabled>
+                   <colorrole role="WindowText">
+                    <brush brushstyle="SolidPattern">
+                     <color alpha="255">
+                      <red>255</red>
+                      <green>255</green>
+                      <blue>255</blue>
+                     </color>
+                    </brush>
+                   </colorrole>
+                   <colorrole role="Button">
+                    <brush brushstyle="SolidPattern">
+                     <color alpha="255">
+                      <red>32</red>
+                      <green>32</green>
+                      <blue>32</blue>
+                     </color>
+                    </brush>
+                   </colorrole>
                    <colorrole role="Light">
                     <brush brushstyle="SolidPattern">
                      <color alpha="255">
                       <red>255</red>
                       <green>0</green>
                       <blue>0</blue>
+                     </color>
+                    </brush>
+                   </colorrole>
+                   <colorrole role="Text">
+                    <brush brushstyle="SolidPattern">
+                     <color alpha="255">
+                      <red>255</red>
+                      <green>255</green>
+                      <blue>255</blue>
+                     </color>
+                    </brush>
+                   </colorrole>
+                   <colorrole role="ButtonText">
+                    <brush brushstyle="SolidPattern">
+                     <color alpha="255">
+                      <red>255</red>
+                      <green>255</green>
+                      <blue>255</blue>
+                     </color>
+                    </brush>
+                   </colorrole>
+                   <colorrole role="Base">
+                    <brush brushstyle="SolidPattern">
+                     <color alpha="255">
+                      <red>32</red>
+                      <green>32</green>
+                      <blue>32</blue>
+                     </color>
+                    </brush>
+                   </colorrole>
+                   <colorrole role="Window">
+                    <brush brushstyle="SolidPattern">
+                     <color alpha="255">
+                      <red>32</red>
+                      <green>32</green>
+                      <blue>32</blue>
+                     </color>
+                    </brush>
+                   </colorrole>
+                   <colorrole role="PlaceholderText">
+                    <brush brushstyle="NoBrush">
+                     <color alpha="128">
+                      <red>255</red>
+                      <green>255</green>
+                      <blue>255</blue>
                      </color>
                     </brush>
                    </colorrole>
@@ -716,6 +1228,11 @@
               </item>
               <item>
                <widget class="QLabel" name="label_17">
+                <property name="font">
+                 <font>
+                  <pointsize>10</pointsize>
+                 </font>
+                </property>
                 <property name="text">
                  <string>Out:</string>
                 </property>
@@ -768,6 +1285,11 @@
          </property>
          <item>
           <widget class="QTableView" name="peerWidget">
+           <property name="font">
+            <font>
+             <pointsize>10</pointsize>
+            </font>
+           </property>
            <property name="horizontalScrollBarPolicy">
             <enum>Qt::ScrollBarAsNeeded</enum>
            </property>
@@ -829,6 +1351,11 @@
              <verstretch>0</verstretch>
             </sizepolicy>
            </property>
+           <property name="font">
+            <font>
+             <pointsize>10</pointsize>
+            </font>
+           </property>
            <property name="horizontalScrollBarPolicy">
             <enum>Qt::ScrollBarAsNeeded</enum>
            </property>
@@ -858,7 +1385,7 @@
          </property>
          <property name="font">
           <font>
-           <pointsize>10</pointsize>
+           <pointsize>12</pointsize>
           </font>
          </property>
          <property name="cursor">
@@ -886,9 +1413,19 @@
            <height>0</height>
           </size>
          </property>
+         <property name="font">
+          <font>
+           <pointsize>8</pointsize>
+          </font>
+         </property>
          <layout class="QGridLayout" name="gridLayout_3">
           <item row="0" column="0">
            <widget class="QLabel" name="label_23">
+            <property name="font">
+             <font>
+              <pointsize>10</pointsize>
+             </font>
+            </property>
             <property name="text">
              <string>Direction</string>
             </property>
@@ -912,6 +1449,11 @@
           </item>
           <item row="1" column="0">
            <widget class="QLabel" name="label_21">
+            <property name="font">
+             <font>
+              <pointsize>10</pointsize>
+             </font>
+            </property>
             <property name="text">
              <string>Version</string>
             </property>
@@ -919,6 +1461,11 @@
           </item>
           <item row="2" column="0">
            <widget class="QLabel" name="label_28">
+            <property name="font">
+             <font>
+              <pointsize>10</pointsize>
+             </font>
+            </property>
             <property name="cursor">
              <cursorShape>IBeamCursor</cursorShape>
             </property>
@@ -951,6 +1498,11 @@
           </item>
           <item row="3" column="0">
            <widget class="QLabel" name="label_4">
+            <property name="font">
+             <font>
+              <pointsize>10</pointsize>
+             </font>
+            </property>
             <property name="text">
              <string>Services</string>
             </property>
@@ -981,6 +1533,11 @@
           </item>
           <item row="4" column="0">
            <widget class="QLabel" name="label_25">
+            <property name="font">
+             <font>
+              <pointsize>10</pointsize>
+             </font>
+            </property>
             <property name="text">
              <string>Sync Node</string>
             </property>
@@ -1004,6 +1561,11 @@
           </item>
           <item row="5" column="0">
            <widget class="QLabel" name="label_29">
+            <property name="font">
+             <font>
+              <pointsize>10</pointsize>
+             </font>
+            </property>
             <property name="text">
              <string>Starting Height</string>
             </property>
@@ -1027,6 +1589,11 @@
           </item>
           <item row="7" column="0">
            <widget class="QLabel" name="label_24">
+            <property name="font">
+             <font>
+              <pointsize>10</pointsize>
+             </font>
+            </property>
             <property name="text">
              <string>Ban Score</string>
             </property>
@@ -1050,6 +1617,11 @@
           </item>
           <item row="8" column="0">
            <widget class="QLabel" name="label_22">
+            <property name="font">
+             <font>
+              <pointsize>10</pointsize>
+             </font>
+            </property>
             <property name="text">
              <string>Connection Time</string>
             </property>
@@ -1073,6 +1645,11 @@
           </item>
           <item row="9" column="0">
            <widget class="QLabel" name="label_15">
+            <property name="font">
+             <font>
+              <pointsize>10</pointsize>
+             </font>
+            </property>
             <property name="text">
              <string>Last Send</string>
             </property>
@@ -1096,6 +1673,11 @@
           </item>
           <item row="10" column="0">
            <widget class="QLabel" name="label_19">
+            <property name="font">
+             <font>
+              <pointsize>10</pointsize>
+             </font>
+            </property>
             <property name="text">
              <string>Last Recieve</string>
             </property>
@@ -1119,6 +1701,11 @@
           </item>
           <item row="11" column="0">
            <widget class="QLabel" name="label_18">
+            <property name="font">
+             <font>
+              <pointsize>10</pointsize>
+             </font>
+            </property>
             <property name="text">
              <string>Last Send:</string>
             </property>
@@ -1142,6 +1729,11 @@
           </item>
           <item row="12" column="0">
            <widget class="QLabel" name="label_20">
+            <property name="font">
+             <font>
+              <pointsize>10</pointsize>
+             </font>
+            </property>
             <property name="text">
              <string>Bytes Received</string>
             </property>
@@ -1165,6 +1757,11 @@
           </item>
           <item row="13" column="0">
            <widget class="QLabel" name="label_26">
+            <property name="font">
+             <font>
+              <pointsize>10</pointsize>
+             </font>
+            </property>
             <property name="text">
              <string>Ping Time</string>
             </property>
@@ -1188,6 +1785,11 @@
           </item>
           <item row="14" column="0">
            <widget class="QLabel" name="label_timeoffset">
+            <property name="font">
+             <font>
+              <pointsize>10</pointsize>
+             </font>
+            </property>
             <property name="text">
              <string>Time Offset</string>
             </property>
