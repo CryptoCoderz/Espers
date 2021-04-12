@@ -8,6 +8,8 @@
 #include "csvmodelwriter.h"
 #include "guiutil.h"
 
+#include "fractal/fractaldvac.h"
+
 #ifdef USE_QRCODE
 #include "qrcodedialog.h"
 #endif
@@ -57,12 +59,14 @@ AddressBookPage::AddressBookPage(Mode mode, Tabs tab, QWidget *parent) :
         ui->deleteButton->setVisible(true);
         ui->signMessage->setVisible(false);
         ui->showQRCode->setVisible(true);
+        ui->showDVACencode->setVisible(true);
         break;
     case ReceivingTab:
         ui->AddressLabelName->setText("Receiving Addresses");
         ui->deleteButton->setVisible(false);
         ui->signMessage->setVisible(true);
         ui->showQRCode->setVisible(true);
+        ui->showDVACencode->setVisible(true);
         break;
     }
 
@@ -71,6 +75,7 @@ AddressBookPage::AddressBookPage(Mode mode, Tabs tab, QWidget *parent) :
     QAction *copyLabelAction = new QAction(tr("Copy &Label"), this);
     QAction *editAction = new QAction(tr("&Edit"), this);
     QAction *showQRCodeAction = new QAction(ui->showQRCode->text(), this);
+    QAction *showDVACencodeAction = new QAction(ui->showDVACencode->text(), this);
     QAction *signMessageAction = new QAction(ui->signMessage->text(), this);
     QAction *verifyMessageAction = new QAction(ui->verifyMessage->text(), this);
     deleteAction = new QAction(ui->deleteButton->text(), this);
@@ -80,6 +85,7 @@ AddressBookPage::AddressBookPage(Mode mode, Tabs tab, QWidget *parent) :
     contextMenu->addAction(copyAddressAction);
     contextMenu->addAction(copyLabelAction);
     contextMenu->addAction(editAction);
+    contextMenu->addAction(showDVACencodeAction);
     if(tab == SendingTab)
         contextMenu->addAction(deleteAction);
     contextMenu->addSeparator();
@@ -97,6 +103,7 @@ AddressBookPage::AddressBookPage(Mode mode, Tabs tab, QWidget *parent) :
     connect(editAction, SIGNAL(triggered()), this, SLOT(onEditAction()));
     connect(deleteAction, SIGNAL(triggered()), this, SLOT(on_deleteButton_clicked()));
     connect(showQRCodeAction, SIGNAL(triggered()), this, SLOT(on_showQRCode_clicked()));
+    connect(showDVACencodeAction, SIGNAL(triggered()), this, SLOT(on_showDVACencode_clicked()));
     connect(signMessageAction, SIGNAL(triggered()), this, SLOT(on_signMessage_clicked()));
     connect(verifyMessageAction, SIGNAL(triggered()), this, SLOT(on_verifyMessage_clicked()));
 
@@ -375,6 +382,35 @@ void AddressBookPage::on_showQRCode_clicked()
 #endif
     QMessageBox::information(this, tr("QR Not Supported"), tr("This build was compiled without QR code support."),
                              QMessageBox::Ok, QMessageBox::Ok);
+}
+
+void AddressBookPage::on_showDVACencode_clicked()
+{
+    QTableView *table = ui->tableView;
+    QModelIndexList indexes = table->selectionModel()->selectedRows(AddressTableModel::Address);
+
+    foreach (QModelIndex index, indexes)
+    {
+        //
+
+        QString address;
+        std::string str_address;
+        QTableView *table = ui->tableView;
+        QModelIndexList indexes = table->selectionModel()->selectedRows(AddressTableModel::Address);
+        if(indexes.empty()){
+            QMessageBox::information(this, tr("Nothing Selected"), tr("You must select an address from the list first."),
+                                     QMessageBox::Ok, QMessageBox::Ok);
+            return;
+        } else {
+            address = indexes[0].data().toString();
+        }
+        // Convert Address to std::string
+        str_address = address.toStdString();
+        // Encode address std::string
+        enCode(str_address);
+    }
+
+    return;
 }
 
 void AddressBookPage::contextualMenu(const QPoint &point)

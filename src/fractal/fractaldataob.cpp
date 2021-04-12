@@ -6,7 +6,7 @@
 // NOTICE!
 //
 // This is a completely experimental data obfuscation method written by
-// CrpytoCoderz (Jonathan Dan Zaretsky - cryptocoderz@gmail.com) 
+// CryptoCoderz (Jonathan Dan Zaretsky - cryptocoderz@gmail.com)
 // and 
 // SaltineChips (Jeremiah Cook - jeremiahwcook@gmail.com)
 //
@@ -64,9 +64,12 @@ using namespace std;
 int input_character_length = 0;
 int input_length = 0;
 int shifts = 0;
+int pivots = 0;
 int position = 0;
 std::string Obfuscated_String = "";
 std::string Obfuscated_Combined_String = "";
+std::string SingleLayer_Key = "";
+std::string SecondLayer_Key = "";
 
 // Initialize Valid Character String Array
 std::string Character_String[62] = { "A", "a", "B", "b", 
@@ -189,6 +192,9 @@ void character_obfuscation(std::string contract_input, std::string contract_alia
             str_ch_ltrcount.push_back(ch_ltrcount);
         }
 
+        // Generate pivots/shifts
+        obfuscation_shift(letter_total_word, Obfuscated_String, true);
+
         // Set obfuscated values
         Obfuscated_Combined_String += (Obfuscated_String + blank_space[0]);
         Obfuscated_String = "";
@@ -226,21 +232,23 @@ void character_obfuscation(std::string contract_input, std::string contract_alia
 }
 
 // Determined obfuscation logic shifts
-void obfuscation_shift() 
+void obfuscation_shift(int input_data_shift, std::string input_data_text, bool char_ob)
 { 
-    //char str[] = Obfuscated_Combined_String; 
-  
-    // Returns first token  
-    //char *token = strtok(str, "");
-    
-    // Keep printing tokens while one of the 
-    // delimiters present in str[]. 
-    //while (token != NULL) 
-    //{ 
-        // Character obfuscation
-    //    printf("%s\n", token); 
-    //    token = strtok(NULL, "-"); 
-    //} 
+    // Generate random seed data for rounds, and shifts/pivots
+    int64_t seed_1, seed_2, seed_3, seed_tmp = 0;
+    double pre_shift = 0;
+    double pre_pivot = 0;
+
+    // Decide data type handling
+    if(char_ob) {
+        seed_1 = GetTime();
+        seed_2 = pindexBest->GetBlockTime();
+        seed_3 = input_data_shift;
+
+        seed_tmp = seed_1 + seed_2 + 0;// TODO finish here man
+    } else {
+        //
+    }
 
 
   
@@ -253,7 +261,7 @@ void priming(std::string contract_input, std::string contract_alias, int contrac
     // Run Preliminary obfuscation proceedure
     character_obfuscation(contract_input, contract_alias, contract_type);
     // Determine sifts/pivots
-    obfuscation_shift();
+    //obfuscation_shift();
 
 	// Set Input Data
     //std::string Output_String = Obfuscated_String;

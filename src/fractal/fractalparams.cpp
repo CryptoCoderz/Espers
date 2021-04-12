@@ -6,7 +6,7 @@
 // NOTICE!
 //
 // This is a completely experimental smart-contract platform written by
-// CrpytoCoderz (Jonathan Dan Zaretsky - cryptocoderz@gmail.com)
+// CryptoCoderz (Jonathan Dan Zaretsky - cryptocoderz@gmail.com)
 //
 // PLEASE USE AT YOUR OWN RISK!!!
 //
