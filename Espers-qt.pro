@@ -1,6 +1,6 @@
 TEMPLATE = app
 TARGET = Espers-fractal-qt
-VERSION = 0.8.7.9
+VERSION = 0.8.8.0
 INCLUDEPATH += src src/json src/qt
 QT += core gui network
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
@@ -333,7 +333,7 @@ HEADERS += src/qt/bitcoingui.h \
     src/fractal/fractalparams.h \
     src/fractal/fractaldataob.h \
     src/fractal/fractalnft.h \
-    src/fractal/fractaldvac.h \
+    src/fractal/fractalbvac.h \
     src/xnode/xnodecomponent.h \
     src/xnode/xnodemngr.h \
     src/xnode/xnodereward.h \
@@ -439,7 +439,7 @@ SOURCES += src/qt/bitcoin.cpp src/qt/bitcoingui.cpp \
     src/fractal/fractalparams.cpp \
     src/fractal/fractaldataob.cpp \
     src/fractal/fractalnft.cpp \
-    src/fractal/fractaldvac.cpp \
+    src/fractal/fractalbvac.cpp \
     src/xnode/xnoderpc.cpp \
     src/xnode/xnodecomponent.cpp \
     src/xnode/xnodemngr.cpp \

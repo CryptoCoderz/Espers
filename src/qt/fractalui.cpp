@@ -36,6 +36,6 @@ void FractalUI::on_cCON_clicked()
     {
         create_smartCONTRACT("image.jpg", "nftGENESIS001", 3);
     } else {
-        create_smartCONTRACT("this is only a test", "testCONTRACT", 1);
+        create_smartCONTRACT("this is only a test", "tokenGENESIS001", 0);
     }
 }

@@ -89,7 +89,7 @@ void write_contractDATA(std::string obfuscated_write_string, std::string contrac
         pathConfigFile += "/fractal/web3Contract/" + contract_alias + ".ftl";
         //pathConfigDir += "/fractal/web3Contract/";
     } else {
-        pathConfigFile += "/fractal/tknContract/" + contract_alias + ".ftl";
+        pathConfigFile += "/" + contract_alias + ".ftl";
         //pathConfigDir += "/fractal/tknContract/";
     }
 

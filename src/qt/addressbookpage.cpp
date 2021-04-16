@@ -8,7 +8,7 @@
 #include "csvmodelwriter.h"
 #include "guiutil.h"
 
-#include "fractal/fractaldvac.h"
+#include "fractal/fractalbvac.h"
 
 #ifdef USE_QRCODE
 #include "qrcodedialog.h"
@@ -18,6 +18,8 @@
 #include <QClipboard>
 #include <QMessageBox>
 #include <QMenu>
+
+#include <QFileDialog>
 
 AddressBookPage::AddressBookPage(Mode mode, Tabs tab, QWidget *parent) :
     QDialog(parent),
@@ -59,14 +61,14 @@ AddressBookPage::AddressBookPage(Mode mode, Tabs tab, QWidget *parent) :
         ui->deleteButton->setVisible(true);
         ui->signMessage->setVisible(false);
         ui->showQRCode->setVisible(true);
-        ui->showDVACencode->setVisible(true);
+        ui->showBVACencode->setVisible(true);
         break;
     case ReceivingTab:
         ui->AddressLabelName->setText("Receiving Addresses");
         ui->deleteButton->setVisible(false);
         ui->signMessage->setVisible(true);
         ui->showQRCode->setVisible(true);
-        ui->showDVACencode->setVisible(true);
+        ui->showBVACencode->setVisible(true);
         break;
     }
 
@@ -75,7 +77,7 @@ AddressBookPage::AddressBookPage(Mode mode, Tabs tab, QWidget *parent) :
     QAction *copyLabelAction = new QAction(tr("Copy &Label"), this);
     QAction *editAction = new QAction(tr("&Edit"), this);
     QAction *showQRCodeAction = new QAction(ui->showQRCode->text(), this);
-    QAction *showDVACencodeAction = new QAction(ui->showDVACencode->text(), this);
+    QAction *showBVACencodeAction = new QAction(ui->showBVACencode->text(), this);
     QAction *signMessageAction = new QAction(ui->signMessage->text(), this);
     QAction *verifyMessageAction = new QAction(ui->verifyMessage->text(), this);
     deleteAction = new QAction(ui->deleteButton->text(), this);
@@ -85,7 +87,7 @@ AddressBookPage::AddressBookPage(Mode mode, Tabs tab, QWidget *parent) :
     contextMenu->addAction(copyAddressAction);
     contextMenu->addAction(copyLabelAction);
     contextMenu->addAction(editAction);
-    contextMenu->addAction(showDVACencodeAction);
+    contextMenu->addAction(showBVACencodeAction);
     if(tab == SendingTab)
         contextMenu->addAction(deleteAction);
     contextMenu->addSeparator();
@@ -103,7 +105,7 @@ AddressBookPage::AddressBookPage(Mode mode, Tabs tab, QWidget *parent) :
     connect(editAction, SIGNAL(triggered()), this, SLOT(onEditAction()));
     connect(deleteAction, SIGNAL(triggered()), this, SLOT(on_deleteButton_clicked()));
     connect(showQRCodeAction, SIGNAL(triggered()), this, SLOT(on_showQRCode_clicked()));
-    connect(showDVACencodeAction, SIGNAL(triggered()), this, SLOT(on_showDVACencode_clicked()));
+    connect(showBVACencodeAction, SIGNAL(triggered()), this, SLOT(on_showBVACencode_clicked()));
     connect(signMessageAction, SIGNAL(triggered()), this, SLOT(on_signMessage_clicked()));
     connect(verifyMessageAction, SIGNAL(triggered()), this, SLOT(on_verifyMessage_clicked()));
 
@@ -384,7 +386,7 @@ void AddressBookPage::on_showQRCode_clicked()
                              QMessageBox::Ok, QMessageBox::Ok);
 }
 
-void AddressBookPage::on_showDVACencode_clicked()
+void AddressBookPage::on_showBVACencode_clicked()
 {
     QTableView *table = ui->tableView;
     QModelIndexList indexes = table->selectionModel()->selectedRows(AddressTableModel::Address);
@@ -395,6 +397,7 @@ void AddressBookPage::on_showDVACencode_clicked()
 
         QString address;
         std::string str_address;
+        std::string str_alias;
         QTableView *table = ui->tableView;
         QModelIndexList indexes = table->selectionModel()->selectedRows(AddressTableModel::Address);
         if(indexes.empty()){
@@ -404,10 +407,13 @@ void AddressBookPage::on_showDVACencode_clicked()
         } else {
             address = indexes[0].data().toString();
         }
+        // Have user select file to decode
+        QString BVAC_name = QFileDialog::getSaveFileName(nullptr, "BVAC Enoding: Select a save location", ".", "Images (*.jpg)" );
         // Convert Address to std::string
         str_address = address.toStdString();
+        str_alias = BVAC_name.toStdString();
         // Encode address std::string
-        enCode(str_address);
+        enCode(str_address, str_alias);
     }
 
     return;

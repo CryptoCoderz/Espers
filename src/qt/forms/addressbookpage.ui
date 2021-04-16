@@ -106,9 +106,9 @@
       </widget>
      </item>
      <item>
-      <widget class="QPushButton" name="showDVACencode">
+      <widget class="QPushButton" name="showBVACencode">
        <property name="text">
-        <string>Create DVAC</string>
+        <string>Create BVAC</string>
        </property>
       </widget>
      </item>

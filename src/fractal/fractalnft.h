@@ -5,9 +5,12 @@
 #define FRACTALNFT_H
 
 #include <string>
+#include <vector>
 
+extern int n;
 extern std::string nftOut_String;
 extern bool iLOAD;
+extern bool load_image(std::vector<unsigned char>& image, const std::string& filename, int& x, int& y);
 
 void NFTparse(std::string filename);
 

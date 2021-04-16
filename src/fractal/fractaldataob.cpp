@@ -193,7 +193,7 @@ void character_obfuscation(std::string contract_input, std::string contract_alia
         }
 
         // Generate pivots/shifts
-        obfuscation_shift(letter_total_word, Obfuscated_String, true);
+        // obfuscation_shift(letter_total_word, Obfuscated_String, true);
 
         // Set obfuscated values
         Obfuscated_Combined_String += (Obfuscated_String + blank_space[0]);

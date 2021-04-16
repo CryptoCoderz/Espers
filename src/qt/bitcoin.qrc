@@ -49,6 +49,7 @@
         <file alias="bitcoin_testnet">res/icons/Espers_testnet.png</file>
         <file alias="settings">res/icons/settings.png</file>
         <file alias="qriconov">res/icons/qriconov.png</file>
+        <file alias="bvac">res/icons/bvac_import.jpg</file>
     </qresource>
     <qresource prefix="/images">
         <file alias="about">res/images/about.png</file>

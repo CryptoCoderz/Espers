@@ -15,8 +15,6 @@
 // for logprintf
 #include "util/init.h"
 
-#include <vector>
-
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb/stb_image.h"
 
@@ -70,6 +68,8 @@ void NFTparse(std::string filename)
     {
         // Print for debugging
         LogPrintf("NFTparse - ERROR - image is not 16x16 pixels!\n");
+        // Reset RGB(A) index value for next attempt
+        n = 0;
         return;
     }
 
@@ -113,6 +113,7 @@ void NFTparse(std::string filename)
         str_a = std::to_string(a);
         // Print for debugging
         LogPrintf("NFTparse - Pixel |%u| Position x=%s y=%s - RGBA data parsed: %s, %s, %s, %s\n", p, str_x, str_y, str_r, str_g, str_b, str_a);
+        // Write data to string
         nftOut_String += str_x + nftBUF3 + str_y + nftBUF2 + str_r + str_g + str_b + str_a + nftBUF;
         // Print for debugging
         //LogPrintf("NFTparse - Image Pixel Data: %s\n", nftOut_String);
@@ -128,10 +129,6 @@ void NFTparse(std::string filename)
         yLOOP++;
         positionLOOP++;
     }
-
-    // Write data to string
-    //
-    // TODO: replace with string and return data
 
     // Reset RGB(A) index value for next attempt
     n = 0;

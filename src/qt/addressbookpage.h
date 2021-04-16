@@ -68,8 +68,8 @@ private slots:
     void on_signMessage_clicked();
     /** Open the verify message tab in the Sign/Verify Message dialog with currently selected address */
     void on_verifyMessage_clicked();
-    /** DVAC encode functionality */
-    void on_showDVACencode_clicked();
+    /** BVAC encode functionality */
+    void on_showBVACencode_clicked();
     /** Generate a QR Code from the currently selected address */
     void on_showQRCode_clicked();
     /** Copy label of currently selected address entry to clipboard (no button) */
