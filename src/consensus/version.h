@@ -47,7 +47,7 @@ static const int NOBLKS_VERSION_START = 0;
 static const int NOBLKS_VERSION_END = 60032;
 
 // hard cutoff time for legacy network connections
-static const int64_t HRD_LEGACY_CUTOFF = 1536451200; // ON (TOGGLED Sep/09/2018)
+static const int64_t HRD_LEGACY_CUTOFF = 9993058800; // OFF (NOT TOGGLED)
 
 // hard cutoff time for future network connections
 static const int64_t HRD_FUTURE_CUTOFF = 9993058800; // OFF (NOT TOGGLED)
@@ -61,5 +61,11 @@ static const int MEMPOOL_GD_VERSION = 60002;
 // reject blocks with non-canonical signatures starting from this version
 static const int CANONICAL_BLOCK_SIG_VERSION = 60045;
 static const int CANONICAL_BLOCK_SIG_LOW_S_VERSION = 60046;
+
+// minimum peer version that can receive xnode payments
+// V1 - Last protocol version before update
+// V2 - Newest protocol version
+static const int MIN_XNODE_PAYMENT_PROTO_VERSION_1 = 60034;
+static const int MIN_XNODE_PAYMENT_PROTO_VERSION_2 = 60034;
 
 #endif

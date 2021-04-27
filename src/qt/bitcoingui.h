@@ -14,7 +14,7 @@ class OverviewPage;
 class ClientControlPage;
 class MessagePage;
 class BlockBrowser;
-class SiteOnChain;
+class FractalUI;
 class AddressBookPage;
 class SendCoinsDialog;
 class SignVerifyMessageDialog;
@@ -72,7 +72,7 @@ private:
     ClientControlPage *clientcontrolPage;
     MessagePage *messagePage;
     BlockBrowser *blockbrowser;
-    SiteOnChain *siteonChain;
+    FractalUI *fractalUI;
     SignVerifyMessageDialog *signVerifyMessageDialog;
 
     QLabel *labelEncryptionIcon;
@@ -87,7 +87,7 @@ private:
     QAction *clientcontrolAction;
     QAction *messageAction;
     QAction *blockbrowserAction;
-    QAction *siteonChainAction;
+    QAction *fractalUIAction;
     QAction *historyAction;
     QAction *quitAction;
     QAction *sendCoinsAction;
@@ -172,8 +172,8 @@ private slots:
     void gotoMessagePage();
     /** Switch to chain info(explorer) page */
     void gotoBlockBrowser();
-    /** Switch to siteonchain(websites on the blockchain) page */
-    void gotoSiteOnChain();
+    /** Switch to fractalui(websites on the blockchain) page */
+    void gotoFractalUI();
     /** Switch to history (transactions) page */
     void gotoHistoryPage();
     /** Switch to address book page */

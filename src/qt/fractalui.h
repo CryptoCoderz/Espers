@@ -1,10 +1,10 @@
-#ifndef SITEONCHAIN_H
-#define SITEONCHAIN_H
+#ifndef FRACTALUI_H
+#define FRACTALUI_H
 
 #include <QWidget>
 
 namespace Ui {
-    class SiteOnChain;
+    class FractalUI;
 }
 class ClientModel;
 class WalletModel;
@@ -14,25 +14,25 @@ class QModelIndex;
 QT_END_NAMESPACE
 
 /** Overview ("home") page widget */
-class SiteOnChain : public QWidget
+class FractalUI : public QWidget
 {
     Q_OBJECT
 
 public:
-    explicit SiteOnChain(QWidget *parent = 0);
-    ~SiteOnChain();
-    void setModel(SiteOnChain *model);
+    explicit FractalUI(QWidget *parent = 0);
+    ~FractalUI();
+    void setModel(FractalUI *model);
 
 public slots:
 
 signals:
 
 private:
-    Ui::SiteOnChain *ui;
+    Ui::FractalUI *ui;
         WalletModel *model;
 
 private slots:
 
 };
 
-#endif // GENEREATEPAGE_H
+#endif // FRACTALUI_H

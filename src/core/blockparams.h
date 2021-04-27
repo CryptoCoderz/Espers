@@ -1,4 +1,4 @@
-// Copyright (c) 2016-2020 The CryptoCoderz Team / Espers
+// Copyright (c) 2016-2021 The CryptoCoderz Team / Espers
 // Distributed under the MIT/X11 software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 #ifndef ESPERS_BLOCKPARAMS_H
@@ -7,6 +7,11 @@
 #include "node/net.h"
 #include "chain.h"
 #include "primitives/bignum.h"
+
+#define START_XNODE_PAYMENTS_TESTNET      9993058800  // OFF (NOT TOGGLED)
+#define START_XNODE_PAYMENTS              9993058800  // OFF (NOT TOGGLED)
+#define STOP_XNODE_PAYMENTS_TESTNET       9993058800  // OFF (NOT TOGGLED)
+#define STOP_XNODE_PAYMENTS               9993058800  // OFF (NOT TOGGLED)
 
 // Define difficulty retarget algorithms
 enum DiffMode {
@@ -29,6 +34,6 @@ unsigned int VRX_Retarget(const CBlockIndex* pindexLast, bool fProofOfStake);
 unsigned int GetNextTargetRequired(const CBlockIndex* pindexLast, bool fProofOfStake);
 int64_t GetProofOfWorkReward(int64_t nHeight, int64_t nFees);
 int64_t GetProofOfStakeReward(int64_t nCoinAge, int64_t nFees);
-
+int64_t GetXNodePayment(int nHeight, int64_t blockValue);
 
 #endif // ESPERS_BLOCKPARAMS_H

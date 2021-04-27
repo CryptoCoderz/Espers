@@ -1,4 +1,4 @@
-// Copyright (c) 2016-2020 The CryptoCoderz Team / Espers
+// Copyright (c) 2016-2021 The CryptoCoderz Team / Espers
 // Distributed under the MIT/X11 software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -614,4 +614,14 @@ int64_t GetProofOfStakeReward(int64_t nCoinAge, int64_t nFees)
 
     LogPrint("creation", "GetProofOfStakeReward(): create=%s nCoinAge=%d\n", FormatMoney(nSubsidy), nCoinAge);
     return nSubsidy + nFees;
+}
+
+//
+// Xnode coin base reward
+//
+int64_t GetXNodePayment(int nHeight, int64_t blockValue)
+{
+    // No reward during alpha phase prototyping
+    int64_t ret = 0 * COIN;
+    return ret;
 }

@@ -1,4 +1,4 @@
-// Copyright (c) 2016-2020 The CryptoCoderz Team / Espers
+// Copyright (c) 2016-2021 The CryptoCoderz Team / Espers
 // Distributed under the MIT/X11 software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 #ifndef ESPERS_MINING_H
@@ -36,5 +36,7 @@ static const int64_t nBlockPoWReward = 5000 * COIN;
 static const int64_t nBlockRewardBuffer = 0.1 * COIN;
 /** Coinbase transaction outputs can only be spent after this number of new blocks (network rule) */
 static const int nCoinbaseMaturity = 60;
+/** Xnode required collateral */
+inline int64_t XNodeCollateral(int nHeight) { return 1113; } // 5K ESP required as collateral
 
 #endif

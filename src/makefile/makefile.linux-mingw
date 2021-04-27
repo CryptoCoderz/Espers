@@ -82,6 +82,7 @@ OBJS= \
     obj/rpc/rpcnet.o \
     obj/rpc/rpcblockchain.o \
     obj/rpc/rpcrawtransaction.o \
+    obj/xnode/xnoderpc.o \
     obj/subcore/timedata.o \
     obj/subcore/script.o \
     obj/core/sync.o \
@@ -92,6 +93,7 @@ OBJS= \
     obj/subcore/noui.o \
     obj/consensus/kernel.o \
     obj/primitives/pbkdf2.o \
+    obj/consensus/fork.o \
     obj/crypto/scrypt/scrypt.o \
     obj/crypto/scrypt/scrypt-arm.o \
     obj/crypto/scrypt/scrypt-x86.o \
@@ -115,7 +117,14 @@ OBJS= \
     obj/crypto/common/shabal.o \
     obj/crypto/common/whirlpool.o \
     obj/crypto/common/haval.o \
-    obj/crypto/common/sha2big.o
+    obj/crypto/common/sha2big.o \
+    obj/xnode/xnodecomponent.o \
+    obj/xnode/xnodemngr.o \
+    obj/xnode/xnodereward.o \
+    obj/xnode/xnodesettings.o \
+    obj/xnode/xnodestart.o \
+    obj/xnode/xnodesync.o \
+    obj/xnode/xnodecrypter.o
 
 ifeq (${USE_WALLET}, 1)
     DEFS += -DENABLE_WALLET

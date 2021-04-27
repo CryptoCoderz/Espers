@@ -13,7 +13,6 @@
 #include <QTimer>
 #include <QDebug>
 
-//TODO: cleanup linking
 #include <boost/bind.hpp>
 
 WalletModel::WalletModel(CWallet *wallet, OptionsModel *optionsModel, QObject *parent) :

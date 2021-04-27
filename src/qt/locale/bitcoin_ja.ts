@@ -15,10 +15,10 @@
         <location line="+41"/>
         <source>Copyright © 2009-2014 The Bitcoin developers
 Copyright © 2012-2014 The NovaCoin developers
-Copyright © 2016-2018 The Espers developers</source>
+Copyright © 2016-2021 The Espers developers</source>
         <translation>コピーライト © 2009-2014 The Bitcoin developers
 コピーライト © 2012-2014 The NovaCoin developers
-コピーライト © 2016-2018 The Espers developers</translation>
+コピーライト © 2016-2021 The Espers developers</translation>
     </message>
     <message>
         <location line="+15"/>

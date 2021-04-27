@@ -1,4 +1,4 @@
-// Copyright (c) 2016-2020 The CryptoCoderz Team / Espers
+// Copyright (c) 2016-2021 The CryptoCoderz Team / Espers
 // Distributed under the MIT/X11 software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 #include "clientcontrolpage.h"
@@ -16,6 +16,7 @@
 #include <QClipboard>
 #include <QMessageBox>
 #include <QMenu>
+#include <QDesktopServices>
 
 // For reading client version
 #include <QDir>
@@ -31,23 +32,37 @@ ClientControlPage::ClientControlPage(QWidget *parent) :
 {
     ui->setupUi(this);
     // CHECK IF STANDALONE
-    QFileInfo check_standalone(QDir::currentPath());
+    QFileInfo check_standalone(QDir::currentPath() + "ESP.cfg");
     if(!check_standalone.exists())
     {
         // C.C.S
-      //  ui->chck4_upd8->setEnabled(false);
-      //  ui->dwngrd_opt->setEnabled(false);
-      // ui->checkBoxupd8->setEnabled(false);
-      //  ui->minCLIE->setEnabled(false);
-      //  ui->CS_submit->setEnabled(false);
-      //  ui->br_input->setEnabled(false);
-      //  ui->BR_submit->setEnabled(false);
-     //   ui->optin_test->setEnabled(false);
-     //   ui->AU_apply->setEnabled(false);
+        ui->chck4_upd8->setEnabled(false);
+        ui->dwngrd_opt->setEnabled(false);
+        ui->checkBoxupd8->setEnabled(false);
+        ui->minCLIE->setEnabled(false);
+        ui->CS_submit->setEnabled(false);
+        ui->br_input->setEnabled(false);
+        ui->BR_submit->setEnabled(false);
+        ui->optin_test->setEnabled(false);
+        ui->AU_apply->setEnabled(false);
+#ifdef Q_OS_WIN
 
-        QMessageBox::warning(this, "Error",
-                           "Local directory not found... Somehow. Error 54",
-                           QMessageBox::Ok );
+        QMessageBox::StandardButton retval = QMessageBox::question(this, tr("Launcher not found"),
+                 tr("The Espers Launcher is required for advanced features to work, would you like to download it now?"),
+                 QMessageBox::Yes|QMessageBox::No,
+                 QMessageBox::No);
+        if(retval == QMessageBox::Yes)
+        {
+            QString link="https://github.com/CryptoCoderz/Espers/releases";
+                QDesktopServices::openUrl(QUrl(link));
+        }
+        else
+        {
+            QMessageBox::warning(this, "Launcher not found",
+                               "Skipping Espers Launcher download, however it is recommended that you download and use it from now on!",
+                               QMessageBox::Ok );
+        }
+#endif
     }
     else if(check_standalone.exists())
     {
@@ -131,7 +146,7 @@ void ClientControlPage::on_chck4_upd8_clicked()
 void ClientControlPage::on_dwngrd_opt_clicked()
 {
     QMessageBox::information(this, "No Available Versions",
-                       "v0.8.4.2 cannot be downgraded, only later versions can.",
+                       "v0.8.7.6 cannot be downgraded, only later versions can.",
                        QMessageBox::Ok );
 }
 
@@ -163,7 +178,7 @@ void ClientControlPage::on_CS_submit_clicked()
 
 void ClientControlPage::on_BR_submit_clicked()
 {
-    QMessageBox::information(this, "Coming in v0.8.4.3",
+    QMessageBox::information(this, "Coming in v0.8.7.7",
                        "Please email your issues to CryptoCoderz@gmail.com",
                        QMessageBox::Ok );
 }
@@ -204,7 +219,7 @@ void ClientControlPage::on_minCLIE_clicked()
 {
     if(ui->minCLIE->isChecked())
     {
-    QPixmap pix(":/images/0840m");
+    QPixmap pix(":/images/0876m");
     this->ui->cliePREV->setPixmap(pix);
     }
     else
