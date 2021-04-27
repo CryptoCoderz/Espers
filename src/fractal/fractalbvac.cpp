@@ -7,7 +7,7 @@
 // This is a completely experimental colored binary data storage and retrieval written by
 // CryptoCoderz (Jonathan Dan Zaretsky - cryptocoderz@gmail.com)
 // and
-// SaltineChips (Jeremiah Cook - jeremiahwcook@gmail.com)
+// SaltineChips (Jerimiah Cook - jerimiahwcook@gmail.com)
 //
 //
 // PLEASE USE AT YOUR OWN RISK!!!
