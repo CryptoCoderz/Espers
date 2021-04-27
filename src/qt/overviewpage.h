@@ -1,22 +1,12 @@
 #ifndef OVERVIEWPAGE_H
 #define OVERVIEWPAGE_H
 
+#include "util/util.h"
+
+#include <QTimer>
 #include <QWidget>
 
-#include "clientmodel.h"
-#include "core/main.h"
 #include "core/wallet.h"
-#include "primitives/base58.h"
-
-#include <QDir>
-#include <QFile>
-#include <QProcess>
-#include <QTime>
-#include <QTimer>
-#include <QStringList>
-#include <QMap>
-#include <QSettings>
-#include <QSlider>
 
 double getPoSHardness(int);
 double convertPoSCoins(int64_t);
@@ -24,17 +14,22 @@ int getPoSTime(int);
 int PoSInPastHours(int);
 const CBlockIndex* getPoSIndex(int);
 
-namespace Ui {
-    class OverviewPage;
-}
 class ClientModel;
 class WalletModel;
 class TxViewDelegate;
 class TransactionFilterProxy;
+//
+class OverviewPage;
+
+namespace Ui {
+    class OverviewPage;
+}
 
 QT_BEGIN_NAMESPACE
 class QModelIndex;
 QT_END_NAMESPACE
+//
+extern OverviewPage* ovrvwref;
 
 /** Overview ("home") page widget */
 class OverviewPage : public QWidget
@@ -48,24 +43,36 @@ public:
     void setClientModel(ClientModel *clientModel);
     void setWalletModel(WalletModel *walletModel);
     void showOutOfSyncWarning(bool fShow);
+    void ShowSynchronizedMessage(bool fSyncFinish);
 
 public slots:
-    void setBalance(qint64 balance, qint64 stake, qint64 unconfirmedBalance, qint64 immatureBalance);
+    void setBalance(const CAmount& balance, const CAmount& stake, const CAmount& unconfirmedBalance, const CAmount& immatureBalance);
+
     void updatePoSstat(bool);
     void setCntBlocks(int pseudo);
     void setCntConnections(int count);
+    void setLockStatus();
+    void setLockIconLocked();
+    void setLockIconUnlocked();
 
 signals:
     void transactionClicked(const QModelIndex &index);
 
 private:
+    QTimer *timer;
     Ui::OverviewPage *ui;
     ClientModel *clientModel;
     WalletModel *walletModel;
-    qint64 currentBalance;
-    qint64 currentStake;
-    qint64 currentUnconfirmedBalance;
-    qint64 currentImmatureBalance;
+    CAmount currentBalance;
+    CAmount currentStake;
+    CAmount currentUnconfirmedBalance;
+    CAmount currentImmatureBalance;
+    CAmount currentAnonymizedBalance;
+    CAmount currentWatchOnlyBalance;
+    CAmount currentWatchOnlyStake;
+    CAmount currentWatchUnconfBalance;
+    CAmount currentWatchImmatureBalance;
+    int nDisplayUnit;
 
     TxViewDelegate *txdelegate;
     TransactionFilterProxy *filter;
@@ -73,6 +80,10 @@ private:
 private slots:
     void updateDisplayUnit();
     void handleTransactionClicked(const QModelIndex &index);
+    void updateAlerts(const QString &warnings);
+    void updateWatchOnlyLabels(bool showWatchOnly);
+    void on_viewQR_clicked();
+    void on_vwalltx_clicked();
 };
 
 #endif // OVERVIEWPAGE_H

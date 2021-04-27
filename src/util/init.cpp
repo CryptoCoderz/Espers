@@ -1067,14 +1067,14 @@ bool AppInit2(boost::thread_group& threadGroup)
             activeXNode.ManageStatus();
         }
 
-        if(GetBoolArg("-xnconflock", false)) {
+        if(GetBoolArg("-xnconflock", true)) {
             LogPrintf("Locking XNodes:\n");
             uint256 xnTxHash;
             BOOST_FOREACH(CXNodeConfig::CXNodeEntry xne, xnodeConfig.getEntries()) {
                 LogPrintf("  %s %s\n", xne.getTxHash(), xne.getOutputIndex());
                 xnTxHash.SetHex(xne.getTxHash());
-                //COutPoint outpoint = COutPoint(xnTxHash, boost::lexical_cast<unsigned int>(xne.getOutputIndex()));
-                //pwalletMain->LockCoin(outpoint);
+                COutPoint outpoint = COutPoint(xnTxHash, boost::lexical_cast<unsigned int>(xne.getOutputIndex()));
+                pwalletMain->LockCoin(outpoint);
             }
         }
 
@@ -1127,10 +1127,20 @@ bool AppInit2(boost::thread_group& threadGroup)
 
 #ifdef ENABLE_WALLET
     // Mine proof-of-stake blocks in the background
-    if (!GetBoolArg("-staking", true))
+    if (!GetBoolArg("-staking", true)) {
         LogPrintf("Staking disabled\n");
-    else if (pwalletMain)
+    }
+    else if (pwalletMain) {
         threadGroup.create_thread(boost::bind(&ThreadStakeMiner, pwalletMain));
+    }
+
+    if(pwalletMain->IsLocked()) {
+        // Toggle wallet lock status
+        settingsStatus = true;
+    } else {
+        // Toggle wallet lock status
+        settingsStatus = false;
+    }
 #endif
 
     // ********************************************************* Step 12: finished

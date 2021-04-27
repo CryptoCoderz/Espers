@@ -77,7 +77,7 @@ static const char alphanum[] =
 bool fXnode = false;
 string strXnodePrivKey = "";
 string strXnodeAddr = "";
-
+// Standard Arguments/toggles
 map<string, string> mapArgs;
 map<string, vector<string> > mapMultiArgs;
 bool fDebug = false;
@@ -97,6 +97,9 @@ int64_t nLiveForkToggle = 0;
 int64_t enforceXNodePaymentsTime = 4085657524;
 int nXNodeMinProtocol = 0;
 bool fSucessfullyLoaded = false;
+//Logic for lock/unlock GUI icon
+//does not affect daemon operation
+bool settingsStatus = false;
 
 // Init OpenSSL library multithreading support
 static CCriticalSection** ppmutexOpenSSL;

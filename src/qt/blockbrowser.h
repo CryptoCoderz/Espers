@@ -1,7 +1,7 @@
 #ifndef BLOCKBROWSER_H
 #define BLOCKBROWSER_H
 
-#include <QWidget>
+#include <QDialog>
 
 #include "clientmodel.h"
 #include "core/main.h"
@@ -46,7 +46,7 @@ class QModelIndex;
 QT_END_NAMESPACE
 
 /** Overview ("home") page widget */
-class BlockBrowser : public QWidget
+class BlockBrowser : public QDialog
 {
     Q_OBJECT
 

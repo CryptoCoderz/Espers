@@ -27,18 +27,6 @@ using namespace json_spirit;
 #define DECORATION_SIZE 48
 #define NUM_ITEMS 10
 
-BlockBrowser::BlockBrowser(QWidget *parent) :
-    ui(new Ui::BlockBrowser),
-    model(0)
-{
-    ui->setupUi(this);
-
-    connect(ui->blockButton, SIGNAL(pressed()), this, SLOT(blockClicked()));
-    connect(ui->txButton, SIGNAL(pressed()), this, SLOT(txClicked()));
-
-    // Statistics
-    connect(ui->startButton, SIGNAL(pressed()), this, SLOT(updateStatistics()));
-}
 //Statistics
 int heightPrevious = -1;
 int connectionPrevious = -1;
@@ -51,6 +39,29 @@ double hardnessPrevious2 = -1;
 int stakeminPrevious = -1;
 int stakemaxPrevious = -1;
 QString stakecPrevious = "";
+
+BlockBrowser::BlockBrowser(QWidget *parent) :
+    QDialog(parent),
+    ui(new Ui::BlockBrowser)
+{
+    ui->setupUi(this);
+
+    setFixedSize(880, 500);
+
+    connect(ui->blockButton, SIGNAL(pressed()), this, SLOT(blockClicked()));
+    connect(ui->txButton, SIGNAL(pressed()), this, SLOT(txClicked()));
+
+    // Statistics
+    connect(ui->startButton, SIGNAL(pressed()), this, SLOT(updateStatistics()));
+}
+
+void BlockBrowser::setModel(WalletModel *model)
+{
+    if(model) {
+        this->model = model;
+        setWindowTitle(QString("Block Browser"));
+    }
+}
 
 BlockBrowser::~BlockBrowser()
 {

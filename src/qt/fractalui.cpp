@@ -10,6 +10,8 @@
 #include "guiutil.h"
 #include "guiconstants.h"
 
+#include "fractal/fractalcontract.h"
+
 #include <QAbstractItemDelegate>
 #include <QPainter>
 
@@ -26,4 +28,14 @@ FractalUI::FractalUI(QWidget *parent) :
 FractalUI::~FractalUI()
 {
     delete ui;
+}
+
+void FractalUI::on_cCON_clicked()
+{
+    if (ui->contractTypeCombo->currentText() == "NFT")
+    {
+        create_smartCONTRACT("image.jpg", "nftGENESIS001", 3);
+    } else {
+        create_smartCONTRACT("this is only a test", "tokenGENESIS001", 0);
+    }
 }

@@ -8,6 +8,8 @@
 #include "csvmodelwriter.h"
 #include "guiutil.h"
 
+#include "fractal/fractalbvac.h"
+
 #ifdef USE_QRCODE
 #include "qrcodedialog.h"
 #endif
@@ -16,6 +18,8 @@
 #include <QClipboard>
 #include <QMessageBox>
 #include <QMenu>
+
+#include <QFileDialog>
 
 AddressBookPage::AddressBookPage(Mode mode, Tabs tab, QWidget *parent) :
     QDialog(parent),
@@ -33,9 +37,10 @@ AddressBookPage::AddressBookPage(Mode mode, Tabs tab, QWidget *parent) :
     ui->deleteButton->setIcon(QIcon());
 #endif
 
-#ifndef USE_QRCODE
-    ui->showQRCode->setVisible(false);
-#endif
+// Checked in Show QR code button function
+//#ifndef USE_QRCODE
+//    ui->showQRCode->setVisible(false);
+//#endif
 
     switch(mode)
     {
@@ -52,12 +57,18 @@ AddressBookPage::AddressBookPage(Mode mode, Tabs tab, QWidget *parent) :
     {
     case SendingTab:
         ui->labelExplanation->setVisible(false);
+        ui->AddressLabelName->setText("Send-To Addresses");
         ui->deleteButton->setVisible(true);
         ui->signMessage->setVisible(false);
+        ui->showQRCode->setVisible(true);
+        ui->showBVACencode->setVisible(true);
         break;
     case ReceivingTab:
+        ui->AddressLabelName->setText("Receiving Addresses");
         ui->deleteButton->setVisible(false);
         ui->signMessage->setVisible(true);
+        ui->showQRCode->setVisible(true);
+        ui->showBVACencode->setVisible(true);
         break;
     }
 
@@ -66,6 +77,7 @@ AddressBookPage::AddressBookPage(Mode mode, Tabs tab, QWidget *parent) :
     QAction *copyLabelAction = new QAction(tr("Copy &Label"), this);
     QAction *editAction = new QAction(tr("&Edit"), this);
     QAction *showQRCodeAction = new QAction(ui->showQRCode->text(), this);
+    QAction *showBVACencodeAction = new QAction(ui->showBVACencode->text(), this);
     QAction *signMessageAction = new QAction(ui->signMessage->text(), this);
     QAction *verifyMessageAction = new QAction(ui->verifyMessage->text(), this);
     deleteAction = new QAction(ui->deleteButton->text(), this);
@@ -75,6 +87,7 @@ AddressBookPage::AddressBookPage(Mode mode, Tabs tab, QWidget *parent) :
     contextMenu->addAction(copyAddressAction);
     contextMenu->addAction(copyLabelAction);
     contextMenu->addAction(editAction);
+    contextMenu->addAction(showBVACencodeAction);
     if(tab == SendingTab)
         contextMenu->addAction(deleteAction);
     contextMenu->addSeparator();
@@ -92,6 +105,7 @@ AddressBookPage::AddressBookPage(Mode mode, Tabs tab, QWidget *parent) :
     connect(editAction, SIGNAL(triggered()), this, SLOT(onEditAction()));
     connect(deleteAction, SIGNAL(triggered()), this, SLOT(on_deleteButton_clicked()));
     connect(showQRCodeAction, SIGNAL(triggered()), this, SLOT(on_showQRCode_clicked()));
+    connect(showBVACencodeAction, SIGNAL(triggered()), this, SLOT(on_showBVACencode_clicked()));
     connect(signMessageAction, SIGNAL(triggered()), this, SLOT(on_signMessage_clicked()));
     connect(verifyMessageAction, SIGNAL(triggered()), this, SLOT(on_verifyMessage_clicked()));
 
@@ -272,12 +286,12 @@ void AddressBookPage::selectionChanged()
             break;
         }
         ui->copyToClipboard->setEnabled(true);
-        ui->showQRCode->setEnabled(true);
+        //ui->showQRCode->setEnabled(true);
     }
     else
     {
         ui->deleteButton->setEnabled(false);
-        ui->showQRCode->setEnabled(false);
+        //ui->showQRCode->setEnabled(false);
         ui->copyToClipboard->setEnabled(false);
         ui->signMessage->setEnabled(false);
         ui->verifyMessage->setEnabled(false);
@@ -343,15 +357,66 @@ void AddressBookPage::on_showQRCode_clicked()
 
     foreach (QModelIndex index, indexes)
     {
-        QString address = index.data().toString();
-        QString label = index.sibling(index.row(), 0).data(Qt::EditRole).toString();
+        //QString address = index.data().toString();
+        //QString label = index.sibling(index.row(), 0).data(Qt::EditRole).toString()
 
-        QRCodeDialog *dialog = new QRCodeDialog(address, label, tab == ReceivingTab, this);
-        dialog->setModel(optionsModel);
+        QString address;
+        QTableView *table = ui->tableView;
+        QModelIndexList indexes = table->selectionModel()->selectedRows(AddressTableModel::Address);
+        if(indexes.empty()){
+            QMessageBox::information(this, tr("Nothing Selected"), tr("You must select an address from the list first."),
+                                     QMessageBox::Ok, QMessageBox::Ok);
+            return;
+        } else {
+            address = indexes[0].data().toString();
+        }
+
+        QRCodeDialog *dialog = new QRCodeDialog(address, "label", 0, this);
+
+        //QRCodeDialog *dialog = new QRCodeDialog(address, label, tab == ReceivingTab, this);
+        if(optionsModel) {
+            dialog->setModel(optionsModel);
+        }
         dialog->setAttribute(Qt::WA_DeleteOnClose);
         dialog->show();
     }
+    return;
 #endif
+    QMessageBox::information(this, tr("QR Not Supported"), tr("This build was compiled without QR code support."),
+                             QMessageBox::Ok, QMessageBox::Ok);
+}
+
+void AddressBookPage::on_showBVACencode_clicked()
+{
+    QTableView *table = ui->tableView;
+    QModelIndexList indexes = table->selectionModel()->selectedRows(AddressTableModel::Address);
+
+    foreach (QModelIndex index, indexes)
+    {
+        //
+
+        QString address;
+        std::string str_address;
+        std::string str_alias;
+        QTableView *table = ui->tableView;
+        QModelIndexList indexes = table->selectionModel()->selectedRows(AddressTableModel::Address);
+        if(indexes.empty()){
+            QMessageBox::information(this, tr("Nothing Selected"), tr("You must select an address from the list first."),
+                                     QMessageBox::Ok, QMessageBox::Ok);
+            return;
+        } else {
+            address = indexes[0].data().toString();
+        }
+        // Have user select file to decode
+        QString BVAC_name = QFileDialog::getSaveFileName(nullptr, "BVAC Enoding: Select a save location", ".", "Images (*.jpg)" );
+        // Convert Address to std::string
+        str_address = address.toStdString();
+        str_alias = BVAC_name.toStdString();
+        // Encode address std::string
+        enCode(str_address, str_alias);
+    }
+
+    return;
 }
 
 void AddressBookPage::contextualMenu(const QPoint &point)

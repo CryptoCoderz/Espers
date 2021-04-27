@@ -78,6 +78,7 @@ signals:
     void strXNodesChanged(const QString &strXNodes);
     void alertsChanged(const QString &warnings);
     void bytesChanged(quint64 totalBytesIn, quint64 totalBytesOut);
+    void statusWalletLockChanged(bool unLock);
 
     //! Asynchronous message notification
     void message(const QString &title, const QString &message, bool modal, unsigned int style);

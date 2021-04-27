@@ -14,19 +14,27 @@ class OverviewPage;
 class ClientControlPage;
 class MessagePage;
 class BlockBrowser;
+class SettingsPage;
 class FractalUI;
 class AddressBookPage;
 class SendCoinsDialog;
 class SignVerifyMessageDialog;
 class Notificator;
 class RPCConsole;
+class BitcoinGUI;
 
 QT_BEGIN_NAMESPACE
 class QLabel;
 class QModelIndex;
-class QProgressBar;
+//class QProgressBar;
 class QStackedWidget;
 QT_END_NAMESPACE
+
+extern BitcoinGUI* guiref;
+extern bool settingsLock;
+extern bool settingsChangePass;
+extern bool settingsRelock;
+extern bool settingsUncrypted;
 
 /**
   Bitcoin GUI main class. This class represents the main window of the Bitcoin UI. It communicates with both the client and
@@ -50,6 +58,14 @@ public:
     */
     void setWalletModel(WalletModel *walletModel);
 
+    ClientModel* getClientModel() {
+        return this->clientModel;
+    }
+
+    WalletModel* getWalletModel() {
+        return this->walletModel;
+    }
+
 protected:
     void changeEvent(QEvent *e);
     void closeEvent(QCloseEvent *event);
@@ -71,16 +87,18 @@ private:
     SendCoinsDialog *sendCoinsPage;
     ClientControlPage *clientcontrolPage;
     MessagePage *messagePage;
+    QLabel* netLabel;
     BlockBrowser *blockbrowser;
     FractalUI *fractalUI;
+    SettingsPage *settingsPage;
     SignVerifyMessageDialog *signVerifyMessageDialog;
 
-    QLabel *labelEncryptionIcon;
-    QLabel *labelStakingIcon;
-    QLabel *labelConnectionsIcon;
-    QLabel *labelBlocksIcon;
-    QLabel *progressBarLabel;
-    QProgressBar *progressBar;
+    //QLabel *labelEncryptionIcon;
+    //QLabel *labelStakingIcon;
+    //QLabel *labelConnectionsIcon;
+    //QLabel *labelBlocksIcon;
+    //QLabel *progressBarLabel;
+    //QProgressBar *progressBar;
 
     QMenuBar *appMenuBar;
     QAction *overviewAction;
@@ -110,13 +128,15 @@ private:
     QAction *editConfigAction;
     QAction *editConfigExtAction;
     QAction *openDataDirAction;
+    QAction *settingsAction;
+    QAction *importPrivateKeyAction;
 
     QSystemTrayIcon *trayIcon;
     Notificator *notificator;
     TransactionView *transactionView;
     RPCConsole *rpcConsole;
 
-    QMovie *syncIconMovie;
+    //QMovie *syncIconMovie;
     /** Keep track of previous number of blocks, to detect progress */
     int prevBlocks;
 
@@ -125,7 +145,7 @@ private:
     /** Create the main UI actions. */
     void createActions();
     /** Create the menu bar and sub-menus. */
-    void createMenuBar();
+    //void createMenuBar();
     /** Create the toolbars */
     void createToolBars();
     /** Create system tray (notification) icon */
@@ -142,7 +162,14 @@ public slots:
        @param[in] status            current encryption status
        @see WalletModel::EncryptionStatus
     */
-    void setEncryptionStatus(int status);
+    static void setEncryptionStatus(int status);
+    void setWalletUnlockStakingOnly();
+    void setUnencrypted();
+    void setUnlocked();
+    void setLocked();
+    void aboutQtExt_Internal();
+    static void aboutQtExt_Static();
+    static void gotoHistoryPage_static();
 
     /** Notify the user of an event from the core network or transaction handling code.
        @param[in] title     the message box / notification title
@@ -172,6 +199,8 @@ private slots:
     void gotoMessagePage();
     /** Switch to chain info(explorer) page */
     void gotoBlockBrowser();
+    /** Switch to settings page */
+    void gotoSettingsPage();
     /** Switch to fractalui(websites on the blockchain) page */
     void gotoFractalUI();
     /** Switch to history (transactions) page */
@@ -205,6 +234,8 @@ private slots:
     void encryptWallet();
     /** Backup the wallet */
     void backupWallet();
+    /** Import a private key */
+    void importPrivateKey();
     /** Change encrypted wallet passphrase */
     void changePassphrase();
     /** Ask for passphrase to unlock wallet temporarily */
@@ -224,7 +255,7 @@ private slots:
     /** Update local wallet weight */
     void updateWeight();
     /** Update local wallet staking icon */
-    void updateStakingIcon();
+    //void updateStakingIcon();
 
     /** called by a timer to check if fRequestShutdown has been set **/
     void detectShutdown();

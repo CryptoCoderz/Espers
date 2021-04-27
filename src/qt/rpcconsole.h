@@ -14,7 +14,12 @@ namespace Ui {
 }
 class ClientModel;
 
-/** Local Bitcoin RPC console. */
+QT_BEGIN_NAMESPACE
+class QMenu;
+class QItemSelection;
+QT_END_NAMESPACE
+
+/** Local Espers RPC console. */
 class RPCConsole: public QWidget
 {
     Q_OBJECT
@@ -74,7 +79,7 @@ public slots:
     /** Set number of blocks shown in the UI */
     void setNumBlocks(int count);
     /** Set number of xnodes shown in the UI */
-    void setXNodeCount(const QString &strXNodes);
+    void setXnodeCount(const QString &strXnodes);
     /** Go forward or back in history */
     void browseHistory(int offset);
     /** Scroll console view to end */
