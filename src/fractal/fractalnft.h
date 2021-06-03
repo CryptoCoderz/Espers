@@ -10,6 +10,7 @@
 extern int n;
 extern std::string nftOut_String;
 extern bool iLOAD;
+extern bool NFT_run;
 extern bool load_image(std::vector<unsigned char>& image, const std::string& filename, int& x, int& y);
 
 void NFTparse(std::string filename);

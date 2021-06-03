@@ -7,6 +7,7 @@
 //
 // This is a completely experimental smart-contract platform written by
 // CryptoCoderz (Jonathan Dan Zaretsky - cryptocoderz@gmail.com)
+// dmEgc2xhdnUgZ29zcG9kZSBib2dlIGUgbmFzaCBzcGFzZXRhbCBlc3VzIGhyaXN0b3M=
 //
 // PLEASE USE AT YOUR OWN RISK!!!
 //
@@ -124,10 +125,13 @@ void write_contractDATA(std::string obfuscated_write_string, std::string contrac
     }
 }
 
-void read_contractDATA(std::string obfuscated_read_string, std::string contract_alias, int contract_type) {
+void read_contractDATA(std::string contract_alias, int contract_type) {
     //
-    obfuscated_read_string = Obfuscated_Combined_String;
-    contract_alias = selected_contract_alias;
+    boost::filesystem::path pathConfigFile(GetDataDir());
+    std::string cleaned_Path = pathConfigFile.string().c_str();
+    std::replace( cleaned_Path.begin(), cleaned_Path.end(), '\\', '/');
+    cleaned_Path += "/" + contract_alias + ".ftl";
+    open_smartCONTRACT(cleaned_Path, contract_type);
 }
 
 void parse_fractalSCRIPT(std::string fractal_SCRIPT) {

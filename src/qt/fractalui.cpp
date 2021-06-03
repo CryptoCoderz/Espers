@@ -11,6 +11,8 @@
 #include "guiconstants.h"
 
 #include "fractal/fractalcontract.h"
+// Added for reading fractal contracts
+#include "fractal/fractalengine.h"
 
 #include <QAbstractItemDelegate>
 #include <QPainter>
@@ -38,4 +40,9 @@ void FractalUI::on_cCON_clicked()
     } else {
         create_smartCONTRACT("this is only a test", "tokenGENESIS001", 0);
     }
+}
+
+void FractalUI::on_netTokensBtn_clicked()
+{
+    read_contractDATA("tokenGENESIS001", 0);
 }

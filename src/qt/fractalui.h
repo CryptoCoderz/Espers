@@ -34,6 +34,7 @@ private:
 private slots:
 
         void on_cCON_clicked();
+        void on_netTokensBtn_clicked();
 };
 
 #endif // FRACTALUI_H

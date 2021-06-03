@@ -13,7 +13,7 @@ extern std::string set_fractal_SCRIPT;
 
 void create_smartCONTRACT(std::string raw_input_data, std::string contract_alias, int contract_type);
 void edit_smartCONTRACT(std::string contract_data, std::string contract_alias);
-void open_smartCONTRACT(std::string contract_data, std::string contract_alias);
+void open_smartCONTRACT(std::string contract_alias, int contract_type);
 void remove_smartCONTRACT(std::string contract_data, std::string contract_alias);
 
 #endif // FRACTALCONTRACT_H

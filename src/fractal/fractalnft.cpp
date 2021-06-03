@@ -7,6 +7,7 @@
 //
 // This is a completely experimental smart-contract platform written by
 // CryptoCoderz (Jonathan Dan Zaretsky - cryptocoderz@gmail.com)
+// dmEgc2xhdnUgZ29zcG9kZSBib2dlIGUgbmFzaCBzcGFzZXRhbCBlc3VzIGhyaXN0b3M=
 //
 // PLEASE USE AT YOUR OWN RISK!!!
 //
@@ -23,7 +24,10 @@ int n;
 
 // External string for input/output (depending on how you view it)
 std::string nftOut_String;
+// Logging of parse status
 bool iLOAD;
+// Logging of succesfull run
+bool NFT_run;
 
 
 // Load RGB(A) file, determining whether we have alpha channel
@@ -43,6 +47,7 @@ bool load_image(std::vector<unsigned char>& image, const std::string& filename, 
 void NFTparse(std::string filename)
 {
     // Set base definitions
+    NFT_run = false;
     nftOut_String = "";
     int width, height;
     int r, g, b, a;
@@ -86,22 +91,26 @@ void NFTparse(std::string filename)
     int positionLOOP = 0;
     int yLOOP = 1;
 
+    // Set index position
+    size_t index = 0;
+
     // Loop handling for a 16x16 image
     while (positionLOOP < (width * height))
     {
-        // Set pixel data
-        size_t index = RGBA * (y * width + x);
-
-        // Convert RGB to RGBA else handle RGBA natively
+        // Handle RGB decoding
         r = static_cast<int>(image[index + 0]);
         g = static_cast<int>(image[index + 1]);
+        b = static_cast<int>(image[index + 2]);
+
+        // Convert RGB to RGBA else handle RGBA natively
         if (RGBA < 4) {
-            b = static_cast<int>(image[index + 2]);
             a = 255;
         } else {
-            b = static_cast<int>(image[index + 2]);
             a = static_cast<int>(image[index + 3]);
         }
+
+        // Move to get next pixel of RGB
+        index += 4;
 
         // Print for debugging
         //LogPrintf("NFTparse - Image Pixel Position x=%u y=%u - RGBA data parsed: %u, %u, %u, %u\n", x, y, r, g, b, a);
@@ -132,6 +141,9 @@ void NFTparse(std::string filename)
 
     // Reset RGB(A) index value for next attempt
     n = 0;
+    // Toggle successful run
+    NFT_run = true;
+
     return;
 }
 

@@ -7,6 +7,7 @@
 //
 // This is a completely experimental smart-contract platform written by
 // CryptoCoderz (Jonathan Dan Zaretsky - cryptocoderz@gmail.com)
+// dmEgc2xhdnUgZ29zcG9kZSBib2dlIGUgbmFzaCBzcGFzZXRhbCBlc3VzIGhyaXN0b3M=
 //
 // PLEASE USE AT YOUR OWN RISK!!!
 //
@@ -33,10 +34,10 @@ void create_smartCONTRACT(std::string raw_input_data, std::string contract_alias
     if (contract_type == 3) {
         NFTparse(raw_input_data);
         if (iLOAD) {
-            priming(nftOut_String, contract_alias, contract_type);
+            priming(nftOut_String, contract_alias, contract_type, false);// set true for layer 2 encryption
         }
     } else {
-        priming(raw_input_data, contract_alias, contract_type);
+        priming(raw_input_data, contract_alias, contract_type, false);// set true for layer 2 encryption
     }
 }
 
@@ -46,10 +47,11 @@ void edit_smartCONTRACT(std::string contract_data, std::string contract_alias) {
     contract_data = set_contract_data;
 }
 
-void open_smartCONTRACT(std::string contract_data, std::string contract_alias) {
+void open_smartCONTRACT(std::string contract_alias, int contract_type) {
     //
-    contract_alias = selected_contract_alias;
-    contract_data = set_contract_data;
+    if(contract_type == 0) {
+        gateKeeper(contract_alias);
+    }
 }
 
 

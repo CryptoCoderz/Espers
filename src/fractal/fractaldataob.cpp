@@ -8,7 +8,8 @@
 // This is a completely experimental data obfuscation method written by
 // CryptoCoderz (Jonathan Dan Zaretsky - cryptocoderz@gmail.com)
 // and 
-// SaltineChips (Jerimiah Cook - jerimiahwcook@gmail.com)
+// SaltineChips (Jeremiah Cook - jeremiahwcook@gmail.com)
+// dmEgc2xhdnUgZ29zcG9kZSBib2dlIGUgbmFzaCBzcGFzZXRhbCBlc3VzIGhyaXN0b3M=
 //
 // PLEASE USE AT YOUR OWN RISK!!!
 //
@@ -52,6 +53,9 @@
 
 #include <string>
 #include <cstring>
+// Read from file
+#include <iostream>
+#include <fstream>
 
 #include "fractaldataob.h"
 //
@@ -68,6 +72,7 @@ int pivots = 0;
 int position = 0;
 std::string Obfuscated_String = "";
 std::string Obfuscated_Combined_String = "";
+std::string PlainText_Combined_String = "";
 std::string SingleLayer_Key = "";
 std::string SecondLayer_Key = "";
 
@@ -113,16 +118,30 @@ std::string blank_space[1] = { " " };
 // Logging of each word character count (hard limit of 5000 words per obfuscation)
 std::string Word_Letter_Count[5000] = {};
 
+// Logging of each whole word movement (hard limit of 5000 words per obfuscation)
+std::string Word_Letter_Movements[5000] = {};
+
+// Logging of each word character movement (hard limit of 5000 characters per obfuscation)
+std::string Word_Character_Movements[5000] = {};
+
+// Key teeth, used for layer 2 (hard limit of 5000 characters available for teeth placement)
+std::string Ob_Key_Teeth[5000] = {};
+
 // Preliminary obfuscation proceedure
-void character_obfuscation(std::string contract_input, std::string contract_alias, int contract_type)// TODO: Refactor contract_alias to be able to write later as we want more than just character obbing
-{ 
+void character_obfuscation(std::string contract_input, std::string contract_alias, int contract_type, bool layer_2)// TODO: Refactor contract_alias to be able to write later as we want more than just character obbing
+{
+    // Clear any leftovers in Global from previous run
+    SecondLayer_Key = "";
+    SingleLayer_Key = "";
+    Obfuscated_Combined_String = "";
+    Obfuscated_String = "";
     // Set input string
     char Input_String[contract_input.length()+contract_alias.length()];
     //std::string combined_string = contract_input + contract_alias;
     //memset(Input_String, 0, (contract_input.length()+contract_alias.length())*sizeof(int));
     strcpy(Input_String, contract_input.c_str());
     // Returns first word
-    char *wrdcount = strtok(Input_String, " ");
+    char *wrdcount = strtok(Input_String, " ");// TODO: Explore cleaning with blank_space[0]
 
     // Log word count
     int word_total = 1;
@@ -192,11 +211,15 @@ void character_obfuscation(std::string contract_input, std::string contract_alia
             str_ch_ltrcount.push_back(ch_ltrcount);
         }
 
-        // Generate pivots/shifts
-        // obfuscation_shift(letter_total_word, Obfuscated_String, true);
+        // Only run layer 2 obfuscation depth if requested
+        if(layer_2)
+        {
+            // Generate pivots/shifts
+            obfuscation_shift(Obfuscated_String.length(), Obfuscated_String, true);
+        }
 
         // Set obfuscated values
-        Obfuscated_Combined_String += (Obfuscated_String + blank_space[0]);
+        Obfuscated_Combined_String += (Obfuscated_String + Character_String[4]);
         Obfuscated_String = "";
 
         // Move to next word
@@ -213,6 +236,19 @@ void character_obfuscation(std::string contract_input, std::string contract_alia
         // Move up in word count
         word_total ++;
     }
+
+    // Print for debugging
+    LogPrintf("CharacterObfuscation - cleartext data: %s \n", Obfuscated_Combined_String);
+
+    // Obfuscate whole output data
+    obfuscation_shift(Obfuscated_Combined_String.length(), Obfuscated_Combined_String, false);
+    // Print for debugging
+    LogPrintf("CharacterObfuscation - encrypted data: %s \n", Obfuscated_Combined_String);
+
+    // Write read key to end of output
+    Obfuscated_Combined_String += (Character_String[0] + SingleLayer_Key + Character_String[0]);
+    // Print for debugging
+    LogPrintf("CharacterObfuscation - embedded PubKey: %s \n", (Character_String[0] + SingleLayer_Key + Character_String[0]));
 
     // Print for debugging
     LogPrintf("CharacterObfuscation - finished \n");
@@ -234,20 +270,17 @@ void character_obfuscation(std::string contract_input, std::string contract_alia
 // Determined obfuscation logic shifts
 void obfuscation_shift(int input_data_shift, std::string input_data_text, bool char_ob)
 { 
-    // Generate random seed data for rounds, and shifts/pivots
-    int64_t seed_1, seed_2, seed_3, seed_tmp = 0;
-    double pre_shift = 0;
-    double pre_pivot = 0;
+    // Print for debugging
+    LogPrintf("Obfuscation_Shift - Starting \n");
 
     // Decide data type handling
     if(char_ob) {
-        seed_1 = GetTime();
-        seed_2 = pindexBest->GetBlockTime();
-        seed_3 = input_data_shift;
+        //
+        ignition(input_data_shift, input_data_text);
 
-        seed_tmp = seed_1 + seed_2 + 0;// TODO finish here man
     } else {
         //
+        flameout(input_data_shift, input_data_text);
     }
 
 
@@ -256,47 +289,443 @@ void obfuscation_shift(int input_data_shift, std::string input_data_text, bool c
 } 
 
 // Setup the obfuscation engine
-void priming(std::string contract_input, std::string contract_alias, int contract_type)
+void priming(std::string contract_input, std::string contract_alias, int contract_type, bool layer_2)
 {
     // Run Preliminary obfuscation proceedure
-    character_obfuscation(contract_input, contract_alias, contract_type);
-    // Determine sifts/pivots
-    //obfuscation_shift();
-
-	// Set Input Data
-    //std::string Output_String = Obfuscated_String;
- 
-	// Initialize Output String Array
-    //std::string Output_String[input_length];
-
-	// Shifting Points
-    //int shifting_points[shifts];
-
-	// Shifting Direction
-	//
-	// False == Right
-	// True  == Left
-    //bool shifting_direction = false;
-
-	// Overlap Logic
-    //int overlap_count = 0;
- 
-    // Print Strings
-    //for (int i = 0; i < input_length; i++)
-    //    std::cout << Output_String[i] << "\n";
+    character_obfuscation(contract_input, contract_alias, contract_type, layer_2);
 }
 
 // Ignition of obfuscation engine
-void ignition()  {
-    // Functionality
+void ignition(int input_data_shift, std::string input_data_text)  {
+    // Generate random seed data for rounds, and shifts/pivots
+    int64_t seed_1, seed_2, seed_3, pre_shift, pre_pivot;
+    double seed_tmp = 0;
+    int seed_loop = ((input_data_shift + 6) / 3);
+    bool collision = false;
+
+    // Print for debugging
+    LogPrintf("ignition() - Character Obfuscation Run Selected \n");
+    // Set basic seed data
+    seed_1 = GetTime();
+    seed_2 = pindexBest->GetBlockTime();
+    seed_3 = input_data_shift;
+    // Create basic rand seed
+    seed_tmp = (seed_1 + seed_2) / seed_3;
+    // Print for debugging
+    LogPrintf("ignition() - seed_1: %u , seed_2: %u , seed_3: %u, seed_tmp: %u \n", seed_1, seed_2, seed_3, seed_tmp);
+    // Loop until seed satisfies parameters
+    while(seed_tmp > (seed_3 * 10)) {
+        // Reduce value
+        seed_tmp /= 10;
+    }
+    // Verfiy lower sanity
+    while(seed_tmp < 2) {
+        // Raise value
+        seed_tmp *= 10;
+    }
+    // Print for debugging
+    LogPrintf("ignition() - Sanity correction seed_tmp now: %u \n", seed_tmp);
+    // Set shift values
+    pre_shift = seed_tmp + (seed_3 / 2);
+    pre_pivot = ((pre_shift - 1) + seed_tmp) / seed_3;
+    // Print for debugging
+    LogPrintf("ignition() - pre_shift: %u , pre_pivot: %u \n", pre_shift, pre_pivot);
+    // Set individual characters to obfuscate
+    int letter_loop_total = input_data_text.length();
+    char ch_inputcount[letter_loop_total];
+    char ch_outputcount[letter_loop_total];
+    int logged_used_positions[letter_loop_total];
+    strcpy(ch_inputcount, input_data_text.c_str());
+    //
+    int col_rep = letter_loop_total;
+    //
+    int64_t ob_move = (pre_pivot + pre_shift) * (seed_loop / 3);
+    //
+    seed_loop = 0;
+    // Print for debugging
+    LogPrintf("ignition() [preloop] - move attempt size: %u \n", ob_move);
+    // Bring down move within sanity window
+    if(ob_move > seed_3) {
+        // Print for debugging
+        LogPrintf("ignition() [preloop] - dropping move size to fulfill sanity \n");
+        while(ob_move > seed_3) {
+            ob_move /= 2;
+        }
+        // Print for debugging
+        LogPrintf("ignition() [preloop] - adjust move size: %u \n", ob_move);
+    }
+    //
+    logged_used_positions[seed_loop] = ob_move;
+    // Print for debugging
+    LogPrintf("ignition() [preloop] - logging used position: %u \n", logged_used_positions[seed_loop]);
+    // Set jumbled array data
+    ch_outputcount[seed_loop] = ch_inputcount[ob_move];
+    //
+    seed_loop ++;
+
+    // Loop through and set obfuscate
+    while(seed_loop < seed_3) {
+        // Print for debugging
+        LogPrintf("ignition() - obfuscation loop: %u \n", seed_loop);
+
+        if(!collision) {
+            //
+            ob_move = (pre_pivot + pre_shift) * (seed_loop / 3);
+            // Print for debugging
+            LogPrintf("ignition() - move attempt size: %u \n", ob_move);
+            // Bring down move within sanity window
+            if(ob_move > seed_3) {
+                // Print for debugging
+                LogPrintf("ignition() - dropping move size to fulfill sanity \n");
+                while(ob_move > seed_3) {
+                    ob_move /= 2;
+                }
+                // Print for debugging
+                LogPrintf("ignition() - adjust move size: %u \n", ob_move);
+            }
+        }
+
+        int l = 0;
+        bool san_run = false;
+        while(l < seed_loop) {
+            // Print for debugging
+            LogPrintf("ignition() - Running collision check \n");
+            //
+            if(logged_used_positions[l] == ob_move) {
+                //
+                collision = true;
+                san_run = true;
+                // Print for debugging
+                LogPrintf("ignition() - Collision occured at attempt index: %u, attempted move index: %u \n", seed_loop, logged_used_positions[l]);
+                // Break out of loop after collision
+                break;
+            }
+            //
+            if(l == (seed_loop - 1)) {
+                // Print for debugging
+                LogPrintf("ignition() - checking last collision loop for collision handling \n");
+                if(!san_run && collision) {
+                    collision = false;
+                    // Print for debugging
+                    LogPrintf("ignition() - Collision resolved at attempt index: %u, attempted move index: %u \n", seed_loop, logged_used_positions[l]);
+                }
+            }
+            //
+            l ++;
+        }
+        //
+        if(!collision) {
+            //
+            logged_used_positions[seed_loop] = ob_move;
+            // Print for debugging
+            LogPrintf("ignition() - logging used position: %u \n", logged_used_positions[seed_loop]);
+            // Set jumbled array data
+            ch_outputcount[seed_loop] = ch_inputcount[ob_move];
+            // Set global stored values
+            Ob_Key_Teeth[seed_loop] = ch_outputcount[seed_loop];
+            Word_Character_Movements[seed_loop] = std::to_string(ob_move);
+            // Print for debugging
+            LogPrintf("ignition() - Done! origin: %u, placement: %u \n", seed_loop, ob_move);
+            // Move up in loop position
+            seed_loop ++;
+        } else {
+            //
+            if(col_rep > 0) {
+                //
+                col_rep --;
+
+                //
+                ob_move = col_rep;
+            }
+            // Print for debugging
+            LogPrintf("ignition() - Re-Loop due to collision [new placement: %u] \n", ob_move);
+        }
+    }
+    // Generate obfuscated string and key
+    keyMaster(seed_3, true);
 }
 
 // Flameout at obfuscation threshold
-void flameout() {
-    // Functionality
+void flameout(int input_data_shift, std::string input_data_text) {
+    // Generate random seed data for rounds, and shifts/pivots
+    int64_t seed_1, seed_2, seed_3, pre_shift, pre_pivot;
+    double seed_tmp = 0;
+    int seed_loop = ((input_data_shift + 6) / 3);
+    int KeyTeeth_Loop = 0;
+    bool collision = false;
+
+    // Print for debugging
+    LogPrintf("ignition() - Character Obfuscation Run Selected \n");
+    // Set basic seed data
+    seed_1 = GetTime();
+    seed_2 = pindexBest->GetBlockTime();
+    seed_3 = input_data_shift;
+    // Create basic rand seed
+    seed_tmp = (seed_1 + seed_2) / seed_3;
+    // Print for debugging
+    LogPrintf("ignition() - seed_1: %u , seed_2: %u , seed_3: %u, seed_tmp: %u \n", seed_1, seed_2, seed_3, seed_tmp);
+    // Loop until seed satisfies parameters
+    while(seed_tmp > (seed_3 * 10)) {
+        // Reduce value
+        seed_tmp /= 10;
+    }
+    // Verfiy lower sanity
+    while(seed_tmp < 2) {
+        // Raise value
+        seed_tmp *= 10;
+    }
+    // Print for debugging
+    LogPrintf("ignition() - Sanity correction seed_tmp now: %u \n", seed_tmp);
+    // Set shift values
+    pre_shift = seed_tmp + (seed_3 / 2);
+    pre_pivot = ((pre_shift - 1) + seed_tmp) / seed_3;
+    // Print for debugging
+    LogPrintf("ignition() - pre_shift: %u , pre_pivot: %u \n", pre_shift, pre_pivot);
+    // Set individual characters to obfuscate
+    int letter_loop_total = input_data_text.length();
+    char ch_inputcount[letter_loop_total];
+    char ch_outputcount[letter_loop_total];
+    int logged_used_positions[letter_loop_total];
+    strcpy(ch_inputcount, input_data_text.c_str());
+    //
+    int col_rep = letter_loop_total;
+    //
+    int64_t ob_move = (pre_pivot + pre_shift) * (seed_loop / 3);
+    //
+    seed_loop = 0;
+    // Print for debugging
+    LogPrintf("ignition() [preloop] - move attempt size: %u \n", ob_move);
+    // Bring down move within sanity window
+    if(ob_move > seed_3) {
+        // Print for debugging
+        LogPrintf("ignition() [preloop] - dropping move size to fulfill sanity \n");
+        while(ob_move > seed_3) {
+            ob_move /= 2;
+        }
+        // Print for debugging
+        LogPrintf("ignition() [preloop] - adjust move size: %u \n", ob_move);
+    }
+    //
+    logged_used_positions[seed_loop] = ob_move;
+    // Print for debugging
+    LogPrintf("ignition() [preloop] - logging used position: %u \n", logged_used_positions[seed_loop]);
+    // Set jumbled array data
+    ch_outputcount[ob_move] = ch_inputcount[seed_loop];
+    // Set global stored values
+    Word_Letter_Movements[seed_loop] = (std::to_string(ob_move) + Character_String[2]);
+    //
+    seed_loop ++;
+
+    // Loop through and set obfuscate
+    while(seed_loop < seed_3) {
+        // Print for debugging
+        LogPrintf("ignition() - obfuscation loop: %u \n", seed_loop);
+
+        if(!collision) {
+            //
+            ob_move = (pre_pivot + pre_shift) * (seed_loop / 3);
+            // Print for debugging
+            LogPrintf("ignition() - move attempt size: %u \n", ob_move);
+            // Bring down move within sanity window
+            if(ob_move > seed_3) {
+                // Print for debugging
+                LogPrintf("ignition() - dropping move size to fulfill sanity \n");
+                while(ob_move > seed_3) {
+                    ob_move /= 2;
+                }
+                // Print for debugging
+                LogPrintf("ignition() - adjust move size: %u \n", ob_move);
+            }
+        }
+
+        int l = 0;
+        bool san_run = false;
+        while(l < seed_loop) {
+            // Print for debugging
+            LogPrintf("ignition() - Running collision check \n");
+            //
+            if(logged_used_positions[l] == ob_move) {
+                //
+                collision = true;
+                san_run = true;
+                // Print for debugging
+                LogPrintf("ignition() - Collision occured at attempt index: %u, attempted move index: %u \n", seed_loop, logged_used_positions[l]);
+                // Break out of loop after collision
+                break;
+            }
+            //
+            if(l == (seed_loop - 1)) {
+                // Print for debugging
+                LogPrintf("ignition() - checking last collision loop for collision handling \n");
+                if(!san_run && collision) {
+                    collision = false;
+                    // Print for debugging
+                    LogPrintf("ignition() - Collision resolved at attempt index: %u, attempted move index: %u \n", seed_loop, logged_used_positions[l]);
+                }
+            }
+            //
+            l ++;
+        }
+        //
+        if(!collision) {
+            //
+            logged_used_positions[seed_loop] = ob_move;
+            // Print for debugging
+            LogPrintf("ignition() - logging used position: %u \n", logged_used_positions[seed_loop]);
+            // Set jumbled array data
+            ch_outputcount[ob_move] = ch_inputcount[seed_loop];
+            // Set global stored values
+            Word_Letter_Movements[seed_loop] = (std::to_string(ob_move) + Character_String[2]);
+            // Print for debugging
+            LogPrintf("ignition() - Done! origin: %u, placement: %u \n", seed_loop, ob_move);
+            // Move up in loop position
+            seed_loop ++;
+        } else {
+            //
+            if(col_rep > 0) {
+                //
+                col_rep --;
+
+                //
+                ob_move = col_rep;
+            }
+            // Print for debugging
+            LogPrintf("ignition() - Re-Loop due to collision [new placement: %u] \n", ob_move);
+        }
+    }
+    // Generate Key Teeth data (globally)
+    while(KeyTeeth_Loop < seed_3) {
+        Ob_Key_Teeth[KeyTeeth_Loop] = ch_outputcount[KeyTeeth_Loop];
+        KeyTeeth_Loop ++;
+    }
+    // Generate obfuscated string and key
+    keyMaster(seed_3, false);
+}
+
+void keyMaster(int loop_threshold, bool layer_2) {
+    // Set loop start
+    int cur_loop = 0;
+    // Initialize string for assembled data
+    std::string Teeth_assembled;
+    std::string Key_assembled;
+    // Loop through until assembled
+    while(cur_loop < loop_threshold) {
+        // Assemble key teeth
+        Teeth_assembled += Ob_Key_Teeth[cur_loop];
+        if(layer_2) {
+            Key_assembled += Word_Character_Movements[cur_loop];
+        } else {
+            Key_assembled += Word_Letter_Movements[cur_loop];
+        }
+        // move up in loop round
+        cur_loop ++;
+    }
+    // Set globally used data
+    if(layer_2) {
+        Obfuscated_String = Teeth_assembled;
+        SecondLayer_Key += Key_assembled;
+    } else {
+        Obfuscated_Combined_String = Teeth_assembled;
+        SingleLayer_Key = Key_assembled;
+    }
+
+}
+
+void gateKeeper(std::string contract_decode) {
+    // Clean previous run data values
+    PlainText_Combined_String = "";
+    // Open requested contract data
+    LogPrintf("gateKeeper - INFO - Opening file %s for decoding\n", contract_decode);
+    std::ifstream file;
+    file.open(contract_decode.c_str());
+    if(!file.is_open()) {
+        // Print for debugging
+        LogPrintf("gateKeeper - ERROR 00 - Cannot open file for decoding!\n");
+        return;
+    } else {
+        // Print for debugging
+        LogPrintf("gateKeeper - INFO - File successfully opened!\n");
+    }
+    // Set read data
+    std::string line;
+    std::string key;
+    std::string teeth;
+    // Read data
+    while(file.good()) {
+        // Print for debugging
+        LogPrintf("gateKeeper - INFO - Reading file...\n");
+        // Loop through lines
+        std::getline(file, line);
+        // Print for debugging
+        LogPrintf("gateKeeper - INFO - Got line data...\n");
+        if (!line.empty()) {
+            if (line[0] != '#') {
+                // Print for debugging
+                LogPrintf("gateKeeper - INFO - Read data success!\n");
+                // Set input string
+                char Input_String[line.length()];
+                strcpy(Input_String, line.c_str());
+                // Set Teeth data
+                char *ob_sets = strtok(Input_String, "A");
+                teeth = ob_sets;
+                // Set Key as focus
+                ob_sets = strtok(NULL, "A");
+                key = ob_sets;
+                //
+                break;
+            } else {
+                // Print for debugging
+                LogPrintf("gateKeeper - WARNING - Comment detected! \n");
+            }
+        } else {
+            // Print for debugging
+            LogPrintf("gateKeeper - WARNING - Empty line detected! \n");
+        }
+    }
+    // Print for debugging
+    LogPrintf("gateKeeper - sending contract data to re-assembler! | teeth: %s | key: %s | \n", teeth, key);
+    // Run re-assembly function
+    reassembly(teeth, key);
 }
 
 // Reassemble a flameout
-void reassembly() {
-    //Functionality
+void reassembly(std::string input1, std::string input2) {
+    // Set local values from global
+    std::string builder_key = input2;
+    std::string builder_teeth = input1;
+    int64_t key_size = input2.length();
+    int64_t teeth_size = input1.length();
+    // Set loop start
+    int cur_loop = 0;
+    // Set first phase loop threshold
+    int loop_threshold = key_size;
+    // Set input string
+    char Key_input[key_size];
+    char Teeth_input[teeth_size];
+    strcpy(Key_input, builder_key.c_str());
+    strcpy(Teeth_input, builder_teeth.c_str());
+    // Set key array data
+    char *ob_sets = strtok(Key_input, "B");
+    // Loop through and extract key data
+    while(cur_loop < loop_threshold) {
+        // Convert value for proper comparison
+        int deob_set = int(ob_sets);
+        // Set key array data
+        Ob_Key_Teeth[cur_loop] = Teeth_input[deob_set];
+        // Move onto next key piece
+        ob_sets = strtok(NULL, "B");
+        // Move up in loop round
+        cur_loop ++;
+    }
+    // Reset looping logic
+    cur_loop = 0;
+    // Assemble decoded data
+    while(cur_loop < loop_threshold) {
+        // Set combined data
+        PlainText_Combined_String += Ob_Key_Teeth[cur_loop];
+        // Move up in loop round
+        cur_loop ++;
+    }
+    // Print for debugging
+    LogPrintf("reassembly - OUTPUT - %s", PlainText_Combined_String);
 }

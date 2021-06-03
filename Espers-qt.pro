@@ -1,6 +1,6 @@
 TEMPLATE = app
 TARGET = Espers-fractal-qt
-VERSION = 0.8.8.0
+VERSION = 0.8.8.2
 INCLUDEPATH += src src/json src/qt
 QT += core gui network
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
@@ -305,6 +305,7 @@ HEADERS += src/qt/bitcoingui.h \
     src/primitives/limitedmap.h \
     src/qt/fractalui.h \
     src/qt/tokenui.h \
+    src/qt/nftui.h \
     src/qt/macnotificationhandler.h \
     src/crypto/hmq/hmq1725.h \
     src/crypto/bmw/bmw512.h \
@@ -434,6 +435,7 @@ SOURCES += src/qt/bitcoin.cpp src/qt/bitcoingui.cpp \
     src/primitives/pbkdf2.cpp \
     src/qt/fractalui.cpp \
     src/qt/tokenui.cpp \
+    src/qt/nftui.cpp \
     src/fractal/fractalengine.cpp \
     src/fractal/fractalcontract.cpp \
     src/fractal/fractalparams.cpp \
@@ -473,7 +475,8 @@ FORMS += \
     src/qt/forms/rpcconsolesettings.ui \
     src/qt/forms/optionsdialog.ui \
     src/qt/forms/fractalui.ui \
-    src/qt/forms/tokenui.ui
+    src/qt/forms/tokenui.ui \
+    src/qt/forms/nftui.ui
 
 contains(USE_QRCODE, 1) {
 HEADERS += src/qt/qrcodedialog.h

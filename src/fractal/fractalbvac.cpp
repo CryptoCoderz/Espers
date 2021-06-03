@@ -7,7 +7,8 @@
 // This is a completely experimental colored binary data storage and retrieval written by
 // CryptoCoderz (Jonathan Dan Zaretsky - cryptocoderz@gmail.com)
 // and
-// SaltineChips (Jerimiah Cook - jerimiahwcook@gmail.com)
+// SaltineChips (Jeremiah Cook - jeremiahwcook@gmail.com)
+// dmEgc2xhdnUgZ29zcG9kZSBib2dlIGUgbmFzaCBzcGFzZXRhbCBlc3VzIGhyaXN0b3M=
 //
 //
 // PLEASE USE AT YOUR OWN RISK!!!
@@ -342,6 +343,8 @@ void deCode(std::string image_to_deCode) {
         BVAC_run = false;
         // Print for debugging
         LogPrintf("BVAC Decode - ERROR - Invalid RGB type: expected RGB, parsed RGBA\n");
+        // Reset RGB(A) index value for next attempt
+        n = 0;
         return;
     }
 
@@ -426,7 +429,7 @@ void match_deCode(std::string input_thatdata) {
     // Returns word as string for letters
     std::string str_ch_ltrcount = thatdata;
     // set word letter count
-    int letter_loop_total = 4;// 32 more after
+    int letter_loop_total = 4;// 34 more after
     // reset character loop position
     int character_detection_loop = 0;
     int bits_match_loop = 0;
