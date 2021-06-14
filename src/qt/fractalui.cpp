@@ -45,4 +45,16 @@ void FractalUI::on_cCON_clicked()
 void FractalUI::on_netTokensBtn_clicked()
 {
     read_contractDATA("tokenGENESIS001", 0);
+
+    if(fextTokenDecodeSuccess) {
+        // Inform user of success
+        QMessageBox::information(this, "DeOb Decode Success",
+                        "The DeOb system was successfully decoded the test genesis Token data!",
+                        QMessageBox::Ok );
+    } else {
+        // Inform user of failure
+        QMessageBox::warning(this, "DeOb Decode Failure",
+                        "The DeOb system was unable to decode the test genesis Token data...",
+                        QMessageBox::Ok );
+    }
 }

@@ -73,8 +73,10 @@ int position = 0;
 std::string Obfuscated_String = "";
 std::string Obfuscated_Combined_String = "";
 std::string PlainText_Combined_String = "";
+std::string PlainText_String = "";
 std::string SingleLayer_Key = "";
 std::string SecondLayer_Key = "";
+bool fTokenDecodeSuccess = false;
 
 // Initialize Valid Character String Array
 std::string Character_String[62] = { "A", "a", "B", "b", 
@@ -183,7 +185,7 @@ void character_obfuscation(std::string contract_input, std::string contract_alia
             // Print for debugging
             LogPrintf("CharacterObfuscation - tokenize word |%s| by letter, current letter: %s \n", wrdcount, str_ch_ltrcount);
 
-            // loop until we match up sting character with known characters
+            // loop until we match up string character with known characters
             while(character_detection_loop < 62)
             {
                 if(str_ch_ltrcount == Character_String[character_detection_loop])
@@ -197,6 +199,8 @@ void character_obfuscation(std::string contract_input, std::string contract_alia
 
             // unmatch letter and add obfuscation tail data
             Obfuscated_String += (Letter_Unmatch_String[character_detection_loop] + Obfuscation_String[character_detection_loop]);
+            // add syntax safe letter buffer
+            Obfuscated_String += Character_String[6];
 
             // add onto letter count for word
             letter_total ++;
@@ -683,13 +687,17 @@ void gateKeeper(std::string contract_decode) {
         }
     }
     // Print for debugging
-    LogPrintf("gateKeeper - sending contract data to re-assembler! | teeth: %s | key: %s | \n", teeth, key);
+    LogPrintf("gateKeeper - INFO - sending contract data to re-assembler! | teeth: %s | key: %s | \n", teeth, key);
     // Run re-assembly function
     reassembly(teeth, key);
+    // Finish deob sequences
+    character_deob(PlainText_Combined_String);
 }
 
 // Reassemble a flameout
 void reassembly(std::string input1, std::string input2) {
+    // Print for debugging
+    LogPrintf("reassembly - INFO - starting... \n");
     // Set local values from global
     std::string builder_key = input2;
     std::string builder_teeth = input1;
@@ -699,33 +707,220 @@ void reassembly(std::string input1, std::string input2) {
     int cur_loop = 0;
     // Set first phase loop threshold
     int loop_threshold = key_size;
-    // Set input string
-    char Key_input[key_size];
-    char Teeth_input[teeth_size];
-    strcpy(Key_input, builder_key.c_str());
-    strcpy(Teeth_input, builder_teeth.c_str());
-    // Set key array data
-    char *ob_sets = strtok(Key_input, "B");
-    // Loop through and extract key data
+    int clean_threshold = 0;
+    std::string str_grab_loop = "B";
     while(cur_loop < loop_threshold) {
-        // Convert value for proper comparison
-        int deob_set = int(ob_sets);
-        // Set key array data
-        Ob_Key_Teeth[cur_loop] = Teeth_input[deob_set];
-        // Move onto next key piece
-        ob_sets = strtok(NULL, "B");
-        // Move up in loop round
+        // Count teeth peaks and valleys
+        if(builder_key.at(cur_loop) == str_grab_loop.at(0)) {
+            clean_threshold ++;
+        }
         cur_loop ++;
     }
     // Reset looping logic
     cur_loop = 0;
+    // Print for debugging
+    LogPrintf("reassembly - INFO - set clean loop threshold: %u \n", clean_threshold);
+    // Set input string
+    char Key_input[key_size+1];
+    char Teeth_input[teeth_size+1];
+    std::string input_buf = "_";
+    char ch_input_buf = input_buf.at(0);
+    builder_key.push_back(ch_input_buf);
+    builder_teeth.push_back(ch_input_buf);
+    strcpy(Key_input, builder_key.c_str());
+    strcpy(Teeth_input, builder_teeth.c_str());
+    // Set key array data
+    char *ob_sets = strtok(Key_input, "B");
+    std::string str_ob_sets = std::string(ob_sets);
+    // Print for debugging
+    LogPrintf("reassembly - INFO - set first movement from position: 0 to position: %u \n", str_ob_sets);
+    // Loop through and extract key data
+    while(cur_loop < clean_threshold) {
+        // Convert value for proper comparison
+        std::string::size_type string_sz;
+        int deob_set = std::stoi (str_ob_sets, &string_sz);
+        // Print for debugging
+        LogPrintf("reassembly - INFO - found movement at position: %u to position: %u \n", cur_loop, deob_set);
+        // Set key array data
+        std::string str_ch_convrt;
+        str_ch_convrt.push_back(Teeth_input[deob_set]);
+        // Print for debugging
+        LogPrintf("reassembly - INFO - set decoded value: %u \n", str_ch_convrt);
+        Ob_Key_Teeth[cur_loop] = str_ch_convrt;
+        // Move up in loop round
+        cur_loop ++;
+        // Move onto next key piece
+        ob_sets = strtok(NULL, "B");
+        str_ob_sets = std::string(ob_sets);
+    }
+    // Reset looping logic
+    cur_loop = 0;
     // Assemble decoded data
-    while(cur_loop < loop_threshold) {
+    while(cur_loop < clean_threshold) {
         // Set combined data
         PlainText_Combined_String += Ob_Key_Teeth[cur_loop];
         // Move up in loop round
         cur_loop ++;
     }
     // Print for debugging
-    LogPrintf("reassembly - OUTPUT - %s", PlainText_Combined_String);
+    LogPrintf("reassembly - OUTPUT - %s \n", PlainText_Combined_String);
+}
+
+void character_deob(std::string to_deob) {
+    //
+    // Set input string
+    char Input_String[to_deob.length()];
+    strcpy(Input_String, to_deob.c_str());
+    // Returns first word
+    char *ob_count = strtok(Input_String, "C");// TODO: Explore cleaning with blank_space[1]
+
+    // Log word count
+    int word_total = 1;
+    // Log letter count
+    int letter_total = 1;
+    // Define character loop position
+    int character_detection_loop = 0;
+
+    // Clear any leftovers in Global from previous run
+    PlainText_String = "";
+    PlainText_Combined_String = "";
+    fTokenDecodeSuccess = false;
+
+    // Keep looping through "tokens" while one of the
+    // delimiters present in str[].
+    while (ob_count != NULL)
+    {
+        // Print for debugging
+        LogPrintf("Character_DeOb - current word total: %u, processing word: %s \n", word_total, ob_count);
+
+        // Word de-obfuscation
+        //
+
+        // Log letter count
+        int letter_total_word = 0;
+        // Set word as string for looping logic
+        std::string wrdcount = ob_count;
+
+        // Padd incoming value set
+        std::string catch_buf = "0";
+        char ch_catch_buf = catch_buf.at(0);
+        wrdcount.push_back(ch_catch_buf);
+
+        // Set letter division string
+        char division_String[wrdcount.length()];
+        strcpy(division_String, wrdcount.c_str());
+
+        // Returns word as string for letters
+        char *ob_bits = strtok(division_String, "D");
+        std::string ltrcount = ob_bits;
+
+        // Print for debugging
+        LogPrintf("Character_DeOb - First letter is: %s, in word: %s \n", ltrcount, wrdcount);
+
+        // set word letter count
+        int letter_loop_total = 0;
+        // set letter loop count
+        int ltr_loop = 0;
+        int ltr_threshold = wrdcount.length();
+        // Set catch value
+        std::string letter_Catch = "D";
+
+        // Set first value for comparison
+        char ch_ob_count = wrdcount.at(0);
+        std::string str_ch_ob_count;
+        str_ch_ob_count.push_back(ch_ob_count);
+
+        // Print for debugging
+        LogPrintf("Character_DeOb - Selected position ZERO, which is character: %s \n", str_ch_ob_count);
+
+        // Create clean loop threshold
+        while(ltr_loop < (ltr_threshold - 1))
+        {
+            //
+            if(str_ch_ob_count == letter_Catch){
+                //
+                letter_loop_total ++;
+                // Print for debugging
+                LogPrintf("Character_DeOb - Found letter in loop: %u \n", ltr_loop);
+            } else {
+                // Print for debugging
+                LogPrintf("Character_DeOb - Letter catch was unable to match: %s, to expected value: %s \n", str_ch_ob_count, letter_Catch);
+            }
+            // Move up in round position
+            ltr_loop++;
+
+            // Set next value
+            ch_ob_count = wrdcount.at(ltr_loop);
+            str_ch_ob_count = "";
+            str_ch_ob_count.push_back(ch_ob_count);
+
+        }
+        // reset character loop position
+        character_detection_loop = 0;
+
+        // Print for debugging
+        LogPrintf("Character_DeOb - loop start position: %u, loop end position: %u \n", letter_total_word, letter_loop_total);
+
+        // De-Obfuscate letters
+        while(letter_total_word < letter_loop_total)
+        {
+            // Character de-obfuscation
+            //
+
+            // Print for debugging
+            LogPrintf("Character_DeOb - tokenize word |%s| by letter, current letter: %s \n", ob_count, ob_bits);
+
+            // loop until we match up string character with known characters
+            while(character_detection_loop < 62)
+            {
+                if(ltrcount == (Letter_Unmatch_String[character_detection_loop] + Obfuscation_String[character_detection_loop]))
+                {
+                    // Break loop when letter match is found
+                    break;
+                }
+                // Move up in loop count if not matched
+                character_detection_loop ++;
+            }
+
+            // match letter and obfuscation tail data
+            PlainText_String += Character_String[character_detection_loop];
+
+            // add onto letter count for word
+            letter_total ++;
+            letter_total_word ++;
+
+            // Reset character detection loop
+            character_detection_loop = 0;
+
+            // Move to next letter
+            ob_bits = strtok(NULL, "D");
+            ltrcount = std::string(ob_bits);
+        }
+
+        // Set plaintext values
+        PlainText_Combined_String += (PlainText_String + " ");
+        PlainText_String = "";
+
+        // Move to next word
+        ob_count = strtok(NULL, "C");
+
+        // Break loop if maximum de-obfuscatable word count is reached
+        if(word_total >= 5000)
+        {
+            break;
+        }
+
+        Word_Letter_Count[word_total] = letter_total_word;
+
+        // Move up in word count
+        word_total ++;
+    }
+
+    // Print for debugging
+    LogPrintf("Character_DeOb - PlainText Output: %s \n", PlainText_Combined_String);
+
+    // TESTING FUNCTION
+    if(PlainText_Combined_String == "this is only a test ") {
+        fTokenDecodeSuccess = true;
+    }
 }

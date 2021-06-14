@@ -25,6 +25,7 @@ std::string selected_contract_alias = "";
 std::string set_raw_input_data = "";
 std::string set_contract_data = "";
 std::string set_fractal_SCRIPT = "";
+bool fextTokenDecodeSuccess = false;
 
 void create_smartCONTRACT(std::string raw_input_data, std::string contract_alias, int contract_type) {
     //
@@ -51,6 +52,7 @@ void open_smartCONTRACT(std::string contract_alias, int contract_type) {
     //
     if(contract_type == 0) {
         gateKeeper(contract_alias);
+        fextTokenDecodeSuccess = fTokenDecodeSuccess;
     }
 }
 
