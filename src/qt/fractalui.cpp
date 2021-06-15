@@ -39,6 +39,10 @@ void FractalUI::on_cCON_clicked()
         create_smartCONTRACT("image.jpg", "nftGENESIS001", 3);
     } else {
         create_smartCONTRACT("this is only a test", "tokenGENESIS001", 0);
+        // Inform user
+        QMessageBox::information(this, "Fractal Encoder",
+                        "The Fractal platform has written the contract data.",
+                        QMessageBox::Ok );
     }
 }
 

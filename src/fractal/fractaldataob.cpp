@@ -774,6 +774,28 @@ void character_deob(std::string to_deob) {
     // Returns first word
     char *ob_count = strtok(Input_String, "C");// TODO: Explore cleaning with blank_space[1]
 
+    // Initialize word array
+    std::string wrd_arry[5000];
+    // Set found count
+    int log_found = 0;
+    // Set starting loop position
+    int start_position = 0;
+    // Loop through all words in input
+    while (ob_count != NULL)
+    {
+        // Set array data
+        wrd_arry[log_found] = ob_count;
+        // Break loop if maximum de-obfuscatable word count is reached
+        if(log_found >= 5000)
+        {
+            break;
+        }
+        // Log word count found
+        log_found ++;
+        // Move to next word
+        ob_count = strtok(NULL, "C");
+    }
+
     // Log word count
     int word_total = 1;
     // Log letter count
@@ -786,12 +808,11 @@ void character_deob(std::string to_deob) {
     PlainText_Combined_String = "";
     fTokenDecodeSuccess = false;
 
-    // Keep looping through "tokens" while one of the
-    // delimiters present in str[].
-    while (ob_count != NULL)
+    // Loop through input data and parse
+    while (start_position < log_found)
     {
         // Print for debugging
-        LogPrintf("Character_DeOb - current word total: %u, processing word: %s \n", word_total, ob_count);
+        LogPrintf("Character_DeOb - current word total: %u, processing word: %s \n", word_total, wrd_arry[start_position]);
 
         // Word de-obfuscation
         //
@@ -799,7 +820,7 @@ void character_deob(std::string to_deob) {
         // Log letter count
         int letter_total_word = 0;
         // Set word as string for looping logic
-        std::string wrdcount = ob_count;
+        std::string wrdcount = wrd_arry[start_position];
 
         // Padd incoming value set
         std::string catch_buf = "0";
@@ -902,7 +923,7 @@ void character_deob(std::string to_deob) {
         PlainText_String = "";
 
         // Move to next word
-        ob_count = strtok(NULL, "C");
+        start_position ++;
 
         // Break loop if maximum de-obfuscatable word count is reached
         if(word_total >= 5000)
