@@ -19,7 +19,7 @@
 // For Logprintf
 #include "util/util.h"
 // For image read
-#include "fractalnft.h"
+#include "fractalnftbase.h"
 
 // For threadsafe messages
 #include "ui/ui_interface.h"
@@ -28,9 +28,6 @@
 #include <cstring>
 
 using namespace std;
-
-#define STB_IMAGE_WRITE_IMPLEMENTATION
-#include "stb/stb_image_write.h"
 
 std::string mydata = "CeyQ1FkJc4gwqLvRzCJv5CG8TW1Y2s1H"; // PubKey Example
 std::string thatdata = ""; // Set and used for decode
@@ -286,10 +283,8 @@ void printCODED(int char_TOTAL, int w, int h, int channels, std::string passed_a
     // Inform user of image generation
     uiInterface.ThreadSafeMessageBox("Your BVAC image has been generated!", "", CClientUIInterface::MSG_INFORMATION);
     // Print image
-    stbi_write_jpg(passed_alias.c_str(), w, h, channels, data, 100);
+    write_image(passed_alias.c_str(), w, h, channels, data);
 }
-
-#undef STB_IMAGE_WRITE_IMPLEMENTATION// TODO: verify this, good practice would be unload as needed...
 
 void deCode(std::string image_to_deCode) {
     BVAC_run = false;
@@ -317,7 +312,7 @@ void deCode(std::string image_to_deCode) {
     else if ((width * height) > 256 || width != height)
     {
         // Print for debugging
-        LogPrintf("NFTparse - ERROR - image is not 16x16 pixels!\n");
+        LogPrintf("NFTBASEparse - ERROR - image is not 16x16 pixels!\n");
         // Reset RGB(A) index value for next attempt
         n = 0;
         return;

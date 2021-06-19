@@ -117,17 +117,17 @@ std::string Obfuscation_String[62] = { "41141441", "41421441", "41141442", "4142
 // Initialize a space used for cleaneliness
 std::string blank_space[1] = { " " };
 
-// Logging of each word character count (hard limit of 5000 words per obfuscation)
-std::string Word_Letter_Count[5000] = {};
+// Logging of each word character count (hard limit of 90000 words per obfuscation)
+std::string Word_Letter_Count[90000] = {};
 
-// Logging of each whole word movement (hard limit of 5000 words per obfuscation)
-std::string Word_Letter_Movements[5000] = {};
+// Logging of each whole word movement (hard limit of 90000 words per obfuscation)
+std::string Word_Letter_Movements[90000] = {};
 
-// Logging of each word character movement (hard limit of 5000 characters per obfuscation)
-std::string Word_Character_Movements[5000] = {};
+// Logging of each word character movement (hard limit of 90000 characters per obfuscation)
+std::string Word_Character_Movements[90000] = {};
 
-// Key teeth, used for layer 2 (hard limit of 5000 characters available for teeth placement)
-std::string Ob_Key_Teeth[5000] = {};
+// Key teeth, used for layer 2 (hard limit of 90000 characters available for teeth placement)
+std::string Ob_Key_Teeth[90000] = {};
 
 // Preliminary obfuscation proceedure
 void character_obfuscation(std::string contract_input, std::string contract_alias, int contract_type, bool layer_2)// TODO: Refactor contract_alias to be able to write later as we want more than just character obbing
@@ -230,7 +230,7 @@ void character_obfuscation(std::string contract_input, std::string contract_alia
         wrdcount = strtok(NULL, " ");
 
         // Break loop if maximum obfuscatable word count is reached
-        if(word_total >= 5000)
+        if(word_total >= 90001)
         {
             break;
         }
@@ -245,7 +245,9 @@ void character_obfuscation(std::string contract_input, std::string contract_alia
     LogPrintf("CharacterObfuscation - cleartext data: %s \n", Obfuscated_Combined_String);
 
     // Obfuscate whole output data
-    obfuscation_shift(Obfuscated_Combined_String.length(), Obfuscated_Combined_String, false);
+    if(contract_type != 3) {
+        obfuscation_shift(Obfuscated_Combined_String.length(), Obfuscated_Combined_String, false);
+    }
     // Print for debugging
     LogPrintf("CharacterObfuscation - encrypted data: %s \n", Obfuscated_Combined_String);
 
@@ -775,7 +777,7 @@ void character_deob(std::string to_deob) {
     char *ob_count = strtok(Input_String, "C");// TODO: Explore cleaning with blank_space[1]
 
     // Initialize word array
-    std::string wrd_arry[5000];
+    std::string wrd_arry[90000];
     // Set found count
     int log_found = 0;
     // Set starting loop position
@@ -786,7 +788,7 @@ void character_deob(std::string to_deob) {
         // Set array data
         wrd_arry[log_found] = ob_count;
         // Break loop if maximum de-obfuscatable word count is reached
-        if(log_found >= 5000)
+        if(log_found >= 90001)
         {
             break;
         }
@@ -926,7 +928,7 @@ void character_deob(std::string to_deob) {
         start_position ++;
 
         // Break loop if maximum de-obfuscatable word count is reached
-        if(word_total >= 5000)
+        if(word_total >= 90001)
         {
             break;
         }

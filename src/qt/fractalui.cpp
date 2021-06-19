@@ -16,6 +16,7 @@
 
 #include <QAbstractItemDelegate>
 #include <QPainter>
+#include <QFileDialog>
 
 #define DECORATION_SIZE 48
 #define NUM_ITEMS 10
@@ -36,7 +37,9 @@ void FractalUI::on_cCON_clicked()
 {
     if (ui->contractTypeCombo->currentText() == "NFT")
     {
-        create_smartCONTRACT("image.jpg", "nftGENESIS001", 3);
+        // Have user select file to decode
+        QString NFT_name = QFileDialog::getOpenFileName(nullptr, "NFT Creation: Select an Image" , ".", "Images (*.png)" );
+        create_smartCONTRACT(NFT_name.toStdString(), "nftGENESIS001", 3);
     } else {
         create_smartCONTRACT("this is only a test", "tokenGENESIS001", 0);
         // Inform user

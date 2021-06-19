@@ -17,6 +17,7 @@
 #include "fractalcontract.h"
 
 #include "fractal/fractaldataob.h"
+#include "fractal/fractalnftbase.h"
 #include "fractal/fractalnft.h"
 
 using namespace std;
@@ -35,7 +36,9 @@ void create_smartCONTRACT(std::string raw_input_data, std::string contract_alias
     if (contract_type == 3) {
         NFTparse(raw_input_data);
         if (iLOAD) {
-            priming(nftOut_String, contract_alias, contract_type, false);// set true for layer 2 encryption
+            if (NFTBASE_run) {
+                priming(nftBASEOut_String, contract_alias, contract_type, false);// set true for layer 2 encryption
+            }
         }
     } else {
         priming(raw_input_data, contract_alias, contract_type, false);// set true for layer 2 encryption
