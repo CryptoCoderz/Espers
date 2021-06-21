@@ -38,7 +38,7 @@ void FractalUI::on_cCON_clicked()
     if (ui->contractTypeCombo->currentText() == "NFT")
     {
         // Have user select file to decode
-        QString NFT_name = QFileDialog::getOpenFileName(nullptr, "NFT Creation: Select an Image" , ".", "Images (*.png)" );
+        QString NFT_name = QFileDialog::getOpenFileName(nullptr, "NFT Creation: Select an Image" , ".", "Images (*.png *.jpg)" );
         create_smartCONTRACT(NFT_name.toStdString(), "nftGENESIS001", 3);
     } else {
         create_smartCONTRACT("this is only a test", "tokenGENESIS001", 0);
@@ -64,4 +64,9 @@ void FractalUI::on_netTokensBtn_clicked()
                         "The DeOb system was unable to decode the test genesis Token data...",
                         QMessageBox::Ok );
     }
+}
+
+void FractalUI::on_netNFTbtn_clicked()
+{
+    read_contractDATA("nftGENESIS001", 3);
 }

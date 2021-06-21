@@ -12,7 +12,7 @@ extern std::string nftBASEOut_String;
 extern bool iLOAD;
 extern bool NFTBASE_run;
 extern bool load_image(std::vector<unsigned char>& image, const std::string& filename, int& x, int& y);
-extern void write_image(std::string passed_alias, int w, int h, int channels, unsigned char data[]);
+extern void write_image(std::string passed_alias, int w, int h, int channels, unsigned char data[], int contract_type, int PNGdata);
 
 void NFTBASEparse(std::string filename);
 

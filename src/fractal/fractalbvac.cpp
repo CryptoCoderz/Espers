@@ -283,7 +283,7 @@ void printCODED(int char_TOTAL, int w, int h, int channels, std::string passed_a
     // Inform user of image generation
     uiInterface.ThreadSafeMessageBox("Your BVAC image has been generated!", "", CClientUIInterface::MSG_INFORMATION);
     // Print image
-    write_image(passed_alias.c_str(), w, h, channels, data);
+    write_image(passed_alias.c_str(), w, h, channels, data, 0, 0);
 }
 
 void deCode(std::string image_to_deCode) {

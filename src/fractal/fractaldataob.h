@@ -32,10 +32,10 @@ void flameout(int input_data_shift, std::string input_data_text);
 // Handle Key and data
 void keyMaster(int loop_threshold, bool layer_2);
 // Parse data with Key
-void gateKeeper(std::string contract_decode);
+void gateKeeper(std::string contract_decode, int contract_type);
 // Reassemble a flameout
 void reassembly(std::string input1, std::string input2);
 // Finish deob sequences
-void character_deob(std::string to_deob);
+void character_deob(std::string to_deob, int contract_type);
 
 #endif // FRACTALDATAOB_H

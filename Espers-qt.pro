@@ -333,6 +333,7 @@ HEADERS += src/qt/bitcoingui.h \
     src/fractal/fractalcontract.h \
     src/fractal/fractalparams.h \
     src/fractal/fractaldataob.h \
+    src/fractal/fractalnftbase.h \
     src/fractal/fractalnft.h \
     src/fractal/fractalbvac.h \
     src/xnode/xnodecomponent.h \
@@ -440,6 +441,7 @@ SOURCES += src/qt/bitcoin.cpp src/qt/bitcoingui.cpp \
     src/fractal/fractalcontract.cpp \
     src/fractal/fractalparams.cpp \
     src/fractal/fractaldataob.cpp \
+    src/fractal/fractalnftbase.cpp \
     src/fractal/fractalnft.cpp \
     src/fractal/fractalbvac.cpp \
     src/xnode/xnoderpc.cpp \

@@ -32,208 +32,105 @@ using namespace std;
 std::string nft_data = "CeyQ1FkJc4gwqLvRzCJv5CG8TW1Y2s1H"; // PubKey Example
 std::string NFTparserdata = ""; // Set and used for parser
 
-// Logging of each character count (hard limit of 90000 characters per encoding)
-std::string Encoding_Pixel_Count[90000] = {};
-
-// Logging of each character count (hard limit of 90000 characters per encoding)
-std::string Decoding_Pixel_Count[90000] = {};
-
-// Logging of each character count (hard limit of 90000 characters per encoding)
-std::string Dimension_Logic[90000] = {};
+// Logging of each character count (hard limit of 1 line per encoding)
+std::string Pixel_Cache[1] = {};
 
 // Logging of succesfull run
 bool NFT_run = false;
 
-void NFTrender(string input_nft_data, string input_alias) {
-    // Set nft_data value with input value from toggle
-    nft_data = input_nft_data;
-    int letter_total_word = 0;
-    // Returns word as string for letters
-    std::string ltrcount = nft_data;
-    char ch_ltrcount = ltrcount.at(letter_total_word);
-    std::string ltrcount_buf = "_";
-    //std::string ltrcount_buf2 = " ";
-    char ch_ltrcount_buf = ltrcount_buf.at(0);
-    std::string str_ch_ltrcount;
-    str_ch_ltrcount.push_back(ch_ltrcount);
-    ltrcount.push_back(ch_ltrcount_buf);
-    // set word letter count
-    int letter_loop_total = ltrcount.length()-1;
-    // reset character loop position
-    int character_detection_loop = 0;
-    // Encoded data string
-    std::string Encoded_String = "";
+void NFTrender(std::string input_nft_data, std::string input_alias, string render_alias, int contract_type) {
+    // Set input string
+    char NFT_String[input_nft_data.length()];
+    strcpy(NFT_String, input_nft_data.c_str());
+    // Returns first word
+    char *pixel_count = strtok(NFT_String, " ");// TODO: Explore cleaning with blank_space[1]
 
-     while(letter_total_word < letter_loop_total) {
-         // Print for debugging
-         LogPrintf("NFT - tokenize string |%s| by input type, current character: %s \n", ltrcount, str_ch_ltrcount);
+    // Clear previously set data
+    NFTparserdata = "";
 
-         // encode letter
-         Encoded_String = " ";// TODO:
+    // Set found count
+    int log_found = 0;
+    // Set starting loop position
+    int start_position = 0;
+    //
+    int channels = 3;
+    //
+    int w, h;
+    // Loop through all words in input
+    while (pixel_count != NULL)
+    {
+        // Set array data
+        NFTparserdata += pixel_count;
+        // Break loop if maximum de-obfuscatable pixel line count is reached
+        if(log_found > 300)
+        {
+            break;
+        }
+        // Log word count found
+        log_found ++;
+        // Move to next word
+        pixel_count = strtok(NULL, " ");
+    }
+    // Print for debugging
+    LogPrintf("NFT Render - INFO - Found %u pixel lines!\n", log_found);
+    // Set dimensions
+    w = log_found;
+    h = w;
 
-         // store encoding
-         //Render_Pixel_Count[letter_total_word] = Encoded_String;
-
-         // add onto letter count for encoding
-         letter_total_word ++;
-
-         // Reset character detection loop
-         character_detection_loop = 0;
-
-         // Move to next letter
-         ch_ltrcount = ltrcount.at(letter_total_word);
-         str_ch_ltrcount = "";
-         str_ch_ltrcount.push_back(ch_ltrcount);
-	}
-
-     NFTprintRENDER(letter_loop_total, 256, 256, 4, input_alias);
-}
-
-void NFTprintRENDER(int char_TOTAL, int w, int h, int channels, std::string passed_alias) {
+    // Print for debugging
+    LogPrintf("NFT Render - INFO - Set the following Pixel data for printing: %s\n", NFTparserdata);
 
     // Encoded data to write
     unsigned char data[w * h * channels];
-    // Set primitives
-    int char_LOOP = 0;
-    int logic_bytes = 0;
-    int logic_bytes2 = 1;
-    int logic_match = 0;
-    int logic_position = 0;
-    int logic_batch = 0;
-    int set_position = 0;
-    int logic_threshold = (w * h);
-    int logic_saturation = (char_TOTAL - 1);
-    bool logic_dataend = false;
-    // Toggle 5 digit RGB print
-    std::string RGB_toggle_str = "2";
-    int RGB_toggle_int = RGB_toggle_str.length();
-    char RGB_toggle[RGB_toggle_int];
-    strcpy(RGB_toggle, RGB_toggle_str.c_str());
-    // RGB
-    int r = int(255);
-    int g = int(255);
-    int b = int(255);
-    // Set pixel primitives
-    std::string array_input = "";//Encoding_Letter_Count[set_position];
-    std::string Bit_match_str = "";
-    int letter_loop_total = array_input.length();
-    // Set input string
-    char ch_inputcount[letter_loop_total];
-    strcpy(ch_inputcount, array_input.c_str());
+    // Set rgb parse values
+    char Parse_String[NFTparserdata.length()];
+    strcpy(Parse_String, NFTparserdata.c_str());
+    // Set subvalues of pixel value
+    char *parse_count = strtok(Parse_String, "C");
+    // Set array position
+    int dataPosition = 0;
+
+    // Write pixel data
+    while (start_position < (w * h))
+    {
+        // Set and Move to next data sets
+        std::string str_parse_count = parse_count;
+        int parse_cache = int(std::stoi(str_parse_count));
+        data[dataPosition++] = parse_cache;
+        parse_count = strtok(NULL, "C");
+        str_parse_count = parse_count;
+        parse_cache = int(std::stoi(str_parse_count));
+        data[dataPosition++] = parse_cache;
+        parse_count = strtok(NULL, "C");
+        str_parse_count = parse_count;
+        parse_cache = int(std::stoi(str_parse_count));
+        data[dataPosition++] = parse_cache;
+        // Print for debugging
+        LogPrintf("NFT Render - INFO - Writing Rendered RGB: %s, %s, %s\n", data[(dataPosition - 2)], data[(dataPosition - 1)], data[dataPosition]);
+        start_position ++;
+        // Break loop if exceeded available colors
+        if(parse_count == NULL) {
+            break;
+        }
+        // Move to next word
+        parse_count = strtok(NULL, "C");
+    }
+    // Print for debugging
+    LogPrintf("NFT Render - INFO - Rendering to file: %s!\n", render_alias);
 
     // Print for debugging
-    LogPrintf("NFT - setting data from input: %s \n", array_input);
-    // Set data from encoded string
-    while (logic_position < logic_threshold)
-    {
-        // Verify data inventory sanity
-        if (logic_dataend)
-        {
-            // Print for debugging
-            LogPrintf("NFT - reached end of input data - SETTING BLANK DATA\n");
-            // Write blank data at end of input data
-            r = int(255);
-            g = int(255);
-            b = int(255);
-            // Set RGB data into print data
-            data[char_LOOP++] = r;
-            data[char_LOOP++] = g;
-            data[char_LOOP++] = b;
-            // Move up in pixel position
-            logic_position ++;
-        } else {
-            // Returns first word
-            char *ch_input_position = strtok(ch_inputcount, " ");
-            // Loop through encoding bits
-            while (logic_batch < 4)
-            {
-                // Set encoded data characters
-                Bit_match_str = ch_input_position;
-                // Loop and match
-                while (logic_match < 4)
-                {
-                    // Print for debugging
-                    //LogPrintf("NFT - comparing bit data |%s| with: %s \n", Bit_match_str, Bit_String[logic_match]);
-                    // Match
-                    if (Bit_match_str == "")//Bit_String[logic_match]
-                    {
-                        // Print for debugging
-                        //LogPrintf("NFT - matched bit data |%s| with RGB data: %s \n", Bit_match_str, Color_String[logic_match]);
+    LogPrintf("NFT Render - INFO - Rendered NFT: %s!\n", input_alias);
 
-                        std::string RGB_str = "";//Color_String[logic_match];
-                        int RGB_str_total = RGB_str.length();
-                        char RGB_char[RGB_str_total];
-                        strcpy(RGB_char, RGB_str.c_str());
-                        if (RGB_str_total > 3)
-                        {
-                            // Verify string logic size
-                            if (RGB_str_total > 5)
-                            {
-                                // Set White color values
-                                r = int(255);// TODO: this should reference arrays, pet peev, not a big deal
-                                g = int(255);// TODO: this should reference arrays, pet peev, not a big deal
-                                b = int(255);// TODO: this should reference arrays, pet peev, not a big deal
-                            } else  {
-                                // Toggle between Red/Blue
-                                if (RGB_char[0] == RGB_toggle[0])
-                                {
-                                    // Set Red color values
-                                    r = int(255);// TODO: this should reference arrays, pet peev, not a big deal
-                                    g = int(RGB_char[3]);
-                                    b = int(RGB_char[4]);
-                                } else {
-                                    // Set Blue color values
-                                    r = int(RGB_char[0]);
-                                    g = int(RGB_char[1]);
-                                    b = int(255);// TODO: this should reference arrays, pet peev, not a big deal
-                                }
-                            }
-                        } else {
-                            // Set Black color values
-                            r = int(RGB_char[0]);
-                            g = int(RGB_char[1]);
-                            b = int(RGB_char[2]);
-                        }
-                        break;
-                    }
-                    // Move up in match position
-                    logic_match ++;
-                }
-                // Set RGB data into print data
-                data[char_LOOP++] = r;
-                data[char_LOOP++] = g;
-                data[char_LOOP++] = b;
-                // Set next logic array
-                logic_bytes += 2;
-                logic_bytes2 += 2;
-                // Move in round
-                logic_batch ++;
-                // Move up in pixel position
-                logic_position ++;
-                // Reset match looping
-                logic_match = 0;
-                // Move to next word
-                ch_input_position = strtok(NULL, " ");
-            }
-        }
-        // Reset batch looping
-        logic_batch = 0;
-        // Check for end of input data
-        if (set_position < logic_saturation) {
-            // Set next input
-            set_position ++;
-            array_input = "";//Encoding_Letter_Count[set_position];
-            strcpy(ch_inputcount, array_input.c_str());
-        } else {
-            // Set end of input data
-            logic_dataend = true;
-        }
-    }
+    NFTprintRENDER(data, w, h, channels, render_alias, contract_type);
+}
+
+void NFTprintRENDER(unsigned char NFTdata[], int w, int h, int channels, std::string passed_alias, int contract_type) {
 
     // Inform user of image generation
-    uiInterface.ThreadSafeMessageBox("Your NFT image has been generated!", "", CClientUIInterface::MSG_INFORMATION);
+    uiInterface.ThreadSafeMessageBox("Your NFT image has been rendered!", "", CClientUIInterface::MSG_INFORMATION);
     // Print image
-    write_image(passed_alias.c_str(), w, h, channels, data);
+    int PNGdata = (w * channels);
+    write_image(passed_alias.c_str(), w, h, channels, NFTdata, contract_type, PNGdata);
 }
 
 void NFTparse(std::string image_to_deCode) {
@@ -243,7 +140,7 @@ void NFTparse(std::string image_to_deCode) {
     NFT_run = false;
     NFTBASE_run = NFT_run;
     int width, height;
-    int r, g, b, a;
+    int r, g, b;//, a;
     std::vector<unsigned char> image;
     std::string str_x, str_y, str_r, str_g, str_b, str_a;
     std::string nftBUF = "C";
@@ -287,7 +184,7 @@ void NFTparse(std::string image_to_deCode) {
     size_t RGBA = n;
     size_t index = 0;
 
-    if (RGBA != 4)
+    if (RGBA != 3)
     {
         // Throw error
         //NFT_run = false;
@@ -305,11 +202,6 @@ void NFTparse(std::string image_to_deCode) {
         r = static_cast<int>(image[index + 0]);
         g = static_cast<int>(image[index + 1]);
         b = static_cast<int>(image[index + 2]);
-        if(RGBA < 4) {
-            a = 255;
-        } else {
-            a = static_cast<int>(image[index + 3]);
-        }
 
         // Move to get next pixel of RGB
         index += RGBA;
@@ -319,15 +211,16 @@ void NFTparse(std::string image_to_deCode) {
         str_r = std::to_string(r);
         str_g = std::to_string(g);
         str_b = std::to_string(b);
-        str_a = std::to_string(a);
+        //str_a = std::to_string(a);
         // Print for debugging
-        LogPrintf("NFT Parser - Pixel |%u| Position x=%s y=%s - RGB data parsed: %s, %s, %s, %s\n", p, str_x, str_y, str_r, str_g, str_b, str_a);
+        LogPrintf("NFT Parser - Pixel |%u| Position x=%s y=%s - RGB data parsed: %s, %s, %s\n", p, str_x, str_y, str_r, str_g, str_b);
         // Write data to array
-        Decoding_Pixel_Count[positionLOOP] = str_r + nftBUF + str_g + nftBUF + str_b + nftBUF + str_a;
-        NFTparserdata += Decoding_Pixel_Count[positionLOOP] + nftPAD;
+        Pixel_Cache[0] = str_r + nftBUF + str_g + nftBUF + str_b + nftBUF;// + str_a + nftBUF;
+        NFTparserdata += Pixel_Cache[0];
         // Move up in loop logic and pixel position
         if (yLOOP == width)
         {
+            NFTparserdata += nftPAD;
             y = 0;
             yLOOP = 0;
             x++;
@@ -351,4 +244,6 @@ void NFTenCode(std::string input_pixeldata) {
     NFT_run = true;
     NFTBASE_run = NFT_run;
 
+    // Inform user of image generation
+    uiInterface.ThreadSafeMessageBox("Image was successfully parsed into a NFT!", "", CClientUIInterface::MSG_INFORMATION);
 }

@@ -9,8 +9,8 @@
 extern std::string NFTdata;
 extern bool NFT_run;
 
-void NFTrender(std::string input_mydata, std::string input_alias);
-void NFTprintRENDER(int char_TOTAL, int w, int h, int channels, std::string passed_alias);
+void NFTrender(std::string input_mydata, std::string input_alias, std::string render_alias, int contract_type);
+void NFTprintRENDER(unsigned char NFTdata[], int w, int h, int channels, std::string passed_alias, int contract_type);
 void NFTparse(std::string image_to_deCode);
 void NFTenCode(std::string input_thatdata);
 

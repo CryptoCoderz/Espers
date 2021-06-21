@@ -27,6 +27,7 @@ std::string set_raw_input_data = "";
 std::string set_contract_data = "";
 std::string set_fractal_SCRIPT = "";
 bool fextTokenDecodeSuccess = false;
+std::string ext_Contract_Path = "";
 
 void create_smartCONTRACT(std::string raw_input_data, std::string contract_alias, int contract_type) {
     //
@@ -54,8 +55,12 @@ void edit_smartCONTRACT(std::string contract_data, std::string contract_alias) {
 void open_smartCONTRACT(std::string contract_alias, int contract_type) {
     //
     if(contract_type == 0) {
-        gateKeeper(contract_alias);
+        gateKeeper(contract_alias, contract_type);
         fextTokenDecodeSuccess = fTokenDecodeSuccess;
+    } else if(contract_type == 3) {
+        //
+        gateKeeper(contract_alias, contract_type);
+        NFTrender(PlainText_Combined_String, contract_alias, ext_Contract_Path, contract_type);
     }
 }
 

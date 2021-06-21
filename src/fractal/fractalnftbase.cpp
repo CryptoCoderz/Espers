@@ -48,9 +48,15 @@ bool load_image(std::vector<unsigned char>& image, const std::string& filename, 
 #define STB_IMAGE_WRITE_IMPLEMENTATION
 #include "stb/stb_image_write.h"
 
-void write_image(std::string passed_alias, int w, int h, int channels, unsigned char data[])
+void write_image(std::string passed_alias, int w, int h, int channels, unsigned char data[], int contract_type, int PNGdata)
 {
-    stbi_write_jpg(passed_alias.c_str(), w, h, channels, data, 100);
+    if(contract_type < 10) {// TODO: Temporary, will handle JPG and PNG fluidly in the future
+        stbi_write_jpg(passed_alias.c_str(), w, h, channels, data, 100);
+        stbi_image_free(&data);// Release memory
+    } else {
+        stbi_write_png(passed_alias.c_str(), w, h, channels, data, PNGdata);
+        stbi_image_free(&data);// Release memory
+    }
 }
 
 #undef STB_IMAGE_WRITE_IMPLEMENTATION// TODO: verify this, good practice would be unload as needed...

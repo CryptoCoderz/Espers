@@ -35,6 +35,7 @@ private slots:
 
         void on_cCON_clicked();
         void on_netTokensBtn_clicked();
+        void on_netNFTbtn_clicked();
 };
 
 #endif // FRACTALUI_H

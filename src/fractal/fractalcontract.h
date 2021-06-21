@@ -11,6 +11,7 @@ extern std::string set_raw_input_data;
 extern std::string set_contract_data;
 extern std::string set_fractal_SCRIPT;
 extern bool fextTokenDecodeSuccess;
+extern std::string ext_Contract_Path;
 
 void create_smartCONTRACT(std::string raw_input_data, std::string contract_alias, int contract_type);
 void edit_smartCONTRACT(std::string contract_data, std::string contract_alias);

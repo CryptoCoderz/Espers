@@ -130,7 +130,9 @@ void read_contractDATA(std::string contract_alias, int contract_type) {
     boost::filesystem::path pathConfigFile(GetDataDir());
     std::string cleaned_Path = pathConfigFile.string().c_str();
     std::replace( cleaned_Path.begin(), cleaned_Path.end(), '\\', '/');
-    cleaned_Path += "/" + contract_alias + ".ftl";
+    cleaned_Path += "/" + contract_alias;
+    ext_Contract_Path = cleaned_Path + ".jpg";
+    cleaned_Path += ".ftl";
     open_smartCONTRACT(cleaned_Path, contract_type);
 }
 
