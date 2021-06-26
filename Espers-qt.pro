@@ -306,6 +306,7 @@ HEADERS += src/qt/bitcoingui.h \
     src/qt/fractalui.h \
     src/qt/tokenui.h \
     src/qt/nftui.h \
+    src/qt/contractui.h \
     src/qt/macnotificationhandler.h \
     src/crypto/hmq/hmq1725.h \
     src/crypto/bmw/bmw512.h \
@@ -437,6 +438,7 @@ SOURCES += src/qt/bitcoin.cpp src/qt/bitcoingui.cpp \
     src/qt/fractalui.cpp \
     src/qt/tokenui.cpp \
     src/qt/nftui.cpp \
+    src/qt/contractui.cpp \
     src/fractal/fractalengine.cpp \
     src/fractal/fractalcontract.cpp \
     src/fractal/fractalparams.cpp \
@@ -478,7 +480,8 @@ FORMS += \
     src/qt/forms/optionsdialog.ui \
     src/qt/forms/fractalui.ui \
     src/qt/forms/tokenui.ui \
-    src/qt/forms/nftui.ui
+    src/qt/forms/nftui.ui \
+    src/qt/forms/contractui.ui
 
 contains(USE_QRCODE, 1) {
 HEADERS += src/qt/qrcodedialog.h

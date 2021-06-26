@@ -6,22 +6,9 @@
 
 #include "clientmodel.h"
 #include "walletmodel.h"
-#include "core/main.h"
-#include "core/wallet.h"
-#include "primitives/base58.h"
-#include "transactionrecord.h"
-#include "optionsmodel.h"
-#include "guiutil.h"
-#include "guiconstants.h"
-#include "util/init.h"
-#include "rpc/rpcserver.h"
 
-using namespace json_spirit;
-
-#include <sstream>
 #include <string>
 
-#include <QAbstractItemDelegate>
 #include <QPainter>
 
 NftUI::NftUI(QWidget *parent) :
@@ -44,4 +31,24 @@ void NftUI::setModel(WalletModel *model)
 NftUI::~NftUI()
 {
     delete ui;
+}
+
+void NftUI::on_btnPATH_clicked()
+{
+
+}
+
+void NftUI::on_genprevBTN_clicked()
+{
+
+}
+
+void NftUI::on_cancelBTN_clicked()
+{
+
+}
+
+void NftUI::on_createBTN_clicked()
+{
+
 }

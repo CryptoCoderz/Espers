@@ -117,9 +117,6 @@ std::string Obfuscation_String[62] = { "41141441", "41421441", "41141442", "4142
 // Initialize a space used for cleaneliness
 std::string blank_space[1] = { " " };
 
-// Logging of each word character count (hard limit of 5000 words per obfuscation)
-std::string Word_Letter_Count[5000] = {};
-
 // Logging of each whole word movement (hard limit of 5000 words per obfuscation)
 std::string Word_Letter_Movements[5000] = {};
 
@@ -139,8 +136,6 @@ void character_obfuscation(std::string contract_input, std::string contract_alia
     Obfuscated_String = "";
     // Set input string
     char Input_String[contract_input.length()+contract_alias.length()];
-    //std::string combined_string = contract_input + contract_alias;
-    //memset(Input_String, 0, (contract_input.length()+contract_alias.length())*sizeof(int));
     strcpy(Input_String, contract_input.c_str());
     // Returns first word
     char *wrdcount = strtok(Input_String, " ");// TODO: Explore cleaning with blank_space[0]
@@ -157,7 +152,7 @@ void character_obfuscation(std::string contract_input, std::string contract_alia
     while (wrdcount != NULL) 
     { 
         // Print for debugging
-        LogPrintf("CharacterObfuscation - current word total: %u, processing word: %s \n", word_total, wrdcount);
+        //LogPrintf("CharacterObfuscation - current word total: %u, processing word: %s \n", word_total, wrdcount);
 
         // Word obfuscation
         //
@@ -183,7 +178,7 @@ void character_obfuscation(std::string contract_input, std::string contract_alia
             //
 
             // Print for debugging
-            LogPrintf("CharacterObfuscation - tokenize word |%s| by letter, current letter: %s \n", wrdcount, str_ch_ltrcount);
+            //LogPrintf("CharacterObfuscation - tokenize word |%s| by letter, current letter: %s \n", wrdcount, str_ch_ltrcount);
 
             // loop until we match up string character with known characters
             while(character_detection_loop < 62)
@@ -235,14 +230,12 @@ void character_obfuscation(std::string contract_input, std::string contract_alia
             break;
         }
 
-        Word_Letter_Count[word_total] = letter_total_word;
-
         // Move up in word count
         word_total ++;
     }
 
     // Print for debugging
-    LogPrintf("CharacterObfuscation - cleartext data: %s \n", Obfuscated_Combined_String);
+    //LogPrintf("CharacterObfuscation - cleartext data: %s \n", Obfuscated_Combined_String);
 
     // Obfuscate whole output data
     if(contract_type != 3) {
@@ -658,6 +651,7 @@ void gateKeeper(std::string contract_decode, int contract_type) {
     std::string line;
     std::string key;
     std::string teeth;
+    Obfuscated_Combined_String = "";
     // Read data
     while(file.good()) {
         // Print for debugging
@@ -670,26 +664,10 @@ void gateKeeper(std::string contract_decode, int contract_type) {
             if (line[0] != '#') {
                 // Print for debugging
                 LogPrintf("gateKeeper - INFO - Read data success!\n");
-                // Set input string
-                char Input_String[line.length()];
-                strcpy(Input_String, line.c_str());
-                if(contract_type != 3) {
-                    // Set Teeth data
-                    char *ob_sets = strtok(Input_String, "A");
-                    teeth = ob_sets;
-                    // Set Key as focus
-                    ob_sets = strtok(NULL, "A");
-                    key = ob_sets;
-                } else {
-                    // Set Teeth data
-                    char *ob_sets = strtok(Input_String, "|");
-                    teeth = ob_sets;
-                    key = "BLANK";
-                }
+                // Combine input string
+                Obfuscated_Combined_String += line;
                 // Print for debugging
                 LogPrintf("gateKeeper - INFO - Set data success!\n");
-                //
-                break;
             } else {
                 // Print for debugging
                 LogPrintf("gateKeeper - WARNING - Comment detected! \n");
@@ -699,8 +677,24 @@ void gateKeeper(std::string contract_decode, int contract_type) {
             LogPrintf("gateKeeper - WARNING - Empty line detected! \n");
         }
     }
+    // Handle individual contract types
+    if(contract_type != 3) {
+        // Set Teeth data
+        std::string ob_sets = Obfuscated_Combined_String.substr(0, Obfuscated_Combined_String.find("A"));
+        teeth = ob_sets;
+        // Set Key as focus
+        ob_sets = strtok(NULL, "A");
+        Obfuscated_Combined_String.erase(0, Obfuscated_Combined_String.find("A") + std::string("A").length());
+        ob_sets = Obfuscated_Combined_String.substr(0, Obfuscated_Combined_String.find("A"));
+        key = ob_sets;
+    } else {
+        // Set Teeth data
+        std::string ob_sets = Obfuscated_Combined_String.substr(0, Obfuscated_Combined_String.find("|"));
+        teeth = ob_sets;
+        key = "BLANK";
+    }
     // Print for debugging
-    LogPrintf("gateKeeper - INFO - sending contract data to re-assembler! | teeth: %s | key: %s | \n", teeth, key);
+    //LogPrintf("gateKeeper - INFO - sending contract data to re-assembler! | teeth: %s | key: %s | \n", teeth, key);
     if(contract_type != 3) {
         // Run re-assembly function
         reassembly(teeth, key);
@@ -785,15 +779,10 @@ void reassembly(std::string input1, std::string input2) {
 }
 
 void character_deob(std::string to_deob, int contract_type) {
-    //
     // Print for debugging
     LogPrintf("deob - INFO - starting... \n");
     // Set input string
-    char Input_String[to_deob.length()];
-    strcpy(Input_String, to_deob.c_str());
-    // Returns first word
-    char *ob_count = strtok(Input_String, "C");// TODO: Explore cleaning with blank_space[1]
-
+    std::string ob_count = to_deob.substr(0, to_deob.find("C"));
     // Set found count
     int log_found = 0;
     // Set starting loop position
@@ -801,19 +790,20 @@ void character_deob(std::string to_deob, int contract_type) {
     // Print for debugging
     LogPrintf("deob - INFO - Set base values... \n");
     // Loop through all words in input
-    while (ob_count != NULL)
-    {
+    size_t position = 0;
+    while((position = to_deob.find("C")) != std::string::npos) {
         // Set array data
         Ob_Cache[log_found] = ob_count;
+        // Log word count found
+        log_found ++;
         // Break loop if maximum de-obfuscatable word count is reached
         if(log_found >= 5000)
         {
             break;
         }
-        // Log word count found
-        log_found ++;
-        // Move to next word
-        ob_count = strtok(NULL, "C");
+        to_deob.erase(0, to_deob.find("C") + std::string("C").length());
+        ob_count = to_deob.substr(0, to_deob.find("C"));
+
     }
 
     // Print for debugging
@@ -835,7 +825,7 @@ void character_deob(std::string to_deob, int contract_type) {
     while (start_position < log_found)
     {
         // Print for debugging
-        LogPrintf("Character_DeOb - current word total: %u, processing word: %s \n", word_total, Ob_Cache[start_position]);
+        //LogPrintf("Character_DeOb - current word total: %u, processing word: %s \n", word_total, Ob_Cache[start_position]);
 
         // Word de-obfuscation
         //
@@ -859,7 +849,7 @@ void character_deob(std::string to_deob, int contract_type) {
         std::string ltrcount = ob_bits;
 
         // Print for debugging
-        LogPrintf("Character_DeOb - First letter is: %s, in word: %s \n", ltrcount, wrdcount);
+        //LogPrintf("Character_DeOb - First letter is: %s, in word: %s \n", ltrcount, wrdcount);
 
         // set word letter count
         int letter_loop_total = 0;
@@ -875,7 +865,7 @@ void character_deob(std::string to_deob, int contract_type) {
         str_ch_ob_count.push_back(ch_ob_count);
 
         // Print for debugging
-        LogPrintf("Character_DeOb - Selected position ZERO, which is character: %s \n", str_ch_ob_count);
+        //LogPrintf("Character_DeOb - Selected position ZERO, which is character: %s \n", str_ch_ob_count);
 
         // Create clean loop threshold
         while(ltr_loop < (ltr_threshold - 1))
@@ -885,10 +875,10 @@ void character_deob(std::string to_deob, int contract_type) {
                 //
                 letter_loop_total ++;
                 // Print for debugging
-                LogPrintf("Character_DeOb - Found letter in loop: %u \n", ltr_loop);
+                //LogPrintf("Character_DeOb - Found letter in loop: %u \n", ltr_loop);
             } else {
                 // Print for debugging
-                LogPrintf("Character_DeOb - Letter catch was unable to match: %s, to expected value: %s \n", str_ch_ob_count, letter_Catch);
+                //LogPrintf("Character_DeOb - Letter catch was unable to match: %s, to expected value: %s \n", str_ch_ob_count, letter_Catch);
             }
             // Move up in round position
             ltr_loop++;
@@ -903,7 +893,7 @@ void character_deob(std::string to_deob, int contract_type) {
         character_detection_loop = 0;
 
         // Print for debugging
-        LogPrintf("Character_DeOb - loop start position: %u, loop end position: %u \n", letter_total_word, letter_loop_total);
+        //LogPrintf("Character_DeOb - loop start position: %u, loop end position: %u \n", letter_total_word, letter_loop_total);
 
         // De-Obfuscate letters
         while(letter_total_word < letter_loop_total)
@@ -912,7 +902,7 @@ void character_deob(std::string to_deob, int contract_type) {
             //
 
             // Print for debugging
-            LogPrintf("Character_DeOb - re-matching letter |%s| in word: %s \n", ltrcount, wrdcount);
+            //LogPrintf("Character_DeOb - re-matching letter |%s| in word: %s \n", ltrcount, wrdcount);
 
             // loop until we match up string character with known characters
             while(character_detection_loop < 62)
@@ -954,14 +944,13 @@ void character_deob(std::string to_deob, int contract_type) {
             break;
         }
 
-        Word_Letter_Count[word_total] = letter_total_word;
-
         // Move up in word count
         word_total ++;
     }
 
     // Print for debugging
-    LogPrintf("Character_DeOb - PlainText Output: %s \n", PlainText_Combined_String);
+    LogPrintf("Character_DeOb - Finished de-obfuscation \n");
+    //LogPrintf("Character_DeOb - PlainText Output: %s \n", PlainText_Combined_String);
 
     if(contract_type != 3) {
         // TESTING FUNCTION

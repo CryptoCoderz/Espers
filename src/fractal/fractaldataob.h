@@ -16,7 +16,6 @@ extern std::string Obfuscated_Combined_String;
 extern std::string PlainText_Combined_String;
 extern std::string SingleLayer_Key;
 extern std::string SecondLayer_Key;
-extern std::string Word_Letter_Count[];
 extern bool fTokenDecodeSuccess;
 
 // Preliminary obfuscation proceedure

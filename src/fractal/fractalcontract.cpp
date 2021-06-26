@@ -30,9 +30,6 @@ bool fextTokenDecodeSuccess = false;
 std::string ext_Contract_Path = "";
 
 void create_smartCONTRACT(std::string raw_input_data, std::string contract_alias, int contract_type) {
-    //
-    //contract_alias = selected_contract_alias;
-    //raw_input_data = set_raw_input_data;
 
     if (contract_type == 3) {
         NFTparse(raw_input_data);
