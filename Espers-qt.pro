@@ -323,7 +323,14 @@ HEADERS += src/qt/bitcoingui.h \
     src/crypto/common/sph_sha2.h \
     src/fractal/fractalengine.h \
     src/fractal/fractalcontract.h \
-    src/fractal/fractaltoken.h
+    src/fractal/fractalparams.h \
+    src/xnode/xnodecomponent.h \
+    src/xnode/xnodemngr.h \
+    src/xnode/xnodereward.h \
+    src/xnode/xnodesettings.h \
+    src/xnode/xnodestart.h \
+    src/xnode/xnodesync.h \
+    src/xnode/xnodecrypter.h
 
 SOURCES += src/qt/bitcoin.cpp src/qt/bitcoingui.cpp \
     src/qt/transactiontablemodel.cpp \
@@ -359,6 +366,7 @@ SOURCES += src/qt/bitcoin.cpp src/qt/bitcoingui.cpp \
     src/consensus/velocity.cpp \
     src/rpc/rpcvelocity.cpp \
     src/consensus/checkpoints.cpp \
+    src/consensus/fork.cpp \
     src/node/addrman.cpp \
     src/database/db.cpp \
     src/database/walletdb.cpp \
@@ -414,8 +422,14 @@ SOURCES += src/qt/bitcoin.cpp src/qt/bitcoingui.cpp \
     src/qt/fractalui.cpp \
     src/fractal/fractalengine.cpp \
     src/fractal/fractalcontract.cpp \
-    src/fractal/fractaltoken.cpp
-
+    src/xnode/xnoderpc.cpp \
+    src/xnode/xnodecomponent.cpp \
+    src/xnode/xnodemngr.cpp \
+    src/xnode/xnodereward.cpp \
+    src/xnode/xnodesettings.cpp \
+    src/xnode/xnodestart.cpp \
+    src/xnode/xnodesync.cpp \
+    src/xnode/xnodecrypter.cpp
 RESOURCES += \
     src/qt/bitcoin.qrc
 

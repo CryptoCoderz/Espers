@@ -318,6 +318,9 @@ public:
         return nValueOut;
     }
 
+    // Map TX inputs for scanning
+    void GetMapTxInputs(MapPrevTx &mapInputs) const;
+
     /** Amount of bitcoins coming in to this transaction
         Note that lightweight clients may not know anything besides the hash of previous transactions,
         so may not be able to calculate this.
@@ -327,7 +330,7 @@ public:
         @see CTransaction::FetchInputs
      */
     // TODO: Velocity reference
-    int64_t GetValueIn(const MapPrevTx& mapInputs) const;
+    int64_t GetValueMapIn(const MapPrevTx& mapInputs) const;
 
     bool ReadFromDisk(CDiskTxPos pos, FILE** pfileRet=NULL)
     {
@@ -405,7 +408,7 @@ public:
      @return	Returns true if all inputs are in txdb or mapTestPool
      */
     bool FetchInputs(CTxDB& txdb, const std::map<uint256, CTxIndex>& mapTestPool,
-                     bool fBlock, bool fMiner, MapPrevTx& inputsRet, bool& fInvalid);
+                     bool fBlock, bool fMiner, MapPrevTx& inputsRet, bool& fInvalid) const;
 
     /** Sanity check previous transactions, then, if all checks succeed,
         mark them as spent by this transaction.
