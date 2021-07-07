@@ -470,6 +470,12 @@ void VRX_Dry_Run(const CBlockIndex* pindexLast)
         }
     }
 
+    if(nBestHeight == 980950)
+    {
+        fDryRun = true;
+        return;
+    }
+
     // Test Fork
     if (nLiveForkToggle != 0) {
         // Do nothing
@@ -585,7 +591,7 @@ int64_t GetProofOfWorkReward(int64_t nHeight, int64_t nFees)
 
     LogPrint("creation", "GetProofOfWorkReward() : create=%s nSubsidy=%d\n", FormatMoney(nSubsidy), nSubsidy);
 
-    if (nHeight > 980950) {
+    if (nHeight >= 980950) {
         nSubsidy = (500 * COIN);
     }
 
@@ -619,7 +625,7 @@ int64_t GetProofOfStakeReward(int64_t nCoinAge, int64_t nFees)
 
     LogPrint("creation", "GetProofOfStakeReward(): create=%s nCoinAge=%d\n", FormatMoney(nSubsidy), nCoinAge);
 
-    if (pindexBest->nHeight > 980950) {
+    if (pindexBest->nHeight >= 980950) {
         nSubsidy = (500 * COIN);
     }
 
