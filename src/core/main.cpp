@@ -1519,8 +1519,8 @@ const CTxOut& CTransaction::GetOutputFor(const CTxIn& input, const MapPrevTx& in
 
     const CTransaction& txPrev = (mi->second).second;
     if (input.prevout.n >= txPrev.vout.size()) {
-        // Skip if input is 0 (coinbase tx!)
-        if(!input.prevout.IsNull()) {
+        // Skip if input is coinstake tx!
+        if(!IsCoinStake()) {
             throw std::runtime_error("CTransaction::GetOutputFor() : prevout.n out of range");
         }
     }
