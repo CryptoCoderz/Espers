@@ -470,7 +470,7 @@ void VRX_Dry_Run(const CBlockIndex* pindexLast)
         }
     }
 
-    if(nBestHeight == 980950)
+    if(nBestHeight == 980950 || nBestHeight == 980951)
     {
         fDryRun = true;
         return;

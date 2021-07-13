@@ -62,7 +62,7 @@ static const int64_t MIN_RELAY_TX_FEE = MIN_TX_FEE;
 /** Minimum TX count (for relaying) */
 static const int64_t MIN_TX_COUNT = 0;
 /** Minimum TX value (for relaying) */
-static const int64_t MIN_TX_VALUE = 0.01 * COIN;
+static const int64_t MIN_TX_VALUE = 1 * COIN;
 /** No amount larger than this (in satoshi) is valid */
 static const int64_t MAX_SINGLE_TX = 50000000000 * COIN; // 50 Billion (Same As Cap)
 /** Money Range Params */
@@ -78,6 +78,8 @@ inline int64_t TimeDrift() { return 10 * 60; } // Default time drift window
 inline int64_t FutureDriftV1(int64_t nTime) { return nTime + TimeDrift(); } // Initial future drift | Protocol-v2
 inline int64_t FutureDriftV2(int64_t nTime) { return nTime + (TimeDrift() / 2); } // Tightened future drift | Protocol-v3
 inline int64_t FutureDrift(int64_t nTime, int nHeight) { return IsProtocolV3(nHeight) ? FutureDriftV2(nTime) : FutureDriftV1(nTime); }
+/** Velocity Factor handling toggle */
+inline bool FACTOR_TOGGLE(int nHeight) { return TestNet() || nHeight > 980950; }
 
 extern CScript COINBASE_FLAGS;
 extern CCriticalSection cs_main;
@@ -317,9 +319,6 @@ public:
         }
         return nValueOut;
     }
-
-    // Map TX inputs for scanning
-    void GetMapTxInputs(MapPrevTx &mapInputs) const;
 
     /** Amount of bitcoins coming in to this transaction
         Note that lightweight clients may not know anything besides the hash of previous transactions,

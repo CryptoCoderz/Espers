@@ -703,23 +703,6 @@ int CMerkleTx::SetMerkleBranch(const CBlock* pblock)
     return pindexBest->nHeight - pindex->nHeight + 1;
 }
 
-void CTransaction::GetMapTxInputs(MapPrevTx& mapInputs) const
-{
-    // Load TX inputs
-    CTxDB txdb("r");
-    map<uint256, CTxIndex> mapUnused;
-    bool fInvalid = false;
-    // Ensure we can fetch inputs
-    if (!this->FetchInputs(txdb, mapUnused, false, false, mapInputs, fInvalid))
-    {
-        if (fInvalid)
-        {
-            LogPrintf("Invalid TX attempted to set in GetMapTXInputs\n");
-            return;
-        }
-    }
-}
-
 bool CTransaction::CheckTransaction() const
 {
     // Basic checks that don't depend on any context
@@ -1513,17 +1496,12 @@ bool CTransaction::FetchInputs(CTxDB& txdb, const map<uint256, CTxIndex>& mapTes
 const CTxOut& CTransaction::GetOutputFor(const CTxIn& input, const MapPrevTx& inputs) const
 {
     MapPrevTx::const_iterator mi = inputs.find(input.prevout.hash);
-    if (mi == inputs.end()) {
+    if (mi == inputs.end())
         throw std::runtime_error("CTransaction::GetOutputFor() : prevout.hash not found");
-    }
 
     const CTransaction& txPrev = (mi->second).second;
-    if (input.prevout.n >= txPrev.vout.size()) {
-        // Skip if input is coinstake tx!
-        if(!IsCoinStake()) {
-            throw std::runtime_error("CTransaction::GetOutputFor() : prevout.n out of range");
-        }
-    }
+    if (input.prevout.n >= txPrev.vout.size())
+        throw std::runtime_error("CTransaction::GetOutputFor() : prevout.n out of range");
 
     return txPrev.vout[input.prevout.n];
 }
@@ -2368,35 +2346,10 @@ bool CBlock::AcceptBlock()
     if (GetBlockTime() <= pindexPrev->GetPastTimeLimit() || FutureDrift(GetBlockTime(), nHeight) < pindexPrev->GetBlockTime())
         return error("AcceptBlock() : block's timestamp is too early");
 
-    // Set logged values
-    CAmount tx_inputs_values = 0;
-    CAmount tx_outputs_values = 0;
-    CAmount tx_threshold = (500 * COIN);
     // Check that all transactions are finalized
     BOOST_FOREACH(const CTransaction& tx, vtx) {
         if (!IsFinalTx(tx, nHeight, GetBlockTime())) {
             return DoS(10, error("AcceptBlock() : contains a non-final transaction"));
-        }
-        // Log inputs/output values
-        MapPrevTx mapInputs;
-        tx.GetMapTxInputs(mapInputs);
-        if(tx_inputs_values + tx.GetValueMapIn(mapInputs) >= 0) {
-            tx_inputs_values += tx.GetValueMapIn(mapInputs);
-        } else {
-            return DoS(10, error("AcceptBlock() : overflow detected tx_inputs_values + tx.GetValueMapIn(mapInputs)"));
-        }
-        if(tx_outputs_values + tx.GetValueOut() >= 0) {
-            tx_outputs_values += tx.GetValueOut();
-        } else {
-            return DoS(10, error("AcceptBlock() : overflow detected tx_outputs_values + tx.GetValueOut()"));
-        }
-    }
-
-    // Ensure input/output sanity of transactions in the block
-    if((tx_inputs_values + tx_threshold) < tx_outputs_values)
-    {
-        if(nHeight > 980950) {
-            return DoS(100, error("AcceptBlock() : block contains a tx input that is less that output"));
         }
     }
 
