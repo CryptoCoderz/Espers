@@ -84,7 +84,7 @@ bool Velocity(CBlockIndex* prevBlock, CBlock* block)
             if (!tx.FetchInputs(txdb, mapUnused, true, false, mapInputs, fInvalid))
             {
                 if(nHeight > 982300) {
-                    LogPrintf("DENIED: Potentially Invalid TX found during FetchInputs\n");
+                    LogPrintf("DENIED: Invalid TX found during FetchInputs\n");
                     return false;
                 } else {
                     LogPrintf("WARNING: Potentially Invalid TX found during FetchInputs\n");
