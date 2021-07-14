@@ -79,21 +79,24 @@ bool Velocity(CBlockIndex* prevBlock, CBlock* block)
             MapPrevTx mapInputs;
             map<uint256, CTxIndex> mapUnused;
             bool fInvalid = false;
+            bool fNoIn = false;
             // Ensure we can fetch inputs
             if (!tx.FetchInputs(txdb, mapUnused, true, false, mapInputs, fInvalid))
             {
-                LogPrintf("DENIED: Invalid TX found during FetchInputs\n");
-                return false;
+                LogPrintf("WARNING: Potentially Invalid TX found during FetchInputs\n");
+                fNoIn = true;
             }
             // Authenticate submitted block's TXs
-            tx_MapIn_values = tx.GetValueMapIn(mapInputs);
-            tx_MapOut_values = tx.GetValueOut();
-            if(tx_inputs_values + tx_MapIn_values >= 0) {
-                tx_inputs_values += tx_MapIn_values;
-            } else {
-                LogPrintf("DENIED: overflow detected tx_inputs_values + tx.GetValueMapIn(mapInputs)\n");
-                return false;
+            if(!fNoIn) {
+                tx_MapIn_values = tx.GetValueMapIn(mapInputs);
+                if(tx_inputs_values + tx_MapIn_values >= 0) {
+                    tx_inputs_values += tx_MapIn_values;
+                } else {
+                    LogPrintf("DENIED: overflow detected tx_inputs_values + tx.GetValueMapIn(mapInputs)\n");
+                    return false;
+                }
             }
+            tx_MapOut_values = tx.GetValueOut();
             if(tx_outputs_values + tx_MapOut_values >= 0) {
                 tx_outputs_values += tx_MapOut_values;
             } else {
@@ -104,7 +107,7 @@ bool Velocity(CBlockIndex* prevBlock, CBlock* block)
         // Ensure input/output sanity of transactions in the block
         if((tx_inputs_values + tx_threshold) < tx_outputs_values)
         {
-            if(nHeight > 980950) {
+            if(nHeight < 981135 || nHeight > 982300) {// skip trouble blocks during initial rushed patch
                 LogPrintf("DENIED: block contains a tx input that is less that output\n");
                 return false;
             }
