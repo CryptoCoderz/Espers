@@ -9,6 +9,8 @@
 #include "rpc/rpcserver.h"
 
 bool VELOCITY_FACTOR = false;
+uint256 RollingBlock;
+int64_t RollingHeight;
 
 /* VelocityI(int nHeight) ? i : -1
    Returns i or -1 if not found */
@@ -117,6 +119,12 @@ bool Velocity(CBlockIndex* prevBlock, CBlock* block)
                 return false;
             }
         }
+        // Ensure expected coin supply matches actualy coin supply of block
+        if((prevBlock->nMoneySupply + tx_threshold) < (tx_outputs_values))
+        {
+            LogPrintf("DENIED: block contains invalid coin supply amount\n");
+            return false;
+        }
         // Check for and enforce minimum TXs per block (Minimum TXs are disabled for Espers)
         if(VELOCITY_MIN_TX[i] > 0 && TXcount < VELOCITY_MIN_TX[i])
         {
@@ -175,5 +183,28 @@ bool Velocity(CBlockIndex* prevBlock, CBlock* block)
             return false;
     }
     // Velocity constraints met, return block acceptance
+    return true;
+}
+
+bool RollingCheckpoints(int nHeight)
+{
+    // Skip chain start
+    if (nHeight < 5000) {
+        return false;
+    }
+    // Define values
+    CBlockIndex* pindexCurrentBlock = pindexBest;
+    CBlockIndex* pindexPastBlock = pindexCurrentBlock;
+    // Set count and loop
+    int pastBLOCK_1 = (pindexCurrentBlock->nHeight - BLOCK_TEMP_CHECKPOINT_DEPTH);
+    while (pastBLOCK_1 < pindexCurrentBlock->nHeight) {
+        // Index backwards
+        pindexPastBlock = pindexPastBlock->pprev;
+        pastBLOCK_1 ++;
+    }
+    // Set output values
+    RollingBlock = pindexPastBlock->GetBlockHash();
+    RollingHeight = pindexPastBlock->nHeight;
+    // Success
     return true;
 }
