@@ -46,7 +46,7 @@ ClientControlPage::ClientControlPage(QWidget *parent) :
         ui->optin_test->setEnabled(false);
         ui->AU_apply->setEnabled(false);
 #ifdef Q_OS_WIN
-
+/*
         QMessageBox::StandardButton retval = QMessageBox::question(this, tr("Launcher not found"),
                  tr("The Espers Launcher is required for advanced features to work, would you like to download it now?"),
                  QMessageBox::Yes|QMessageBox::No,
@@ -61,7 +61,7 @@ ClientControlPage::ClientControlPage(QWidget *parent) :
             QMessageBox::warning(this, "Launcher not found",
                                "Skipping Espers Launcher download, however it is recommended that you download and use it from now on!",
                                QMessageBox::Ok );
-        }
+        }*/
 #endif
     }
     else if(check_standalone.exists())
