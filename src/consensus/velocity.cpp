@@ -28,7 +28,7 @@ int VelocityI(int nHeight)
 bool Velocity_check(int nHeight)
 {
     LogPrintf("Checking for Velocity on block %u: ",nHeight);
-    if(VelocityI(nHeight) >= 0)
+    if(VelocityI(nHeight) >= VELOCITY_TOGGLE)
     {
         LogPrintf("Velocity is currently Enabled\n");
         return true;
