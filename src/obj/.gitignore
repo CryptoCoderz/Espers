@@ -5,6 +5,7 @@
 !core
 !daemon
 !database
+!fractal
 !makefile
 !node
 !primitives
