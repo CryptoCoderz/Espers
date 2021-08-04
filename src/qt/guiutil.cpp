@@ -724,6 +724,50 @@ void HelpMessageBox::showOrPrint()
 #endif
 }
 
+void SetLightThemeQSS(QApplication& app)
+{
+    app.setStyleSheet(//"QDialog        { background-color: rgb(32,32,32); }"
+                      "QFrame         { border: none; }"
+                      "QComboBox      { background: transparent; color: rgb(255,255,255); }"
+                      "QComboBox QAbstractItemView::item { color: rgb(255,255,255); }"
+                      "QPushButton    { background: rgb(10, 120, 205, 0.4); color: rgb(255,255,255); }"
+                      "QDoubleSpinBox { background: transparent; color: rgb(255,255,255); border-color: rgb(194,194,194); }"
+                      "QLineEdit      { background: rgb(10, 120, 205, 0.6); color: rgb(255,255,255); border-color: rgb(194,194,194); }"
+                      "QTextEdit      { background: rgb(10, 120, 205, 0.6); color: rgb(255,255,255); }"
+                      "QPlainTextEdit { background: rgb(10, 120, 205, 0.6); color: rgb(255,255,255); }"
+                      "QMenuBar       { background: rgb(10, 120, 205, 0.6); color: rgb(255,255,255); }"
+                      "QMenu          { background: rgb(10, 120, 205, 0.6); color: rgb(255,255,255); }"
+                      "QMenu::item:selected { background-color: rgb(80,80,80, 0.6); }"
+                      "QLabel         { color: rgb(255,255,255); }"
+                      "QScrollBar     { color: rgb(255,255,255); }"
+                      "QCheckBox      { color: rgb(255,255,255); }"
+                      "QRadioButton   { color: rgb(255,255,255); }"
+                      "QSpinBox       { background: transparent; background-color: transparent; color: rgb(255,255,255); }"
+                      "QTabBar::tab   { background-color: rgb(32, 32, 32); background: rgb(32,32,32); color: rgb(255,255,255); border: 1px solid rgb(80,80,80); border-bottom: none; padding: 5px; }"
+                      "QTabBar::tab:selected  { background-color: rgb(45, 45, 45); background: rgb(45,45,45); }"
+                      "QTabBar::tab:!selected { background-color: rgb(32, 32, 32); background: rgb(32,32,32); margin-top: 0px; }"
+                      "QTabWidget::pane { background: transparent; border: 1px solid rgb(80,80,80); }"
+                      "QToolButton    { background: rgb(10, 120, 205); color: rgb(255,255,255); border: none; }"
+                      "QToolButton:checked { color: rgb(255,255,255); border: none; }"
+                      //"QProgressBar   { color: rgb(194,194,194); border-color: rgb(255,255,255); border-width: 3px; border-style: solid; }"
+                      //"QProgressBar::chunk { background: rgb(255,255,255); color: rgb(194,194,194); }"
+                      "QTreeView::item { background: transparent; background: transparent; color: rgb(212,213,213); }"
+                      "QTreeView::item:selected { background-color: rgb(80,80,80); }"
+                      "QTreeView::item:!selected { background-color: rgb(32,32,32,0.6); }"
+                      "QTableView     { background: transparent; background-color: transparent; color: rgb(255,255,255); gridline-color: rgb(157,160,165); }"
+                      "QTableView::item:!selected { background: transparent; background-color: rgb(32,32,32,0.8); color: rgb(255,255,255); gridline-color: rgb(157,160,165); }"
+                      "QTableWidget   { background: transparent; background-color: transparent; color: rgb(255,255,255); }"
+                      "QTabWidget     { background: transparent; background-color: rgb(32, 32, 32); color: rgb(255,255,255); }"
+                      "QHeaderView::section { background: transparent; background-color: transparent; color: rgb(255,255,255); }"
+                      "QHeaderView {background: transparent; background-color: transparent; }"
+                      "QAbstractSpinBox {background: transparent; background-color: transparent; }"
+                      "QToolBar       { background: none; border: none; }"
+                      "QMessageBox    { background-color: rgb(32, 32, 32); color: rgb(255, 255, 255); }"
+                      "QMessageBox::StandardButton    { background-color: rgb(32, 32, 32); color: rgb(255, 255, 255); }"
+                      "QToolTip       { background-color: rgb(32, 32, 32); color: rgb(255, 255, 255); border: 0px; }"
+                      );
+}
+
 void setClipboard(const QString& str)
 {
     QApplication::clipboard()->setText(str, QClipboard::Clipboard);

@@ -255,6 +255,9 @@ int main(int argc, char *argv[])
 
     try
     {
+        // Set theme controls
+        GUIUtil::SetLightThemeQSS(app);
+
         // Regenerate startup link, to fix links to old versions
         if (GUIUtil::GetStartOnSystemStartup())
             GUIUtil::SetStartOnSystemStartup(true);

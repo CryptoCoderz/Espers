@@ -5,22 +5,33 @@ https://espers.io/
 
 What is the Espers [ESP] Blockchain?
 ------------------------------------
-*TODO: Update documentation regarding implemented tech as this section is out of date and much progress and upgrades have been made to mentioned sections...*
 
 ### Overview
-Espers is a blockchain project with the goal of offering secured messaging, websites on the chain and an overall pleasing experience to the user.
+Espers is a blockchain project with the goal of offering secured messaging, websites on the chain, NFTs, Tokens and an overall pleasing experience to the user.
 
 ### Blockchain Technology
 Blockchain technology has the capabilities to change a variety of things in the world and can also be the backbone of a new internet. One place that blockchain technology has not had an impact on yet is website on the blockchain. However, Espers is trying to change that and is well on their way to doing so.
 
+### Fractal multi-chain platform
+Seeing our vision through to completion we are in final build phases of what we have coined the "Fractal" platform. This platform is service layer that handles a infinitely layered network of dynamic side-chains and mini-chains in order to provide the ability to host dynamic data in a very fast, scalable and decentralized manner using the X-Node system as its host layer and utilizing the mainnet as a verification system for launching NFTs, Tokens or other hosted material. By doing this we avoid bloat, and mainnet net reliance beyond launch needs. Ultimately this platform can replace the need for servers, DNS hosting and much more while offering a much more robust solution than available today. I guess, you could call it Web3 or the "internet computer" as some have thrown the term around.
+
 ### Website on the Chain
-Espers Blockchain will keep sites extremely safe and will make them virtually impenetrable, which is creating a new standard for website safety and security. In addition to the security improvements, Espers Blockchain will also ensure that your website is never taken down or removed, no matter what. You will also have complete control of your data, and the sites will feature faster server times.
+Espers Blockchain will keep sites extremely safe and will make them virtually impenetrable, which is creating a new standard for website safety and security. In addition to the security improvements, Espers Blockchain will also ensure that your website is never taken down or removed, no matter what (PROVIDED THE CONTENT IS NOT ILLEGAL!!!). You will also have complete control of your data, and the sites will feature faster server times.
+
+### NFT (Non-fungible Token)
+Introducing altcoins to NFTs, as of v0.8.8.2 prototype now features NFT capabilities. This offers the ability to artists, musicians and animators alike a unified place to store, encrypt, protect, sell and share their artwork! Current compatible formats are JPG/JPEG, PNG, GIF (Animation), OGG VORBIS (Audio) in a square format for initial testing for pictures/animation and up to 5 minute sound files for OGG VORBIS audio. This is a soft limit done only for initial testing. These limits will soon be lifted for full release in future versions.
+
+### Tokens (Like ETH)
+Along with NFTs we have adapted the technology in the Fractal platform to launch and manage Tokens! No longer are there only the few giants that can do this, launch your own Token using Espers [ESP] as "GAS" and for no where near the fees!
+
+### BVAC (Bits Visualized As Color)
+BVAC is a unique system that we developed and created in house just for Espers [ESP] and associated projects. This offers us the ability to store ANY data as a PNG or JPG, similarly to a QR code, with only three files being required as apposed to three entire libraries that QR codes require and the data storage is denser. If you would like to learn more about this feature feel free to reach out to CryptoCoderz or SaltineChips. The current proof of concept implementation is the ability to store and read a public receiving address as a 16x16 BVAC image. Users can share their public keys this way by simply sending each other the BVAC image of the pubkey created from the wallet and then the receiving part is able to load the image using the wallet and decode it into the pubkey once again.
 
 ### Secured Messaging
 Developing the usability features: The secured messaging system, masternodes (intuitive node launching and monitoring), smooth sync patch, shrinking blockchain, light clients and much much more.
 
 ### Custom Difficulty Retarget Algorithm “VRX”
-VRX is designed from the ground up to integrate properly with the Velocity parameter enforcement system to ensure users no longer receive orphan blocks.
+VRX is designed from the ground up to integrate properly with the Velocity parameter enforcement system to ensure users no longer receive orphan blocks. In addition to this function it also dynamicaly adjusts for fluctuations in hashrate or staking whether it be great or small. Being a "Hybrid" blockchain, Espers [ESP] also utilizes VRX's advanced block shuffling and difficulty skewing proceedures in order to offer a truly equal mining/staking experience while further increasing the network's security and reliability. 
 
 ### Velocity Block Constraint System
 Ensuring Espers stays as secure and robust as possible the CryptoCoderz team have implemented what's known as the Velocity block constraint system. This system acts as third and final check for both mined and peer-accepted blocks ensuring that all parameters are strictly enforced.
@@ -32,12 +43,12 @@ Specifications and General info
 ------------------
 Espers uses:
 
-		Boost1.72,
-		OR Boost1.58,
+		Boost1.74,
+		OR Boost1.58+,
 		OpenSSL1.02u,
 		OR OpenSSL1.1x,
 		Berkeley DB 6.2.32,
-		Qt5.14 to compile
+		Qt5.15.2 to compile
 
 General Info:
 

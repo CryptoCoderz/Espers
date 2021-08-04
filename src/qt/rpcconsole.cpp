@@ -9,7 +9,7 @@
 #include "core/main.h"
 #include "core/chainparams.h"
 #include "util/util.h"
-#include "subcore/timedata.h"
+
 #include "rpc/rpcserver.h"
 #include "rpc/rpcclient.h"
 
@@ -67,7 +67,7 @@ void RPCExecutor::start()
 }
 
 /**
- * Split shell command line into a list of arguments. Aims to emulate \c bash and friends.
+ * Split Espers command line into a list of arguments. Aims to emulate \c bash and friends.
  *
  * - Arguments are delimited with whitespace
  * - Extra whitespace at the beginning and end and between arguments will be ignored
@@ -138,7 +138,7 @@ bool parseCommandLine(std::vector<std::string> &args, const std::string &strComm
             break;
         }
     }
-    switch(state) // final state
+    switch(state) // espers state
     {
     case STATE_EATING_SPACES:
         return true;
@@ -210,8 +210,8 @@ RPCConsole::RPCConsole(QWidget *parent) :
     ui->setupUi(this);
 
 #ifndef Q_OS_MAC
-//    ui->openDebugLogfileButton->setIcon(QIcon(":/icons/export"));
-//    ui->showCLOptionsButton->setIcon(QIcon(":/icons/options"));
+    ui->openDebugLogfileButton->setIcon(QIcon(":/icons/export"));
+    ui->showCLOptionsButton->setIcon(QIcon(":/icons/options"));
 #endif
 
     // Install event filter for up and down arrow
@@ -291,11 +291,11 @@ void RPCConsole::setClientModel(ClientModel *model)
         setNumBlocks(model->getNumBlocks());
         connect(model, SIGNAL(numBlocksChanged(int)), this, SLOT(setNumBlocks(int)));
 
+        setXnodeCount(model->getXNodeCountString());
+        connect(model, SIGNAL(strXnodesChanged(QString)), this, SLOT(setXnodeCount(QString)));
+
         updateTrafficStats(model->getTotalBytesRecv(), model->getTotalBytesSent());
         connect(model, SIGNAL(bytesChanged(quint64,quint64)), this, SLOT(updateTrafficStats(quint64, quint64)));
-
-        setXNodeCount(model->getXNodeCountString());
-        connect(model, SIGNAL(strXNodesChanged(QString)), this, SLOT(setXNodeCount(QString)));
 
         // set up peer table
         ui->peerWidget->setModel(model->getPeerTableModel());
@@ -478,9 +478,9 @@ void RPCConsole::setNumBlocks(int count)
         ui->lastBlockTime->setText(clientModel->getLastBlockDate().toString());
 }
 
-void RPCConsole::setXNodeCount(const QString &strXNodes)
+void RPCConsole::setXnodeCount(const QString &strXnodes)
 {
-    ui->xnodeCount->setText(strXNodes);
+    ui->xnodeCount->setText(strXnodes);
 }
 
 void RPCConsole::on_lineEdit_returnPressed()
@@ -591,7 +591,17 @@ QString RPCConsole::FormatBytes(quint64 bytes)
 void RPCConsole::setTrafficGraphRange(int mins)
 {
     ui->trafficGraph->setGraphRangeMins(mins);
-    ui->lblGraphRange->setText(GUIUtil::formatDurationStr(mins * 60));
+    if(mins < 60) {
+        ui->lblGraphRange->setText(QString(tr("%1 m")).arg(mins));
+    } else {
+        int hours = mins / 60;
+        int minsLeft = mins % 60;
+        if(minsLeft == 0) {
+            ui->lblGraphRange->setText(QString(tr("%1 h")).arg(hours));
+        } else {
+            ui->lblGraphRange->setText(QString(tr("%1 h %2 m")).arg(hours).arg(minsLeft));
+        }
+    }
 }
 
 void RPCConsole::on_copyButton_clicked()

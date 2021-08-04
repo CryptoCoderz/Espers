@@ -114,7 +114,12 @@ OBJS= \
     obj/xnode/xnodesettings.o \
     obj/xnode/xnodestart.o \
     obj/xnode/xnodesync.o \
-    obj/xnode/xnodecrypter.o
+    obj/xnode/xnodecrypter.o \
+    obj/fractal/fractalcontract.o \
+    obj/fractal/fractaldataob.o \
+    obj/fractal/fractalengine.o \
+    obj/fractal/fractalnft.o \
+    obj/fractal/fractalparams.o
 
 ifeq (${USE_WALLET}, 1)
     DEFS += -DENABLE_WALLET

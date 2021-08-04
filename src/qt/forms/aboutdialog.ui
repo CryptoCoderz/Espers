@@ -13,6 +13,10 @@
   <property name="windowTitle">
    <string>About Espers</string>
   </property>
+  <property name="styleSheet">
+   <string notr="true">background-color: rgb(32, 32, 32);
+    color: rgb(255, 255, 255);</string>
+  </property>
   <layout class="QHBoxLayout" name="horizontalLayout_2">
    <item>
     <widget class="QLabel" name="label_4">
@@ -49,6 +53,11 @@
       <layout class="QHBoxLayout" name="horizontalLayout">
        <item>
         <widget class="QLabel" name="label">
+          <property name="font">
+          <font>
+           <pointsize>10</pointsize>
+          </font>
+         </property>
          <property name="cursor">
           <cursorShape>IBeamCursor</cursorShape>
          </property>
@@ -62,6 +71,11 @@
        </item>
        <item>
         <widget class="QLabel" name="versionLabel">
+          <property name="font">
+          <font>
+           <pointsize>10</pointsize>
+          </font>
+         </property>
          <property name="cursor">
           <cursorShape>IBeamCursor</cursorShape>
          </property>
@@ -90,6 +104,11 @@
      </item>
      <item>
       <widget class="QLabel" name="copyrightLabel">
+        <property name="font">
+          <font>
+           <pointsize>10</pointsize>
+          </font>
+         </property>
        <property name="cursor">
         <cursorShape>IBeamCursor</cursorShape>
        </property>
@@ -106,6 +125,11 @@ Copyright © 2016-2021 The Espers developers</string>
      </item>
      <item>
       <widget class="QLabel" name="label_2">
+        <property name="font">
+          <font>
+           <pointsize>10</pointsize>
+          </font>
+         </property>
        <property name="cursor">
         <cursorShape>IBeamCursor</cursorShape>
        </property>
@@ -143,6 +167,11 @@ This product includes software developed by the OpenSSL Project for use in the O
      </item>
      <item>
       <widget class="QDialogButtonBox" name="buttonBox">
+        <property name="font">
+          <font>
+           <pointsize>10</pointsize>
+          </font>
+         </property>
        <property name="orientation">
         <enum>Qt::Horizontal</enum>
        </property>

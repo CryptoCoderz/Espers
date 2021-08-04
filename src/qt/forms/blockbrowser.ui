@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
  <class>BlockBrowser</class>
- <widget class="QWidget" name="BlockBrowser">
+ <widget class="QDialog" name="BlockBrowser">
   <property name="windowModality">
    <enum>Qt::NonModal</enum>
   </property>
@@ -34,6 +34,10 @@
   <property name="windowTitle">
    <string>Form</string>
   </property>
+  <property name="styleSheet">
+   <string notr="true">color: rgb(255, 255, 255);
+    background-color: rgb(32, 32, 32);</string>
+  </property>
   <layout class="QGridLayout">
    <property name="sizeConstraint">
     <enum>QLayout::SetMaximumSize</enum>
@@ -63,7 +67,7 @@
         <number>7</number>
        </property>
        <item>
-        <widget class="QLabel" name="label_5">
+        <widget class="QLabel" name="timeLabel">
          <property name="font">
           <font>
            <family>Open Sans,sans-serif</family>
@@ -97,6 +101,11 @@
         <width>501</width>
         <height>400</height>
        </rect>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">background: transparent;
+        background-color: rgb(20, 20, 20, 0.35);
+       </string>
       </property>
       <layout class="QGridLayout" name="gridLayout_3" rowstretch="0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0" columnstretch="0,0">
        <property name="sizeConstraint">

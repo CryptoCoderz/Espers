@@ -4,7 +4,6 @@
         <file alias="quit">res/icons/quit.png</file>
         <file alias="send">res/icons/send.png</file>
         <file alias="toolbar">res/icons/Espers_16x16.png</file>
-        <file alias="connect_0">res/icons/connect0.png</file>
         <file alias="connect_1">res/icons/connect1.png</file>
         <file alias="connect_2">res/icons/connect2.png</file>
         <file alias="connect_3">res/icons/connect3.png</file>
@@ -44,19 +43,20 @@
         <file alias="editconf">res/icons/editconf.png</file>
         <file alias="folder">res/icons/folder.png</file>
         <file alias="chaininfo">res/icons/chaininfo.png</file>
-        <file alias="messaging">res/icons/messaging.png</file>
         <file alias="sitechain">res/icons/siteonchain.png</file>
-        <file alias="generate">res/icons/generate.png</file>
         <file alias="ccs">res/icons/ccs.png</file>
-        <file alias="notsynced">res/icons/notsynced.png</file>
         <file alias="bitcoin">res/icons/Espers.png</file>
         <file alias="bitcoin_testnet">res/icons/Espers_testnet.png</file>
+        <file alias="settings">res/icons/settings.png</file>
+        <file alias="qriconov">res/icons/qriconov.png</file>
+        <file alias="bvac">res/icons/bvac_import.jpg</file>
     </qresource>
     <qresource prefix="/images">
         <file alias="about">res/images/about.png</file>
         <file alias="splash">res/images/splash.png</file>
         <file alias="header">res/images/header.png</file>
-        <file alias="qt">res/images/qt.png</file>
+        <file alias="background_light">res/images/background_light.png</file>
+        <file alias="background_light_alt">res/images/background_light_alt.png</file>
     </qresource>
     <qresource prefix="/movies">
         <file alias="update_spinner">res/movies/update_spinner.mng</file>
@@ -101,6 +101,9 @@
         <file alias="uk">locale/bitcoin_uk.qm</file>
         <file alias="zh_CN">locale/bitcoin_zh_CN.qm</file>
         <file alias="zh_TW">locale/bitcoin_zh_TW.qm</file>
+    </qresource>
+    <qresource prefix="/gifs">
+        <file alias="syncgif">res/gifs/syncicon.gif</file>
     </qresource>
     <qresource prefix="/">
         <file alias="version">forms/docs/version.txt</file>

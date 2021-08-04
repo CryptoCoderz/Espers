@@ -113,6 +113,8 @@ void ClientModel::updateTimer()
     }
 
     emit bytesChanged(getTotalBytesRecv(), getTotalBytesSent());
+
+    emit statusWalletLockChanged(settingsStatus);
 }
 
 void ClientModel::updateXnTimer()
