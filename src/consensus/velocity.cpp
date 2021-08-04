@@ -7,6 +7,7 @@
 #include "database/txdb.h"
 #include "velocity.h"
 #include "rpc/rpcserver.h"
+#include "core/blockparams.h"
 
 bool VELOCITY_FACTOR = false;
 uint256 RollingBlock;
@@ -46,7 +47,7 @@ bool Velocity(CBlockIndex* prevBlock, CBlock* block)
     CAmount tx_outputs_values = 0;
     CAmount tx_MapIn_values = 0;
     CAmount tx_MapOut_values = 0;
-    CAmount tx_threshold = (500 * COIN);
+    CAmount tx_threshold = 0;
     int64_t TXcount = block->vtx.size();
     int64_t TXrate = 0;
     int64_t CURvalstamp  = 0;
@@ -69,6 +70,12 @@ bool Velocity(CBlockIndex* prevBlock, CBlock* block)
     OLDvalstamp = prevBlock->pprev->GetBlockTime() + VELOCITY_MIN_RATE[i];
     SYScrntstamp = GetAdjustedTime() + VELOCITY_MIN_RATE[i];
     SYSbaseStamp = GetTime() + VELOCITY_MIN_RATE[i];
+
+    if(block->IsProofOfStake()) {
+        tx_threshold = GetProofOfStakeReward(0, 0);
+    } else {
+        tx_threshold = GetProofOfWorkReward(pindexBest->nHeight, 0);
+    }
 
     // Factor in TXs for Velocity constraints
     if(VELOCITY_FACTOR == true)

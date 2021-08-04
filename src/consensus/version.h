@@ -30,13 +30,13 @@ static const int DATABASE_VERSION = 70509;
 //
 // network protocol versioning
 //
-static const int PROTOCOL_VERSION = 60036;
+static const int PROTOCOL_VERSION = 60037;
 
 // intial proto version, to be increased after version/verack negotiation
 static const int INIT_PROTO_VERSION = 209;
 
 // disconnect from peers older than this proto version
-static const int MIN_PEER_PROTO_VERSION = 60035;
+static const int MIN_PEER_PROTO_VERSION = 60036;
 
 // nTime field added to CAddress, starting with this version;
 // if possible, avoid requesting addresses nodes older than this
@@ -44,10 +44,10 @@ static const int CADDR_TIME_VERSION = 31402;
 
 // only request blocks from nodes outside this range of versions
 static const int NOBLKS_VERSION_START = 0;
-static const int NOBLKS_VERSION_END = 60034;
+static const int NOBLKS_VERSION_END = 60035;
 
 // hard cutoff time for legacy network connections
-static const int64_t HRD_LEGACY_CUTOFF = 9993058800; // OFF (NOT TOGGLED)
+static const int64_t HRD_LEGACY_CUTOFF = 1629180671; // ON (Monday, August 16, 2021 11:11:11 PM GMT-07:00)
 
 // hard cutoff time for future network connections
 static const int64_t HRD_FUTURE_CUTOFF = 9993058800; // OFF (NOT TOGGLED)
