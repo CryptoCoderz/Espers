@@ -319,7 +319,7 @@ CBlock* CreateNewBlock(CReserveKey& reservekey, bool fProofOfStake, int64_t* pFe
             if (!tx.FetchInputs(txdb, mapTestPoolTmp, false, true, mapInputs, fInvalid))
                 continue;
 
-            int64_t nTxFees = tx.GetValueIn(mapInputs)-tx.GetValueOut();
+            int64_t nTxFees = tx.GetValueMapIn(mapInputs)-tx.GetValueOut();
             if (nTxFees < nMinFee)
                 continue;
 

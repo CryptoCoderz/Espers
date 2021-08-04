@@ -62,7 +62,7 @@ static const int64_t MIN_RELAY_TX_FEE = MIN_TX_FEE;
 /** Minimum TX count (for relaying) */
 static const int64_t MIN_TX_COUNT = 0;
 /** Minimum TX value (for relaying) */
-static const int64_t MIN_TX_VALUE = 0.01 * COIN;
+static const int64_t MIN_TX_VALUE = 1 * COIN;
 /** No amount larger than this (in satoshi) is valid */
 static const int64_t MAX_SINGLE_TX = 50000000000 * COIN; // 50 Billion (Same As Cap)
 /** Money Range Params */
@@ -73,11 +73,19 @@ static const unsigned int LOCKTIME_THRESHOLD = 500000000; // Tue Nov  5 00:53:20
 static const int MAX_BLOCKS_IN_TRANSIT_PER_PEER = 128;
 /** Timeout in seconds before considering a block download peer unresponsive. */
 static const unsigned int BLOCK_DOWNLOAD_TIMEOUT = 60;
+/** Maximum block reorganize depth (consider else an invalid fork) */
+static const unsigned int BLOCK_REORG_MAX_DEPTH = 150;
+/** Minimum block reorganize depth (consider else an invalid fork) */
+static const unsigned int BLOCK_REORG_MIN_DEPTH = 15;
+/** Depth for rolling checkpoing block */
+static const unsigned int BLOCK_TEMP_CHECKPOINT_DEPTH = 12;
 /** Future Drift Params*/ // inline int64_t FutureDrift(int64_t nTime) { return nTime + 10 * 60; }
 inline int64_t TimeDrift() { return 10 * 60; } // Default time drift window
 inline int64_t FutureDriftV1(int64_t nTime) { return nTime + TimeDrift(); } // Initial future drift | Protocol-v2
 inline int64_t FutureDriftV2(int64_t nTime) { return nTime + (TimeDrift() / 2); } // Tightened future drift | Protocol-v3
 inline int64_t FutureDrift(int64_t nTime, int nHeight) { return IsProtocolV3(nHeight) ? FutureDriftV2(nTime) : FutureDriftV1(nTime); }
+/** Velocity Factor handling toggle */
+inline bool FACTOR_TOGGLE(int nHeight) { return TestNet() || nHeight > 980950; }
 
 extern CScript COINBASE_FLAGS;
 extern CCriticalSection cs_main;
@@ -327,7 +335,7 @@ public:
         @see CTransaction::FetchInputs
      */
     // TODO: Velocity reference
-    int64_t GetValueIn(const MapPrevTx& mapInputs) const;
+    int64_t GetValueMapIn(const MapPrevTx& mapInputs) const;
 
     bool ReadFromDisk(CDiskTxPos pos, FILE** pfileRet=NULL)
     {
@@ -405,7 +413,7 @@ public:
      @return	Returns true if all inputs are in txdb or mapTestPool
      */
     bool FetchInputs(CTxDB& txdb, const std::map<uint256, CTxIndex>& mapTestPool,
-                     bool fBlock, bool fMiner, MapPrevTx& inputsRet, bool& fInvalid);
+                     bool fBlock, bool fMiner, MapPrevTx& inputsRet, bool& fInvalid) const;
 
     /** Sanity check previous transactions, then, if all checks succeed,
         mark them as spent by this transaction.

@@ -37,7 +37,7 @@ json_spirit::Value getvelocityinfo(const Array& params, bool fHelp) {
 		obj.push_back(json_spirit::Pair("min-value",  (int)VELOCITY_MIN_VALUE[i]));
 	if( VELOCITY_MIN_FEE[i] > 0 )
 		obj.push_back(json_spirit::Pair("min-fee",    (int)VELOCITY_MIN_FEE[i]));
-	obj.push_back(json_spirit::Pair("factor",       VELOCITY_FACTOR[i]));
+    obj.push_back(json_spirit::Pair("factor",       VELOCITY_FACTOR));
 	obj.push_back(json_spirit::Pair("explicit",     VELOCITY_EXPLICIT[i]));
 	return obj;
 }
