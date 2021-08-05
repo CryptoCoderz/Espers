@@ -51,8 +51,6 @@
 // This can also be used a form access control rather than data obfuscation 
 // for modifying the data stored.
 
-#define _GLIBCXX_USE_C99 1
-
 #include <string>
 #include <cstring>
 // Read from file
