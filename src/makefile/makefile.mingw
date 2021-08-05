@@ -118,6 +118,7 @@ OBJS= \
     obj/fractal/fractalcontract.o \
     obj/fractal/fractaldataob.o \
     obj/fractal/fractalengine.o \
+    obj/fractal/fractalnftbase.o \
     obj/fractal/fractalnft.o \
     obj/fractal/fractalparams.o
 

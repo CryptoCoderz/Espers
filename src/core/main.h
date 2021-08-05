@@ -85,7 +85,7 @@ inline int64_t FutureDriftV1(int64_t nTime) { return nTime + TimeDrift(); } // I
 inline int64_t FutureDriftV2(int64_t nTime) { return nTime + (TimeDrift() / 2); } // Tightened future drift | Protocol-v3
 inline int64_t FutureDrift(int64_t nTime, int nHeight) { return IsProtocolV3(nHeight) ? FutureDriftV2(nTime) : FutureDriftV1(nTime); }
 /** Velocity Factor handling toggle */
-inline bool FACTOR_TOGGLE(int nHeight) { return TestNet() || nHeight > 980950; }
+inline bool FACTOR_TOGGLE(int nHeight) { return TestNet() || nHeight > 983000; }
 
 extern CScript COINBASE_FLAGS;
 extern CCriticalSection cs_main;

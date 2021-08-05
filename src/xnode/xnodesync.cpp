@@ -91,7 +91,8 @@ bool CXNodeSync::IsXNodeSynced()
         warningXNodeSync = 0;
         return true;
     } else {
-        LogPrintf("CXNodeSync::IsXNodeSynced - SUCCESS - Sync has finished\n");
+        // TODO: Rework this function properly, for now disable pointless debug warnings
+        //LogPrintf("CXNodeSync::IsXNodeSynced - SUCCESS - Sync has finished\n");
         return true;
     }
 

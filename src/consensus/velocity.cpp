@@ -3,11 +3,11 @@
 // Distributed under the MIT/X11 software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
+#include "core/blockparams.h"
 #include "core/main.h"
 #include "database/txdb.h"
 #include "velocity.h"
 #include "rpc/rpcserver.h"
-#include "core/blockparams.h"
 
 bool VELOCITY_FACTOR = false;
 uint256 RollingBlock;
@@ -28,7 +28,7 @@ int VelocityI(int nHeight)
 bool Velocity_check(int nHeight)
 {
     LogPrintf("Checking for Velocity on block %u: ",nHeight);
-    if(VelocityI(nHeight) >= VELOCITY_TOGGLE)
+    if(VelocityI(nHeight) >= VELOCITY_HEIGHT[nHeight])
     {
         LogPrintf("Velocity is currently Enabled\n");
         return true;
@@ -88,29 +88,21 @@ bool Velocity(CBlockIndex* prevBlock, CBlock* block)
             MapPrevTx mapInputs;
             map<uint256, CTxIndex> mapUnused;
             bool fInvalid = false;
-            bool fNoIn = false;
             // Ensure we can fetch inputs
             if (!tx.FetchInputs(txdb, mapUnused, true, false, mapInputs, fInvalid))
             {
-                if(nHeight > 982300) {
-                    LogPrintf("DENIED: Invalid TX found during FetchInputs\n");
-                    return false;
-                } else {
-                    LogPrintf("WARNING: Potentially Invalid TX found during FetchInputs\n");
-                    fNoIn = true;
-                }
+                LogPrintf("DENIED: Invalid TX found during FetchInputs\n");
+                return false;
             }
             // Authenticate submitted block's TXs
-            if(!fNoIn) {
-                tx_MapIn_values = tx.GetValueMapIn(mapInputs);
-                if(tx_inputs_values + tx_MapIn_values >= 0) {
-                    tx_inputs_values += tx_MapIn_values;
-                } else {
-                    LogPrintf("DENIED: overflow detected tx_inputs_values + tx.GetValueMapIn(mapInputs)\n");
-                    return false;
-                }
-            }
+            tx_MapIn_values = tx.GetValueMapIn(mapInputs);
             tx_MapOut_values = tx.GetValueOut();
+            if(tx_inputs_values + tx_MapIn_values >= 0) {
+                tx_inputs_values += tx_MapIn_values;
+            } else {
+                LogPrintf("DENIED: overflow detected tx_inputs_values + tx.GetValueMapIn(mapInputs)\n");
+                return false;
+            }
             if(tx_outputs_values + tx_MapOut_values >= 0) {
                 tx_outputs_values += tx_MapOut_values;
             } else {
@@ -121,10 +113,8 @@ bool Velocity(CBlockIndex* prevBlock, CBlock* block)
         // Ensure input/output sanity of transactions in the block
         if((tx_inputs_values + tx_threshold) < tx_outputs_values)
         {
-            if(nHeight < 981135 || nHeight > 982300) {// skip trouble blocks during initial rushed patch
-                LogPrintf("DENIED: block contains a tx input that is less that output\n");
-                return false;
-            }
+            LogPrintf("DENIED: block contains a tx input that is less that output\n");
+            return false;
         }
         // Ensure expected coin supply matches actualy coin supply of block
         if((prevBlock->nMoneySupply + tx_threshold) < (tx_outputs_values))
