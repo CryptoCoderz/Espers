@@ -1,6 +1,6 @@
 TEMPLATE = app
 TARGET = Espers-fractal-qt
-VERSION = 0.8.8.2
+VERSION = 0.8.8.3
 INCLUDEPATH += src src/json src/qt
 QT += core gui network
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets

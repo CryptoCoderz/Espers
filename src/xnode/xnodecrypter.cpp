@@ -86,6 +86,7 @@ void ThreadCheckXNodeEnginePool()
     RenameThread("Espers-xnodeengine");
 
     unsigned int c = 0;
+    unsigned int r = 0;
 
     while (true)
     {
@@ -95,7 +96,6 @@ void ThreadCheckXNodeEnginePool()
         // try to sync from all available nodes, one step at a time
         // TODO: Re-enable later after feature is finished
         //xnodeSync.Process();
-
 
         if(xnodeSync.IsXNodeSynced()) {
 
@@ -114,6 +114,12 @@ void ThreadCheckXNodeEnginePool()
 
             //if(c % XNODES_DUMP_SECONDS == 0) DumpXNodes();
 
+        } else {
+            if(r == 0) {
+                LogPrintf("ThreadCheckXNodeEnginePool - xnodeSync failed!\n");
+            }
+            // Log runs
+            r ++;
         }
     }
 }

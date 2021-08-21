@@ -43,12 +43,6 @@ bool Velocity_check(int nHeight)
 bool Velocity(CBlockIndex* prevBlock, CBlock* block)
 {
     // Define values
-    CAmount tx_inputs_values = 0;
-    CAmount tx_outputs_values = 0;
-    CAmount tx_MapIn_values = 0;
-    CAmount tx_MapOut_values = 0;
-    CAmount tx_threshold = 0;
-    int64_t TXcount = block->vtx.size();
     int64_t TXrate = 0;
     int64_t CURvalstamp  = 0;
     int64_t OLDvalstamp  = 0;
@@ -71,61 +65,13 @@ bool Velocity(CBlockIndex* prevBlock, CBlock* block)
     SYScrntstamp = GetAdjustedTime() + VELOCITY_MIN_RATE[i];
     SYSbaseStamp = GetTime() + VELOCITY_MIN_RATE[i];
 
-    if(block->IsProofOfStake()) {
-        tx_threshold = GetProofOfStakeReward(0, 0);
-    } else {
-        tx_threshold = GetProofOfWorkReward(pindexBest->nHeight, 0);
-    }
-
     // Factor in TXs for Velocity constraints
     if(VELOCITY_FACTOR == true)
     {
-        // Set factor values
-        BOOST_FOREACH(const CTransaction& tx, block->vtx)
+        // Run TX factoring
+        if(!tx_Factor(prevBlock, block))
         {
-            // Load TX inputs
-            CTxDB txdb("r");
-            MapPrevTx mapInputs;
-            map<uint256, CTxIndex> mapUnused;
-            bool fInvalid = false;
-            // Ensure we can fetch inputs
-            if (!tx.FetchInputs(txdb, mapUnused, true, false, mapInputs, fInvalid))
-            {
-                LogPrintf("DENIED: Invalid TX found during FetchInputs\n");
-                return false;
-            }
-            // Authenticate submitted block's TXs
-            tx_MapIn_values = tx.GetValueMapIn(mapInputs);
-            tx_MapOut_values = tx.GetValueOut();
-            if(tx_inputs_values + tx_MapIn_values >= 0) {
-                tx_inputs_values += tx_MapIn_values;
-            } else {
-                LogPrintf("DENIED: overflow detected tx_inputs_values + tx.GetValueMapIn(mapInputs)\n");
-                return false;
-            }
-            if(tx_outputs_values + tx_MapOut_values >= 0) {
-                tx_outputs_values += tx_MapOut_values;
-            } else {
-                LogPrintf("DENIED: overflow detected tx_outputs_values + tx.GetValueOut()\n");
-                return false;
-            }
-        }
-        // Ensure input/output sanity of transactions in the block
-        if((tx_inputs_values + tx_threshold) < tx_outputs_values)
-        {
-            LogPrintf("DENIED: block contains a tx input that is less that output\n");
-            return false;
-        }
-        // Ensure expected coin supply matches actualy coin supply of block
-        if((prevBlock->nMoneySupply + tx_threshold) < (tx_outputs_values))
-        {
-            LogPrintf("DENIED: block contains invalid coin supply amount\n");
-            return false;
-        }
-        // Check for and enforce minimum TXs per block (Minimum TXs are disabled for Espers)
-        if(VELOCITY_MIN_TX[i] > 0 && TXcount < VELOCITY_MIN_TX[i])
-        {
-            LogPrintf("DENIED: Not enough TXs in block\n");
+            LogPrintf("DENIED: Velocity denied block: %u\n", prevBlock->nHeight+1);
             return false;
         }
     }
@@ -203,5 +149,68 @@ bool RollingCheckpoints(int nHeight)
     RollingBlock = pindexPastBlock->GetBlockHash();
     RollingHeight = pindexPastBlock->nHeight;
     // Success
+    return true;
+}
+
+// Factor in TXs for Velocity constraints
+bool tx_Factor(CBlockIndex* prevBlock, CBlock* block)
+{
+    // Define Values
+    CAmount tx_inputs_values = 0;
+    CAmount tx_outputs_values = 0;
+    CAmount tx_MapIn_values = 0;
+    CAmount tx_MapOut_values = 0;
+    CAmount tx_threshold = 0;
+
+    if(block->IsProofOfStake()) {
+        tx_threshold = GetProofOfStakeReward(0, 0);
+    } else {
+        tx_threshold = GetProofOfWorkReward(prevBlock->nHeight+1, 0);
+    }
+
+    // Set factor values
+    BOOST_FOREACH(const CTransaction& tx, block->vtx)
+    {
+        // Load TX inputs
+        CTxDB txdb("r");
+        MapPrevTx mapInputs;
+        map<uint256, CTxIndex> mapUnused;
+        bool fInvalid = false;
+        // Ensure we can fetch inputs
+        if (!tx.FetchInputs(txdb, mapUnused, true, false, mapInputs, fInvalid))
+        {
+            LogPrintf("DENIED: Invalid TX found during FetchInputs\n");
+            return false;
+        }
+        // Authenticate submitted block's TXs
+        tx_MapIn_values = tx.GetValueMapIn(mapInputs);
+        tx_MapOut_values = tx.GetValueOut();
+        if(tx_inputs_values + tx_MapIn_values >= 0) {
+            tx_inputs_values += tx_MapIn_values;
+        } else {
+            LogPrintf("DENIED: overflow detected tx_inputs_values + tx.GetValueMapIn(mapInputs)\n");
+            return false;
+        }
+        if(tx_outputs_values + tx_MapOut_values >= 0) {
+            tx_outputs_values += tx_MapOut_values;
+        } else {
+            LogPrintf("DENIED: overflow detected tx_outputs_values + tx.GetValueOut()\n");
+            return false;
+        }
+    }
+    // Ensure input/output sanity of transactions in the block
+    if((tx_inputs_values + tx_threshold) < tx_outputs_values)
+    {
+        LogPrintf("DENIED: block contains a tx input that is less that output\n");
+        return false;
+    }
+    // Ensure expected coin supply matches actualy coin supply of block
+    if((prevBlock->nMoneySupply + tx_threshold) < (tx_outputs_values))
+    {
+        LogPrintf("DENIED: block contains invalid coin supply amount\n");
+        return false;
+    }
+
+    // Return success if we get here
     return true;
 }

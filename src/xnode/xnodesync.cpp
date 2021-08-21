@@ -54,13 +54,13 @@ bool CXNodeSync::IsXNodeSynced()
         LogPrintf("CXNodeSync::IsXNodeSynced - INFO - Mainnet sync'd, running other checks\n");
         if(xnodeman.CountEnabled() == 0) {
             lastXNsyncFailure = GetTime();
-            RequestedXNodeSyncAttempt + 2;
+            RequestedXNodeSyncAttempt += 2;
             LogPrintf("CXNodeSync::IsXNodeSynced - WARNING - No XNodes on sync'd Mainnet\n");
         }
     } else if(!IsBlockchainSynced()) {
         // Keep looping for a while but count the attempts
         lastXNsyncFailure = GetTime();
-        RequestedXNodeSyncAttempt + 2;
+        RequestedXNodeSyncAttempt += 2;
         LogPrintf("CXNodeSync::IsXNodeSynced - INFO - Mainnet not sync'd, timeout and wait\n");
     }
 
@@ -73,6 +73,7 @@ bool CXNodeSync::IsXNodeSynced()
         warningXNodeSync = 0;
         lastXNsyncFailure = GetTime();
         LogPrintf("CXNodeSync::IsXNodeSynced - ERROR - Sync has failed, retry again later\n");
+        MilliSleep(30000);// TODO: Find alternative to sleeping, maybe per-block bool trigger?
         return false;
     }
 

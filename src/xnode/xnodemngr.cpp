@@ -592,7 +592,10 @@ void CXNodeMan::ProcessXNodeConnections()
 void CXNodeMan::ProcessMessage(CNode* pfrom, std::string& strCommand, CDataStream& vRecv)
 {
     // Check for sync
-    if(!xnodeSync.IsXNodeSynced()) return;
+    if(!xnodeSync.IsXNodeSynced()) {
+        LogPrintf("CXNodeMan::ProcessMessage - xnodeSync failed!\n");
+        return;
+    }
 
     LOCK(cs_process_message);
 

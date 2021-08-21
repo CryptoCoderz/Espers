@@ -187,7 +187,10 @@ int CXNodePayments::GetMinXNodePaymentsProto() {
 
 void ProcessMessageXNodePayments(CNode* pfrom, std::string& strCommand, CDataStream& vRecv)
 {
-    if(!xnodeSync.IsXNodeSynced()) return;
+    if(!xnodeSync.IsXNodeSynced()) {
+        LogPrintf("ProcessMessageXNodePayments - xnodeSync failed!\n");
+        return;
+    }
 
     if (strCommand == "xnget") { //XNode Payments Request Sync
 

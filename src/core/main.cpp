@@ -1833,13 +1833,11 @@ bool static Reorganize(CTxDB& txdb, CBlockIndex* pindexNew)
     CBlockIndex* plongerindex = plonger;
     int64_t pfinglonger = (plonger->nHeight - pfork->nHeight);
     int64_t pheightlonger = plonger->nHeight;
+    int64_t preorgmax = (pfork->nHeight - BLOCK_REORG_MAX_DEPTH);
 
     // Ensure reorganize depth sanity
     if (pfinglonger > BLOCK_REORG_MAX_DEPTH) {
         return error("Reorganize() : Maximum depth exceeded");
-    }
-    if (pfinglonger < BLOCK_REORG_MIN_DEPTH) {
-        return error("Reorganize() : Minimum depth exceeded");
     }
 
     // Get a checkpoint for quality assurance
@@ -1857,7 +1855,7 @@ bool static Reorganize(CTxDB& txdb, CBlockIndex* pindexNew)
             return error("Reorganize() : Chain quality failed, blockhash is invalid");
         }
     } else {
-        //
+        // Could not obtain checkpoint
         return error("Reorganize() : Chain quality failed, blockheight is invalid");
     }
 
@@ -1882,6 +1880,7 @@ bool static Reorganize(CTxDB& txdb, CBlockIndex* pindexNew)
     vector<CBlockIndex*> vConnect;
     for (CBlockIndex* pindex = pindexNew; pindex != pfork; pindex = pindex->pprev)
         vConnect.push_back(pindex);
+
     reverse(vConnect.begin(), vConnect.end());
 
     LogPrintf("REORGANIZE: Disconnect %u blocks; %s..%s\n", vDisconnect.size(), pfork->GetBlockHash().ToString(), pindexBest->GetBlockHash().ToString());
@@ -1895,13 +1894,13 @@ bool static Reorganize(CTxDB& txdb, CBlockIndex* pindexNew)
         if (!block.ReadFromDisk(pindex))
             return error("Reorganize() : ReadFromDisk for disconnect failed");
         if (!block.DisconnectBlock(txdb, pindex))
-            return error("Reorganize() : DisconnectBlock %s failed", pindex->GetBlockHash().ToString());
+            return error("Reorganize() : DisconnectBlock failed for block: %s ", pindex->GetBlockHash().ToString());
 
         // Queue memory transactions to resurrect.
         // We only do this for blocks after the last checkpoint (reorganisation before that
         // point should only happen with -reindex/-loadblock, or a misbehaving peer.
         BOOST_REVERSE_FOREACH(const CTransaction& tx, block.vtx)
-            if (!(tx.IsCoinBase() || tx.IsCoinStake()) && pindex->nHeight > Checkpoints::GetTotalBlocksEstimate())
+            if (!(tx.IsCoinBase() || tx.IsCoinStake()) && pindex->nHeight > preorgmax)
                 vResurrect.push_front(tx);
     }
 
@@ -1916,7 +1915,16 @@ bool static Reorganize(CTxDB& txdb, CBlockIndex* pindexNew)
         if (!block.ConnectBlock(txdb, pindex))
         {
             // Invalid block
-            return error("Reorganize() : ConnectBlock %s failed", pindex->GetBlockHash().ToString());
+            return error("Reorganize() : ConnectBlock failed for block: %s", pindex->GetBlockHash().ToString());
+        }
+        if(Velocity_check(pindex->nHeight))
+        {
+            // Announce Velocity constraint failure
+            if(!Velocity(pindex->pprev, &block))
+            {
+                // Invalid data within block
+                return error("Reorganize() : tx_Factor failed at height: %u", pindex->nHeight);
+            }
         }
 
         // Queue memory transactions to delete
