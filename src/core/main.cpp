@@ -1840,6 +1840,10 @@ bool static Reorganize(CTxDB& txdb, CBlockIndex* pindexNew)
         return error("Reorganize() : Maximum depth exceeded");
     }
 
+    // Set rolling checkpoint status, just in case we haven't accepted any blocks yet
+    // TODO: Clean up to prevent redundant calls beween reorganize and AcceptBlock
+    fRollingCheckpoint = RollingCheckpoints(pfork->nHeight);
+
     // Get a checkpoint for quality assurance
     if (fRollingCheckpoint) {
         // Verify chain quality
@@ -2394,7 +2398,10 @@ bool CBlock::AcceptBlock()
         uint256 targetProofOfStake;
         if (!CheckProofOfStake(pindexPrev, vtx[1], nBits, hashProof, targetProofOfStake))
         {
-            return error("AcceptBlock() : check proof-of-stake failed for block %s", hash.ToString());
+            // TODO: Clean this up!
+            if(nHeight != 984015 && nHeight != 984198) {
+                return error("AcceptBlock() : check proof-of-stake failed for block %s", hash.ToString());
+            }
         }
     }
     // PoW is checked in CheckBlock()
@@ -2434,6 +2441,7 @@ bool CBlock::AcceptBlock()
     }
 
     // Set rolling checkpoint status
+    // TODO: Clean up to prevent redundant calls beween reorganize and AcceptBlock
     fRollingCheckpoint = RollingCheckpoints(nHeight);
 
     return true;
