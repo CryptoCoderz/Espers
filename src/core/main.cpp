@@ -1833,10 +1833,10 @@ bool static Reorganize(CTxDB& txdb, CBlockIndex* pindexNew)
     CBlockIndex* plongerindex = plonger;
     int64_t pfinglonger = (plonger->nHeight - pfork->nHeight);
     int64_t pheightlonger = plonger->nHeight;
-    int64_t preorgmax = (pfork->nHeight - BLOCK_REORG_MAX_DEPTH);
+    int64_t preorgmax = (pfork->nHeight - BLOCK_REORG_THRESHOLD);
 
     // Ensure reorganize depth sanity
-    if (pfinglonger > BLOCK_REORG_MAX_DEPTH) {
+    if (pfinglonger > BLOCK_REORG_THRESHOLD) {
         return error("Reorganize() : Maximum depth exceeded");
     }
 
@@ -3139,7 +3139,7 @@ bool static AlreadyHave(CTxDB& txdb, const CInv& inv)
 
 
 
-
+// NOTE: Called from "ProcessMessage" when "getdata" is flagged
 void static ProcessGetData(CNode* pfrom)
 {
     std::deque<CInv>::iterator it = pfrom->vRecvGetData.begin();
@@ -3173,6 +3173,7 @@ void static ProcessGetData(CNode* pfrom)
                         assert(ret);
                     }
 
+                    // Send the requested block data to peer
                     pfrom->PushMessage("block", block);
 
                     // Trigger them to send a getblocks request for the next batch of inventory
@@ -3186,6 +3187,31 @@ void static ProcessGetData(CNode* pfrom)
                         pfrom->PushMessage("inv", vInv);
                         pfrom->hashContinue = 0;
                     }
+                }
+            }
+            else if (inv.type == MSG_DEMIBLOCK)
+            {
+                // Send block from disk
+                map<uint256, CBlockIndex*>::iterator mi = mapBlockIndex.find(inv.hash);
+                if (mi != mapBlockIndex.end())
+                {
+                    CBlock block;
+                    block.ReadFromDisk((*mi).second);
+
+                    // previous versions could accept sigs with high s
+                    if (!IsCanonicalBlockSignature(&block, true)) {
+                        bool ret = EnsureLowS(block.vchBlockSig);
+                        assert(ret);
+                    }
+
+                    // Send the requested block to peer
+                    pfrom->PushMessage("demiblock", block);
+                } else {
+                    // Send best available block to peer
+                    map<uint256, CBlockIndex*>::iterator mi2 = mapBlockIndex.find(pindexBest->GetBlockHash());
+                    CBlock block;
+                    block.ReadFromDisk((*mi2).second) ;
+                    pfrom->PushMessage("demiblock", block);
                 }
             }
             else if (inv.IsKnownType())
@@ -3539,6 +3565,8 @@ bool static ProcessMessage(CNode* pfrom, string strCommand, CDataStream& vRecv, 
     }
 
 
+    // NOTE: "getdata" can be used for either batch or single data calls
+    //       for most types of required/requested data
     else if (strCommand == "getdata")
     {
         vector<CInv> vInv;
@@ -3559,9 +3587,11 @@ bool static ProcessMessage(CNode* pfrom, string strCommand, CDataStream& vRecv, 
         ProcessGetData(pfrom);
     }
 
-
     else if (strCommand == "getblocks")
     {
+        // TODO: Skip if Demi-node reorganize is still ongoing
+        //
+
         CBlockLocator locator;
         uint256 hashStop;
         vRecv >> locator >> hashStop;
@@ -3705,9 +3735,11 @@ bool static ProcessMessage(CNode* pfrom, string strCommand, CDataStream& vRecv, 
         if (tx.nDoS) Misbehaving(pfrom->GetId(), tx.nDoS);
     }
 
-
     else if (strCommand == "block")
     {
+        // TODO: Skip if Demi-node reorganize is still ongoing
+        //
+
         CBlock block;
         vRecv >> block;
         uint256 hashBlock = block.GetHash();
@@ -3722,9 +3754,26 @@ bool static ProcessMessage(CNode* pfrom, string strCommand, CDataStream& vRecv, 
         mapBlockSource[inv.hash] = pfrom->GetId();
         MarkBlockAsReceived(inv.hash, pfrom->GetId());
 
-        if (ProcessBlock(pfrom, &block))
-            mapAlreadyAskedFor.erase(inv); // TODO: watch this area
+        // NOTE: Demi-node verified reorganize triggers in ProcessBlock()
+        if (ProcessBlock(pfrom, &block)) mapAlreadyAskedFor.erase(inv);
+
         if (block.nDoS) Misbehaving(pfrom->GetId(), block.nDoS);
+    }
+
+    // Demi-node calls
+    // NOTE: For demi-nodes operation we toggle similar to "block" message
+    //       flag but we only care about extracting the data and
+    //       not storing it
+    else if (strCommand == "demiblock")
+    {
+        CBlock block;
+        vRecv >> block;
+        uint256 hashBlock = block.GetHash();
+
+        LogPrint("net", "received demiblock %s\n", hashBlock.ToString());
+
+        // TODO: Set demiblock data and call reorganize consensus
+        //
     }
 
 
@@ -4209,8 +4258,9 @@ bool SendMessages(CNode* pto, bool fSendTrickle)
             }
             pto->vInventoryToSend = vInvWait;
         }
-        if (!vInv.empty())
+        if (!vInv.empty()) {
             pto->PushMessage("inv", vInv);
+        }
 
         // Detect stalled peers. Require that blocks are in flight, we haven't
         // received a (requested) block in one minute, and that all blocks are
@@ -4235,8 +4285,7 @@ bool SendMessages(CNode* pto, bool fSendTrickle)
             vGetData.push_back(CInv(MSG_BLOCK, hash));
             MarkBlockAsInFlight(pto->GetId(), hash);
             LogPrint("net", "Requesting block %s from %s\n", hash.ToString().c_str(), state.name.c_str());
-            if (vGetData.size() >= 1000)
-            {
+            if (vGetData.size() >= 1000) {
                 pto->PushMessage("getdata", vGetData);
                 vGetData.clear();
             }
@@ -4264,8 +4313,13 @@ bool SendMessages(CNode* pto, bool fSendTrickle)
             }
             pto->mapAskFor.erase(pto->mapAskFor.begin());
         }
-        if (!vGetData.empty())
+
+        //
+        // Push any uncleared data
+        //
+        if (!vGetData.empty()) {
             pto->PushMessage("getdata", vGetData);
+        }
 
     }
     return true;
