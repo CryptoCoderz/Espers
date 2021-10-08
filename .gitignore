@@ -16,6 +16,7 @@ src/build.h
 .qmake.stash
 Makefile
 Espers-qt
+Espers-fractal-qt
 #resources cpp
 qrc_*.cpp
 #qt creator
