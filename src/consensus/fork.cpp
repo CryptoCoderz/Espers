@@ -3,7 +3,6 @@
 // Distributed under the MIT/X11 software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
-#include "primitives/bignum.h"
 #include "core/sync.h"
 #include "node/net.h"
 #include "subcore/key.h"

@@ -7,7 +7,6 @@
 #ifndef XNODEMAN_H
 #define XNODEMAN_H
 
-#include "primitives/bignum.h"
 #include "core/sync.h"
 #include "node/net.h"
 #include "subcore/key.h"

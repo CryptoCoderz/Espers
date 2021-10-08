@@ -12,7 +12,6 @@ using namespace boost;
 
 #include "script.h"
 #include "keystore.h"
-#include "primitives/bignum.h"
 #include "key.h"
 #include "core/main.h"
 #include "core/sync.h"

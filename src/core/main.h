@@ -7,7 +7,6 @@
 #define ESPERS_MAIN_H
 
 #include "chain.h"
-#include "primitives/bignum.h"
 #include "sync.h"
 #include "subcore/txmempool.h"
 #include "node/net.h"

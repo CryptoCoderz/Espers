@@ -4,7 +4,6 @@
 #ifndef ESPERS_FORK_H
 #define ESPERS_FORK_H
 
-#include "primitives/bignum.h"
 
 #include "core/sync.h"
 #include "node/net.h"

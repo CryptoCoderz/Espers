@@ -4,7 +4,6 @@
 #ifndef ESPERS_GENESIS_H
 #define ESPERS_GENESIS_H
 
-#include "primitives/bignum.h"
 
 /** Genesis Start Time */
 static const unsigned int timeGenesisBlock = 1473058800; // Mon, 05 Sep 2016 07:00:00 GMT

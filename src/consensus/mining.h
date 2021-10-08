@@ -4,7 +4,6 @@
 #ifndef ESPERS_MINING_H
 #define ESPERS_MINING_H
 
-#include "primitives/bignum.h"
 
 /** Minimum nCoinAge required to stake PoS (v2) */
 static const unsigned int nStakeMinAge = 2 * 60 * 60; // 2 hours

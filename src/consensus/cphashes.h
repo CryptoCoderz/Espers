@@ -4,7 +4,6 @@
 #ifndef ESPERS_CPHASHES_H
 #define ESPERS_CPHASHES_H
 
-#include "primitives/bignum.h"
 
 static const uint256 CheckBlock_0001("0x0000068c30d404af5c95bc7caa3c464447e63ac3d6fc69d071b3965818487ad1");
 static const uint256 CheckBlock_0002("0x00000932f50079a2bbe960fc72f0f5e65e779b735c2a1130ad4e16f57bdf9c46");
