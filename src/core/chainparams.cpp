@@ -57,13 +57,13 @@ public:
         vAlertPubKey = ParseHex("04e22531e96c9056be6b659c91a94fbfebeb5d5257fe044b88695c62f7c2f81f85d131a669df3be611393f454852a2d08c6314bba5ca3cbe5616262da3d4a6efac");
         nDefaultPort = 22448;
         nRPCPort = 22442;
-        bnProofOfWorkLimit = CBigNum(~uint256(0) >> 20);
-        bnProofOfStakeLimit = CBigNum(~uint256(0) >> 20);
+        bnProofOfWorkLimit = ~uint256(0) >> 20;
+        bnProofOfStakeLimit = ~uint256(0) >> 20;
         // Genesis Message
         const char* pszTimestamp = "Krypton Abandons Ethereum for Bitcoin Proof of Stake Blockchain after 51% Attack : Mon, 05 Sep 2016 07:00:00 GMT";
         std::vector<CTxIn> vin;
         vin.resize(1);
-        vin[0].scriptSig = CScript() << 0 << CBigNum(42) << vector<unsigned char>((const unsigned char*)pszTimestamp, (const unsigned char*)pszTimestamp + strlen(pszTimestamp));
+        vin[0].scriptSig = CScript() << 0 << CScriptNum(42) << vector<unsigned char>((const unsigned char*)pszTimestamp, (const unsigned char*)pszTimestamp + strlen(pszTimestamp));
         std::vector<CTxOut> vout;
         vout.resize(1);
         vout[0].SetEmpty();
@@ -131,8 +131,8 @@ public:
         pchMessageStart[1] = 0xe6;
         pchMessageStart[2] = 0x68;
         pchMessageStart[3] = 0x5a;
-        bnProofOfWorkLimit = CBigNum(~uint256(0) >> 16);
-        bnProofOfStakeLimit = CBigNum(~uint256(0) >> 16);
+        bnProofOfWorkLimit = ~uint256(0) >> 16;
+        bnProofOfStakeLimit = ~uint256(0) >> 16;
         /** TestNet Parameters */
         vAlertPubKey = ParseHex("02e22531e96c9056be6b659c91a94fbfebeb5d5257fe044b88695c62f7c2f81f85d131a669df3be611393f454852a2d08c6314bba5ca3cbe5616262db3d4a6efac");
         nDefaultPort = 32448;
@@ -180,7 +180,7 @@ public:
         pchMessageStart[2] = 0x09;
         pchMessageStart[3] = 0x1a;
         /** RegNet Parameters */
-        bnProofOfWorkLimit = CBigNum(~uint256(0) >> 1);
+        bnProofOfWorkLimit = ~uint256(0) >> 1;
         genesis.nTime = timeRegNetGenesis;
         genesis.nBits  = bnProofOfWorkLimit.GetCompact();
         genesis.nNonce = nNonceReg;

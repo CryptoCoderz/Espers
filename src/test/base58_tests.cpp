@@ -16,7 +16,7 @@ BOOST_AUTO_TEST_CASE(base58_EncodeBase58)
 {
     Array tests = read_json("base58_encode_decode.json");
 
-    BOOST_FOREACH(Value& tv, tests)
+    for (Value& tv : tests)
     {
         Array test = tv.get_array();
         std::string strTest = write_string(tv, false);
@@ -39,7 +39,7 @@ BOOST_AUTO_TEST_CASE(base58_DecodeBase58)
     Array tests = read_json("base58_encode_decode.json");
     std::vector<unsigned char> result;
 
-    BOOST_FOREACH(Value& tv, tests)
+    for (Value& tv : tests)
     {
         Array test = tv.get_array();
         std::string strTest = write_string(tv, false);
@@ -109,7 +109,7 @@ BOOST_AUTO_TEST_CASE(base58_keys_valid_parse)
     CBitcoinSecret secret;
     CBitcoinAddress addr;
 
-    BOOST_FOREACH(Value& tv, tests)
+    for (Value& tv : tests)
     {
         Array test = tv.get_array();
         std::string strTest = write_string(tv, false);
@@ -165,7 +165,7 @@ BOOST_AUTO_TEST_CASE(base58_keys_valid_gen)
 {
     Array tests = read_json("base58_keys_valid.json");
     std::vector<unsigned char> result;
-    BOOST_FOREACH(Value& tv, tests)
+    for (Value& tv : tests)
     {
         Array test = tv.get_array();
         std::string strTest = write_string(tv, false);
@@ -236,7 +236,7 @@ BOOST_AUTO_TEST_CASE(base58_keys_invalid)
     CBitcoinSecret secret;
     CBitcoinAddress addr;
 
-    BOOST_FOREACH(Value& tv, tests)
+    for (Value& tv : tests)
     {
         Array test = tv.get_array();
         std::string strTest = write_string(tv, false);

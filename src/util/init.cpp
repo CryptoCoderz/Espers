@@ -16,6 +16,8 @@
 #include "util.h"
 #include "ui/ui_interface.h"
 #include "consensus/checkpoints.h"
+#include "util/reverse_iterator.h"
+
 #ifdef ENABLE_WALLET
 #include "database/db.h"
 #include "core/wallet.h"
@@ -602,7 +604,7 @@ bool AppInit2(boost::thread_group& threadGroup)
                 }
                 // Loop backward through backup files and keep the N newest ones (1 <= N <= 10)
                 int counter = 0;
-                BOOST_REVERSE_FOREACH(PAIRTYPE(const std::time_t, boost::filesystem::path) file, folder_set)
+                for (std::pair<const std::time_t, boost::filesystem::path> file : reverse_iterate(folder_set))
                 {
                     counter++;
                     if (counter > nWalletBackups)
@@ -679,7 +681,7 @@ bool AppInit2(boost::thread_group& threadGroup)
     
     if (mapArgs.count("-onlynet")) {
         std::set<enum Network> nets;
-        BOOST_FOREACH(std::string snet, mapMultiArgs["-onlynet"]) {
+        for (std::string snet : mapMultiArgs["-onlynet"]) {
             enum Network net = ParseNetwork(snet);
             if (net == NET_UNROUTABLE)
                 return InitError(strprintf(_("Unknown network specified in -onlynet: '%s'"), snet));
@@ -733,7 +735,7 @@ bool AppInit2(boost::thread_group& threadGroup)
     {
         std::string strError;
         if (mapArgs.count("-bind")) {
-            BOOST_FOREACH(std::string strBind, mapMultiArgs["-bind"]) {
+            for (std::string strBind : mapMultiArgs["-bind"]) {
                 CService addrBind;
                 if (!Lookup(strBind.c_str(), addrBind, GetListenPort(), false))
                     return InitError(strprintf(_("Cannot resolve -bind address: '%s'"), strBind));
@@ -753,7 +755,7 @@ bool AppInit2(boost::thread_group& threadGroup)
 
     if (mapArgs.count("-externalip"))
     {
-        BOOST_FOREACH(string strAddr, mapMultiArgs["-externalip"]) {
+        for (string strAddr : mapMultiArgs["-externalip"]) {
             CService addrLocal(strAddr, GetListenPort(), fNameLookup);
             if (!addrLocal.IsValid())
                 return InitError(strprintf(_("Cannot resolve -externalip address: '%s'"), strAddr));
@@ -772,7 +774,7 @@ bool AppInit2(boost::thread_group& threadGroup)
     }
 #endif
 
-    BOOST_FOREACH(string strDest, mapMultiArgs["-seednode"])
+    for (string strDest : mapMultiArgs["-seednode"])
         AddOneShot(strDest);
 
     // ********************************************************* Step 7: load blockchain
@@ -953,7 +955,7 @@ bool AppInit2(boost::thread_group& threadGroup)
     std::vector<boost::filesystem::path> vImportFiles;
     if (mapArgs.count("-loadblock"))
     {
-        BOOST_FOREACH(string strFile, mapMultiArgs["-loadblock"])
+        for (string strFile : mapMultiArgs["-loadblock"])
             vImportFiles.push_back(strFile);
     }
     threadGroup.create_thread(boost::bind(&ThreadImport, vImportFiles));
@@ -1051,7 +1053,7 @@ bool AppInit2(boost::thread_group& threadGroup)
         if(GetBoolArg("-xnconflock", true)) {
             LogPrintf("Locking XNodes:\n");
             uint256 xnTxHash;
-            BOOST_FOREACH(CXNodeConfig::CXNodeEntry xne, xnodeConfig.getEntries()) {
+            for (CXNodeConfig::CXNodeEntry xne : xnodeConfig.getEntries()) {
                 LogPrintf("  %s %s\n", xne.getTxHash(), xne.getOutputIndex());
                 xnTxHash.SetHex(xne.getTxHash());
                 COutPoint outpoint = COutPoint(xnTxHash, boost::lexical_cast<unsigned int>(xne.getOutputIndex()));

@@ -11,11 +11,10 @@
 
 #include <stdint.h>
 
-#include <boost/foreach.hpp>
 #include <boost/variant.hpp>
 
 #include "keystore.h"
-#include "primitives/bignum.h"
+#include "scriptnum.h"
 #include "util/util.h"
 
 typedef std::vector<unsigned char> valtype;
@@ -24,6 +23,10 @@ class CTransaction;
 
 static const unsigned int MAX_SCRIPT_ELEMENT_SIZE = 520; // bytes
 static const unsigned int MAX_OP_RETURN_RELAY = 40;      // bytes
+
+// Threshold for nLockTime: below this value it is interpreted as block number,
+// otherwise as UNIX timestamp.
+static const unsigned int LOCKTIME_THRESHOLD = 500000000; // Tue Nov  5 00:53:20 1985 UTC
 
 /** Signature hash types/flags */
 enum
@@ -59,6 +62,17 @@ enum
     // Verify CHECKLOCKTIMEVERIFY (BIP65)
     //
     SCRIPT_VERIFY_CHECKLOCKTIMEVERIFY = (1U << 6),
+
+    // Using a non-push operator in the scriptSig causes script failure (softfork safe, BIP62 rule 2).
+    SCRIPT_VERIFY_SIGPUSHONLY = (1U << 7),
+
+    // Require minimal encodings for all push operations (OP_0... OP_16, OP_1NEGATE where possible, direct
+    // pushes up to 75 bytes, OP_PUSHDATA up to 255 bytes, OP_PUSHDATA2 for anything larger). Evaluating
+    // any other push causes the script to fail (BIP62 rule 3).
+    // In addition, whenever a stack element is interpreted as a number, it must be of minimal length (BIP62 rule 4).
+    // (softfork safe)
+    SCRIPT_VERIFY_MINIMALDATA = (1U << 8)
+
 };
 
 // Mandatory script verification flags that all new blocks must comply with for
@@ -69,14 +83,15 @@ enum
 static const unsigned int MANDATORY_SCRIPT_VERIFY_FLAGS = SCRIPT_VERIFY_NULLDUMMY |
                                                           SCRIPT_VERIFY_STRICTENC |
                                                           SCRIPT_VERIFY_ALLOW_EMPTY_SIG |
-                                                          SCRIPT_VERIFY_FIX_HASHTYPE |
-                                                          SCRIPT_VERIFY_CHECKLOCKTIMEVERIFY;
+                                                          SCRIPT_VERIFY_FIX_HASHTYPE;
 
 // Standard script verification flags that standard transactions will comply
 // with. However scripts violating these flags may still be present in valid
 // blocks and we must accept those blocks.
 static const unsigned int STANDARD_SCRIPT_VERIFY_FLAGS = MANDATORY_SCRIPT_VERIFY_FLAGS |
-                                                         SCRIPT_VERIFY_DISCOURAGE_UPGRADABLE_NOPS;
+                                                         SCRIPT_VERIFY_DISCOURAGE_UPGRADABLE_NOPS |
+                                                         SCRIPT_VERIFY_MINIMALDATA |
+                                                         SCRIPT_VERIFY_CHECKLOCKTIMEVERIFY;
 
 // For convenience, standard but not mandatory verify flags.
 static const unsigned int STANDARD_NOT_MANDATORY_VERIFY_FLAGS = STANDARD_SCRIPT_VERIFY_FLAGS & ~MANDATORY_SCRIPT_VERIFY_FLAGS;
@@ -263,7 +278,7 @@ const char* GetOpName(opcodetype opcode);
 inline std::string ValueString(const std::vector<unsigned char>& vch)
 {
     if (vch.size() <= 4)
-        return strprintf("%d", CBigNum(vch).getint());
+        return strprintf("%d", CScriptNum(vch, false).getint());
     else
         return HexStr(vch);
 }
@@ -271,7 +286,7 @@ inline std::string ValueString(const std::vector<unsigned char>& vch)
 inline std::string StackString(const std::vector<std::vector<unsigned char> >& vStack)
 {
     std::string str;
-    BOOST_FOREACH(const std::vector<unsigned char>& vch, vStack)
+    for (const std::vector<unsigned char>& vch : vStack)
     {
         if (!str.empty())
             str += " ";
@@ -279,13 +294,6 @@ inline std::string StackString(const std::vector<std::vector<unsigned char> >& v
     }
     return str;
 }
-
-
-
-
-
-
-
 
 /** Serialized script, used inside transaction inputs and outputs */
 class CScript : public std::vector<unsigned char>
@@ -297,24 +305,13 @@ protected:
         {
             push_back(n + (OP_1 - 1));
         }
-        else
+        else if (n == 0)
         {
-            CBigNum bn(n);
-            *this << bn.getvch();
-        }
-        return *this;
-    }
-
-    CScript& push_uint64(uint64_t n)
-    {
-        if (n >= 1 && n <= 16)
-        {
-            push_back(n + (OP_1 - 1));
+            push_back(OP_0);
         }
         else
         {
-            CBigNum bn(n);
-            *this << bn.getvch();
+            *this << CScriptNum::serialize(n);
         }
         return *this;
     }
@@ -340,36 +337,14 @@ public:
         return ret;
     }
 
-
-    //explicit CScript(char b) is not portable.  Use 'signed char' or 'unsigned char'.
-    explicit CScript(signed char b)        { operator<<(b); }
-    explicit CScript(short b)              { operator<<(b); }
-    explicit CScript(int b)                { operator<<(b); }
-    explicit CScript(long b)               { operator<<(b); }
-    explicit CScript(long long b)          { operator<<(b); }
-    explicit CScript(unsigned char b)      { operator<<(b); }
-    explicit CScript(unsigned int b)       { operator<<(b); }
-    explicit CScript(unsigned short b)     { operator<<(b); }
-    explicit CScript(unsigned long b)      { operator<<(b); }
-    explicit CScript(unsigned long long b) { operator<<(b); }
+    CScript(int64_t b) { operator<<(b); }
 
     explicit CScript(opcodetype b)     { operator<<(b); }
     explicit CScript(const uint256& b) { operator<<(b); }
-    explicit CScript(const CBigNum& b) { operator<<(b); }
+    explicit CScript(const CScriptNum& b) { operator<<(b); }
     explicit CScript(const std::vector<unsigned char>& b) { operator<<(b); }
 
-
-    //CScript& operator<<(char b) is not portable.  Use 'signed char' or 'unsigned char'.
-    CScript& operator<<(signed char b)        { return push_int64(b); }
-    CScript& operator<<(short b)              { return push_int64(b); }
-    CScript& operator<<(int b)                { return push_int64(b); }
-    CScript& operator<<(long b)               { return push_int64(b); }
-    CScript& operator<<(long long b)          { return push_int64(b); }
-    CScript& operator<<(unsigned char b)      { return push_uint64(b); }
-    CScript& operator<<(unsigned int b)       { return push_uint64(b); }
-    CScript& operator<<(unsigned short b)     { return push_uint64(b); }
-    CScript& operator<<(unsigned long b)      { return push_uint64(b); }
-    CScript& operator<<(unsigned long long b) { return push_uint64(b); }
+    CScript& operator<<(int64_t b) { return push_int64(b); }
 
     CScript& operator<<(opcodetype opcode)
     {
@@ -401,7 +376,7 @@ public:
         return *this;
     }
 
-    CScript& operator<<(const CBigNum& b)
+    CScript& operator<<(const CScriptNum& b)
     {
         *this << b.getvch();
         return *this;
@@ -580,7 +555,7 @@ public:
 
     bool IsPayToScriptHash() const;
 
-    // Called by IsStandardTx and P2SH VerifyScript (which makes it consensus-critical).
+    // Called by IsStandardTx and P2SH/BIP62 VerifyScript (which makes it consensus-critical).
     bool IsPushOnly() const
     {
         const_iterator pc = begin();
@@ -594,9 +569,6 @@ public:
         }
         return true;
     }
-
-    // Called by IsStandardTx.
-    bool HasCanonicalPushes() const;
 
     void SetDestination(const CTxDestination& address);
     void SetMultisig(int nRequired, const std::vector<CPubKey>& keys);

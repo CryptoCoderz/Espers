@@ -82,6 +82,7 @@ OBJS= \
     obj/subcore/hash.o \
     obj/subcore/noui.o \
     obj/consensus/kernel.o \
+    obj/primitives/base58.o \
     obj/primitives/pbkdf2.o \
     obj/consensus/fork.o \
     obj/crypto/scrypt/scrypt.o \

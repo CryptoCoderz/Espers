@@ -10,6 +10,8 @@
 #include "core/sync.h"
 #include "consensus/fork.h"
 #include "node/addrman.h"
+#include "util/reverse_iterator.h"
+
 #include <boost/lexical_cast.hpp>
 
 CCriticalSection cs_xnodepayments;
@@ -319,7 +321,7 @@ uint64_t CXNodePayments::CalculateScore(uint256 blockHash, CTxIn& vin)
 
 bool CXNodePayments::GetBlockPayee(int nBlockHeight, CScript& payee, CTxIn& vin)
 {
-    BOOST_FOREACH(CXNodePaymentWinner& winner, vWinning){
+    for (CXNodePaymentWinner& winner : vWinning){
         if(winner.nBlockHeight == nBlockHeight) {
             payee = winner.payee;
             vin = winner.vin;
@@ -332,7 +334,7 @@ bool CXNodePayments::GetBlockPayee(int nBlockHeight, CScript& payee, CTxIn& vin)
 
 bool CXNodePayments::GetWinningXNode(int nBlockHeight, CTxIn& vinOut)
 {
-    BOOST_FOREACH(CXNodePaymentWinner& winner, vWinning){
+    for (CXNodePaymentWinner& winner : vWinning){
         if(winner.nBlockHeight == nBlockHeight) {
             vinOut = winner.vin;
             return true;
@@ -352,7 +354,7 @@ bool CXNodePayments::AddWinningXNode(CXNodePaymentWinner& winnerIn)
     winnerIn.score = CalculateScore(blockHash, winnerIn.vin);
 
     bool foundBlock = false;
-    BOOST_FOREACH(CXNodePaymentWinner& winner, vWinning){
+    for (CXNodePaymentWinner& winner : vWinning){
         if(winner.nBlockHeight == winnerIn.nBlockHeight) {
             foundBlock = true;
             if(winner.score < winnerIn.score){
@@ -415,7 +417,7 @@ bool CXNodePayments::ProcessBlock(int nBlockHeight)
     LogPrintf(" ProcessBlock Start nHeight %d - vin %s. \n", nBlockHeight, activeXNode.vin.ToString().c_str());
 
     std::vector<CTxIn> vecLastPayments;
-    BOOST_REVERSE_FOREACH(CXNodePaymentWinner& winner, vWinning)
+    for (CXNodePaymentWinner& winner : reverse_iterate(vWinning))
     {
         //if we already have the same vin - we have one full payment cycle, break
         if(vecLastPayments.size() > (unsigned int)nMinimumAge) break;
@@ -446,7 +448,7 @@ bool CXNodePayments::ProcessBlock(int nBlockHeight)
     {
         LogPrintf(" Find by reverse \n");
 
-        BOOST_REVERSE_FOREACH(CTxIn& vinLP, vecLastPayments)
+        for (CTxIn& vinLP : reverse_iterate(vecLastPayments))
         {
             CXNode* pxn = xnodeman.Find(vinLP);
             if(pxn != NULL)
@@ -506,7 +508,7 @@ void CXNodePayments::Relay(CXNodePaymentWinner& winner)
     vector<CInv> vInv;
     vInv.push_back(inv);
     LOCK(cs_vNodes);
-    BOOST_FOREACH(CNode* pnode, vNodes){
+    for (CNode* pnode : vNodes){
         pnode->PushMessage("inv", vInv);
     }
 }
@@ -515,7 +517,7 @@ void CXNodePayments::Sync(CNode* node)
 {
     LOCK(cs_xnodepayments);
 
-    BOOST_FOREACH(CXNodePaymentWinner& winner, vWinning)
+    for (CXNodePaymentWinner& winner : vWinning)
         if(winner.nBlockHeight >= pindexBest->nHeight-10 && winner.nBlockHeight <= pindexBest->nHeight + 20)
             node->PushMessage("xnw", winner);
 }

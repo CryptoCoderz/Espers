@@ -12,6 +12,7 @@
 #include "node/net.h"
 #include "database/txdb.h"
 #include "consensus/velocity.h"
+#include "primitives/uint256.h"
 #include "main.h"
 
 using namespace std;
@@ -41,8 +42,8 @@ double VRFup3 = 2;
 double TerminalAverage = 0;
 double TerminalFactor = 10000;
 double debugTerminalAverage = 0;
-CBigNum newBN = 0;
-CBigNum oldBN = 0;
+uint256 newBN = 0;
+uint256 oldBN = 0;
 int64_t VLrate1 = 0;
 int64_t VLrate2 = 0;
 int64_t VLrate3 = 0;
@@ -74,9 +75,9 @@ bool fDryRun;
 bool fCRVreset;
 const CBlockIndex* pindexPrev = 0;
 const CBlockIndex* BlockVelocityType = 0;
-CBigNum bnVelocity = 0;
-CBigNum bnOld;
-CBigNum bnNew;
+uint256 bnVelocity = 0;
+uint256 bnOld;
+uint256 bnNew;
 std::string difType ("");
 unsigned int retarget = DIFF_VRX; // Default with VRX
 
@@ -137,8 +138,8 @@ void VRXdebug()
     LogPrintf("Terminal-Velocity 4th multiplier set to: %f: \n",VLF4);
     LogPrintf("Terminal-Velocity 5th multiplier set to: %f: \n",VLF5);
     LogPrintf("Terminal-Velocity averaged a final multiplier of: %f: \n",TerminalAverage);
-    LogPrintf("Prior Terminal-Velocity: %u\n", oldBN);
-    LogPrintf("New Terminal-Velocity:  %u\n", newBN);
+    LogPrintf("Prior Terminal-Velocity: %u: \n", oldBN.GetLow64());
+    LogPrintf("New Terminal-Velocity:  %u: \n", newBN.GetLow64());
     return;
 }
 
@@ -181,7 +182,7 @@ void GNTdebug()
 unsigned int PeercoinDiff(const CBlockIndex* pindexLast, bool fProofOfStake)
 {
     // Standard PPC retarget system, similiar to BTC's
-    CBigNum bnTargetLimit = fProofOfStake ? Params().ProofOfStakeLimit() : Params().ProofOfWorkLimit();
+    uint256 bnTargetLimit = fProofOfStake ? Params().ProofOfStakeLimit() : Params().ProofOfWorkLimit();
 
     if (pindexLast == NULL)
         return bnTargetLimit.GetCompact(); // genesis block
@@ -214,7 +215,7 @@ unsigned int DarkGravityWave(const CBlockIndex* pindexLast, bool fProofOfStake)
 {
         // DarkGravityWave v3.1, written by Evan Duffield - evan@dashpay.io
         // Modified & revised by bitbandi for PoW support [implementation (fork) cleanup done by CryptoCoderz]
-        const CBigNum nProofOfWorkLimit = fProofOfStake ? Params().ProofOfStakeLimit() : Params().ProofOfWorkLimit();
+        const uint256 nProofOfWorkLimit = fProofOfStake ? Params().ProofOfStakeLimit() : Params().ProofOfWorkLimit();
         const CBlockIndex *BlockLastSolved = pindexLast;
         const CBlockIndex *BlockLastSolved_lgf = GetLastBlockIndex(pindexLast, fProofOfStake);
         const CBlockIndex *BlockReading = pindexLast;
@@ -228,8 +229,8 @@ unsigned int DarkGravityWave(const CBlockIndex* pindexLast, bool fProofOfStake)
         int64_t PastBlocksMin = 7;
         int64_t PastBlocksMax = 24;
         int64_t CountBlocks = 0;
-        CBigNum PastDifficultyAverage;
-        CBigNum PastDifficultyAveragePrev;
+        uint256 PastDifficultyAverage;
+        uint256 PastDifficultyAveragePrev;
 
         if (BlockLastSolved == NULL || BlockLastSolved->nHeight == 0 || BlockLastSolved->nHeight < PastBlocksMax) {
             return nProofOfWorkLimit.GetCompact();
@@ -241,7 +242,7 @@ unsigned int DarkGravityWave(const CBlockIndex* pindexLast, bool fProofOfStake)
 
             if(CountBlocks <= PastBlocksMin) {
                 if (CountBlocks == 1) { PastDifficultyAverage.SetCompact(BlockReading->nBits); }
-                else { PastDifficultyAverage = ((PastDifficultyAveragePrev * CountBlocks) + (CBigNum().SetCompact(BlockReading->nBits))) / (CountBlocks + 1); }
+                else { PastDifficultyAverage = ((PastDifficultyAveragePrev * CountBlocks) + (uint256().SetCompact(BlockReading->nBits))) / (CountBlocks + 1); }
                 PastDifficultyAveragePrev = PastDifficultyAverage;
             }
 
@@ -263,7 +264,7 @@ unsigned int DarkGravityWave(const CBlockIndex* pindexLast, bool fProofOfStake)
             }
         }
 
-        CBigNum bnNew(PastDifficultyAverage);
+        uint256 bnNew(PastDifficultyAverage);
 
         int64_t _nTargetTimespan = CountBlocks * Params().TargetSpacing();
 

@@ -169,7 +169,7 @@ bool tx_Factor(CBlockIndex* prevBlock, CBlock* block)
     }
 
     // Set factor values
-    BOOST_FOREACH(const CTransaction& tx, block->vtx)
+    for (const CTransaction& tx : block->vtx)
     {
         // Load TX inputs
         CTxDB txdb("r");

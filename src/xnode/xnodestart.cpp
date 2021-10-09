@@ -331,7 +331,7 @@ bool CActiveXNode::GetXnodeVin(CTxIn& vin, CPubKey& pubkey, CKey& secretKey, std
 		uint256 txHash(strTxHash);
         int outputIndex = boost::lexical_cast<int>(strOutputIndex);
 		bool found = false;
-		BOOST_FOREACH(COutput& out, possibleCoins) {
+		for (COutput& out : possibleCoins) {
 			if(out.tx->GetHash() == txHash && out.i == outputIndex)
 			{
 				selectedOutput = &out;
@@ -374,7 +374,7 @@ bool CActiveXNode::GetXnodeVinForPubKey(std::string collateralAddress, CTxIn& vi
 		uint256 txHash(strTxHash);
         int outputIndex = boost::lexical_cast<int>(strOutputIndex);
 		bool found = false;
-		BOOST_FOREACH(COutput& out, possibleCoins) {
+		for (COutput& out : possibleCoins) {
 			if(out.tx->GetHash() == txHash && out.i == outputIndex)
 			{
 				selectedOutput = &out;
@@ -439,7 +439,7 @@ vector<COutput> CActiveXNode::SelectCoinsXNode()
     pwalletMain->AvailableCoinsXN(vCoins);
 
     // Filter
-    BOOST_FOREACH(const COutput& out, vCoins)
+    for (const COutput& out : vCoins)
     {
         if(out.tx->vout[out.i].nValue == XNodeCollateral(pindexBest->nHeight)*COIN) { //exactly
         	filteredCoins.push_back(out);
@@ -462,7 +462,7 @@ vector<COutput> CActiveXNode::SelectCoinsXNodeForPubKey(std::string collateralAd
     pwalletMain->AvailableCoins(vCoins);
 
     // Filter
-    BOOST_FOREACH(const COutput& out, vCoins)
+    for (const COutput& out : vCoins)
     {
         if(out.tx->vout[out.i].scriptPubKey == scriptPubKey && out.tx->vout[out.i].nValue == XNodeCollateral(pindexBest->nHeight)*COIN) { //exactly
         	filteredCoins.push_back(out);

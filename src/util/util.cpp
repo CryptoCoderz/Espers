@@ -35,7 +35,6 @@ namespace boost {
 #include <boost/program_options/parsers.hpp>
 #include <boost/filesystem.hpp>
 #include <boost/filesystem/fstream.hpp>
-#include <boost/foreach.hpp>
 #include <boost/thread.hpp>
 #include <openssl/crypto.h>
 #include <openssl/rand.h>
@@ -436,7 +435,7 @@ const signed char p_util_hexdigit[256] =
 
 bool IsHex(const string& str)
 {
-    BOOST_FOREACH(char c, str)
+    for (char c : str)
     {
         if (HexDigit(c) < 0)
             return false;
@@ -512,7 +511,7 @@ void ParseParameters(int argc, const char* const argv[])
     }
 
     // New 0.6 features:
-    BOOST_FOREACH(const PAIRTYPE(string,string)& entry, mapArgs)
+    for (const std::pair<string,string>& entry : mapArgs)
     {
         string name = entry.first;
 

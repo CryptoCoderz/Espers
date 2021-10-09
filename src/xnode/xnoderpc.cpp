@@ -117,7 +117,7 @@ Value xnode(const Array& params, bool fHelp)
         Object statusObj;
         statusObj.push_back(Pair("alias", alias));
 
-        BOOST_FOREACH(CXNodeConfig::CXNodeEntry xne, xnodeConfig.getEntries()) {
+        for (CXNodeConfig::CXNodeEntry xne : xnodeConfig.getEntries()) {
             if(xne.getAlias() == alias) {
                 found = true;
                 std::string errorMessage;
@@ -165,7 +165,7 @@ Value xnode(const Array& params, bool fHelp)
 
         Object resultsObj;
 
-        BOOST_FOREACH(CXNodeConfig::CXNodeEntry xne, xnodeConfig.getEntries()) {
+        for (CXNodeConfig::CXNodeEntry xne : xnodeConfig.getEntries()) {
             total++;
 
             std::string errorMessage;
@@ -284,7 +284,7 @@ Value xnode(const Array& params, bool fHelp)
         Object statusObj;
         statusObj.push_back(Pair("alias", alias));
 
-        BOOST_FOREACH(CXNodeConfig::CXNodeEntry xne, xnodeConfig.getEntries()) {
+        for (CXNodeConfig::CXNodeEntry xne : xnodeConfig.getEntries()) {
             if(xne.getAlias() == alias) {
                 found = true;
                 std::string errorMessage;
@@ -338,7 +338,7 @@ Value xnode(const Array& params, bool fHelp)
 
         Object resultsObj;
 
-        BOOST_FOREACH(CXNodeConfig::CXNodeEntry xne, xnodeConfig.getEntries()) {
+        for (CXNodeConfig::CXNodeEntry xne : xnodeConfig.getEntries()) {
             total++;
 
             std::string errorMessage;
@@ -491,7 +491,7 @@ Value xnode(const Array& params, bool fHelp)
 
         Object resultObj;
 
-        BOOST_FOREACH(CXNodeConfig::CXNodeEntry xne, xnodeConfig.getEntries()) {
+        for (CXNodeConfig::CXNodeEntry xne : xnodeConfig.getEntries()) {
             Object xnObj;
             xnObj.push_back(Pair("alias", xne.getAlias()));
             xnObj.push_back(Pair("address", xne.getIp()));
@@ -509,7 +509,7 @@ Value xnode(const Array& params, bool fHelp)
         vector<COutput> possibleCoins = activeXNode.SelectCoinsXNode();
 
         Object obj;
-        BOOST_FOREACH(COutput& out, possibleCoins) {
+        for (COutput& out : possibleCoins) {
             obj.push_back(Pair(out.tx->GetHash().ToString().c_str(), boost::lexical_cast<std::string>(out.i)));
         }
 
@@ -536,7 +536,7 @@ Value xnode(const Array& params, bool fHelp)
 
         Object resultObj;
 
-        BOOST_FOREACH(CXNodeConfig::CXNodeEntry xne, xnodeConfig.getEntries()) {
+        for (CXNodeConfig::CXNodeEntry xne : xnodeConfig.getEntries()) {
             std::string errorMessage;
             std::vector<unsigned char> vchXnodeSignature;
             std::string strXnodeSignMessage;
@@ -578,7 +578,7 @@ Value xnode(const Array& params, bool fHelp)
 
             //send to all peers
             LOCK(cs_vNodes);
-            BOOST_FOREACH(CNode* pnode, vNodes)
+            for (CNode* pnode : vNodes)
                 pnode->PushMessage("mvote", pxn->vin, vchXnodeSignature, nVote);
         }
 
@@ -620,7 +620,7 @@ Value xnode(const Array& params, bool fHelp)
 
         //send to all peers
         LOCK(cs_vNodes);
-        BOOST_FOREACH(CNode* pnode, vNodes)
+        for (CNode* pnode : vNodes)
             pnode->PushMessage("mvote", activeXNode.vin, vchXnodeSignature, nVote);
 
     }
@@ -685,14 +685,14 @@ Value xnodelist(const Array& params, bool fHelp)
     Object obj;
     if (strMode == "rank") {
         std::vector<pair<int, CXNode> > vXNodeRanks = xnodeman.GetXNodeRanks(pindexBest->nHeight);
-        BOOST_FOREACH(PAIRTYPE(int, CXNode)& s, vXNodeRanks) {
+        for (std::pair<int, CXNode>& s : vXNodeRanks) {
             std::string strVin = s.second.vin.prevout.ToStringShort();
             if(strFilter !="" && strVin.find(strFilter) == string::npos) continue;
             obj.push_back(Pair(strVin,       s.first));
         }
     } else {
         std::vector<CXNode> vXNodes = xnodeman.GetFullXNodeVector();
-        BOOST_FOREACH(CXNode& xn, vXNodes) {
+        for (CXNode& xn : vXNodes) {
             std::string strVin = xn.vin.prevout.ToStringShort();
             if (strMode == "activeseconds") {
                 if(strFilter !="" && strVin.find(strFilter) == string::npos) continue;

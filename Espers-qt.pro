@@ -220,7 +220,6 @@ HEADERS += src/qt/bitcoingui.h \
     src/core/blocksizecalculator.h \
     src/node/addrman.h \
     src/primitives/base58.h \
-    src/primitives/bignum.h \
     src/core/blockparams.h \
     src/core/chainparams.h \
     src/core/chainparamsseeds.h \
@@ -231,6 +230,7 @@ HEADERS += src/qt/bitcoingui.h \
     src/primitives/compat.h \
     src/subcore/coincontrol.h \
     src/core/sync.h \
+    src/util/reversde_iterator.h \
     src/util/util.h \
     src/subcore/hash.h \
     src/primitives/uint256.h \
@@ -249,6 +249,7 @@ HEADERS += src/qt/bitcoingui.h \
     src/subcore/txmempool.h \
     src/database/walletdb.h \
     src/subcore/script.h \
+    src/subcore/scriptnum.h \
     src/util/init.h \
     src/primitives/mruset.h \
     src/consensus/velocity.h \
@@ -362,6 +363,7 @@ SOURCES += src/qt/bitcoin.cpp src/qt/bitcoingui.cpp \
     src/qt/bitcoinaddressvalidator.cpp \
     src/node/alert.cpp \
     src/core/blocksizecalculator.cpp \
+    src/primitives/base58.cpp \
     src/core/blockparams.cpp \
     src/core/chainparams.cpp \
     src/consensus/version.cpp \

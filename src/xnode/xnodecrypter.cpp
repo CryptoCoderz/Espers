@@ -21,7 +21,7 @@ bool CXNodeEngineSigner::IsVinAssociatedWithPubkey(CTxIn& vin, CPubKey& pubkey){
     uint256 hash;
     //if(GetTransaction(vin.prevout.hash, txVin, hash, true)){
     if(GetTransaction(vin.prevout.hash, txVin, hash)){
-        BOOST_FOREACH(CTxOut out, txVin.vout){
+        for (CTxOut out : txVin.vout){
             if(out.nValue == XNodeCollateral(pindexBest->nHeight)*COIN){
                 if(out.scriptPubKey == payee2) return true;
             }

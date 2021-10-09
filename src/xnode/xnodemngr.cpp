@@ -237,7 +237,7 @@ void CXNodeMan::Check()
 {
     LOCK(cs);
 
-    BOOST_FOREACH(CXNode& xn, vXNodes)
+    for (CXNode& xn : vXNodes)
         xn.Check();
 }
 
@@ -305,7 +305,7 @@ int CXNodeMan::CountEnabled(int protocolVersion)
     int i = 0;
     protocolVersion = protocolVersion == -1 ? xnodePayments.GetMinXNodePaymentsProto() : protocolVersion;
 
-    BOOST_FOREACH(CXNode& xn, vXNodes) {
+    for (CXNode& xn : vXNodes) {
         xn.Check();
         if(xn.protocolVersion < protocolVersion || !xn.IsEnabled()) continue;
         i++;
@@ -318,7 +318,7 @@ int CXNodeMan::CountXNodesAboveProtocol(int protocolVersion)
 {
     int i = 0;
 
-    BOOST_FOREACH(CXNode& xn, vXNodes) {
+    for (CXNode& xn : vXNodes) {
         xn.Check();
         if(xn.protocolVersion < protocolVersion || !xn.IsEnabled()) continue;
         i++;
@@ -348,7 +348,7 @@ CXNode *CXNodeMan::Find(const CTxIn &vin)
 {
     LOCK(cs);
 
-    BOOST_FOREACH(CXNode& xn, vXNodes)
+    for (CXNode& xn : vXNodes)
     {
         if(xn.vin.prevout == vin.prevout)
             return &xn;
@@ -362,7 +362,7 @@ CXNode* CXNodeMan::FindOldestNotInVec(const std::vector<CTxIn> &vVins, int nMini
 
     CXNode *pOldestXNode = NULL;
 
-    BOOST_FOREACH(CXNode &xn, vXNodes)
+    for (CXNode &xn : vXNodes)
     {   
         xn.Check();
         if(!xn.IsEnabled()) continue;
@@ -370,7 +370,7 @@ CXNode* CXNodeMan::FindOldestNotInVec(const std::vector<CTxIn> &vVins, int nMini
         if(xn.GetXNodeInputAge() < nMinimumAge) continue;
 
         bool found = false;
-        BOOST_FOREACH(const CTxIn& vin, vVins)
+        for (const CTxIn& vin : vVins)
             if(xn.vin.prevout == vin.prevout)
             {   
                 found = true;
@@ -400,7 +400,7 @@ CXNode *CXNodeMan::Find(const CPubKey &pubKeyXNode)
 {
     LOCK(cs);
 
-    BOOST_FOREACH(CXNode& xn, vXNodes)
+    for (CXNode& xn : vXNodes)
     {
         if(xn.pubkey2 == pubKeyXNode)
             return &xn;
@@ -422,10 +422,10 @@ CXNode *CXNodeMan::FindRandomNotInVec(std::vector<CTxIn> &vecToExclude, int prot
     LogPrintf("CXNodeMan::FindRandomNotInVec - rand %d\n", rand);
     bool found;
 
-    BOOST_FOREACH(CXNode &xn, vXNodes) {
+    for (CXNode &xn : vXNodes) {
         if(xn.protocolVersion < protocolVersion || !xn.IsEnabled()) continue;
         found = false;
-        BOOST_FOREACH(CTxIn &usedVin, vecToExclude) {
+        for (CTxIn &usedVin : vecToExclude) {
             if(xn.vin.prevout == usedVin.prevout) {
                 found = true;
                 break;
@@ -446,7 +446,7 @@ CXNode* CXNodeMan::GetCurrentXnode(int mod, int64_t nBlockHeight, int minProtoco
     CXNode* winner = NULL;
 
     // scan for winner
-    BOOST_FOREACH(CXNode& xn, vXNodes) {
+    for (CXNode& xn : vXNodes) {
         xn.Check();
         if(xn.protocolVersion < minProtocol || !xn.IsEnabled()) continue;
 
@@ -474,7 +474,7 @@ int CXNodeMan::GetXNodeRank(const CTxIn& vin, int64_t nBlockHeight, int minProto
     if(!GetBlockHash(hash, nBlockHeight)) return -1;
 
     // scan for winner
-    BOOST_FOREACH(CXNode& xn, vXNodes) {
+    for (CXNode& xn : vXNodes) {
 
         if(xn.protocolVersion < minProtocol) continue;
         if(fOnlyActive) {
@@ -492,7 +492,7 @@ int CXNodeMan::GetXNodeRank(const CTxIn& vin, int64_t nBlockHeight, int minProto
     sort(vecXNodeScores.rbegin(), vecXNodeScores.rend(), CompareValueOnly());
 
     int rank = 0;
-    BOOST_FOREACH (PAIRTYPE(unsigned int, CTxIn)& s, vecXNodeScores){
+    for (std::pair<unsigned int, CTxIn>& s : vecXNodeScores){
         rank++;
         if(s.second == vin) {
             return rank;
@@ -512,7 +512,7 @@ std::vector<pair<int, CXNode> > CXNodeMan::GetXNodeRanks(int64_t nBlockHeight, i
     if(!GetBlockHash(hash, nBlockHeight)) return vecXNodeRanks;
 
     // scan for winner
-    BOOST_FOREACH(CXNode& xn, vXNodes) {
+    for (CXNode& xn : vXNodes) {
 
         xn.Check();
 
@@ -531,7 +531,7 @@ std::vector<pair<int, CXNode> > CXNodeMan::GetXNodeRanks(int64_t nBlockHeight, i
     sort(vecXNodeScores.rbegin(), vecXNodeScores.rend(), CompareValueOnlyXN());
 
     int rank = 0;
-    BOOST_FOREACH (PAIRTYPE(unsigned int, CXNode)& s, vecXNodeScores){
+    for (std::pair<unsigned int, CXNode>& s : vecXNodeScores){
         rank++;
         vecXNodeRanks.push_back(make_pair(rank, s.second));
     }
@@ -544,7 +544,7 @@ CXNode* CXNodeMan::GetXNodeByRank(int nRank, int64_t nBlockHeight, int minProtoc
     std::vector<pair<unsigned int, CTxIn> > vecXNodeScores;
 
     // scan for winner
-    BOOST_FOREACH(CXNode& xn, vXNodes) {
+    for (CXNode& xn : vXNodes) {
 
         if(xn.protocolVersion < minProtocol) continue;
         if(fOnlyActive) {
@@ -562,7 +562,7 @@ CXNode* CXNodeMan::GetXNodeByRank(int nRank, int64_t nBlockHeight, int minProtoc
     sort(vecXNodeScores.rbegin(), vecXNodeScores.rend(), CompareValueOnly());
 
     int rank = 0;
-    BOOST_FOREACH (PAIRTYPE(unsigned int, CTxIn)& s, vecXNodeScores){
+    for (std::pair<unsigned int, CTxIn>& s : vecXNodeScores){
         rank++;
         if(rank == nRank) {
             return Find(s.second);
@@ -578,7 +578,7 @@ void CXNodeMan::ProcessXNodeConnections()
 
     //if(!xnodeEnginePool.pSubmittedToXNode) return;
     
-    BOOST_FOREACH(CNode* pnode, vNodes)
+    for (CNode* pnode : vNodes)
     {
         //if(xnodeEnginePool.pSubmittedToXNode->addr == pnode->addr) continue;
 
@@ -886,7 +886,7 @@ void CXNodeMan::ProcessMessage(CNode* pfrom, std::string& strCommand, CDataStrea
 
                 //send to all peers
                 LOCK(cs_vNodes);
-                BOOST_FOREACH(CNode* pnode, vNodes)
+                for (CNode* pnode : vNodes)
                     pnode->PushMessage("mvote", vin, vchSig, nVote);
             }
 
@@ -921,7 +921,7 @@ void CXNodeMan::ProcessMessage(CNode* pfrom, std::string& strCommand, CDataStrea
         int count = this->size();
         int i = 0;
 
-        BOOST_FOREACH(CXNode& xn, vXNodes) {
+        for (CXNode& xn : vXNodes) {
 
             if(xn.addr.IsRFC1918()) continue; //local network
 
@@ -947,14 +947,14 @@ void CXNodeMan::ProcessMessage(CNode* pfrom, std::string& strCommand, CDataStrea
 void CXNodeMan::RelayXNodeEntry(const CTxIn vin, const CService addr, const std::vector<unsigned char> vchSig, const int64_t nNow, const CPubKey pubkey, const CPubKey pubkey2, const int count, const int current, const int64_t lastUpdated, const int protocolVersion, CScript donationAddress, int donationPercentage)
 {
     LOCK(cs_vNodes);
-    BOOST_FOREACH(CNode* pnode, vNodes)
+    for (CNode* pnode : vNodes)
         pnode->PushMessage("dsee", vin, addr, vchSig, nNow, pubkey, pubkey2, count, current, lastUpdated, protocolVersion, donationAddress, donationPercentage);
 }
 
 void CXNodeMan::RelayXNodeEntryPing(const CTxIn vin, const std::vector<unsigned char> vchSig, const int64_t nNow, const bool stop)
 {
     LOCK(cs_vNodes);
-    BOOST_FOREACH(CNode* pnode, vNodes)
+    for (CNode* pnode : vNodes)
         pnode->PushMessage("dseep", vin, vchSig, nNow, stop);
 }
 

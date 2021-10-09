@@ -6,7 +6,6 @@
 #ifndef ESPERS_CHAIN_PARAMS_H
 #define ESPERS_CHAIN_PARAMS_H
 
-#include "primitives/bignum.h"
 #include "primitives/uint256.h"
 #include "util/util.h"
 
@@ -57,8 +56,8 @@ public:
     const MessageStartChars& MessageStart() const { return pchMessageStart; }
     const vector<unsigned char>& AlertKey() const { return vAlertPubKey; }
     int GetDefaultPort() const { return nDefaultPort; }
-    const CBigNum& ProofOfWorkLimit() const { return bnProofOfWorkLimit; }
-    const CBigNum& ProofOfStakeLimit() const { return bnProofOfStakeLimit; }
+    const uint256& ProofOfWorkLimit() const { return bnProofOfWorkLimit; }
+    const uint256& ProofOfStakeLimit() const { return bnProofOfStakeLimit; }
     int SubsidyHalvingInterval() const { return nSubsidyHalvingInterval; }
     virtual const CBlock& GenesisBlock() const = 0;
     virtual bool RequireRPCPassword() const { return true; }
@@ -81,8 +80,8 @@ protected:
     vector<unsigned char> vAlertPubKey;
     int nDefaultPort;
     int nRPCPort;
-    CBigNum bnProofOfWorkLimit;
-    CBigNum bnProofOfStakeLimit;
+    uint256 bnProofOfWorkLimit;
+    uint256 bnProofOfStakeLimit;
     int nSubsidyHalvingInterval;
     string strDataDir;
     vector<CDNSSeedData> vSeeds;
