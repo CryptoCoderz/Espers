@@ -305,7 +305,10 @@ std::string HelpMessage()
     strUsage += "\n" + _("Demi-node feature options:") + "\n";
     strUsage += "  -deminodes=<n> " + _("Toggle Demi-node features on/off, (0-1, default: 0") + "\n";
     strUsage += "  -demimaxdepth=<n> " + _("Set the maximum override depth for chain reorganization, (default: 0") + "\n";
-    strUsage += "  -demilock=<n> " + _("Lock Demi-nodes to either allow or deny standard node failover, (0-1, default: 0") + "\n";
+    strUsage += "  -demilocksync=<n> " + _("Lock Demi-nodes to either allow or deny standard node sync failover, (0-1, default: 0") + "\n";
+    strUsage += "  -demistrict=<n> " + _("Toggle using Demi-nodes exclusively to accept new blocks on/off, (0-1, default: 0") + "\n";
+    strUsage += "  -demipeerlimit=<n> " + _("Allow/Deny blocks from peers using legacy clients/wallets, (0-1, default: 0") + "\n";
+    strUsage += "  -demireorgtype=<n> " + _("Allow/Deny reorganize requests from peers as well as Demi-nodes, (0-1, default: 0") + "\n";
 
     return strUsage;
 }
