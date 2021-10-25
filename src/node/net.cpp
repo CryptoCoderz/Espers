@@ -711,7 +711,7 @@ bool FirstCycle = true;
 
 void RefreshRecentConnections(int RefreshMinutes)
 {
-    if (vNodes.size() >= 8)
+    if (vNodes.size() >= GetArg("-maxconnections", 125))
     {
         return;
     }
@@ -1681,6 +1681,10 @@ void static StartSync(const vector<CNode*> &vNodes) {
         return;
 
     // Iterate over all nodes
+    //
+    // TODO: This needs to be completely rewritten later
+    // (pnode->nStartingHeight > (nBestHeight - 144))  will almost always be true
+    // and etc...
     BOOST_FOREACH(CNode* pnode, vNodes) {
         // check preconditions for allowing a sync
         if (!pnode->fClient && !pnode->fOneShot &&

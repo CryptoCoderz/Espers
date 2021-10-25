@@ -139,7 +139,7 @@ bool RollingCheckpoints(int nHeight)
     CBlockIndex* pindexCurrentBlock = pindexBest;
     CBlockIndex* pindexPastBlock = pindexCurrentBlock;
     // Set count and loop
-    int pastBLOCK_1 = (pindexCurrentBlock->nHeight - BLOCK_TEMP_CHECKPOINT_DEPTH);
+    int pastBLOCK_1 = (pindexCurrentBlock->nHeight - (BLOCK_TEMP_CHECKPOINT_DEPTH + BLOCK_REORG_THRESHOLD));
     while (pastBLOCK_1 < pindexCurrentBlock->nHeight) {
         // Index backwards
         pindexPastBlock = pindexPastBlock->pprev;

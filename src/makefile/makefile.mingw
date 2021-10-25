@@ -115,6 +115,9 @@ OBJS= \
     obj/xnode/xnodestart.o \
     obj/xnode/xnodesync.o \
     obj/xnode/xnodecrypter.o \
+    obj/deminode/demimodule.o \
+    obj/deminode/deminet.o \
+    obj/deminode/demisync.o \
     obj/fractal/fractalcontract.o \
     obj/fractal/fractaldataob.o \
     obj/fractal/fractalengine.o \
@@ -145,7 +148,7 @@ leveldb/libleveldb.a:
 obj/txdb-leveldb.o: leveldb/libleveldb.a
 
 obj/%.o: %.cpp %.c $(HEADERS)
-	g++ -c $(CFLAGS) -o $@ $<
+	g++ -c $(CFLAGS) -o $(xCXXFLAGS) -std=c++11 $@ $<
 
 obj/crypto/scrypt/scrypt-x86.o: crypto/scrypt/scrypt-x86.S
 	$(CXX) -c $(xCXXFLAGS) -MMD -o $@ $<

@@ -85,10 +85,7 @@ inline void MilliSleep(int64_t n)
 #endif
 }
 
-extern bool fXnode;
-extern int64_t enforceXNodePaymentsTime;
-extern std::string strXnodeAddr;
-extern int nXNodeMinProtocol;
+// Standard args
 extern std::map<std::string, std::string> mapArgs;
 extern std::map<std::string, std::vector<std::string> > mapMultiArgs;
 extern bool fDebug;
@@ -101,12 +98,20 @@ extern std::string strMiscWarning;
 extern bool fNoListen;
 extern bool fLogTimestamps;
 extern volatile bool fReopenDebugLog;
-//Live fork toggle
+// Live fork toggle
 extern std::string strLiveForkToggle;
-extern int64_t nLiveForkToggle;
-//Logic for lock/unlock GUI icon
-//does not affect daemon operation
+extern int64_t nLiveForkToggle;// TODO: just have dependent functions create a non-extern within
+                               // their respective functions (start cleaning up externs)
+// Xnodes
+extern bool fXnode;
+extern int64_t enforceXNodePaymentsTime;
+extern std::string strXnodeAddr;
+extern int nXNodeMinProtocol;
+// Logic for lock/unlock GUI icon, does not affect daemon operation
 extern bool settingsStatus;
+// Demi-node toggle
+extern bool fDemiNodes;
+
 
 void RandAddSeed();
 void RandAddSeedPerfmon();

@@ -51,6 +51,9 @@ Value ping(const Array& params, bool fHelp)
     return Value::null;
 }
 
+// TODO: Move this to a more central calling point
+// Currently recreated in velocity.cpp when
+// both files could be sharing this function instead.
 static void CopyNodeStats(std::vector<CNodeStats>& vstats)
 {
     vstats.clear();

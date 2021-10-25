@@ -5,6 +5,7 @@
 !core
 !daemon
 !database
+!deminode
 !fractal
 !makefile
 !node
