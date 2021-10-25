@@ -59,7 +59,7 @@ static const int BIP0031_VERSION = 60000;
 static const int MEMPOOL_GD_VERSION = 60002;
 
 // "demi-nodes" command, enhanced "getdata" behavior starts with this version:
-static const int DEMINODE_VERSION = 60040;
+static const int DEMINODE_VERSION = 60039;
 
 // reject blocks with non-canonical signatures starting from this version
 static const int CANONICAL_BLOCK_SIG_VERSION = 60045;

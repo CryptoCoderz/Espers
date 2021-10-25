@@ -6,7 +6,7 @@
 
 #include "database/txdb.h"
 
-bool fDemiFound;
+bool fDemiPeerRelay(std::string peerAddr);
 bool getDemiBlock(uint256 blockHash);
 
 #endif // DEMINET_H
