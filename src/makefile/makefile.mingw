@@ -115,6 +115,9 @@ OBJS= \
     obj/xnode/xnodestart.o \
     obj/xnode/xnodesync.o \
     obj/xnode/xnodecrypter.o \
+    obj/deminode/demimodule.o \
+    obj/deminode/deminet.o \
+    obj/deminode/demisync.o \
     obj/fractal/fractalcontract.o \
     obj/fractal/fractaldataob.o \
     obj/fractal/fractalengine.o \
