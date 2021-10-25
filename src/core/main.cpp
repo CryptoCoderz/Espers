@@ -3173,7 +3173,7 @@ void static ProcessGetData(CNode* pfrom)
                         assert(ret);
                     }
 
-                    // Send the requested block data to peer
+                    // Send the requested block to peer
                     pfrom->PushMessage("block", block);
 
                     // Trigger them to send a getblocks request for the next batch of inventory

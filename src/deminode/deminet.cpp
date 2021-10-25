@@ -28,6 +28,8 @@ static void DemiNodeFetch(uint256 blockHash)
         vector<CInv> vGetDemiData;
         const CInv& dinv = CInv(MSG_DEMIBLOCK, blockHash);
         vGetDemiData.push_back(dinv);
+        // Reset previously set data
+        fDemiFound = false;
         // Loop through peers/nodes
         BOOST_FOREACH(CNode* pnode, vNodes) {
             // Skip obsolete nodes
