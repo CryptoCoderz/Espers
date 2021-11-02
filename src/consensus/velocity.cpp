@@ -199,13 +199,13 @@ bool tx_Factor(CBlockIndex* prevBlock, CBlock* block)
         }
     }
     // Ensure input/output sanity of transactions in the block
-    if((tx_inputs_values + tx_threshold) < tx_outputs_values)
+    if((tx_inputs_values + (tx_threshold + (1 * COIN))) < tx_outputs_values)
     {
         LogPrintf("DENIED: block contains a tx input that is less that output\n");
         return false;
     }
     // Ensure expected coin supply matches actualy coin supply of block
-    if((prevBlock->nMoneySupply + tx_threshold) < (tx_outputs_values))
+    if((prevBlock->nMoneySupply + (tx_threshold + (1 * COIN))) < (tx_outputs_values))
     {
         LogPrintf("DENIED: block contains invalid coin supply amount\n");
         return false;

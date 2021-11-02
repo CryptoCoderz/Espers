@@ -106,6 +106,7 @@ extern uint64_t nLastBlockTx;
 extern uint64_t nLastBlockSize;
 extern int64_t nLastCoinStakeSearchInterval;
 extern const std::string strMessageMagic;
+extern std::string GetRelayPeerAddr;
 extern int64_t nTimeBestReceived;
 extern bool fImporting;
 extern bool fReindex;

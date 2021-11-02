@@ -61,7 +61,7 @@ bool fImporting = false;
 bool fReindex = false;
 bool fHaveGUI = false;
 bool fRollingCheckpoint = false;
-std::string GetRelayPeerAddr;
+std::string GetRelayPeerAddr = "127.0.0.1";
 
 struct COrphanBlock {
     uint256 hashBlock;
