@@ -104,7 +104,7 @@
       </property>
       <property name="styleSheet">
        <string notr="true">background: transparent;
-        background-color: rgb(20, 20, 20, 0.35);
+        background-color: rgba(20, 20, 20, 0.35);
        </string>
       </property>
       <layout class="QGridLayout" name="gridLayout_3" rowstretch="0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0" columnstretch="0,0">

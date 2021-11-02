@@ -18,7 +18,7 @@
   </property>
   <property name="styleSheet">
    <string notr="true">background: transparent;
-background-color: rgb(20, 20, 20, 0.35);</string>
+background-color: rgba(20, 20, 20, 0.35);</string>
   </property>
   <widget class="QLabel" name="smartContractLabel">
    <property name="geometry">

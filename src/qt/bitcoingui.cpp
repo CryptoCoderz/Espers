@@ -472,7 +472,7 @@ void BitcoinGUI::createToolBars()
     toolbar->setContextMenuPolicy(Qt::PreventContextMenu);
     toolbar->setObjectName("tabs");
     //toolbar->setStyleSheet("QToolBar { background: none; } QToolButton { color: #ffffff; background: none;} QToolButton:hover { background-color: #3CB0E8 } QToolButton:checked { background-color: #164356 } QToolButton:pressed { background-color: #990000 } #tabs { color: #ffffff; background-color: qradialgradient(cx: -0.8, cy: 0, fx: -0.8, fy: 0, radius: 0.6, stop: 0 #499bea, stop: 1 #207ce5); border: none }");
-    toolbar->setStyleSheet("QToolBar { background: none; } QToolButton { color: #ffffff; background: none;} QToolButton:hover { background-color: rgb(0, 174, 239, 0.4); } QToolButton:checked { background-color: rgb(0, 174, 239, 0.4); } QToolButton:pressed { background-color: rgb(2, 160, 219, 0.4); } #tabs { color: #ffffff; background: none; border: none;}");//QToolBar { background: none; }
+    toolbar->setStyleSheet("QToolBar { background: none; } QToolButton { color: #ffffff; background: none;} QToolButton:hover { background-color: rgba(0, 174, 239, 0.4); } QToolButton:checked { background-color: rgba(0, 174, 239, 0.4); } QToolButton:pressed { background-color: rgba(2, 160, 219, 0.4); } #tabs { color: #ffffff; background: none; border: none;}");//QToolBar { background: none; }
     toolbar->setIconSize(QSize(64,64));
 	
     QLabel* header = new QLabel();

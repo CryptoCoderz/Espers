@@ -665,7 +665,7 @@
            </font>
           </property>
           <property name="styleSheet">
-           <string notr="true">background-color: rgb(20, 20, 20, 0.35);</string>
+           <string notr="true">background-color: rgba(20, 20, 20, 0.35);</string>
           </property>
           <property name="text">
            <string/>
@@ -1210,7 +1210,7 @@
               </font>
              </property>
              <property name="styleSheet">
-              <string notr="true">background-color: rgb(20, 20, 20, 0.65);</string>
+              <string notr="true">background-color: rgba(20, 20, 20, 0.65);</string>
              </property>
              <property name="text">
               <string/>

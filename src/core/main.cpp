@@ -2631,7 +2631,13 @@ bool ProcessBlock(CNode* pfrom, CBlock* pblock)
     }
 
     // Set peer address for AcceptBlock() checks
-    GetRelayPeerAddr = pfrom->addrName;
+    //
+    // Only set peer IP if we receive a block from
+    // a peer. For self-mined blocks we self-set
+    // our IP during block generation.
+    if(pfrom != NULL) {
+        GetRelayPeerAddr = pfrom->addrName;
+    }
 
     // Store to disk
     if (!pblock->AcceptBlock())
