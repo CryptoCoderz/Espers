@@ -106,6 +106,9 @@ public:
 // CreateNewBlock: create new block (without proof-of-work/proof-of-stake)
 CBlock* CreateNewBlock(CReserveKey& reservekey, bool fProofOfStake, int64_t* pFees)
 {
+    // Set self as network peer sending block
+    GetRelayPeerAddr = "127.0.0.1";
+
     // Create new block
 #ifdef __GNUC__
 #define GCC_VERSION (__GNUC__ * 10000 \
