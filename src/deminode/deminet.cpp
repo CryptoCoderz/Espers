@@ -28,7 +28,7 @@ bool fDemiPeerRelay(std::string peerAddr)
 {
     int l = 0;
     // Loop through Demi-node list
-    while(l == 0) {
+    while(l < 5) {
         if(peerAddr == scanDeminodes[l]) {
             // Success if found
             LogPrintf("Demi-node System: fDemiPeerRelay - Peer: %s matches listed Demi-node!\n", peerAddr);

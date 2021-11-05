@@ -116,7 +116,7 @@ void ThreadCheckXNodeEnginePool()
 
         } else {
             if(r == 0) {
-                LogPrintf("ThreadCheckXNodeEnginePool - xnodeSync failed!\n");
+                //LogPrintf("ThreadCheckXNodeEnginePool - xnodeSync failed!\n");
             }
             // Log runs
             r ++;
