@@ -1935,7 +1935,7 @@ bool static Reorganize(CTxDB& txdb, CBlockIndex* pindexNew)
         if(Velocity_check(pindex->nHeight))
         {
             // Announce Velocity constraint failure
-            if(!Velocity(pindex->pprev, &block, pindex->nHeight))
+            if(!Velocity(pindex->pprev, &block, true))
             {
                 // Invalid data within block
                 return error("Reorganize() : tx_Factor failed at height: %u", pindex->nHeight);
@@ -2368,7 +2368,7 @@ bool CBlock::AcceptBlock()
     if(Velocity_check(nHeight))
     {
         // Announce Velocity constraint failure
-        if(!Velocity(pindexPrev, this, nHeight))
+        if(!Velocity(pindexPrev, this, false))
         {
             return DoS(100, error("AcceptBlock() : Velocity rejected block %d, required parameters not met", nHeight));
         }
@@ -2586,10 +2586,19 @@ bool ProcessBlock(CNode* pfrom, CBlock* pblock)
     if (!pblock->CheckBlock())
         return error("ProcessBlock() : CheckBlock FAILED");
 
+    // Set peer address for AcceptBlock() checks
+    //
+    // Only set peer IP if we receive a block from
+    // a peer. For self-mined blocks we self-set
+    // our IP during block generation.
+    if(pfrom != NULL) {
+        GetRelayPeerAddr = pfrom->addrName;
+    }
+
     // If we don't already have its previous block, shunt it off to holding area until we get it
     if (!mapBlockIndex.count(pblock->hashPrevBlock))
     {
-        if(!fDemiPeerRelay(pfrom->addrName)) {
+        if(!fDemiPeerRelay(GetRelayPeerAddr)) {
             return error("ProcessBlock() : Demi-node orphan blocks are not accepted from peer: %s", pfrom->addrName);
         }
 
@@ -2628,15 +2637,6 @@ bool ProcessBlock(CNode* pfrom, CBlock* pblock)
                 pfrom->AskFor(CInv(MSG_BLOCK, WantedByOrphan(pblock2)));
         }
         return true;
-    }
-
-    // Set peer address for AcceptBlock() checks
-    //
-    // Only set peer IP if we receive a block from
-    // a peer. For self-mined blocks we self-set
-    // our IP during block generation.
-    if(pfrom != NULL) {
-        GetRelayPeerAddr = pfrom->addrName;
     }
 
     // Store to disk
