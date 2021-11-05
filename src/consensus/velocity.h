@@ -25,8 +25,8 @@ static const         bool VELOCITY_EXPLICIT[]  = { false }; /** Require all swit
 
 // Value set 1
 bool Velocity_check(int nHeight);
-bool Velocity(CBlockIndex* prevBlock, CBlock* block);
-bool tx_Factor(CBlockIndex* prevBlock, CBlock* block);
+bool Velocity(CBlockIndex* prevBlock, CBlock* block, int nHeight);
+bool tx_Factor(CBlockIndex* prevBlock, CBlock* block, int nHeight);
 
 int VelocityI(int nHeight);
 bool RollingCheckpoints(int nHeight);

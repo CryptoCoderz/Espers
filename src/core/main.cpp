@@ -1935,7 +1935,7 @@ bool static Reorganize(CTxDB& txdb, CBlockIndex* pindexNew)
         if(Velocity_check(pindex->nHeight))
         {
             // Announce Velocity constraint failure
-            if(!Velocity(pindex->pprev, &block))
+            if(!Velocity(pindex->pprev, &block, pindex->nHeight))
             {
                 // Invalid data within block
                 return error("Reorganize() : tx_Factor failed at height: %u", pindex->nHeight);
@@ -2368,7 +2368,7 @@ bool CBlock::AcceptBlock()
     if(Velocity_check(nHeight))
     {
         // Announce Velocity constraint failure
-        if(!Velocity(pindexPrev, this))
+        if(!Velocity(pindexPrev, this, nHeight))
         {
             return DoS(100, error("AcceptBlock() : Velocity rejected block %d, required parameters not met", nHeight));
         }

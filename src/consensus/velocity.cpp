@@ -40,7 +40,7 @@ bool Velocity_check(int nHeight)
 /* Velocity(CBlockIndex* prevBlock, CBlock* block) ? true : false
    Goes close to the top of CBlock::AcceptBlock
    Returns true if proposed Block matches constrains */
-bool Velocity(CBlockIndex* prevBlock, CBlock* block)
+bool Velocity(CBlockIndex* prevBlock, CBlock* block, int nHeight)
 {
     // Define values
     int64_t TXrate = 0;
@@ -52,7 +52,6 @@ bool Velocity(CBlockIndex* prevBlock, CBlock* block)
     int64_t TXstampO = 0;
     int64_t SYScrntstamp = 0;
     int64_t SYSbaseStamp = 0;
-    int nHeight = prevBlock->nHeight+1;
     int i = VelocityI(nHeight);
     // Set stanard values
     TXrate = block->GetBlockTime() - prevBlock->GetBlockTime();
@@ -69,9 +68,9 @@ bool Velocity(CBlockIndex* prevBlock, CBlock* block)
     if(VELOCITY_FACTOR == true)
     {
         // Run TX factoring
-        if(!tx_Factor(prevBlock, block))
+        if(!tx_Factor(prevBlock, block, nHeight))
         {
-            LogPrintf("DENIED: Velocity denied block: %u\n", prevBlock->nHeight+1);
+            LogPrintf("DENIED: Velocity denied block: %u\n", nHeight);
             return false;
         }
     }
@@ -153,7 +152,7 @@ bool RollingCheckpoints(int nHeight)
 }
 
 // Factor in TXs for Velocity constraints
-bool tx_Factor(CBlockIndex* prevBlock, CBlock* block)
+bool tx_Factor(CBlockIndex* prevBlock, CBlock* block, int nHeight)
 {
     // Define Values
     CAmount tx_inputs_values = 0;
@@ -166,6 +165,11 @@ bool tx_Factor(CBlockIndex* prevBlock, CBlock* block)
         tx_threshold = GetProofOfStakeReward(0, 0);
     } else {
         tx_threshold = GetProofOfWorkReward(prevBlock->nHeight+1, 0);
+    }
+
+    // Adjust threshold if we're comparing distant blocks
+    if((prevBlock->nHeight + 1) < nHeight) {
+        tx_threshold *= (nHeight - (prevBlock->nHeight + 1));
     }
 
     // Set factor values
@@ -205,8 +209,9 @@ bool tx_Factor(CBlockIndex* prevBlock, CBlock* block)
         return false;
     }
     // Ensure expected coin supply matches actualy coin supply of block
-    if((prevBlock->nMoneySupply + (tx_threshold + (1 * COIN))) < (tx_outputs_values))
+    if(((prevBlock->nMoneySupply + tx_threshold) / COIN) < (tx_outputs_values / COIN))
     {
+        LogPrintf("TX_FACTOR: Mismatched supply in block, excpected: %u | found: %u\n", (int64_t)((prevBlock->nMoneySupply + tx_threshold) / COIN), (int64_t)(tx_outputs_values / COIN));
         LogPrintf("DENIED: block contains invalid coin supply amount\n");
         return false;
     }

@@ -51,17 +51,17 @@ bool CXNodeSync::IsXNodeSynced()
     if(IsBlockchainSynced()) {
         // Resync if we lose all xnodes from sleep/wake or failure to sync originally
         // Keep looping for a while but count the attempts
-        LogPrintf("CXNodeSync::IsXNodeSynced - INFO - Mainnet sync'd, running other checks\n");
+        //LogPrintf("CXNodeSync::IsXNodeSynced - INFO - Mainnet sync'd, running other checks\n");
         if(xnodeman.CountEnabled() == 0) {
             lastXNsyncFailure = GetTime();
             RequestedXNodeSyncAttempt += 2;
-            LogPrintf("CXNodeSync::IsXNodeSynced - WARNING - No XNodes on sync'd Mainnet\n");
+            //LogPrintf("CXNodeSync::IsXNodeSynced - WARNING - No XNodes on sync'd Mainnet\n");
         }
     } else if(!IsBlockchainSynced()) {
         // Keep looping for a while but count the attempts
         lastXNsyncFailure = GetTime();
         RequestedXNodeSyncAttempt += 2;
-        LogPrintf("CXNodeSync::IsXNodeSynced - INFO - Mainnet not sync'd, timeout and wait\n");
+        //LogPrintf("CXNodeSync::IsXNodeSynced - INFO - Mainnet not sync'd, timeout and wait\n");
     }
 
     // Check for timeout
@@ -72,7 +72,7 @@ bool CXNodeSync::IsXNodeSynced()
         RequestedXNodeSyncAttempt = 0;
         warningXNodeSync = 0;
         lastXNsyncFailure = GetTime();
-        LogPrintf("CXNodeSync::IsXNodeSynced - ERROR - Sync has failed, retry again later\n");
+        //LogPrintf("CXNodeSync::IsXNodeSynced - ERROR - Sync has failed, retry again later\n");
         MilliSleep(30000);// TODO: Find alternative to sleeping, maybe per-block bool trigger?
         return false;
     }
@@ -80,7 +80,7 @@ bool CXNodeSync::IsXNodeSynced()
     // XNode reward enforcement (TODO: finish implementation)
     if(IsSporkActive(SPORK_8_XNODE_PAYMENT_ENFORCEMENT)) {
         warningXNodeSync++;
-        LogPrintf("CXNodeSync::IsXNodeSynced - WARNING - Reward enforcement not yet implemented\n");
+        //LogPrintf("CXNodeSync::IsXNodeSynced - WARNING - Reward enforcement not yet implemented\n");
     }
 
 
@@ -88,7 +88,7 @@ bool CXNodeSync::IsXNodeSynced()
     // Report successfull sync
     // TODO: add more extensive and stringent security checks
     if(warningXNodeSync >= XNODE_SYNC_WARNING) {
-        LogPrintf("CXNodeSync::IsXNodeSynced - SUCCESS - Sync finished but with WARNINGS\n");
+        //LogPrintf("CXNodeSync::IsXNodeSynced - SUCCESS - Sync finished but with WARNINGS\n");
         warningXNodeSync = 0;
         return true;
     } else {
