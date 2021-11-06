@@ -40,7 +40,7 @@ bool Velocity_check(int nHeight)
 /* Velocity(CBlockIndex* prevBlock, CBlock* block) ? true : false
    Goes close to the top of CBlock::AcceptBlock
    Returns true if proposed Block matches constrains */
-bool Velocity(CBlockIndex* prevBlock, CBlock* block, bool fReorganize)
+bool Velocity(CBlockIndex* prevBlock, CBlock* block, bool fFactor_tx)
 {
     // Define values
     int64_t TXrate = 0;
@@ -66,10 +66,10 @@ bool Velocity(CBlockIndex* prevBlock, CBlock* block, bool fReorganize)
     SYSbaseStamp = GetTime() + VELOCITY_MIN_RATE[i];
 
     // Factor in TXs for Velocity constraints
-    if(VELOCITY_FACTOR == true)
+    if(VELOCITY_FACTOR == true && fFactor_tx)
     {
         // Run TX factoring
-        if(!tx_Factor(prevBlock, block, fReorganize))
+        if(!tx_Factor(prevBlock, block))
         {
             LogPrintf("DENIED: Velocity denied block: %u\n", nHeight);
             return false;
@@ -153,7 +153,7 @@ bool RollingCheckpoints(int nHeight)
 }
 
 // Factor in TXs for Velocity constraints
-bool tx_Factor(CBlockIndex* prevBlock, CBlock* block, bool fReorganize)
+bool tx_Factor(CBlockIndex* prevBlock, CBlock* block)
 {
     // Define Values
     CAmount tx_inputs_values = 0;
@@ -161,17 +161,11 @@ bool tx_Factor(CBlockIndex* prevBlock, CBlock* block, bool fReorganize)
     CAmount tx_MapIn_values = 0;
     CAmount tx_MapOut_values = 0;
     CAmount tx_threshold = 0;
-    int nHeight = prevBlock->nHeight+1;
 
     if(block->IsProofOfStake()) {
         tx_threshold = GetProofOfStakeReward(0, 0);
     } else {
         tx_threshold = GetProofOfWorkReward(prevBlock->nHeight+1, 0);
-    }
-
-    // Adjust threshold if we're comparing distant blocks
-    if((prevBlock->nHeight + 1) < nHeight) {
-        tx_threshold *= (nHeight - (prevBlock->nHeight + 1));
     }
 
     // Set factor values
@@ -210,20 +204,23 @@ bool tx_Factor(CBlockIndex* prevBlock, CBlock* block, bool fReorganize)
         LogPrintf("DENIED: block contains a tx input that is less that output\n");
         return false;
     }
-    // Ensure expected coin supply matches actualy coin supply of block
-    if(((prevBlock->nMoneySupply + tx_threshold) / COIN) < (tx_outputs_values / COIN))
-    {
-        // Skip Supply Mismatch checks for Orphans (We check for this during Reorganize() or AcceptBlock())
-        if(nHeight < pindexBest->nHeight && !fReorganize) {
-            LogPrintf("TX_FACTOR: Skipping Supply Mismatch check for orphan block: %u | current block: %u\n", nHeight, pindexBest->nHeight);
-        } else {
-            LogPrintf("TX_FACTOR: Mismatched supply in block, excpected: %u | found: %u\n", (int64_t)((prevBlock->nMoneySupply + tx_threshold) / COIN), (int64_t)(tx_outputs_values / COIN));
-            LogPrintf("DENIED: block contains invalid coin supply amount\n");
-            return false;
-        }
-    }
 
     // Return success if we get here
-    LogPrintf("CHECK_PASSED: Transaction/Input factoring has met Velocity constraints\n");
+    LogPrintf("CHECK_PASSED: transaction/input factoring has met Velocity constraints\n");
+    return true;
+}
+
+bool bIndex_Factor(CBlockIndex* InSplitPoint, CBlockIndex* InSplitEnd, int InFactor)
+{
+    CAmount tx_threshold = 500 * COIN;
+    tx_threshold *= InFactor;
+
+    // Ensure expected coin supply matches actualy coin supply of branch
+    if(((InSplitPoint->nMoneySupply + tx_threshold) / COIN) < (InSplitEnd->nMoneySupply / COIN))
+    {
+        LogPrintf("VELOCITY_FACTOR: Mismatched supply in branch, excpected: %u | found: %u\n", (int64_t)((InSplitPoint->nMoneySupply + tx_threshold) / COIN), (int64_t)(InSplitEnd->nMoneySupply / COIN));
+        LogPrintf("DENIED: branch contains invalid coin supply amount\n");
+        return false;
+    }
     return true;
 }

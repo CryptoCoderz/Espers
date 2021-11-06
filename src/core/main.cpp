@@ -1836,6 +1836,7 @@ bool static Reorganize(CTxDB& txdb, CBlockIndex* pindexNew)
     int64_t pfinglonger = (plonger->nHeight - pfork->nHeight);
     int64_t pheightlonger = plonger->nHeight;
     int64_t preorgmax = (pfork->nHeight - BLOCK_REORG_MAX_DEPTH);
+    int diffFactor = 0;
 
     // Ensure reorganize depth sanity
     if (pfinglonger > BLOCK_REORG_MAX_DEPTH) {
@@ -1877,6 +1878,7 @@ bool static Reorganize(CTxDB& txdb, CBlockIndex* pindexNew)
     // Find the fork
     while (pfork != plonger)
     {
+        diffFactor ++;
         while (plonger->nHeight > pfork->nHeight)
             if (!(plonger = plonger->pprev))
                 return error("Reorganize() : plonger->pprev is null");
@@ -1884,6 +1886,13 @@ bool static Reorganize(CTxDB& txdb, CBlockIndex* pindexNew)
             break;
         if (!(pfork = pfork->pprev))
             return error("Reorganize() : pfork->pprev is null");
+    }
+
+    // Verify Supply Sanity of connecting branch
+    if(!bIndex_Factor(plonger, pindexNew, diffFactor))
+    {
+        // Invalid branch coin supply
+        return error("Reorganize() : Invalid branch coin supply");
     }
 
     // List of what to disconnect
@@ -1938,7 +1947,7 @@ bool static Reorganize(CTxDB& txdb, CBlockIndex* pindexNew)
             if(!Velocity(pindex->pprev, &block, true))
             {
                 // Invalid data within block
-                return error("Reorganize() : tx_Factor failed at height: %u", pindex->nHeight);
+                return error("Reorganize() : Velocity failed at height: %u", pindex->nHeight);
             }
         }
 
@@ -2598,9 +2607,9 @@ bool ProcessBlock(CNode* pfrom, CBlock* pblock)
     // If we don't already have its previous block, shunt it off to holding area until we get it
     if (!mapBlockIndex.count(pblock->hashPrevBlock))
     {
-        if(!fDemiPeerRelay(GetRelayPeerAddr)) {
-            return error("ProcessBlock() : Demi-node orphan blocks are not accepted from peer: %s", pfrom->addrName);
-        }
+        //if(!fDemiPeerRelay(GetRelayPeerAddr)) {
+        //    return error("ProcessBlock() : Demi-node orphan blocks are not accepted from peer: %s", pfrom->addrName);
+        //}
 
         LogPrintf("ProcessBlock: ORPHAN BLOCK %lu, prev=%s\n", (unsigned long)mapOrphanBlocks.size(), pblock->hashPrevBlock.ToString());
 
@@ -2666,6 +2675,17 @@ bool ProcessBlock(CNode* pfrom, CBlock* pblock)
             delete mi->second;
         }
         mapOrphanBlocksByPrev.erase(hashPrev);
+    }
+
+    // Check block against Velocity parameters
+    if(Velocity_check(mapBlockIndex[hash]->nHeight))
+    {
+        // Announce Velocity constraint failure
+        if(!Velocity(mapBlockIndex[hash]->pprev, pblock, true))
+        {
+            Misbehaving(pfrom->GetId(), 25);
+            return error("ProcessBlock() : Velocity rejected block %d, required parameters not met", mapBlockIndex[hash]->nHeight);
+        }
     }
 
     if (!IsInitialBlockDownload())
