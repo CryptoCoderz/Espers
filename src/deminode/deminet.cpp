@@ -3,13 +3,8 @@
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
 #include "deminet.h"
+#include "demimodule.h"
 
-// TODO: Open deminode.conf and scan for registered Demi-nodes
-// For now we hardset Team nodes as Demi-nodes
-std::string scanDeminodes[5] {
-    "80.211.102.238:22448", "80.211.27.133:22448", "134.122.23.191:22448", "159.89.114.40:22448",
-    "127.0.0.1"
-};
 // Setup Demi network voting log
 int voteDeminodes[4] {
     0, 0, 0, 0
@@ -22,20 +17,14 @@ uint256 hashDeminodes[4] {
     0, 0, 0, 0
 };
 
-bool fDemiFound = false;
-
 bool fDemiPeerRelay(std::string peerAddr)
 {
-    int l = 0;
     // Loop through Demi-node list
-    while(l < 5) {
-        if(peerAddr == scanDeminodes[l]) {
-            // Success if found
-            LogPrintf("Demi-node System: fDemiPeerRelay - Peer: %s matches listed Demi-node!\n", peerAddr);
-            return true;
-        }
-        // Move up in loop count
-        l++;
+    ReadDemiConfigFile(peerAddr);
+    if(fDemiFound) {
+        // Return success
+        LogPrintf("Demi-node System: fDemiPeerRelay - Peer: %s matches listed Demi-node!\n", peerAddr);
+        return true;
     }
     // Failure if not found
     LogPrintf("Demi-node System: fDemiPeerRelay - Peer: %s does NOT match any listed Demi-node!\n", peerAddr);
@@ -59,6 +48,7 @@ static void DemiNodeFetch(uint256 blockHash)
             }
 
             // See if we found a Demi-node
+            /*
             if(scanDeminodes[0] == pnode->addrName) {
                 voteDeminodes[0] ++;
                 pnode->PushMessage("getdata", vGetDemiData);
@@ -76,6 +66,7 @@ static void DemiNodeFetch(uint256 blockHash)
                 pnode->PushMessage("getdata", vGetDemiData);
                 fDemiFound = true;
             }
+            */
         }
 
         vGetDemiData.clear();

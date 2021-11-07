@@ -4,5 +4,13 @@
 #ifndef DEMIMODULE_H
 #define DEMIMODULE_H
 
+#include <string>
+#include <cstring>
+
+using namespace std;
+
+void ReadDemiConfigFile(std::string peerReadAddr);
+
+extern bool fDemiFound;
 
 #endif // DEMIMODULE_H

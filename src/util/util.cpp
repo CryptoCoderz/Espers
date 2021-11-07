@@ -1072,8 +1072,6 @@ boost::filesystem::path GetConfigFile()
 void ReadConfigFile(map<string, string>& mapSettingsRet,
                     map<string, vector<string> >& mapMultiSettingsRet)
 {
-    int confLoop = 0;
-    injectConfig:
     boost::filesystem::ifstream streamConfig(GetConfigFile());
     if (!streamConfig.good())
     {
@@ -1096,32 +1094,34 @@ void ReadConfigFile(map<string, string>& mapSettingsRet,
                fprintf(ConfFile, "port=22448\n");
                fprintf(ConfFile, "rpcport=22442\n");
                fprintf(ConfFile, "rpcconnect=127.0.0.1\n");
-               fprintf(ConfFile, "addnode=173.212.230.232:22448\n");
-               fprintf(ConfFile, "addnode=46.4.27.201:22448\n");
-               fprintf(ConfFile, "addnode=80.211.178.121:22448\n");
-               fprintf(ConfFile, "addnode=109.196.145.250:22448\n");
-               fprintf(ConfFile, "addnode=94.177.246.216:22448\n");
-               fprintf(ConfFile, "addnode=[2002:2a33:21c4::2a33:21c4]:22448\n");
-               fprintf(ConfFile, "addnode=18.218.64.210:22448\n");
-               fprintf(ConfFile, "addnode=76.171.67.113:22448\n");
-               fprintf(ConfFile, "addnode=94.130.26.162:22448\n");
-               fprintf(ConfFile, "addnode=[2a00:ee2:300:d00:6944:3ce8:83af:bf45]:22448\n");
-               fprintf(ConfFile, "addnode=[2001:0:9d38:90d7:28d2:daf0:a43f:a654]:22448\n");
-               fprintf(ConfFile, "addnode=[2001:0:9d38:6abd:245d:169a:34c0:5adf]:22448\n");
-               fprintf(ConfFile, "addnode=[2a01:e35:2fdf:73d0:dc0f:2dc0:6e68:9cb1]:22448\n");
-               fprintf(ConfFile, "addnode=[2001:0:9d38:90d7:107b:3ce5:b052:c968]:22448\n");
+               fprintf(ConfFile, "addnode=80.211.102.238:22448\n");
+               fprintf(ConfFile, "addnode=80.211.27.133:22448\n");
+               fprintf(ConfFile, "addnode=134.122.23.191:22448\n");
+               fprintf(ConfFile, "addnode=159.89.114.40:22448\n");
+               fprintf(ConfFile, "addnode=86.92.83.17:22448\n");
+               fprintf(ConfFile, "addnode=86.92.83.17\n");
+               fprintf(ConfFile, "addnode=n1.espers.io:22448\n");
+               fprintf(ConfFile, "addnode=n2.espers.io:22448\n");
+               fprintf(ConfFile, "addnode=n3.espers.io:22448\n");
+               fprintf(ConfFile, "addnode=n4.espers.io:22448\n");
+               fprintf(ConfFile, "addnode=n5.espers.io:22448\n");
+               fprintf(ConfFile, "addnode=n6.espers.io:22448\n");
+               fprintf(ConfFile, "addnode=n7.espers.io:22448\n");
+               fprintf(ConfFile, "addnode=n8.espers.io:22448\n");
+               fprintf(ConfFile, "addnode=n9.espers.io:22448\n");
+               fprintf(ConfFile, "addnode=n10.espers.io:22448\n");
+               fprintf(ConfFile, "addnode=n1.espers.io\n");
+               fprintf(ConfFile, "addnode=n2.espers.io\n");
+               fprintf(ConfFile, "addnode=n3.espers.io\n");
+               fprintf(ConfFile, "addnode=n4.espers.io\n");
+               fprintf(ConfFile, "addnode=n5.espers.io\n");
+               fprintf(ConfFile, "addnode=n6.espers.io\n");
+               fprintf(ConfFile, "addnode=n7.espers.io\n");
+               fprintf(ConfFile, "addnode=n8.espers.io\n");
+               fprintf(ConfFile, "addnode=n9.espers.io\n");
+               fprintf(ConfFile, "addnode=n10.espers.io\n");
 
                fclose(ConfFile);
-
-               // Returns our config path, created config file is loaded during initial run...
-               return ;
-    }
-
-    // Wallet will reload config file so it is properly read...
-    if (confLoop < 1)
-    {
-        ++confLoop;
-        goto injectConfig;
     }
 
     set<string> setOptions;

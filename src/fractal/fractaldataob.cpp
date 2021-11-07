@@ -677,6 +677,7 @@ void gateKeeper(std::string contract_decode, int contract_type) {
             LogPrintf("gateKeeper - WARNING - Empty line detected! \n");
         }
     }
+    file.close();
     // Handle individual contract types
     if(contract_type != 3) {
         // Set Teeth data
