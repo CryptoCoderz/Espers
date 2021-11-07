@@ -1080,6 +1080,8 @@ void ReadConfigFile(map<string, string>& mapSettingsRet,
                FILE* ConfFile = fopen(ConfPath.string().c_str(), "w");
                fprintf(ConfFile, "listen=1\n");
                fprintf(ConfFile, "server=1\n");
+               fprintf(ConfFile, "deminodes=1\n");
+               fprintf(ConfFile, "demimaxdepth=200\n");
                fprintf(ConfFile, "maxconnections=500\n");
                fprintf(ConfFile, "rpcuser=yourusername\n");
 
