@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Edit Bitcoin.conf</string>
+   <string>Edit Espers.conf</string>
   </property>
   <property name="styleSheet">
    <string notr="true">background-color: rgb(32, 32, 32);
