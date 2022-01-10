@@ -7,11 +7,11 @@
     <x>0</x>
     <y>0</y>
     <width>740</width>
-    <height>450</height>
+    <height>464</height>
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Arion - Debug window</string>
+   <string>Espers - Debug window</string>
   </property>
   <property name="styleSheet">
    <string notr="true">background-color: rgb(32, 32, 32);
@@ -43,7 +43,7 @@ color: rgb(255, 255, 255);</string>
           </font>
          </property>
          <property name="text">
-          <string>Arion Core</string>
+          <string>Espers Core</string>
          </property>
         </widget>
        </item>
@@ -611,7 +611,7 @@ color: rgb(255, 255, 255);</string>
             <string/>
            </property>
            <property name="icon">
-            <iconset resource="../bitcoin.qrc">
+            <iconset>
              <normaloff>:/icons/dark/staking_off</normaloff>:/icons/dark/staking_off</iconset>
            </property>
           </widget>

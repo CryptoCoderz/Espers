@@ -165,7 +165,7 @@
        </item>
        <item>
         <widget class="QCheckBox" name="bitcoinAtStartup">
-        <property name="font">
+         <property name="font">
           <font>
            <pointsize>10</pointsize>
           </font>
@@ -575,6 +575,7 @@
    <class>BitcoinAmountField</class>
    <extends>QSpinBox</extends>
    <header>bitcoinamountfield.h</header>
+   <container>1</container>
   </customwidget>
   <customwidget>
    <class>QValueComboBox</class>

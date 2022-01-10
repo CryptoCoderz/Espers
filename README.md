@@ -58,7 +58,7 @@ General Info:
 		Port: 22448
 		RPC Port: 22442
 
-Compiling Espers daemon on Ubunutu 18.04 LTS Bionic
+Compiling Espers daemon on Ubunutu 18.04 / 20.04 LTS Bionic
 ---------------------------
 ### Note: guide should be compatible with other Ubuntu versions from 14.04+
 
@@ -69,17 +69,17 @@ sudo -i
 
 ### Dependencies install
 ```
-cd ~; sudo apt-get install ntp git build-essential libssl-dev libdb-dev libdb++-dev libboost-all-dev libqrencode-dev libcurl4-openssl-dev curl libzip-dev; apt-get update; apt-get upgrade; apt-get install git make automake build-essential libboost-all-dev; apt-get install yasm binutils libcurl4-openssl-dev openssl libssl-dev; sudo apt-get install libgmp-dev; cd ~;
+cd ~; apt-get install ntp git build-essential libssl-dev libdb-dev libdb++-dev libboost-all-dev libqrencode-dev libcurl4-openssl-dev curl libzip-dev; apt-get update; apt-get upgrade; apt-get install git make automake build-essential libboost-all-dev; apt-get install yasm binutils libcurl4-openssl-dev openssl libssl-dev; sudo apt-get install libgmp-dev;
 ```
 
 ### Dependencies build and link
 ```
-cd ~; wget http://download.oracle.com/berkeley-db/db-6.2.32.NC.tar.gz; tar zxf db-6.2.32.NC.tar.gz; cd db-6.2.32.NC/build_unix; ../dist/configure --enable-cxx; make; sudo make install; sudo ln -s /usr/local/BerkeleyDB.6.2/lib/libdb-6.2.so /usr/lib/libdb-6.2.so; sudo ln -s /usr/local/BerkeleyDB.6.2/lib/libdb_cxx-6.2.so /usr/lib/libdb_cxx-6.2.so; export BDB_INCLUDE_PATH="/usr/local/BerkeleyDB.6.2/include"; export BDB_LIB_PATH="/usr/local/BerkeleyDB.6.2/lib"; cd ~;
+cd ~; wget http://download.oracle.com/berkeley-db/db-6.2.32.NC.tar.gz; tar zxf db-6.2.32.NC.tar.gz; cd db-6.2.32.NC/build_unix; ../dist/configure --enable-cxx; make; make install; ln -s /usr/local/BerkeleyDB.6.2/lib/libdb-6.2.so /usr/lib/libdb-6.2.so;ln -s /usr/local/BerkeleyDB.6.2/lib/libdb_cxx-6.2.so /usr/lib/libdb_cxx-6.2.so; export BDB_INCLUDE_PATH="/usr/local/BerkeleyDB.6.2/include"; export BDB_LIB_PATH="/usr/local/BerkeleyDB.6.2/lib"; cd ~;
 ```
 
 ### Personal upload EXAMPLE
 ```
-cd ~; sudo cp -r /home/ftpuser/ftp/files/ESP-clean/. ~/Espers
+cd ~; cp -r /home/ftpuser/ftp/files/ESP-clean/. ~/Espers
 ```
 
 ### GitHub pull RECOMMENDED
@@ -98,6 +98,8 @@ cd ~; sudo ufw allow 22448/tcp; sudo ufw allow 22442/tcp; sudo mkdir ~/.ESP; cat
 listen=1
 server=1
 daemon=1
+deminodes=1
+demimaxdepth=200
 testnet=0
 rpcuser=espersuser
 rpcpassword=SomeCrazyVeryVerySecurePasswordHere
