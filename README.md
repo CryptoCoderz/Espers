@@ -58,7 +58,7 @@ General Info:
 		Port: 22448
 		RPC Port: 22442
 
-Compiling Espers daemon on Ubunutu 18.04 LTS Bionic
+Compiling Espers daemon on Ubunutu 18.04 / 20.04 LTS Bionic
 ---------------------------
 ### Note: guide should be compatible with other Ubuntu versions from 14.04+
 
@@ -101,8 +101,8 @@ daemon=1
 deminodes=1
 demimaxdepth=200
 testnet=0
-rpcuser=Sneil
-rpcpassword=7f39b4f0a0cd064c1776cdd0c2@F54
+rpcuser=espuser
+rpcpassword=SomeCrazyVeryVerySecurePasswordHere
 rpcport=22442
 port=22448
 rpcconnect=127.0.0.1
