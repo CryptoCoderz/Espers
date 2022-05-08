@@ -1114,6 +1114,11 @@ bool AppInit2(boost::thread_group& threadGroup)
         LogPrintf("No Demi-node features selected... skipping...\n");
     }
 
+    // Check/Create 4k support config file for Qt
+    if(fHaveGUI) {
+        ReadDPIConfigFile();
+    }
+
     RandAddSeedPerfmon();
 
     //// debug print

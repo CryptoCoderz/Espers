@@ -204,6 +204,10 @@ std::string FormatFullVersion();
 std::string FormatSubVersion(const std::string& name, int nClientVersion, const std::vector<std::string>& comments);
 void runCommand(std::string strCommand);
 
+// 4k Display Support
+void GetDPIConfigFile();
+
+
 /**
  * Convert string to signed 32-bit integer with strict parse error feedback.
  * @returns true if the entire string could be parsed as valid integer,
