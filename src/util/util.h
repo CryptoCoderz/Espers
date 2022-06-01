@@ -205,7 +205,7 @@ std::string FormatSubVersion(const std::string& name, int nClientVersion, const 
 void runCommand(std::string strCommand);
 
 // 4k Display Support
-void GetDPIConfigFile();
+void ReadDPIConfigFile();
 
 
 /**

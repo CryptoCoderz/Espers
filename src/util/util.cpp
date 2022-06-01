@@ -1069,6 +1069,28 @@ boost::filesystem::path GetConfigFile()
     return pathConfigFile;
 }
 
+// Create config for 4k displays
+boost::filesystem::path GetDPIConfigFile()
+{
+    boost::filesystem::path pathConfigFile = GetDataDir() / "qt.conf";
+    return pathConfigFile;
+}
+// 4k display cont...
+void ReadDPIConfigFile()
+{
+    boost::filesystem::ifstream streamConfig(GetDPIConfigFile());
+    if (!streamConfig.good())
+    {
+           boost::filesystem::path ConfPath;
+           ConfPath = GetDPIConfigFile();
+           FILE* ConfFile = fopen(ConfPath.string().c_str(), "w");
+           fprintf(ConfFile, "[Platforms]\n");
+           fprintf(ConfFile, "WindowsArguments = dpiawareness=0\n");
+
+           fclose(ConfFile);
+    }
+}
+
 void ReadConfigFile(map<string, string>& mapSettingsRet,
                     map<string, vector<string> >& mapMultiSettingsRet)
 {
@@ -1143,28 +1165,6 @@ void ReadConfigFile(map<string, string>& mapSettingsRet,
     }
     // If datadir is changed in .conf file:
     ClearDatadirCache();
-}
-
-// Create config for 4k displays
-boost::filesystem::path GetDPIConfigFile()
-{
-    boost::filesystem::path pathConfigFile(boost::filesystem::current_path());
-    return pathConfigFile;
-}
-// 4k display cont...
-void ReadDPIConfigFile()
-{
-    boost::filesystem::ifstream streamConfig(GetDPIConfigFile());
-    if (!streamConfig.good())
-    {
-           boost::filesystem::path ConfPath;
-           ConfPath = GetDPIConfigFile() / "qt.conf";
-           FILE* ConfFile = fopen(ConfPath.string().c_str(), "w");
-           fprintf(ConfFile, "[Platforms]\n");
-           fprintf(ConfFile, "WindowsArguments = dpiawareness=0\n");
-
-           fclose(ConfFile);
-    }
 }
 
 boost::filesystem::path GetPidFile()
