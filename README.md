@@ -46,12 +46,10 @@ Specifications and General info
 ------------------
 Espers uses:
 
-		Boost1.74,
-		OR Boost1.58+,
-		OpenSSL1.02u,
-		OR OpenSSL1.1x,
-		Berkeley DB 6.2.32,
-		Qt5.15.2 to compile
+		Boost1.74, OR Boost1.58+
+		OpenSSL1.02u, OR OpenSSL1.1.1q, OR OpenSSL3.0.5
+		Berkeley DB 6.2.32
+		Qt5.15.2 (for GUI)
 
 General Info:
 
@@ -61,7 +59,7 @@ General Info:
 		Port: 22448
 		RPC Port: 22442
 
-Compiling Espers daemon on Ubunutu 18.04 / 20.04 LTS Bionic
+Compiling Espers daemon on Ubunutu 22.04 LTS (Jammy Jellyfish)
 ---------------------------
 ### Note: guide should be compatible with other Ubuntu versions from 14.04+
 
