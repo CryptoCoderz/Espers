@@ -1078,6 +1078,7 @@ boost::filesystem::path GetDPIConfigFile()
 // 4k display cont...
 void ReadDPIConfigFile()
 {
+    // TODO: remove boost in favor of C++11 file lookup/handling
     boost::filesystem::ifstream streamConfig(GetDPIConfigFile());
     if (!streamConfig.good())
     {
@@ -1091,66 +1092,62 @@ void ReadDPIConfigFile()
     }
 }
 
-void ReadConfigFile(map<string, string>& mapSettingsRet,
-                    map<string, vector<string> >& mapMultiSettingsRet)
+void BuildConfigFile()
 {
-    boost::filesystem::ifstream streamConfig(GetConfigFile());
-    if (!streamConfig.good())
+    // TODO: remove boost in favor of C++11 file lookup/handling
+    boost::filesystem::path ConfPath;
+    ConfPath = GetDataDir() / "Espers.conf";
+    FILE* ConfFile = fopen(ConfPath.string().c_str(), "w");
+    fprintf(ConfFile, "listen=1\n");
+    fprintf(ConfFile, "server=1\n");
+    fprintf(ConfFile, "deminodes=1\n");
+    fprintf(ConfFile, "demimaxdepth=200\n");
+    fprintf(ConfFile, "maxconnections=500\n");
+    fprintf(ConfFile, "rpcuser=yourusername\n");
+
+    char s[34];
+    for (int i = 0; i < 34; ++i)
     {
-        boost::filesystem::path ConfPath;
-               ConfPath = GetDataDir() / "Espers.conf";
-               FILE* ConfFile = fopen(ConfPath.string().c_str(), "w");
-               fprintf(ConfFile, "listen=1\n");
-               fprintf(ConfFile, "server=1\n");
-               fprintf(ConfFile, "deminodes=1\n");
-               fprintf(ConfFile, "demimaxdepth=200\n");
-               fprintf(ConfFile, "maxconnections=500\n");
-               fprintf(ConfFile, "rpcuser=yourusername\n");
-
-               char s[34];
-               for (int i = 0; i < 34; ++i)
-               {
-                   s[i] = alphanum[rand() % (sizeof(alphanum) - 1)];
-               }
-
-               std::string str(s, 34);
-               fprintf(ConfFile, "rpcpassword=%s\n", str.c_str());
-               fprintf(ConfFile, "port=22448\n");
-               fprintf(ConfFile, "rpcport=22442\n");
-               fprintf(ConfFile, "rpcconnect=127.0.0.1\n");
-               fprintf(ConfFile, "addnode=80.211.102.238:22448\n");
-               fprintf(ConfFile, "addnode=80.211.27.133:22448\n");
-               fprintf(ConfFile, "addnode=134.122.23.191:22448\n");
-               fprintf(ConfFile, "addnode=159.89.114.40:22448\n");
-               fprintf(ConfFile, "addnode=86.92.83.17:22448\n");
-               fprintf(ConfFile, "addnode=86.92.83.17\n");
-               fprintf(ConfFile, "addnode=n1.espers.io:22448\n");
-               fprintf(ConfFile, "addnode=n2.espers.io:22448\n");
-               fprintf(ConfFile, "addnode=n3.espers.io:22448\n");
-               fprintf(ConfFile, "addnode=n4.espers.io:22448\n");
-               fprintf(ConfFile, "addnode=n5.espers.io:22448\n");
-               fprintf(ConfFile, "addnode=n6.espers.io:22448\n");
-               fprintf(ConfFile, "addnode=n7.espers.io:22448\n");
-               fprintf(ConfFile, "addnode=n8.espers.io:22448\n");
-               fprintf(ConfFile, "addnode=n9.espers.io:22448\n");
-               fprintf(ConfFile, "addnode=n10.espers.io:22448\n");
-               fprintf(ConfFile, "addnode=n1.espers.io\n");
-               fprintf(ConfFile, "addnode=n2.espers.io\n");
-               fprintf(ConfFile, "addnode=n3.espers.io\n");
-               fprintf(ConfFile, "addnode=n4.espers.io\n");
-               fprintf(ConfFile, "addnode=n5.espers.io\n");
-               fprintf(ConfFile, "addnode=n6.espers.io\n");
-               fprintf(ConfFile, "addnode=n7.espers.io\n");
-               fprintf(ConfFile, "addnode=n8.espers.io\n");
-               fprintf(ConfFile, "addnode=n9.espers.io\n");
-               fprintf(ConfFile, "addnode=n10.espers.io\n");
-
-               fclose(ConfFile);
+        s[i] = alphanum[rand() % (sizeof(alphanum) - 1)];
     }
 
+    std::string str(s, 34);
+    fprintf(ConfFile, "rpcpassword=%s\n", str.c_str());
+    fprintf(ConfFile, "port=22448\n");
+    fprintf(ConfFile, "rpcport=22442\n");
+    fprintf(ConfFile, "rpcconnect=127.0.0.1\n");
+    fprintf(ConfFile, "rpcallowip=127.0.0.1\n");
+    fprintf(ConfFile, "addnode=n1.espers.io:22448\n");
+    fprintf(ConfFile, "addnode=n2.espers.io:22448\n");
+    fprintf(ConfFile, "addnode=n3.espers.io:22448\n");
+    fprintf(ConfFile, "addnode=n4.espers.io:22448\n");
+    fprintf(ConfFile, "addnode=n5.espers.io:22448\n");
+    fprintf(ConfFile, "addnode=n6.espers.io:22448\n");
+    fprintf(ConfFile, "addnode=n7.espers.io:22448\n");
+    fprintf(ConfFile, "addnode=n8.espers.io:22448\n");
+    fprintf(ConfFile, "addnode=n9.espers.io:22448\n");
+    fprintf(ConfFile, "addnode=n10.espers.io:22448\n");
+    fprintf(ConfFile, "addnode=n1.espers.io\n");
+    fprintf(ConfFile, "addnode=n2.espers.io\n");
+    fprintf(ConfFile, "addnode=n3.espers.io\n");
+    fprintf(ConfFile, "addnode=n4.espers.io\n");
+    fprintf(ConfFile, "addnode=n5.espers.io\n");
+    fprintf(ConfFile, "addnode=n6.espers.io\n");
+    fprintf(ConfFile, "addnode=n7.espers.io\n");
+    fprintf(ConfFile, "addnode=n8.espers.io\n");
+    fprintf(ConfFile, "addnode=n9.espers.io\n");
+    fprintf(ConfFile, "addnode=n10.espers.io\n");
+    fclose(ConfFile);
+}
+
+void StreamConfigFile(map<string, string>& mapSettingsRet,
+                    map<string, vector<string> >& mapMultiSettingsRet)
+{
     set<string> setOptions;
     setOptions.insert("*");
 
+    // TODO: remove boost in favor of C++11 file lookup/handling
+    boost::filesystem::ifstream streamConfig(GetConfigFile());
     for (boost::program_options::detail::config_file_iterator it(streamConfig, setOptions), end; it != end; ++it)
     {
         // Don't overwrite existing settings so command line settings override bitcoin.conf
@@ -1163,8 +1160,30 @@ void ReadConfigFile(map<string, string>& mapSettingsRet,
         }
         mapMultiSettingsRet[strKey].push_back(it->value[0]);
     }
+}
+
+void ReadConfigFile()
+{
+    // Stream Conf file data
+    StreamConfigFile(mapArgs, mapMultiArgs);
     // If datadir is changed in .conf file:
     ClearDatadirCache();
+}
+
+void InitializeConfigFile()
+{
+    // TODO: remove boost in favor of C++11 file lookup/handling
+    boost::filesystem::ifstream streamConfig(GetConfigFile());
+    if (!streamConfig.good())
+    {
+        // Create Espers.conf
+        BuildConfigFile();
+        // Then read it...
+        ReadConfigFile();
+    } else {
+        // Read Espers.conf
+        ReadConfigFile();
+    }
 }
 
 boost::filesystem::path GetPidFile()
