@@ -100,7 +100,16 @@ int ECDSA_SIG_recover_key_GFp(EC_KEY *eckey, ECDSA_SIG *ecsig, const unsigned ch
     if (!BN_bin2bn(msg, msglen, e)) { ret=-1; goto err; }
     if (8*msglen > n) BN_rshift(e, e, 8-(n & 7));
     zero = BN_CTX_get(ctx);
+// OpenSSL v3.0.0+ Compatibility Update
+// BN_zero() never fails and returns no value.
+#if OPENSSL_VERSION_NUMBER >= 0x30000000L
+    BN_zero(zero);
+// Fallback handling for v0.9.8-v1.1.1
+// TODO: Drop 0.9.8 support and move to above call
+// as standard handling after verifying 1.0-1.1 support
+#else
     if (!BN_zero(zero)) { ret=-1; goto err; }
+#endif
     if (!BN_mod_sub(e, zero, e, order, ctx)) { ret=-1; goto err; }
     rr = BN_CTX_get(ctx);
     if (!BN_mod_inverse(rr, ecsig->r, order, ctx)) { ret=-1; goto err; }
