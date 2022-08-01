@@ -59,7 +59,7 @@ General Info:
 		Port: 22448
 		RPC Port: 22442
 
-Compiling Espers daemon on Ubunutu 22.04 LTS (Jammy Jellyfish)
+Compiling Espers daemon on Ubuntu 22.04 LTS (Jammy Jellyfish)
 ---------------------------
 ### Note: guide should be compatible with other Ubuntu versions from 14.04+
 
