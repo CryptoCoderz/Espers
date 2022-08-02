@@ -165,6 +165,8 @@ wget https://fukuchi.org/works/qrencode/qrencode-4.0.2.tar.gz; tar zxfv qrencode
 Ubuntu Legacy Patch (Ubuntu 18.04 and older)
 ```
 cp -r ~/Espers/src/qt/forms/signverifymessagedialog.ui.legacy_qt ~/Espers/src/qt/forms/signverifymessagedialog.ui
+cp -r ~/Espers/src/qt/forms/rpcconsolesettings.ui.legacy_qt ~/Espers/src/qt/forms/rpcconsolesettings.ui
+cp -r ~/Espers/src/qt/forms/rpcconsole.ui.legacy_qt ~/Espers/src/qt/forms/rpcconsole.ui
 ```
 
 Build Espers Qt
