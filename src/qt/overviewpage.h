@@ -46,7 +46,7 @@ public:
     void ShowSynchronizedMessage(bool fSyncFinish);
 
 public slots:
-    void setBalance(const CAmount& balance, const CAmount& stake, const CAmount& unconfirmedBalance, const CAmount& immatureBalance);
+    void setBalance(qint64 balance, qint64 stake, qint64 unconfirmedBalance, qint64 immatureBalance);
 
     void updatePoSstat(bool);
     void setCntBlocks(int pseudo);
