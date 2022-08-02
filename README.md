@@ -68,9 +68,14 @@ Compiling Espers daemon on Ubuntu 22.04 LTS (Jammy Jellyfish)
 sudo -i
 ```
 
+### Create swap file (if system has less than 2GB of RAM)
+```
+cd ~; sudo fallocate -l 3G /swapfile; ls -lh /swapfile; sudo chmod 600 /swapfile; ls -lh /swapfile; sudo mkswap /swapfile; sudo swapon /swapfile; sudo swapon --show; sudo cp /etc/fstab /etc/fstab.bak; echo '/swapfile none swap sw 0 0' | sudo tee -a /etc/fstab
+```
+
 ### Dependencies install
 ```
-cd ~; apt-get install ntp git build-essential libssl-dev libdb-dev libdb++-dev libboost-all-dev libqrencode-dev libcurl4-openssl-dev curl libzip-dev; apt-get update; apt-get upgrade; apt-get install git make automake build-essential libboost-all-dev; apt-get install yasm binutils libcurl4-openssl-dev openssl libssl-dev; sudo apt-get install libgmp-dev;
+cd ~; apt-get install -y ntp git build-essential libssl-dev libdb-dev libdb++-dev libboost-all-dev libqrencode-dev libcurl4-openssl-dev curl libzip-dev; apt-get update -y; apt-get install -y git make automake build-essential libboost-all-dev; apt-get install -y yasm binutils libcurl4-openssl-dev openssl libssl-dev; sudo apt-get install -y libgmp-dev;
 ```
 
 ### Dependencies build and link
@@ -78,12 +83,7 @@ cd ~; apt-get install ntp git build-essential libssl-dev libdb-dev libdb++-dev l
 cd ~; wget http://download.oracle.com/berkeley-db/db-6.2.32.NC.tar.gz; tar zxf db-6.2.32.NC.tar.gz; cd db-6.2.32.NC/build_unix; ../dist/configure --enable-cxx; make; make install; ln -s /usr/local/BerkeleyDB.6.2/lib/libdb-6.2.so /usr/lib/libdb-6.2.so;ln -s /usr/local/BerkeleyDB.6.2/lib/libdb_cxx-6.2.so /usr/lib/libdb_cxx-6.2.so; export BDB_INCLUDE_PATH="/usr/local/BerkeleyDB.6.2/include"; export BDB_LIB_PATH="/usr/local/BerkeleyDB.6.2/lib"; cd ~;
 ```
 
-### Personal upload EXAMPLE
-```
-cd ~; cp -r /home/ftpuser/ftp/files/ESP-clean/. ~/Espers
-```
-
-### GitHub pull RECOMMENDED
+### GitHub pull (Source Download)
 ```
 cd ~; git clone https://github.com/CryptoCoderz/Espers
 ```
@@ -93,7 +93,7 @@ cd ~; git clone https://github.com/CryptoCoderz/Espers
 cd ~; cd ~/Espers/src; chmod a+x obj; chmod a+x leveldb/build_detect_platform; chmod a+x leveldb; chmod a+x ~/Espers/src; chmod a+x ~/Espers; make -f ~/Espers/src/makefile/makefile.unix USE_UPNP=-; cd ~; cp ~/Espers/src/Espersd /usr/local/bin;
 ```
 
-### Create config file for daemon
+### Create config file (for daemon, DO NOT USE FOR QT)
 ```
 cd ~; sudo ufw allow 22448/tcp; sudo ufw allow 22442/tcp; sudo mkdir ~/.ESP; cat << "CONFIG" >> ~/.ESP/Espers.conf
 listen=1
@@ -108,22 +108,26 @@ rpcport=22442
 port=22448
 rpcconnect=127.0.0.1
 rpcallowip=127.0.0.1
-addnode=198.50.180.207
-addnode=85.255.7.52
-addnode=195.181.211.221
-addnode=176.31.205.41
-addnode=116.14.167.86
-addnode=167.99.171.227
-addnode=174.107.102.219
-addnode=176.9.156.236
-addnode=198.50.180.193
-addnode=94.130.64.143
-addnode=145.239.65.6
-addnode=108.61.175.156
-addnode=46.4.27.201
-addnode=149.56.154.75
-addnode=50.46.99.238
-addnode=159.89.114.40
+addnode=n1.espers.io:22448
+addnode=n2.espers.io:22448
+addnode=n3.espers.io:22448
+addnode=n4.espers.io:22448
+addnode=n5.espers.io:22448
+addnode=n6.espers.io:22448
+addnode=n7.espers.io:22448
+addnode=n8.espers.io:22448
+addnode=n9.espers.io:22448
+addnode=n10.espers.io:22448
+addnode=n1.espers.io
+addnode=n2.espers.io
+addnode=n3.espers.io
+addnode=n4.espers.io
+addnode=n5.espers.io
+addnode=n6.espers.io
+addnode=n7.espers.io
+addnode=n8.espers.io
+addnode=n9.espers.io
+addnode=n10.espers.io
 
 CONFIG
 chmod 700 ~/.ESP/Espers.conf; chmod 700 ~/.ESP; ls -la ~/.ESP
@@ -132,6 +136,35 @@ chmod 700 ~/.ESP/Espers.conf; chmod 700 ~/.ESP; ls -la ~/.ESP
 ### Run Espers daemon
 ```
 cd ~; Espersd; Espersd getinfo
+```
+
+### (Optional) Build Espers-QT (GUI wallet) on Linux 
+
+**All previous steps must be completed first.**
+(If you recompiling some other time you don't have to repeat previous steps.)
+
+Install Qt dependencies:
+```
+sudo apt-get install -y qtcreator qtbase5-dev qttools5-dev qttools5-dev-tools qt5-qmake cmake
+```
+
+Install extended dependencies:
+```
+sudo apt-get install -y autoconf autotools-dev pkg-config zlib1g-dev
+```
+
+Qt Dependencies build and link (1 of 2):
+```
+wget https://ppa.launchpadcontent.net/linuxuprising/libpng12/ubuntu/pool/main/libp/libpng/libpng_1.2.54.orig.tar.xz; tar Jxfv libpng_1.2.54.orig.tar.xz; cd ~/libpng-1.2.54; ./configure; make; sudo make install; cd ~; sudo ln -s /usr/local/lib/libpng12.so.0.54.0 /usr/lib/libpng12.so; sudo ln -s /usr/local/lib/libpng12.so.0.54.0 /usr/lib/libpng12.so.0
+```
+Qt Dependencies build and link (2 of 2):
+```
+wget https://fukuchi.org/works/qrencode/qrencode-4.0.2.tar.gz; tar zxfv qrencode-4.0.2.tar.gz; cd ~/qrencode-4.0.2; ./configure; make; sudo make install; sudo ldconfig
+```
+
+Build Espers Qt
+```
+cd ~/Espers; qmake -qt=qt5 USE_UPNP=-; make
 ```
 
 ### Troubleshooting
