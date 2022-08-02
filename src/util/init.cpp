@@ -549,17 +549,17 @@ bool AppInit2(boost::thread_group& threadGroup)
 #ifdef ENABLE_WALLET
     if (!fDisableWallet) {
 
-        filesystem::path backupDir = GetDataDir() / "backups";
-        if (!filesystem::exists(backupDir))
+        boost::filesystem::path backupDir = GetDataDir() / "backups";
+        if (!boost::filesystem::exists(backupDir))
         {
             // Always create backup folder to not confuse the operating system's file browser
-            filesystem::create_directories(backupDir);
+            boost::filesystem::create_directories(backupDir);
         }
         nWalletBackups = GetArg("-createwalletbackups", 10);
         nWalletBackups = std::max(0, std::min(10, nWalletBackups));
         if(nWalletBackups > 0)
         {
-            if (filesystem::exists(backupDir))
+            if (boost::filesystem::exists(backupDir))
             {
                 // Create backup of the wallet
                 std::string dateTimeStr = DateTimeStrFormat(".%Y-%m-%d-%H.%M", GetTime());
@@ -647,7 +647,7 @@ bool AppInit2(boost::thread_group& threadGroup)
                 return false;
         }
 
-        if (filesystem::exists(GetDataDir() / strWalletFileName))
+        if (boost::filesystem::exists(GetDataDir() / strWalletFileName))
         {
             CDBEnv::VerifyResult r = bitdb.Verify(strWalletFileName, CWalletDB::Recover);
             if (r == CDBEnv::RECOVER_OK)

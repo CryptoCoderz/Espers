@@ -36,32 +36,32 @@ static leveldb::Options GetOptions() {
 
 static void init_blockindex(leveldb::Options& options, bool fRemoveOld = false, bool fCreateBootstrap = false) {
     // First time init.
-    filesystem::path directory = GetDataDir() / "txleveldb";
+    boost::filesystem::path directory = GetDataDir() / "txleveldb";
 
     if (fRemoveOld) {
-        filesystem::remove_all(directory); // remove directory
+        boost::filesystem::remove_all(directory); // remove directory
         unsigned int nFile = 1;
-        filesystem::path bootstrap = GetDataDir() / "bootstrap.dat";
+        boost::filesystem::path bootstrap = GetDataDir() / "bootstrap.dat";
 
         while (true)
         {
-            filesystem::path strBlockFile = GetDataDir() / strprintf("blk%04u.dat", nFile);
+            boost::filesystem::path strBlockFile = GetDataDir() / strprintf("blk%04u.dat", nFile);
 
             // Break if no such file
-            if( !filesystem::exists( strBlockFile ) )
+            if( !boost::filesystem::exists( strBlockFile ) )
                 break;
 
-            if (fCreateBootstrap && nFile == 1 && !filesystem::exists(bootstrap)) {
-                filesystem::rename(strBlockFile, bootstrap);
+            if (fCreateBootstrap && nFile == 1 && !boost::filesystem::exists(bootstrap)) {
+                boost::filesystem::rename(strBlockFile, bootstrap);
             } else {
-                filesystem::remove(strBlockFile);
+                boost::filesystem::remove(strBlockFile);
             }
 
             nFile++;
         }
     }
 
-    filesystem::create_directory(directory);
+    boost::filesystem::create_directory(directory);
     LogPrintf("Opening LevelDB in %s\n", directory.string());
     leveldb::Status status = leveldb::DB::Open(options, directory.string(), &txdb);
     if (!status.ok()) {

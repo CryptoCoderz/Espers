@@ -31,6 +31,11 @@ QRENCODE_INCLUDE_PATH=C:/deps/qrencode-4.0.2
 QRENCODE_LIB_PATH=C:/deps/qrencode-4.0.2/.libs
 }
 
+!win32:!macx{
+BDB_INCLUDE_PATH=/usr/local/BerkeleyDB.6.2/include
+BDB_LIB_PATH=/usr/local/BerkeleyDB.6.2/lib
+}
+
 # OTHER OS
 # for boost 1.37, add -mt to the boost libraries
 # use: qmake BOOST_LIB_SUFFIX=-mt
