@@ -1140,17 +1140,17 @@ void BitcoinGUI::setEncryptionStatus(int status)
                 //labelEncryptionIcon->setPixmap(QIcon(":/icons/lock_open").pixmap(STATUSBAR_ICONSIZE,STATUSBAR_ICONSIZE));
                 //labelEncryptionIcon->setToolTip(tr("Wallet is <b>not encrypted</b>"));
                 guiref->setUnencrypted();
-            break;
+                break;
             case WalletModel::Unlocked:
                 //labelEncryptionIcon->setPixmap(QIcon(":/icons/lock_open").pixmap(STATUSBAR_ICONSIZE,STATUSBAR_ICONSIZE));
                 //labelEncryptionIcon->setToolTip(tr("Wallet is <b>encrypted</b> and currently <b>unlocked</b>"));
                 guiref->setUnlocked();
-            break;
+                break;
             case WalletModel::Locked:
                 //labelEncryptionIcon->setPixmap(QIcon(":/icons/lock_closed").pixmap(STATUSBAR_ICONSIZE,STATUSBAR_ICONSIZE));
                 //labelEncryptionIcon->setToolTip(tr("Wallet is <b>encrypted</b> and currently <b>locked</b>"));
                 guiref->setLocked();
-            break;
+                break;
         }
     }
 }
