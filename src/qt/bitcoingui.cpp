@@ -167,17 +167,18 @@ BitcoinGUI::BitcoinGUI(QWidget *parent):
     centralStackedWidget->addWidget(blockbrowser);
     centralStackedWidget->addWidget(fractalUI);
     centralStackedWidget->addWidget(settingsPage);
+
     LogPrintf("Espers GUI startup step 3\n");
     QWidget *centralWidget = new QWidget();
+    LogPrintf("Espers GUI startup step 3.01\n");
     QVBoxLayout *centralLayout = new QVBoxLayout(centralWidget);
+    LogPrintf("Espers GUI startup step 3.02\n");
     centralLayout->setContentsMargins(0,0,0,0);
     centralWidget->setContentsMargins(0,0,0,0);
-#ifndef Q_OS_MAC
-    centralLayout->addWidget(appMenuBar);
-#endif
     centralLayout->addWidget(centralStackedWidget);
 
     setCentralWidget(centralWidget);
+    LogPrintf("Espers GUI startup step 3.1\n");
 
     // Create status bar
     //statusBar();
@@ -191,6 +192,7 @@ BitcoinGUI::BitcoinGUI(QWidget *parent):
     frameBlocksLayout->setContentsMargins(0,0,0,0);
     frameBlocksLayout->setSpacing(0);
     frameBlocksLayout->setAlignment(Qt::AlignHCenter);
+    LogPrintf("Espers GUI startup step 3.2\n");
     //labelEncryptionIcon = new QLabel();
     //labelStakingIcon = new QLabel();
     //labelConnectionsIcon = new QLabel();
@@ -206,7 +208,7 @@ BitcoinGUI::BitcoinGUI(QWidget *parent):
     //frameBlocksLayout->addStretch();
     frameBlocksLayout->addWidget(netLabel);
     toolbar->addWidget(frameBlocks);
-
+    LogPrintf("Espers GUI startup step 3.3\n");
     if (GetBoolArg("-staking", true))
     {
         //QTimer *timerStakingIcon = new QTimer(labelStakingIcon);
