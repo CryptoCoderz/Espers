@@ -110,6 +110,7 @@ BitcoinGUI::BitcoinGUI(QWidget *parent):
     //setUnifiedTitleAndToolBarOnMac(true);
     QApplication::setAttribute(Qt::AA_DontShowIconsInMenus);
 #endif
+    LogPrintf("Espers GUI startup step 1\n");
     setObjectName("Espers");
     setStyleSheet("#Espers {background-image: url(:/images/background_light) }"); //qradialgradient(cx: -0.8, cy: 0, fx: -0.8, fy: 0, radius: 1.4, stop: 0 #499bea, stop: 1 #207ce5
     // Accept D&D of URIs
@@ -129,7 +130,7 @@ BitcoinGUI::BitcoinGUI(QWidget *parent):
 
     // Create tabs
     overviewPage = new OverviewPage();
-
+    LogPrintf("Espers GUI startup step 2\n");
     transactionsPage = new QWidget(this);
     QVBoxLayout *vbox = new QVBoxLayout();
     transactionView = new TransactionView(this);
@@ -166,7 +167,7 @@ BitcoinGUI::BitcoinGUI(QWidget *parent):
     centralStackedWidget->addWidget(blockbrowser);
     centralStackedWidget->addWidget(fractalUI);
     centralStackedWidget->addWidget(settingsPage);
-
+    LogPrintf("Espers GUI startup step 3\n");
     QWidget *centralWidget = new QWidget();
     QVBoxLayout *centralLayout = new QVBoxLayout(centralWidget);
     centralLayout->setContentsMargins(0,0,0,0);
@@ -213,7 +214,7 @@ BitcoinGUI::BitcoinGUI(QWidget *parent):
         //timerStakingIcon->start(30 * 1000);
         //updateStakingIcon();
     }
-
+    LogPrintf("Espers GUI startup step 4\n");
     // Progress bar and label for blocks download
     //progressBarLabel = new QLabel();
     //progressBarLabel->setVisible(false);
@@ -257,6 +258,7 @@ BitcoinGUI::BitcoinGUI(QWidget *parent):
     connect(receiveCoinsPage, SIGNAL(signMessage(QString)), this, SLOT(gotoSignMessageTab(QString)));
 
     gotoOverviewPage();
+    LogPrintf("Espers GUI startup step 5\n");
 }
 
 BitcoinGUI::~BitcoinGUI()
@@ -272,6 +274,7 @@ BitcoinGUI::~BitcoinGUI()
 
 void BitcoinGUI::createActions()
 {
+    LogPrintf("Espers GUI startup step 6\n");
     QActionGroup *tabGroup = new QActionGroup(this);
 
     overviewAction = new QAction(QIcon(":/icons/overview"), tr("&Dashboard"), this);
@@ -419,6 +422,7 @@ void BitcoinGUI::createActions()
     connect(editConfigAction, SIGNAL(triggered()), this, SLOT(editConfig()));
     connect(editConfigExtAction, SIGNAL(triggered()), this, SLOT(editConfigExt()));
     connect(openDataDirAction, SIGNAL(triggered()), this, SLOT(openDataDir()));
+    LogPrintf("Espers GUI startup step 7\n");
 }
 
 //void BitcoinGUI::createMenuBar()
@@ -459,6 +463,7 @@ void BitcoinGUI::createActions()
 
 static QWidget* makeToolBarSpacer()
 {
+    LogPrintf("Espers GUI startup step 8\n");
     QWidget* spacer = new QWidget();
     spacer->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Expanding);
     spacer->setStyleSheet("QWidget { background: none; }");
@@ -467,6 +472,7 @@ static QWidget* makeToolBarSpacer()
 
 void BitcoinGUI::createToolBars()
 {
+    LogPrintf("Espers GUI startup step 9\n");
     toolbar = new QToolBar(tr("Tabs toolbar"));
     toolbar->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
     toolbar->setContextMenuPolicy(Qt::PreventContextMenu);
@@ -514,6 +520,7 @@ void BitcoinGUI::createToolBars()
 
 void BitcoinGUI::setClientModel(ClientModel *clientModel)
 {
+    LogPrintf("Espers GUI startup step 10\n");
     netLabel->setText("v0.8.8.5");// Version in GUI
     this->clientModel = clientModel;
     if(clientModel)
@@ -555,6 +562,7 @@ void BitcoinGUI::setClientModel(ClientModel *clientModel)
 
 void BitcoinGUI::setWalletModel(WalletModel *walletModel)
 {
+    LogPrintf("Espers GUI startup step 11\n");
     this->walletModel = walletModel;
     if(walletModel)
     {
@@ -584,6 +592,7 @@ void BitcoinGUI::setWalletModel(WalletModel *walletModel)
 
 void BitcoinGUI::createTrayIcon()
 {
+    LogPrintf("Espers GUI startup step 12\n");
     QMenu *trayIconMenu;
 #ifndef Q_OS_MAC
     trayIcon = new QSystemTrayIcon(this);
@@ -624,6 +633,7 @@ void BitcoinGUI::createTrayIcon()
 #ifndef Q_OS_MAC
 void BitcoinGUI::trayIconActivated(QSystemTrayIcon::ActivationReason reason)
 {
+    LogPrintf("Espers GUI startup step 13\n");
     if(reason == QSystemTrayIcon::Trigger)
     {
         // Click on system tray icon triggers show/hide of the main window
@@ -660,6 +670,7 @@ void BitcoinGUI::aboutQtExt_Static()
 
 void BitcoinGUI::setNumConnections(int count)
 {
+    LogPrintf("Espers GUI startup step 14\n");
     QString icon;
     switch(count)
     {
@@ -675,6 +686,7 @@ void BitcoinGUI::setNumConnections(int count)
 
 void BitcoinGUI::setNumBlocks(int count)
 {
+    LogPrintf("Espers GUI startup step 15\n");
     // don't show / hide progress bar and its label if we have no connection to the network
     if (!clientModel || (clientModel->getNumConnections() == 0 && !clientModel->isImporting()))
     {
@@ -764,6 +776,7 @@ void BitcoinGUI::setNumBlocks(int count)
 
 void BitcoinGUI::message(const QString &title, const QString &message, bool modal, unsigned int style)
 {
+    LogPrintf("Espers GUI startup step 16\n");
     QString strTitle = tr("Espers") + " - ";
     // Default to information icon
     int nMBoxIcon = QMessageBox::Information;
@@ -810,6 +823,7 @@ void BitcoinGUI::message(const QString &title, const QString &message, bool moda
 
 void BitcoinGUI::changeEvent(QEvent *e)
 {
+    LogPrintf("Espers GUI startup step 17\n");
     QMainWindow::changeEvent(e);
 #ifndef Q_OS_MAC // Ignored on Mac
     if(e->type() == QEvent::WindowStateChange)
@@ -829,6 +843,7 @@ void BitcoinGUI::changeEvent(QEvent *e)
 
 void BitcoinGUI::closeEvent(QCloseEvent *event)
 {
+    LogPrintf("Espers GUI startup step 18\n");
     if(clientModel)
     {
 #ifndef Q_OS_MAC // Ignored on Mac
@@ -847,6 +862,7 @@ void BitcoinGUI::closeEvent(QCloseEvent *event)
 
 void BitcoinGUI::askFee(qint64 nFeeRequired, bool *payFee)
 {
+    LogPrintf("Espers GUI startup step 19\n");
     if (!clientModel || !clientModel->getOptionsModel())
         return;
 
@@ -861,6 +877,7 @@ void BitcoinGUI::askFee(qint64 nFeeRequired, bool *payFee)
 
 void BitcoinGUI::incomingTransaction(const QModelIndex & parent, int start, int end)
 {
+    LogPrintf("Espers GUI startup step 20\n");
     if(!walletModel || !clientModel)
         return;
     TransactionTableModel *ttm = walletModel->getTransactionTableModel();
@@ -896,6 +913,7 @@ void BitcoinGUI::incomingTransaction(const QModelIndex & parent, int start, int 
 
 void BitcoinGUI::gotoOverviewPage()
 {
+    LogPrintf("Espers GUI startup step 21\n");
     overviewAction->setChecked(true);
     centralStackedWidget->setCurrentWidget(overviewPage);
 
@@ -1126,6 +1144,7 @@ void BitcoinGUI::setLocked()
 
 void BitcoinGUI::setEncryptionStatus(int status)
 {
+    LogPrintf("Espers GUI startup step 22\n");
     if(fWalletUnlockStakingOnly)
     {
         //labelEncryptionIcon->setPixmap(QIcon(":/icons/lock_open").pixmap(STATUSBAR_ICONSIZE,STATUSBAR_ICONSIZE));
