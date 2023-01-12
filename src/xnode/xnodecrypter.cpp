@@ -112,7 +112,7 @@ void ThreadCheckXNodeEnginePool()
                 xnodePayments.CleanPaymentList();
             }
 
-            //if(c % XNODES_DUMP_SECONDS == 0) DumpXNodes();
+            if(c % XNODES_DUMP_SECONDS == 0) DumpXNodes();
 
         } else {
             if(r == 0) {

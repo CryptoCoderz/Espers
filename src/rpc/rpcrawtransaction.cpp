@@ -527,6 +527,9 @@ Value signrawtransaction(const Array& params, bool fHelp)
             fComplete = false;
             continue;
         }
+
+        // TODO: make sure this is logged for PAS features
+        // either separate naming or create global function
         const CScript& prevPubKey = mapPrevOut[txin.prevout];
 
         txin.scriptSig.clear();

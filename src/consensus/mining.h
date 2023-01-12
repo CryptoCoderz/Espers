@@ -38,5 +38,7 @@ static const int64_t nBlockRewardBuffer = 0.1 * COIN;
 static const int nCoinbaseMaturity = 60;
 /** Xnode required collateral */
 inline int64_t XNodeCollateral(int nHeight) { return 1113; } // 5K ESP required as collateral
+/** PubkeyAliasService required fee */
+inline int64_t PubkeyaliasserviceFEE(int nHeight) { return 75; } // ON (75 ESP - TODO: raise to correct value post-test)
 
 #endif

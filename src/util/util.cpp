@@ -101,6 +101,9 @@ string strXnodeAddr = "";
 bool settingsStatus = false;
 //Demi-node handling
 bool fDemiNodes = false;
+//Pubkey Alias Service toggle
+int nPubkeyaliasserviceMinProtocol = 0;
+bool fPubkeyAliasService = false;
 
 // Init OpenSSL library multithreading support
 static CCriticalSection** ppmutexOpenSSL;

@@ -1,6 +1,6 @@
 TEMPLATE = app
 TARGET = Espers-fractal-qt
-VERSION = 0.8.8.5
+VERSION = 0.8.8.6
 INCLUDEPATH += src src/json src/qt
 QT += core gui network
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
@@ -351,7 +351,10 @@ HEADERS += src/qt/bitcoingui.h \
     src/xnode/xnodecrypter.h \
     src/deminode/demimodule.h \
     src/deminode/deminet.h \
-    src/deminode/demisync.h
+    src/deminode/demisync.h \
+    src/pas/pas.h \
+    src/pas/pasengine.h \
+    src/pas/pasman.h
 
 SOURCES += src/qt/bitcoin.cpp src/qt/bitcoingui.cpp \
     src/qt/transactiontablemodel.cpp \
@@ -464,7 +467,10 @@ SOURCES += src/qt/bitcoin.cpp src/qt/bitcoingui.cpp \
     src/xnode/xnodecrypter.cpp \
     src/deminode/demimodule.cpp \
     src/deminode/deminet.cpp \
-    src/deminode/demisync.cpp
+    src/deminode/demisync.cpp \
+    src/pas/pas.cpp \
+    src/pas/pasengine.cpp \
+    src/pas/pasman.cpp
 
 RESOURCES += \
     src/qt/bitcoin.qrc

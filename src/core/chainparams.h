@@ -72,6 +72,7 @@ public:
     int64_t TargetTimespan() const { return nTargetTimespan; }
     int64_t AdjustmentInterval() const { return nAdjustmentInterval; }
     int StartPoSBlock() const { return nStartPoSBlock; }
+    std::string PASfeeAddress() const { return strPASfeeAddress; }
 protected:
     CChainParams() {};
 
@@ -91,6 +92,7 @@ protected:
     int64_t nTargetTimespan;
     int64_t nAdjustmentInterval;
     int nStartPoSBlock;
+    std::string strPASfeeAddress;
 };
 
 /**

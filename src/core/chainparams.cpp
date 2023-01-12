@@ -102,6 +102,8 @@ public:
         nTargetTimespan = 10 * nTargetSpacing;
         // Delay PoS start until - swap start
         nStartPoSBlock = 2125;
+        // Pubkey Alias System fee address
+        strPASfeeAddress = "ESP2bdxwD1VZNo8S3uCxUQZyhvNRx3nSmH";
     }
 
     virtual const CBlock& GenesisBlock() const { return genesis; }
@@ -163,6 +165,8 @@ public:
         // TestNet uses latest VRX retarget
         nTargetSpacing = 0;
         nStartPoSBlock = 0;
+        // Pubkey Alias System fee address
+        strPASfeeAddress = "";
     }
     virtual Network NetworkID() const { return CChainParams::TESTNET; }
 };
@@ -198,6 +202,8 @@ public:
         assert(hashGenesisBlock == hashRegNetGenesisBlock);
         // Regtest mode doesn't have any DNS seeds.
         vSeeds.clear();
+        // Pubkey Alias System fee address
+        strPASfeeAddress = "";
     }
 
     virtual bool RequireRPCPassword() const { return false; }

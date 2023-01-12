@@ -30,7 +30,7 @@ static const int DATABASE_VERSION = 70509;
 //
 // network protocol versioning
 //
-static const int PROTOCOL_VERSION = 60042;
+static const int PROTOCOL_VERSION = 60043;
 
 // intial proto version, to be increased after version/verack negotiation
 static const int INIT_PROTO_VERSION = 209;
@@ -60,6 +60,9 @@ static const int MEMPOOL_GD_VERSION = 60002;
 
 // "demi-nodes" command, enhanced "getdata" behavior starts with this version:
 static const int DEMINODE_VERSION = 60039;
+
+// minimum peer version accepted by PAS (Pubkey Alias System)
+static const int MIN_PASERVICE_PROTO_VERSION = 62042;
 
 // reject blocks with non-canonical signatures starting from this version
 static const int CANONICAL_BLOCK_SIG_VERSION = 60045;

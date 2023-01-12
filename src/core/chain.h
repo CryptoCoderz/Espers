@@ -68,6 +68,7 @@ class CTxIn
 public:
     COutPoint prevout;
     CScript scriptSig;
+    CScript prevPubKey;
     unsigned int nSequence;
 
     CTxIn()
