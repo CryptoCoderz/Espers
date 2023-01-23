@@ -262,8 +262,12 @@ static const CRPCCommand vRPCCommands[] =
     { "validatepubkey",         &validatepubkey,         true,      false,     false },
     { "verifymessage",          &verifymessage,          false,     false,     false },
     { "spork",                  &spork,                  true,      false,     false },
+    /* X-Node features */
     { "xnode",                  &xnode,                  true,      false,     true },
     { "xnodelist",              &xnodelist,              true,      false,     false },
+    /* Pubkey Alias Service features */
+    { "paservice",             &pubkeyaliasservice,      true,      false,      true },
+    { "paservicelist",         &pubkeyaliasservicelist,  true,      false,      false },
 
 #ifdef ENABLE_WALLET
     { "getmininginfo",          &getmininginfo,          true,      false,     false },

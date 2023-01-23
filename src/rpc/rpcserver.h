@@ -188,5 +188,8 @@ extern json_spirit::Value getcheckpoint(const json_spirit::Array& params, bool f
 extern json_spirit::Value spork(const json_spirit::Array& params, bool fHelp);
 extern json_spirit::Value xnode(const json_spirit::Array& params, bool fHelp);
 extern json_spirit::Value xnodelist(const json_spirit::Array& params, bool fHelp);
+// PAS Features
+extern json_spirit::Value pubkeyaliasservice(const json_spirit::Array& params, bool fHelp);
+extern json_spirit::Value pubkeyaliasservicelist(const json_spirit::Array& params, bool fHelp);
 
 #endif

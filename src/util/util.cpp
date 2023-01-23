@@ -1057,13 +1057,6 @@ void ClearDatadirCache()
               boost::filesystem::path());
 }
 
-boost::filesystem::path GetXNodeConfigFile()
-{
-    boost::filesystem::path pathConfigFile(GetArg("-xnconf", "xnode.conf"));
-    if (!pathConfigFile.is_complete()) pathConfigFile = GetDataDir() / pathConfigFile;
-    return pathConfigFile;
-}
-
 boost::filesystem::path GetConfigFile()
 {
     boost::filesystem::path pathConfigFile(GetArg("-conf", "Espers.conf"));

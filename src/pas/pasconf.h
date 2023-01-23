@@ -1,10 +1,9 @@
-// Copyright (c) 2014-2015 The Dash developers
-// Copyright (c) 2017-2023 The CryptoCoderz Team
+// Copyright (c) 2022-2023 The CryptoCoderz Team / Espers project
 // Distributed under the MIT/X11 software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
-#ifndef SRC_XNODECONFIG_H_
-#define SRC_XNODECONFIG_H_
+#ifndef SRC_PASCONF_H_
+#define SRC_PASCONF_H_
 
 #include <string>
 #include <vector>
@@ -12,17 +11,17 @@
 #include <boost/filesystem.hpp>
 #include <boost/filesystem/fstream.hpp>
 
-class CXNodeConfig;
-extern CXNodeConfig xnodeConfig;
+class CPASConfig;
+extern CPASConfig pasConfig;
 
-boost::filesystem::path GetXNodeConfigFile();
+boost::filesystem::path GetPASConfigFile();
 
-class CXNodeConfig
+class CPASConfig
 {
 
 public:
 
-    class CXNodeEntry {
+    class CPASEntry {
 
     private:
         std::string alias;
@@ -32,7 +31,7 @@ public:
         std::string outputIndex;
     public:
 
-        CXNodeEntry(std::string alias, std::string ip, std::string privKey, std::string txHash, std::string outputIndex) {
+        CPASEntry(std::string alias, std::string ip, std::string privKey, std::string txHash, std::string outputIndex) {
             this->alias = alias;
             this->ip = ip;
             this->privKey = privKey;
@@ -81,23 +80,23 @@ public:
         }
     };
 
-    CXNodeConfig() {
-        entries = std::vector<CXNodeEntry>();
+    CPASConfig() {
+        entries = std::vector<CPASEntry>();
     }
 
     void clear();
     bool read(boost::filesystem::path path);
     void add(std::string alias, std::string ip, std::string privKey, std::string txHash, std::string outputIndex);
 
-    std::vector<CXNodeEntry>& getEntries() {
+    std::vector<CPASEntry>& getEntries() {
         return entries;
     }
 
 private:
-    std::vector<CXNodeEntry> entries;
+    std::vector<CPASEntry> entries;
 
 
 };
 
 
-#endif /* SRC_XNODECONFIG_H_ */
+#endif /* SRC_PASCONF_H_ */

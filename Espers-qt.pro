@@ -354,7 +354,9 @@ HEADERS += src/qt/bitcoingui.h \
     src/deminode/demisync.h \
     src/pas/pas.h \
     src/pas/pasengine.h \
-    src/pas/pasman.h
+    src/pas/pasman.h \
+    src/pas/pasconf.h \
+    src/pas/pasregister.h
 
 SOURCES += src/qt/bitcoin.cpp src/qt/bitcoingui.cpp \
     src/qt/transactiontablemodel.cpp \
@@ -468,9 +470,12 @@ SOURCES += src/qt/bitcoin.cpp src/qt/bitcoingui.cpp \
     src/deminode/demimodule.cpp \
     src/deminode/deminet.cpp \
     src/deminode/demisync.cpp \
+    src/rpc/rpcpasengine.cpp \
     src/pas/pas.cpp \
     src/pas/pasengine.cpp \
-    src/pas/pasman.cpp
+    src/pas/pasman.cpp \
+    src/pas/pasconf.cpp \
+    src/pas/pasregister.cpp
 
 RESOURCES += \
     src/qt/bitcoin.qrc
