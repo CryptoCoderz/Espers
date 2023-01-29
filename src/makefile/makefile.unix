@@ -176,7 +176,13 @@ OBJS= \
     obj/fractal/fractalengine.o \
     obj/fractal/fractalnftbase.o \
     obj/fractal/fractalnft.o \
-    obj/fractal/fractalparams.o
+    obj/fractal/fractalparams.o \
+    obj/rpc/rpcpasengine.o \
+    obj/pas/pas.o \
+    obj/pas/pasengine.o \
+    obj/pas/pasman.o \
+    obj/pas/pasconf.o \
+    obj/pas/pasregister.o
 
 ifeq (${USE_WALLET}, 1)
     DEFS += -DENABLE_WALLET
