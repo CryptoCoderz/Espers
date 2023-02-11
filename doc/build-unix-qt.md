@@ -2,8 +2,8 @@ Linux/Unix Espers-qt: Qt5 GUI for Espers
 ===============================
 
 ### Navigation of these documents
-[Back to General Readme](../README.md)
-[Back to Installation Guide](../INSTALL.md)
+- [Back to General Readme](../README.md)
+- [Back to Installation Guide](../INSTALL.md)
 
 
 Build instructions
