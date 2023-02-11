@@ -18,9 +18,9 @@ bool Function(char* psz, int n)
 }
 
 - ANSI/Allman block style
-- 4 space indenting, no tabs
+- 1 tab indenting, no spaces
 - No extra spaces inside parenthesis; please don't do ( this )
-- No space after function names, one space after if, for and while
+- No space after function names, if, for and while
 
 Variable names begin with the type in lowercase, like nSomeVariable.
 Please don't put the first word of the variable name in lowercase like
@@ -62,7 +62,7 @@ Threads
 
 StartNode : Starts other threads.
 
-ThreadSocketHandler : Sends/Receives data from peers on port 8333.
+ThreadSocketHandler : Sends/Receives data from peers on port 22448.
 
 ThreadMessageHandler : Higher-level message handling (sending and
 receiving).
@@ -84,7 +84,7 @@ in 500ms.
 ThreadRPCServer : Remote procedure call handler, listens on port 8332
 for connections and services them.
 
-ThreadBitcoinMiner : Generates bitcoins
+ThreadBitcoinMiner : Generates Espers (obsolete)
 
 ThreadMapPort : Universal plug-and-play startup/shutdown
 

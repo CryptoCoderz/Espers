@@ -1,3 +1,9 @@
+Espers [ESP] Gitian Building 
+============================
+###WARNING - THIS SECTION IS OBSOLETE
+- This section of documentation is not maintained and is deemed obsolete until such a time as it is either removed or updated.
+
+
 Gavin's notes on getting gitian builds up and running:
 
 You need the right hardware: you need a 64-bit-capable CPU with hardware virtualization support (Intel VT-x or AMD-V). Not all modern CPUs support hardware virtualization.
@@ -5,11 +11,13 @@ You need the right hardware: you need a 64-bit-capable CPU with hardware virtual
 You probably need to enable hardware virtualization in your machine's B.I.O.S.
 
 You need to be running a recent version of 64-bit-Ubuntu, and you need to install several prerequisites:
-  sudo apt-get install apache2 git apt-cacher-ng python-vm-builder qemu-kvm
+
+    sudo apt-get install apache2 git apt-cacher-ng python-vm-builder qemu-kvm
 
 Sanity checks:
-  sudo service apt-cacher-ng status   # Should return apt-cacher-ng is running
-  ls -l /dev/kvm   # Should show a /dev/kvm device
+
+    sudo service apt-cacher-ng status   # Should return apt-cacher-ng is running
+    ls -l /dev/kvm   # Should show a /dev/kvm device
 
 Once you've got the right hardware and software:
 

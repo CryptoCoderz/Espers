@@ -1,3 +1,8 @@
+Espers [ESP] Mac OS Deploy 
+============================
+###WARNING - THIS SECTION IS OBSOLETE
+- This section of documentation is not maintained and is deemed obsolete until such a time as it is either removed or updated.
+
 
 macdeployqtplus works best on OS X Lion, for Snow Leopard you'd need to install
 Python 2.7 and make it your default Python installation.
@@ -6,7 +11,7 @@ You will need the appscript package for the fancy disk image creation to work.
 Install it by invoking "sudo easy_install appscript".
 
 Ths script should be invoked in the target directory like this:
-$source_dir/contrib/macdeploy/macdeployqtplus NovaCoin-Qt.app -add-qt-tr da,de,es,hu,ru,uk,zh_CN,zh_TW -dmg -fancy $source_dir/contrib/macdeploy/fancy.plist -verbose 2
+$source_dir/contrib/macdeploy/macdeployqtplus Espers-Qt.app -add-qt-tr da,de,es,hu,ru,uk,zh_CN,zh_TW -dmg -fancy $source_dir/contrib/macdeploy/fancy.plist -verbose 2
 
 During the process, the disk image window will pop up briefly where the fancy
 settings are applied. This is normal, please do not interfere.
@@ -19,8 +24,8 @@ Fill in the following.
 Enable custom process step: [x]
 Command: %{sourceDir}/contrib/macdeploy/macdeployqtplus
 Working directory: %{buildDir}
-Command arguments: NovaCoin-Qt.app -add-qt-tr da,de,es,hu,ru,uk,zh_CN,zh_TW -dmg -fancy %{sourceDir}/contrib/macdeploy/fancy.plist -verbose 2
+Command arguments: Espers-Qt.app -add-qt-tr da,de,es,hu,ru,uk,zh_CN,zh_TW -dmg -fancy %{sourceDir}/contrib/macdeploy/fancy.plist -verbose 2
 
 After that you can start the deployment process through the menu with
-Build -> Deploy Project "novacoin-qt"
+Build -> Deploy Project "espers-qt"
 
