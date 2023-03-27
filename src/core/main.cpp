@@ -2377,7 +2377,7 @@ bool CBlock::AcceptBlock()
     if(Velocity_check(nHeight))
     {
         // Announce Velocity constraint failure
-        if(!Velocity(pindexPrev, this, false))
+        if(!Velocity(pindexPrev, this, true))
         {
             return DoS(100, error("AcceptBlock() : Velocity rejected block %d, required parameters not met", nHeight));
         }
@@ -2649,8 +2649,9 @@ bool ProcessBlock(CNode* pfrom, CBlock* pblock)
     }
 
     // Store to disk
-    if (!pblock->AcceptBlock())
+    if (!pblock->AcceptBlock()) {
         return error("ProcessBlock() : AcceptBlock FAILED");
+    }
 
     // Recursively process any orphan blocks that depended on this one
     vector<uint256> vWorkQueue;
@@ -2677,11 +2678,12 @@ bool ProcessBlock(CNode* pfrom, CBlock* pblock)
         mapOrphanBlocksByPrev.erase(hashPrev);
     }
 
+    // TODO: Veify redundancy, remove if AcceptBlock() only call offers same security
     // Check block against Velocity parameters
-    if(Velocity_check(mapBlockIndex[hash]->nHeight))
+    if(Velocity_check(pindexBest->nHeight))
     {
         // Announce Velocity constraint failure
-        if(!Velocity(mapBlockIndex[hash]->pprev, pblock, true))
+        if(!Velocity(pindexBest, pblock, true))
         {
             Misbehaving(pfrom->GetId(), 25);
             return error("ProcessBlock() : Velocity rejected block %d, required parameters not met", mapBlockIndex[hash]->nHeight);
