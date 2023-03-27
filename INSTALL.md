@@ -66,12 +66,12 @@ Linux/Unix
 
 - Build Espers Qt 
 [See doc/build-unix-qt.md](doc/build-unix-qt.md) for instructions on-
-building Espers QT using the Apple Mac OS operating system. 
+building Espers QT using the Linux/Unix operating system. 
 The intended-for-end-users, nice-graphical-interface, 
 reference implementation of Espers.
 
 - Build Espers Daemon
 [See doc/build-unix.md](doc/build-unix.md) for instructions on building 
-Espersd using the Apple Mac OS operating system. This is the-
+Espersd using the Linux/Unix operating system. This is the-
 intended-for-services, no-graphical-interface, reference
 implementation of Espers.
