@@ -102,6 +102,8 @@ extern volatile bool fReopenDebugLog;
 extern std::string strLiveForkToggle;
 extern int64_t nLiveForkToggle;// TODO: just have dependent functions create a non-extern within
                                // their respective functions (start cleaning up externs)
+//Roll back to block
+extern std::string strRollbackToBlock;
 // Xnodes
 extern bool fXnode;
 extern int64_t enforceXNodePaymentsTime;

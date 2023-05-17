@@ -90,6 +90,8 @@ volatile bool fReopenDebugLog = false;
 //Live fork toggle
 string strLiveForkToggle = "";
 int64_t nLiveForkToggle = 0;
+//Rollback to block
+string strRollbackToBlock = "";
 //Xnodes
 int64_t enforceXNodePaymentsTime = 4085657524;
 int nXNodeMinProtocol = 0;

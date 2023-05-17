@@ -60,6 +60,7 @@ using namespace boost;
 #ifdef ENABLE_WALLET
 CWallet* pwalletMain = NULL;
 int nWalletBackups = 10;
+int nNewHeight;
 #endif
 CClientUIInterface uiInterface;
 bool fConfChange;
@@ -836,24 +837,38 @@ bool AppInit2(boost::thread_group& threadGroup)
 
     if (mapArgs.count("-backtoblock"))
     {
-        int slctBCK = DEFAULT_BACK_TO_BLOCK;
-        int nNewHeight = GetArg("-backtoblock", slctBCK);
-        CBlockIndex* pindex = pindexBest;
-        while (pindex != NULL && pindex->nHeight > nNewHeight)
-        {
-            pindex = pindex->pprev;
-        }
+        strRollbackToBlock = GetArg("-backtoblock", "");
+        LogPrintf("Rolling blocks back...\n");
+        if(!strRollbackToBlock.empty()){
+            nNewHeight = GetArg("-backtoblock", (int)"");
 
-        if (pindex != NULL)
-        {
-            LogPrintf("Back to block index %d\n", nNewHeight);
-	        CTxDB txdbAddr("rw");
-            CBlock block;
-            block.ReadFromDisk(pindex);
-            block.SetBestChain(txdbAddr, pindex);
+            CBlockIndex* pindex = pindexBest;
+            while (pindex != NULL && pindex->nHeight > nNewHeight)
+            {
+                ostringstream osHeight;
+                osHeight << pindex->nHeight;
+                string strHeight = osHeight.str();
+                uiInterface.InitMessage(strprintf("Rolling blocks back... %s to %i \n", strHeight, nNewHeight));
+                pindex = pindex->pprev;
+            }
+
+            if (pindex != NULL)
+            {
+                LogPrintf("Back to block index %d\n", nNewHeight);
+                CTxDB txdbAddr("rw");
+                CBlock block;
+                block.ReadFromDisk(pindex);
+                block.SetBestChain(txdbAddr, pindex);
+            }
+            else
+            {
+                LogPrintf("Block %d not found\n", nNewHeight);
+            }
         }
         else
-            LogPrintf("Block %d not found\n", nNewHeight);
+        {
+            LogPrintf("Back block was requested but not defined!\n");
+        }
     }
 
     // ********************************************************* Step 8: load wallet
