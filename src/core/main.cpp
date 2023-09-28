@@ -1860,7 +1860,7 @@ bool static Reorganize(CTxDB& txdb, CBlockIndex* pindexNew)
     if (fMergeReverse) {
         // Only allow reverse reorgs from Demi-nodes
         // (Override for back-to-block command)
-        if((fDemiPeerRelay(GetRelayPeerAddr) && fDemiNodes) || !strRollbackToBlock.empty()) {
+        if((fDemiPeerRelay(GetRelayPeerAddr) && fDemiNodes) || fRollbacktoBlock) {
             LogPrintf("Reorganize() : Authorized a reverse-reorganize, now executing...\n");
         } else {
             return error("Reorganize() : Denied a reverse-reorganize - Not authorized!");
@@ -1869,17 +1869,26 @@ bool static Reorganize(CTxDB& txdb, CBlockIndex* pindexNew)
 
     // Ensure reorganize depth sanity
     if (nMergeDepth > BLOCK_REORG_MAX_DEPTH) {
-        // Only allow deep reorgs from Demi-nodes
+        // Only allow deep reorgs from Demi-nodes or during back-to-block
         // TODO: allow override as set in config file
-        if(fDemiPeerRelay(GetRelayPeerAddr) && fDemiNodes) {
+        if((fDemiPeerRelay(GetRelayPeerAddr) && fDemiNodes) || fRollbacktoBlock) {
             nReorgMax -= BLOCK_REORG_OVERRIDE_DEPTH;
             if (nMergeDepth > BLOCK_REORG_THRESHOLD) {
-                return error("Reorganize() : Threshold depth exceeded");
+                // Back-to-block bypasses normal threshold as it might not be set
+                if (fRollbacktoBlock) {
+                    nReorgMax = (nNewHeight-1);
+                    LogPrintf("Reorganize() : Rolling back to block: %u \n", nNewHeight);
+                } else {
+                    return error("Reorganize() : Threshold depth exceeded");
+                }
             }
         } else {
             return error("Reorganize() : Maximum depth exceeded");
         }
     }
+
+    // Turn off BackToBlock toggle if on
+    fRollbacktoBlock = false;
 
     // Set rolling checkpoint status, just in case we haven't accepted any blocks yet
     // and/or in case we're reverse reorganizing
