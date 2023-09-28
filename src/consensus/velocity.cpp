@@ -65,6 +65,13 @@ bool Velocity(CBlockIndex* prevBlock, CBlock* block, bool fFactor_tx)
     SYScrntstamp = GetAdjustedTime() + VELOCITY_MIN_RATE[i];
     SYSbaseStamp = GetTime() + VELOCITY_MIN_RATE[i];
 
+    if(nHeight == VELOCITY_HEIGHT[i] || nHeight == (VELOCITY_HEIGHT[i]+1))
+    {
+        // Skip checks for Velocity activation block (may not conform)
+        LogPrintf("SKIPPED: Velocity activation toggle block(s)\n");
+        return true;
+    }
+
     // Factor in TXs for Velocity constraints
     if(VELOCITY_FACTOR == true && fFactor_tx)
     {
@@ -96,11 +103,8 @@ bool Velocity(CBlockIndex* prevBlock, CBlock* block, bool fFactor_tx)
     }
     else if(OLDstamp < OLDvalstamp || TXstampO < OLDvalstamp)
     {
-        if(nHeight != VELOCITY_HEIGHT[i])
-        {
-            LogPrintf("DENIED: Block timestamp is not logical\n");
-            return false;
-        }
+        LogPrintf("DENIED: Block timestamp is not logical\n");
+        return false;
     }
 
     // Validate timestamp is logical based on system time
