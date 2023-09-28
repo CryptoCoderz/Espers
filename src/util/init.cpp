@@ -867,7 +867,7 @@ bool AppInit2(boost::thread_group& threadGroup)
         }
         else
         {
-            LogPrintf("Back block was requested but not defined!\n");
+            LogPrintf("Back to block was requested but not defined!\n");
         }
     }
 

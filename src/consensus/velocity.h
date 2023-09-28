@@ -30,7 +30,7 @@ bool tx_Factor(CBlockIndex* prevBlock, CBlock* block);
 bool bIndex_Factor(CBlockIndex* InSplitPoint, CBlockIndex* InSplitEnd, int InFactor);
 
 int VelocityI(int nHeight);
-bool RollingCheckpoints(int nHeight);
+bool RollingCheckpoints(int nHeight, CBlockIndex *pindexRequest);
 
 extern bool VELOCITY_FACTOR; /** Treat Switches as factors of Block Scanning */
 extern uint256 RollingBlock;
