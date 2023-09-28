@@ -67,8 +67,9 @@ uint64_t cntTime = 0;
 uint64_t prvTime = 0;
 uint64_t difTime = 0;
 uint64_t hourRounds = 0;
+uint64_t minuteRounds = 0;
 uint64_t difCurve = 0;
-uint64_t debugHourRounds = 0;
+uint64_t debugminuteRounds = 0;
 uint64_t debugDifCurve = 0;
 bool fDryRun;
 bool fCRVreset;
@@ -90,27 +91,33 @@ unsigned int retarget = DIFF_VRX; // Default with VRX
 // Debug log printing
 //
 
-void VRXswngdebug()
+void VRXswngdebug(bool fProofOfStake)
 {
     // Print for debugging
     LogPrintf("Previously discovered %s block: %u: \n",difType.c_str(),prvTime);
     LogPrintf("Current block-time: %u: \n",difType.c_str(),cntTime);
     LogPrintf("Time since last %s block: %u: \n",difType.c_str(),difTime);
     // Handle updated versions as well as legacy
-    if(GetTime() > 9993058800) {
-        debugHourRounds = hourRounds;
+    if(pindexPrev->GetBlockTime() > VRX_V3_6) {
+        debugminuteRounds = minuteRounds;
         debugTerminalAverage = TerminalAverage;
         debugDifCurve = difCurve;
-        while(difTime > (debugHourRounds * 60 * 60)) {
+        LogPrintf("VRX_Threadcurve - Previous difficulty found: %d \n", VRX_GetPrevDiff(fProofOfStake));
+        while(difTime > (debugminuteRounds * 60)) {
+            if(VRX_GetPrevDiff(fProofOfStake) < 1) {
+                // Skip
+                LogPrintf("VRX_Threadcurve - Difficulty too low for curve, skipping \n");
+                return;
+            }
             debugTerminalAverage /= debugDifCurve;
-            LogPrintf("diffTime%s is greater than %u Hours: %u \n",difType.c_str(),debugHourRounds,cntTime);
+            LogPrintf("diffTime%s is greater than %u Minutes: %u \n",difType.c_str(),debugminuteRounds,cntTime);
             LogPrintf("Difficulty will be multiplied by: %d \n",debugTerminalAverage);
-            // Break loop after 5 hours, otherwise time threshold will auto-break loop
-            if (debugHourRounds > 5){
+            // Break loop after 20 minutes, otherwise time threshold will auto-break loop
+            if (debugminuteRounds > (5 + 15)){
                 break;
             }
             debugDifCurve ++;
-            debugHourRounds ++;
+            debugminuteRounds ++;
         }
     } else {
         if(difTime > (hourRounds+0) * 60 * 60) {LogPrintf("diffTime%s is greater than 1 Hours: %u \n",difType.c_str(),cntTime);}
@@ -289,7 +296,7 @@ unsigned int DarkGravityWave(const CBlockIndex* pindexLast, bool fProofOfStake)
 //
 
 //
-// This is VRX (v3.5) revised implementation
+// This is VRX (v3.6) revised implementation
 //
 // Terminal-Velocity-RateX, v10-Beta-R9, written by Jonathan Dan Zaretsky - cryptocoderz@gmail.com
 void VRX_BaseEngine(const CBlockIndex* pindexLast, bool fProofOfStake)
@@ -384,6 +391,37 @@ void VRX_Simulate_Retarget()
     return;
 }
 
+double VRX_GetPrevDiff(bool fPoS)
+{
+    const CBlockIndex* blockindex;
+
+    // Floating point number that is a multiple of the minimum difficulty,
+    // minimum difficulty = 1.0.
+    if (pindexBest == NULL) {
+        return 1.0;
+    } else {
+        blockindex = GetLastBlockIndex(pindexBest, fPoS);
+    }
+
+    int nShift = (blockindex->nBits >> 24) & 0xff;
+
+    double dDiff =
+        (double)0x0000ffff / (double)(blockindex->nBits & 0x00ffffff);
+
+    while (nShift < 29)
+    {
+        dDiff *= 256.0;
+        nShift++;
+    }
+    while (nShift > 29)
+    {
+        dDiff /= 256.0;
+        nShift--;
+    }
+
+    return dDiff;
+}
+
 void VRX_ThreadCurve(const CBlockIndex* pindexLast, bool fProofOfStake)
 {
     // Run VRX engine
@@ -410,6 +448,7 @@ void VRX_ThreadCurve(const CBlockIndex* pindexLast, bool fProofOfStake)
         prvTime = BlockVelocityType->pprev->GetBlockTime();
         difTime = cntTime - prvTime;
         hourRounds = 1;
+        minuteRounds = 15;
         difCurve = 2;
         fCRVreset = false;
 
@@ -419,16 +458,21 @@ void VRX_ThreadCurve(const CBlockIndex* pindexLast, bool fProofOfStake)
         } else {
             difType = "PoW";
         }
-        if(fDebug) VRXswngdebug();
+        if(fDebug) VRXswngdebug(fProofOfStake);
 
         // Version 1.2 Extended Curve Run Upgrade
-        if(pindexLast->nHeight+1 >= nLiveForkToggle && nLiveForkToggle != 0) {
+        if(pindexLast->GetBlockTime() > VRX_V3_6) {
             // Set unbiased comparison
             difTime = blkTime - cntTime;
             // Run Curve
-            while(difTime > (hourRounds * 60 * 60)) {
-                // Break loop after 5 hours, otherwise time threshold will auto-break loop
-                if (hourRounds > 5){
+            while(difTime > (minuteRounds * 60)) {
+                // Skip Extended Curve Run if diff is too low
+                if(VRX_GetPrevDiff(fProofOfStake) < 1) {
+                    // Skip
+                    break;
+                }
+                // Break loop after 20 minutes, otherwise time threshold will auto-break loop
+                if(minuteRounds > (5 + 15)){
                     fCRVreset = true;
                     break;
                 }
@@ -438,8 +482,8 @@ void VRX_ThreadCurve(const CBlockIndex* pindexLast, bool fProofOfStake)
                 VRX_Simulate_Retarget();
                 // Increase Curve per round
                 difCurve ++;
-                // Move up an hour per round
-                hourRounds ++;
+                // Move up an minute per round
+                minuteRounds += 1;
             }
         } else {// Version 1.1 Standard Curve Run
             if(difTime > (hourRounds+0) * 60 * 60) { TerminalAverage /= difCurve; }
@@ -461,7 +505,7 @@ void VRX_Dry_Run(const CBlockIndex* pindexLast)
 
     // Check for stall
     // Depricated as of DEC/15/2017 until futher notice
-    if(nBestHeight < 729000) // ON -- TODO - ADJUST DATE!
+    if(nBestHeight < 729000)
     {
         if(nBestHeight >= 704195)
         {

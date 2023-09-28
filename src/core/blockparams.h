@@ -21,13 +21,14 @@ enum DiffMode {
     DIFF_VRX     = 3, // Retarget using Terminal-Velocity-RateX
 };
 
-void VRXswngdebug();
+void VRXswngdebug(bool fProofOfStake);
 void VRXdebug();
 void GNTdebug();
 void VRX_BaseEngine(const CBlockIndex* pindexLast, bool fProofOfStake);
 void VRX_ThreadCurve(const CBlockIndex* pindexLast, bool fProofOfStake);
 void VRX_Dry_Run(const CBlockIndex* pindexLast);
 void VRX_Simulate_Retarget();
+double VRX_GetPrevDiff(bool fPoS);
 unsigned int PeercoinDiff(const CBlockIndex* pindexLast, bool fProofOfStake);
 unsigned int DarkGravityWave(const CBlockIndex* pindexLast, bool fProofOfStake);
 unsigned int VRX_Retarget(const CBlockIndex* pindexLast, bool fProofOfStake);

@@ -47,7 +47,7 @@ static const int NOBLKS_VERSION_START = 0;
 static const int NOBLKS_VERSION_END = 60038;
 
 // hard cutoff time for legacy network connections
-static const int64_t HRD_LEGACY_CUTOFF = 9993058800; // OFF (NOT TOGGLED)
+static const int64_t HRD_LEGACY_CUTOFF = 1696576027; // ON (TOGGLED Fri, 6 Oct 2023 7:07:07 GMT)
 
 // hard cutoff time for future network connections
 static const int64_t HRD_FUTURE_CUTOFF = 9993058800; // OFF (NOT TOGGLED)

@@ -56,6 +56,8 @@ static const int64_t VELOCITY_TOGGLE = 650000; // Implementation of the Velocity
 static const int64_t VELOCITY_TDIFF = 667350; // Use Velocity's retargetting method.
 /** Proof-of-Stake Version 3.0 implementation fork */
 inline bool IsProtocolV3(int64_t nTime) { return TestNet() || nTime > 1535673600; } // ON (TOGGLED Fri, 31 Aug 2018 00:00:00 GMT)
+/** VRX difficulty upgrade to v3.6 */
+static const int64_t VRX_V3_6 = 1696576027; // ON (TOGGLED Fri, 6 Oct 2023 7:07:07 GMT)
 
 // Don't ever reuse these IDs for other sporks
 #define SPORK_1_XNODE_PAYMENTS_ENFORCEMENT               10000
