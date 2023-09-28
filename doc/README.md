@@ -1,9 +1,9 @@
-Espers [ESP] 0.8.8.5 ALPHA
+Espers [ESP] 0.8.8.7 ALPHA
 ===========================================
 
 
 ### Navigation of these documents
-[Back to General Readme](../README.md)
+- [Back to General Readme](../README.md)
 
 
 What is the Espers [ESP] Blockchain?

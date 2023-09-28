@@ -3,7 +3,7 @@ Espers [ESP] Media Attribution and Credits
 
 
 ### Navigation of these documents
-[Back to General Readme](../README.md)
+- [Back to General Readme](../README.md)
 
 ### Attributions
 Below are credits and attributions to the designers of the Espers
