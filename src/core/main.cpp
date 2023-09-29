@@ -1839,6 +1839,10 @@ bool static Reorganize(CTxDB& txdb, CBlockIndex* pindexNew)
     int64_t nReorgMax = 0;
     int64_t diffFactor = 0;
     bool fMergeReverse = false;
+    bool fRollBackCall = fRollbacktoBlock;
+
+    // Turn off BackToBlock toggle if on
+    fRollbacktoBlock = false;
 
     // Find reorganize direction and set values
     // (Espers [ESP] is not directionally bias)
@@ -1860,7 +1864,7 @@ bool static Reorganize(CTxDB& txdb, CBlockIndex* pindexNew)
     if (fMergeReverse) {
         // Only allow reverse reorgs from Demi-nodes
         // (Override for back-to-block command)
-        if((fDemiPeerRelay(GetRelayPeerAddr) && fDemiNodes) || fRollbacktoBlock) {
+        if((fDemiPeerRelay(GetRelayPeerAddr) && fDemiNodes) || fRollBackCall) {
             LogPrintf("Reorganize() : Authorized a reverse-reorganize, now executing...\n");
         } else {
             return error("Reorganize() : Denied a reverse-reorganize - Not authorized!");
@@ -1871,11 +1875,11 @@ bool static Reorganize(CTxDB& txdb, CBlockIndex* pindexNew)
     if (nMergeDepth > BLOCK_REORG_MAX_DEPTH) {
         // Only allow deep reorgs from Demi-nodes or during back-to-block
         // TODO: allow override as set in config file
-        if((fDemiPeerRelay(GetRelayPeerAddr) && fDemiNodes) || fRollbacktoBlock) {
+        if((fDemiPeerRelay(GetRelayPeerAddr) && fDemiNodes) || fRollBackCall) {
             nReorgMax -= BLOCK_REORG_OVERRIDE_DEPTH;
             if (nMergeDepth > BLOCK_REORG_THRESHOLD) {
                 // Back-to-block bypasses normal threshold as it might not be set
-                if (fRollbacktoBlock) {
+                if (fRollBackCall) {
                     nReorgMax = (nNewHeight-1);
                     LogPrintf("Reorganize() : Rolling back to block: %u \n", nNewHeight);
                 } else {
@@ -1886,9 +1890,6 @@ bool static Reorganize(CTxDB& txdb, CBlockIndex* pindexNew)
             return error("Reorganize() : Maximum depth exceeded");
         }
     }
-
-    // Turn off BackToBlock toggle if on
-    fRollbacktoBlock = false;
 
     // Set rolling checkpoint status, just in case we haven't accepted any blocks yet
     // and/or in case we're reverse reorganizing
@@ -1956,16 +1957,23 @@ bool static Reorganize(CTxDB& txdb, CBlockIndex* pindexNew)
     {
         CBlock block;
         if (!block.ReadFromDisk(pindex))
+        {
             return error("Reorganize() : ReadFromDisk for disconnect failed");
+        }
         if (!block.DisconnectBlock(txdb, pindex))
+        {
             return error("Reorganize() : DisconnectBlock failed for block: %s ", pindex->GetBlockHash().ToString());
-
+        }
         // Queue memory transactions to resurrect.
         // We only do this for blocks after the last checkpoint (reorganisation before that
         // point should only happen with -reindex/-loadblock, or a misbehaving peer.
         BOOST_REVERSE_FOREACH(const CTransaction& tx, block.vtx)
+        {
             if (!(tx.IsCoinBase() || tx.IsCoinStake()) && pindex->nHeight > nReorgMax)
+            {
                 vResurrect.push_front(tx);
+            }
+        }
     }
 
     // Connect merging branch
@@ -1995,6 +2003,8 @@ bool static Reorganize(CTxDB& txdb, CBlockIndex* pindexNew)
         BOOST_FOREACH(const CTransaction& tx, block.vtx)
             vDelete.push_back(tx);
     }
+
+    // Write new best chain hash
     if (!txdb.WriteHashBestChain(pindexNew->GetBlockHash()))
         return error("Reorganize() : WriteHashBestChain failed");
 
@@ -2451,8 +2461,9 @@ bool CBlock::AcceptBlock()
 
     // Check proof-of-work or proof-of-stake
     if (nBits != GetNextTargetRequired(pindexPrev, IsProofOfStake()))
+    {
         return DoS(100, error("AcceptBlock() : incorrect %s", IsProofOfWork() ? "proof-of-work" : "proof-of-stake"));
-
+    }
     // Check timestamp against prev
     if (GetBlockTime() <= pindexPrev->GetPastTimeLimit() || FutureDrift(GetBlockTime(), nHeight) < pindexPrev->GetBlockTime())
         return error("AcceptBlock() : block's timestamp is too early");
@@ -3382,6 +3393,22 @@ bool static ProcessMessage(CNode* pfrom, string strCommand, CDataStream& vRecv, 
     {
         LogPrintf("dropmessagestest DROPPING RECV MESSAGE\n");
         return true;
+    }
+
+    // Temporarily hard-ban node with bad blocks until it is updated
+    if (pfrom->addrName == "n9.espers.io:22448" || pfrom->addrName == "n9.espers.io")
+    {
+        LogPrintf("partner %s using known misbehaving node; disconnecting DCM:0A\n", pfrom->addr.ToString());
+        pfrom->fDisconnect = true;
+        Misbehaving(pfrom->GetId(), 100);
+        return false;
+    }
+    if (pfrom->addrName == "107.175.134.158:22448" || pfrom->addrName == "107.175.134.158" || pfrom->addrName == "n8.espers.io")
+    {
+        LogPrintf("partner %s using known misbehaving node; disconnecting DCM:0A\n", pfrom->addr.ToString());
+        pfrom->fDisconnect = true;
+        Misbehaving(pfrom->GetId(), 100);
+        return false;
     }
 
     if (strCommand == "version")

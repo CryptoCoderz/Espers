@@ -843,6 +843,7 @@ bool AppInit2(boost::thread_group& threadGroup)
             nNewHeight = GetArg("-backtoblock", (int)"");
             fRollbacktoBlock = true;
             CBlockIndex* pindex = pindexBest;
+            int pindexGap = (pindex->nHeight - nNewHeight);
             while (pindex != NULL && pindex->nHeight > nNewHeight)
             {
                 ostringstream osHeight;
@@ -851,10 +852,10 @@ bool AppInit2(boost::thread_group& threadGroup)
                 uiInterface.InitMessage(strprintf("Rolling blocks back... %s to %i \n", strHeight, nNewHeight));
                 pindex = pindex->pprev;
             }
-
             if (pindex != NULL)
             {
                 LogPrintf("Back to block index %d\n", nNewHeight);
+                uiInterface.InitMessage(strprintf("Reorganizing %u blocks, please wait... \n", pindexGap));
                 CTxDB txdbAddr("rw");
                 CBlock block;
                 block.ReadFromDisk(pindex);

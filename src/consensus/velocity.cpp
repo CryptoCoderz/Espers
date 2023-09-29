@@ -65,9 +65,9 @@ bool Velocity(CBlockIndex* prevBlock, CBlock* block, bool fFactor_tx)
     SYScrntstamp = GetAdjustedTime() + VELOCITY_MIN_RATE[i];
     SYSbaseStamp = GetTime() + VELOCITY_MIN_RATE[i];
 
-    if(nHeight == VELOCITY_HEIGHT[i] || nHeight == (VELOCITY_HEIGHT[i]+1))
+    if(nHeight == VELOCITY_HEIGHT[i])
     {
-        // Skip checks for Velocity activation block (may not conform)
+        // Skip checks for Velocity activation block(s) (may not conform)
         LogPrintf("SKIPPED: Velocity activation toggle block(s)\n");
         return true;
     }
