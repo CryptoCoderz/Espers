@@ -3395,22 +3395,6 @@ bool static ProcessMessage(CNode* pfrom, string strCommand, CDataStream& vRecv, 
         return true;
     }
 
-    // Temporarily hard-ban node with bad blocks until it is updated
-    if (pfrom->addrName == "n9.espers.io:22448" || pfrom->addrName == "n9.espers.io")
-    {
-        LogPrintf("partner %s using known misbehaving node; disconnecting DCM:0A\n", pfrom->addr.ToString());
-        pfrom->fDisconnect = true;
-        Misbehaving(pfrom->GetId(), 100);
-        return false;
-    }
-    if (pfrom->addrName == "107.175.134.158:22448" || pfrom->addrName == "107.175.134.158" || pfrom->addrName == "n8.espers.io")
-    {
-        LogPrintf("partner %s using known misbehaving node; disconnecting DCM:0A\n", pfrom->addr.ToString());
-        pfrom->fDisconnect = true;
-        Misbehaving(pfrom->GetId(), 100);
-        return false;
-    }
-
     if (strCommand == "version")
     {
         // Each connection can only send one version message

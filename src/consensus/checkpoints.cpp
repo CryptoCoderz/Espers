@@ -46,6 +46,7 @@ namespace Checkpoints
         ( CheckHeight_0018,       CheckBlock_0018)
         ( CheckHeight_0019,       CheckBlock_0019)
         ( CheckHeight_0020,       CheckBlock_0020)
+        ( 667351,                 uint256("0xad798d349cc8e09e66f12c4409ac996465906fbb28e8ecf4e25602d0e8037b19"))
         ( CheckHeight_0021,       CheckBlock_0021)
         ( CheckHeight_0022,       CheckBlock_0022)
         ( CheckHeight_0023,       CheckBlock_0023)
