@@ -57,6 +57,8 @@ namespace Checkpoints
         ( CheckHeight_0028,       CheckBlock_0028)
         ( CheckHeight_0029,       CheckBlock_0029)
         ( CheckHeight_0030,       CheckBlock_0030)
+        (1024000,                 uint256("0x618791c1da28b1c6130bcf8f79f50010b7ce2f511885b769794255651b5920b9"))
+        (1134000,                 uint256("0x0000000300883daacce5afc680baf2f4c13ba11c7f5d4fc363f14dabe8490204"))
     ;
 
     // TestNet has no checkpoints

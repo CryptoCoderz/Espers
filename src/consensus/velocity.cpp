@@ -72,8 +72,14 @@ bool Velocity(CBlockIndex* prevBlock, CBlock* block, bool fFactor_tx)
         return true;
     }
 
+    // TODO: Clean this up!
     // Skip factoring for old switch-over blocks (may not conform)
-    if(nHeight < 990000 && nHeight > 981144) {
+    if((nHeight < 1024000 && nHeight > 981144)
+            || nHeight == 1051651 || nHeight == 1052063
+            || nHeight == 1061153 || nHeight == 1061319
+            || nHeight == 1062201 || nHeight == 1065588
+            || nHeight == 1069792 || nHeight == 1088564
+            || nHeight == 1094595) {
         LogPrintf("NOTICE: Velocity disabled factoring for unsupported block(s)\n");
         fFactor_tx = false;
     }
