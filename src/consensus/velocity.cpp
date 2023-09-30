@@ -65,11 +65,17 @@ bool Velocity(CBlockIndex* prevBlock, CBlock* block, bool fFactor_tx)
     SYScrntstamp = GetAdjustedTime() + VELOCITY_MIN_RATE[i];
     SYSbaseStamp = GetTime() + VELOCITY_MIN_RATE[i];
 
+    // Skip checks for Velocity activation block(s) (may not conform)
     if(nHeight == VELOCITY_HEIGHT[i])
     {
-        // Skip checks for Velocity activation block(s) (may not conform)
         LogPrintf("SKIPPED: Velocity activation toggle block(s)\n");
         return true;
+    }
+
+    // Skip factoring for old switch-over blocks (may not conform)
+    if(nHeight < 990000 && nHeight > 981144) {
+        LogPrintf("NOTICE: Velocity disabled factoring for unsupported block(s)\n");
+        fFactor_tx = false;
     }
 
     // Factor in TXs for Velocity constraints

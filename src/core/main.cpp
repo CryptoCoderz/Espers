@@ -1773,11 +1773,19 @@ bool CBlock::ConnectBlock(CTxDB& txdb, CBlockIndex* pindex, bool fJustCheck)
     if (IsProofOfWork())
     {
         int64_t nReward = GetProofOfWorkReward(pindex->nHeight, nFees);
+        // TODO: Clean this up!
+        // Allow legacy payout for old switch-over blocks (may not conform)
+        if(pindex->nHeight < 990000 && pindex->nHeight > 980949)
+        {
+            nReward = (5100 * COIN);
+        }
         // Check coinbase reward
         if (vtx[0].GetValueOut() > nReward)
+        {
             return DoS(50, error("ConnectBlock() : coinbase reward exceeded (actual=%d vs calculated=%d)",
                    vtx[0].GetValueOut(),
                    nReward));
+        }
     }
     if (IsProofOfStake())
     {
@@ -2464,6 +2472,7 @@ bool CBlock::AcceptBlock()
     {
         return DoS(100, error("AcceptBlock() : incorrect %s", IsProofOfWork() ? "proof-of-work" : "proof-of-stake"));
     }
+
     // Check timestamp against prev
     if (GetBlockTime() <= pindexPrev->GetPastTimeLimit() || FutureDrift(GetBlockTime(), nHeight) < pindexPrev->GetBlockTime())
         return error("AcceptBlock() : block's timestamp is too early");
@@ -2485,7 +2494,8 @@ bool CBlock::AcceptBlock()
         if (!CheckProofOfStake(pindexPrev, vtx[1], nBits, hashProof, targetProofOfStake))
         {
             // TODO: Clean this up!
-            if(nHeight != 984015 && nHeight != 984198) {
+            // Skip checks for old switch-over blocks (may not conform)
+            if(nHeight > 990000 || nHeight < 981145) {
                 return error("AcceptBlock() : check proof-of-stake failed for block %s", hash.ToString());
             }
         }
