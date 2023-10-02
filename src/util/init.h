@@ -12,7 +12,6 @@ namespace boost {
 } // namespace boost
 
 extern CWallet* pwalletMain;
-extern int nNewHeight;
 void StartShutdown();
 bool ShutdownRequested();
 void Shutdown();

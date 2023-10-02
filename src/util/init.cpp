@@ -60,7 +60,6 @@ using namespace boost;
 #ifdef ENABLE_WALLET
 CWallet* pwalletMain = NULL;
 int nWalletBackups = 10;
-int nNewHeight;
 #endif
 CClientUIInterface uiInterface;
 bool fConfChange;

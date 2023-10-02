@@ -93,6 +93,7 @@ int64_t nLiveForkToggle = 0;
 //Rollback to block
 string strRollbackToBlock = "";
 bool fRollbacktoBlock = false;
+int nNewHeight = 0;
 //Xnodes
 int64_t enforceXNodePaymentsTime = 4085657524;
 int nXNodeMinProtocol = 0;
