@@ -105,7 +105,6 @@ extern int64_t nLiveForkToggle;// TODO: just have dependent functions create a n
 //Roll back to block
 extern std::string strRollbackToBlock;
 extern bool fRollbacktoBlock;
-extern int nNewHeight;
 // Xnodes
 extern bool fXnode;
 extern int64_t enforceXNodePaymentsTime;

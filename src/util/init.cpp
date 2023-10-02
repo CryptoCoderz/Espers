@@ -60,6 +60,7 @@ using namespace boost;
 #ifdef ENABLE_WALLET
 CWallet* pwalletMain = NULL;
 int nWalletBackups = 10;
+int nNewHeight;
 #endif
 CClientUIInterface uiInterface;
 bool fConfChange;
@@ -839,7 +840,7 @@ bool AppInit2(boost::thread_group& threadGroup)
         strRollbackToBlock = GetArg("-backtoblock", "");
         LogPrintf("Rolling blocks back...\n");
         if(!strRollbackToBlock.empty()){
-            nNewHeight = GetArg("-backtoblock", (int)"");
+            nNewHeight = GetArg("-backtoblock", (uint64_t)"");
             fRollbacktoBlock = true;
             CBlockIndex* pindex = pindexBest;
             int pindexGap = (pindex->nHeight - nNewHeight);
