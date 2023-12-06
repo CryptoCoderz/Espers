@@ -4252,7 +4252,7 @@ bool SendMessages(CNode* pto, bool fSendTrickle)
 
         // Start block sync
         //
-        // Demi-nodes v0.5 alpha
+        // Demi-nodes v0.6 alpha
         //
         if (pto->fStartSync && !fImporting && !fReindex) {
             // Espers Demi-node rewrite...
@@ -4264,9 +4264,8 @@ bool SendMessages(CNode* pto, bool fSendTrickle)
             // the Demi-node documentation for more information.
             //
 
-            pto->fStartSync = false;
-
             if(!fDemiNodes) {
+                pto->fStartSync = false;
                 PushGetBlocks(pto, pindexBest, uint256(0));
             } else {
                 if(pto->nVersion < DEMINODE_VERSION) {
@@ -4279,8 +4278,9 @@ bool SendMessages(CNode* pto, bool fSendTrickle)
                     // Ensure handling of demi and standard failover
                     //
                     // Sync only if peer is a registered Demi-node
-                    // This is a limitation only of v0.5
+                    // This is a limitation only of v0.6
                     if(fDemiPeerRelay(pto->addrName)) {
+                        pto->fStartSync = false;
                         PushGetBlocks(pto, pindexBest, uint256(0));
                     }
                 }
