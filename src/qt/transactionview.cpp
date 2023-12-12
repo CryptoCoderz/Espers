@@ -27,6 +27,9 @@
 #include <QDateTimeEdit>
 #include <QStyledItemDelegate>
 
+//
+#include <QPushButton>
+
 TransactionView::TransactionView(QWidget *parent) :
     QWidget(parent), model(0), transactionProxyModel(0),
     transactionView(0)
@@ -99,6 +102,10 @@ TransactionView::TransactionView(QWidget *parent) :
     amountWidget->setValidator(new QDoubleValidator(0, 1e20, 8, this));
     hlayout->addWidget(amountWidget);
 
+    // Export Btn Patch v0.8.8.8
+    QPushButton *txexportWidget = new QPushButton("&Export TXs", this);
+    hlayout->addWidget(txexportWidget);
+
     QVBoxLayout *vlayout = new QVBoxLayout(this);
     vlayout->setContentsMargins(0,0,0,0);
     vlayout->setSpacing(0);
@@ -143,6 +150,7 @@ TransactionView::TransactionView(QWidget *parent) :
     connect(typeWidget, SIGNAL(activated(int)), this, SLOT(chooseType(int)));
     connect(addressWidget, SIGNAL(textChanged(QString)), this, SLOT(changedPrefix(QString)));
     connect(amountWidget, SIGNAL(textChanged(QString)), this, SLOT(changedAmount(QString)));
+    connect(txexportWidget, SIGNAL(clicked()), this, SLOT(exportClicked()));
 
     connect(view, SIGNAL(doubleClicked(QModelIndex)), this, SIGNAL(doubleClicked(QModelIndex)));
     connect(view, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(contextualMenu(QPoint)));
