@@ -79,6 +79,8 @@ static int BLOCK_REORG_OVERRIDE_DEPTH = 0;
 static int BLOCK_REORG_THRESHOLD = BLOCK_REORG_MAX_DEPTH + BLOCK_REORG_OVERRIDE_DEPTH;
 /** Depth for rolling checkpoing block */
 static const int BLOCK_TEMP_CHECKPOINT_DEPTH = 120;
+/** Allow/Deny reorganize requests from peers as well as Demi-nodes */
+static int PEER_REORG_TYPE = 0;
 /** Future Drift Params*/ // inline int64_t FutureDrift(int64_t nTime) { return nTime + 10 * 60; }
 inline int64_t TimeDrift() { return 10 * 60; } // Default time drift window
 inline int64_t FutureDriftV1(int64_t nTime) { return nTime + TimeDrift(); } // Initial future drift | Protocol-v2

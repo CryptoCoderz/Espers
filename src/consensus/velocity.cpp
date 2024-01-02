@@ -3,11 +3,8 @@
 // Distributed under the MIT/X11 software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
-#include "core/blockparams.h"
-#include "core/main.h"
 #include "database/txdb.h"
 #include "velocity.h"
-#include "rpc/rpcserver.h"
 
 bool VELOCITY_FACTOR = false;
 uint256 RollingBlock;

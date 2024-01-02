@@ -1871,9 +1871,11 @@ bool static Reorganize(CTxDB& txdb, CBlockIndex* pindexNew)
     // Ensure reorganize direction sanity
     if (fMergeReverse) {
         // Only allow reverse reorgs from Demi-nodes
-        // (Override for back-to-block command)
+        // (Override for back-to-block and demi-reorg-type commands)
         if((fDemiPeerRelay(GetRelayPeerAddr) && fDemiNodes) || fRollBackCall) {
-            LogPrintf("Reorganize() : Authorized a reverse-reorganize, now executing...\n");
+            LogPrintf("Reorganize() : Authorized a Demi-node reverse-reorganize, now executing...\n");
+        } else if(PEER_REORG_TYPE == 1) {
+            LogPrintf("Reorganize() : Authorized a Peer reverse-reorganize, now executing...\n");
         } else {
             return error("Reorganize() : Denied a reverse-reorganize - Not authorized!");
         }

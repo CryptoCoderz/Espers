@@ -6,7 +6,7 @@
 #ifndef VELOCITY_H
 #define VELOCITY_H 1
 
-#include "core/chainparams.h"
+#include "core/blockparams.h"
 #include "core/main.h"
 
 class CBlock;

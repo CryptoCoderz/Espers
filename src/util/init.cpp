@@ -1122,6 +1122,7 @@ bool AppInit2(boost::thread_group& threadGroup)
         // Set Demi-node values
         uiInterface.InitMessage(_("Configuring Demi-node systems..."));
         std::string strOverrideDepth = GetArg("-demimaxdepth", "");
+        std::string strReorganizeType = GetArg("-demireorgtype", "");
         if(!strOverrideDepth.empty()) {
             std::istringstream(strOverrideDepth) >> BLOCK_REORG_OVERRIDE_DEPTH;
             if(BLOCK_REORG_OVERRIDE_DEPTH == 0) {
@@ -1131,6 +1132,15 @@ bool AppInit2(boost::thread_group& threadGroup)
             } else {
                 BLOCK_REORG_THRESHOLD = (BLOCK_REORG_MAX_DEPTH + BLOCK_REORG_OVERRIDE_DEPTH);
                 LogPrintf("Continuing with Demi-node depth override height of: %s\n", strOverrideDepth.c_str());
+            }
+        } if(!strReorganizeType.empty()) {
+            std::istringstream(strReorganizeType) >> PEER_REORG_TYPE;
+            if(PEER_REORG_TYPE == 0) {
+                LogPrintf("Continuing with Demi-node ONLY reorganize authorization...\n");
+            } else if(PEER_REORG_TYPE < 0 || PEER_REORG_TYPE > 1) {
+                return InitError(_("Invalid Demi-node reorganize peer type selected, value must be either 0 or 1\n"));
+            } else {
+                LogPrintf("Continuing with Demi-node AND peer reorganize authorization\n");
             }
         }
     } else {
