@@ -281,7 +281,7 @@ void TransactionView::exportClicked()
             tr("Export Transaction Data"), QString(),
             tr("Comma separated file (*.csv)"));
 
-    if (filename.isNull()) return;
+    if (filename.isNull()) return;////////////////////
 
     CSVModelWriter writer(filename);
 

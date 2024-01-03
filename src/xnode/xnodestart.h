@@ -1,6 +1,6 @@
 // Copyright (c) 2009-2010 Satoshi Nakamoto
 // Copyright (c) 2009-2012 The DarkCoin developers
-// Copyright (c) 2017-2023 The CryptoCoderz Team
+// Copyright (c) 2017-2024 The CryptoCoderz Team
 // Distributed under the MIT/X11 software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 #ifndef ACTIVEXNODE_H

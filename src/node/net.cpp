@@ -8,7 +8,6 @@
 #include "net.h"
 #include "core/main.h"
 #include "addrman.h"
-#include "core/chainparams.h"
 #include "ui/ui_interface.h"
 #include "core/wallet.h"
 
@@ -45,7 +44,7 @@ map<CNetAddr, LocalServiceInfo> mapLocalHost;
 static bool vfReachable[NET_MAX] = {};
 static bool vfLimited[NET_MAX] = {};
 static CNode* pnodeLocalHost = NULL;
-static CNode* pnodeSync = NULL;
+CNode* pnodeSync = NULL;
 uint64_t nLocalHostNonce = 0;
 static std::vector<SOCKET> vhListenSocket;
 CAddrMan addrman;
