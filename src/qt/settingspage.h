@@ -53,6 +53,8 @@ private slots:
 
     void on_aboutqt_clicked();
 
+    void upDateLockStatus();
+
 private:
     Ui::SettingsPage *ui;
     WalletModel *model;

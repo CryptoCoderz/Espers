@@ -179,14 +179,12 @@ void SettingsPage::on_lockwallet_clicked()
             dlg.setModel(guiref->getWalletModel());
             dlg.exec();
         }
-        guiref->getWalletModel()->setWalletLocked(false);
-        ui->lockwallet->setText("Lock Wallet");
-
+        // Check if status has changed after unlock attempt
+        QTimer::singleShot(100, this, SLOT(upDateLockStatus()));
     }
     else
     {
-        guiref->getWalletModel()->setWalletLocked(true);
-        ui->lockwallet->setText("Unlock Wallet");
+        QMessageBox::information(this, tr("Re-lock Request"), tr("To re-lock, please close and then open the client/wallet again"));
     }
 }
 
@@ -200,4 +198,18 @@ void SettingsPage::on_aboutcoin_clicked()
 void SettingsPage::on_aboutqt_clicked()
 {
     BitcoinGUI::aboutQtExt_Static();
+}
+
+void SettingsPage::upDateLockStatus()
+{
+    // Set lock/unlock status
+    if(!settingsStatus) {
+        guiref->getWalletModel()->setWalletLocked(false);
+        ui->lockwallet->setText("Lock Wallet");
+    }
+    else
+    {
+        guiref->getWalletModel()->setWalletLocked(true);
+        ui->lockwallet->setText("Unlock Wallet");
+    }
 }
