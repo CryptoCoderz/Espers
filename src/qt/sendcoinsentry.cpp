@@ -34,6 +34,8 @@ SendCoinsEntry::SendCoinsEntry(QWidget *parent) :
     setFocusProxy(ui->payTo);
 
     GUIUtil::setupAddressWidget(ui->payTo, this);
+
+    ui->payAmount->setStyleSheet("background: transparent; background-color: rgb(32, 32, 32);");
 }
 
 SendCoinsEntry::~SendCoinsEntry()
