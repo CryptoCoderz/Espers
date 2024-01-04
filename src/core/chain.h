@@ -5,12 +5,7 @@
 #ifndef ESPERS_CHAIN_H
 #define ESPERS_CHAIN_H
 
-#include "primitives/uint256.h"
-#include "primitives/serialize.h"
-#include "util/util.h"
 #include "subcore/script.h"
-
-#include <stdio.h>
 
 class CTransaction;
 

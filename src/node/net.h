@@ -6,12 +6,9 @@
 #define ESPERS_NET_H
 
 #include "addrman.h"
-#include "primitives/compat.h"
-#include "core/chain.h"
 #include "subcore/hash.h"
 #include "primitives/limitedmap.h"
 #include "primitives/mruset.h"
-#include "netbase.h"
 #include "subcore/protocol.h"
 #include "core/sync.h"
 #include "primitives/uint256.h"
