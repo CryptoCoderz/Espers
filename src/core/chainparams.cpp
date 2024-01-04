@@ -8,7 +8,6 @@
 
 #include "chainparams.h"
 #include "main.h"
-#include "util/util.h"
 
 #include <boost/assign/list_of.hpp>
 

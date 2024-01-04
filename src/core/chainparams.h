@@ -8,7 +8,6 @@
 
 #include "primitives/bignum.h"
 #include "primitives/uint256.h"
-#include "util/util.h"
 
 #include <vector>
 

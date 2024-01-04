@@ -11,7 +11,6 @@
 #include <map>
 #include <algorithm>
 #include "main.h"
-#include "util/util.h"
 #include "consensus/clientversion.h"
 
 using namespace std;
