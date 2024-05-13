@@ -2318,6 +2318,10 @@ bool CBlock::AddToBlockIndex(unsigned int nFile, unsigned int nBlockPos, const u
 // Relay newly generated block, but don't accept it... Let network consensus decide
 bool NewBlockRelay(CBlock* pblock)
 {
+    // Verify we meet basic parameters
+    if (!Velocity(pindexBest, pblock, false)) {
+        return error("NewBlockRelay() : newly generated block failed to meet parameters \n");
+    }
     // Setup values
     uint256 hash = pblock->GetHash();
     bool relayFail = true;
