@@ -2322,8 +2322,29 @@ bool CBlock::AddToBlockIndex(unsigned int nFile, unsigned int nBlockPos, const u
     return true;
 }
 
+// Relay newly generated block, but don't accept it... Let network consensus decide
+bool NewBlockRelay(CBlock* pblock)
+{
+    // Setup values
+    uint256 hash = pblock->GetHash();
+    bool relayFail = true;
+    // Relay New Block
+    int nBlockEstimate = Checkpoints::GetTotalBlocksEstimate();
+    LOCK(cs_vNodes);
+    BOOST_FOREACH(CNode* pnode, vNodes) {
+        if (nBestHeight > (pnode->nStartingHeight != -1 ? pnode->nStartingHeight - 2000 : nBlockEstimate)) {
+            pnode->PushInventory(CInv(MSG_BLOCK, hash));
+            relayFail = false;
+        }
+    }
+    // Return success if relayed to a peer/node
+    if (relayFail == false) {
+        return true;
+    }
+    // Fail if we can't relay
+    return error("NewBlockRelay() : newly generated block relay failed (Are we synced?) \n");
 
-
+}
 
 bool CBlock::CheckBlock(bool fCheckPOW, bool fCheckMerkleRoot, bool fCheckSig) const
 {

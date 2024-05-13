@@ -678,7 +678,14 @@ Value submitblock(const Array& params, bool fHelp)
         throw JSONRPCError(RPC_DESERIALIZATION_ERROR, "Block decode failed");
     }
 
-    bool fAccepted = ProcessBlock(NULL, &block);
+    // Depricated:
+    // ------------
+    // bool fAccepted = ProcessBlock(NULL, &block);
+    // ----------------
+    //
+    // Relay created block, but don't accept it... Let network consensus decide
+    bool fAccepted = NewBlockRelay(&block);
+
     if (!fAccepted)
         return "rejected";
 
