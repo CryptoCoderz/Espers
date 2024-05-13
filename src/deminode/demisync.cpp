@@ -37,7 +37,7 @@ static void DemiNodeSelect(bool demiSelectStatus, std::string demiSelectAddr)
         }
 
         // Report failure
-        LogPrintf("Demi-node System: DemiNodeSelect - Could not select a Demi-node\n");
+        // LogPrintf("Demi-node System: DemiNodeSelect - Could not select a Demi-node\n");
 }
 
 bool startDemiSync()
@@ -50,7 +50,7 @@ bool startDemiSync()
 
     // Make sure we found a Demi-node
     if(!demiSelectStatus) {
-        LogPrintf("Demi-node System: WARNING - No connected Demi-nodes found for Demi-sync!\n");
+        // LogPrintf("Demi-node System: WARNING - No connected Demi-nodes found for Demi-sync!\n");
         return false;
     } else {
         LogPrintf("Demi-node System: STATUS - Demi-sync has connected to %s and is downloading blocks!\n", demiSelectAddr.c_str());

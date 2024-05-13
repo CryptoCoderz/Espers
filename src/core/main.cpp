@@ -4308,7 +4308,7 @@ bool SendMessages(CNode* pto, bool fSendTrickle)
                     } else {
                         if(!startDemiSync()) {
                             pnodeSync = NULL;
-                            LogPrintf("Current peers are not suitable for sync relay, waiting for other connections...\n");
+                            // LogPrintf("Current peers are not suitable for sync relay, waiting for other connections...\n");
                         } else {
                             LogPrintf("Syncing started with Demi-node scan and connect!\n");
                         }

@@ -23,7 +23,7 @@ bool fDemiPeerRelay(std::string peerAddr)
     ReadDemiConfigFile(peerAddr);
     if(fDemiFound) {
         // Return success
-        // LogPrintf("Demi-node System: fDemiPeerRelay - Peer: %s matches listed Demi-node!\n", peerAddr);
+        LogPrintf("Demi-node System: fDemiPeerRelay - Peer: %s matches listed Demi-node!\n", peerAddr);
         return true;
     }
     // Failure if not found

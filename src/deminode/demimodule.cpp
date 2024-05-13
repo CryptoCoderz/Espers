@@ -52,46 +52,46 @@ void ReadDemiConfigFile(std::string peerReadAddr)
     }
 
     // Open requested config file
-    LogPrintf("ReadDemiConfigFile - INFO - Loading Demi-nodes from: %s \n", GetDemiConfigFile().c_str());
+    // LogPrintf("ReadDemiConfigFile - INFO - Loading Demi-nodes from: %s \n", GetDemiConfigFile().c_str());
     std::ifstream file;
     file.open(GetDemiConfigFile().c_str());
     if(!file.is_open()) {
         // Print for debugging
-        LogPrintf("ReadDemiConfigFile - ERROR 00 - Cannot open file!\n");
+        LogPrintf("ReadDemiConfigFile - ERROR - Cannot open file!\n");
         return;
     } else {
         // Print for debugging
-        LogPrintf("ReadDemiConfigFile - INFO - File successfully opened!\n");
+        // LogPrintf("ReadDemiConfigFile - INFO - File successfully opened!\n");
     }
 
     // Read data
     //
     // Print for debugging
-    LogPrintf("ReadDemiConfigFile - INFO - Reading file...\n");
+    // LogPrintf("ReadDemiConfigFile - INFO - Reading file...\n");
     std::string line;
     while(file.good()) {
         // Loop through lines
         std::getline(file, line);
         // Print for debugging
-        LogPrintf("ReadDemiConfigFile - INFO - Got line data...\n");
+        // LogPrintf("ReadDemiConfigFile - INFO - Got line data...\n");
         if (!line.empty()) {
             if (line[0] != '#') {
                 // Print for debugging
-                LogPrintf("ReadDemiConfigFile - INFO - Read data success!\n");
+                // LogPrintf("ReadDemiConfigFile - INFO - Read data success!\n");
                 // Combine input string
                 if(peerReadAddr == line) {
                     // Print for debugging
-                    LogPrintf("ReadDemiConfigFile - INFO - Set data success!\n");
+                    // LogPrintf("ReadDemiConfigFile - INFO - Set data success!\n");
                     fDemiFound = true;
                     break;
                 }
             } else {
                 // Print for debugging
-                LogPrintf("ReadDemiConfigFile - WARNING - Comment detected! \n");
+                // LogPrintf("ReadDemiConfigFile - WARNING - Comment detected! \n");
             }
         } else {
             // Print for debugging
-            LogPrintf("ReadDemiConfigFile - WARNING - Empty line detected! \n");
+            // LogPrintf("ReadDemiConfigFile - WARNING - Empty line detected! \n");
         }
     }
 
