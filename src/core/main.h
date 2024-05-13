@@ -49,6 +49,8 @@ static unsigned int MAX_BLOCK_SIGOPS = MAX_BLOCK_SIZE/50;
 static const unsigned int MAX_P2SH_SIGOPS = 15;
 /** The maximum number of sigops we're willing to relay/mine in a single tx */
 static unsigned int MAX_TX_SIGOPS = MAX_BLOCK_SIGOPS/5;
+/** Log Max TX sigops */
+static const unsigned int LOG_TX_SIGOPS = MAX_TX_SIGOPS;
 /** The maximum number of orphan transactions kept in memory */
 static const unsigned int MAX_ORPHAN_TRANSACTIONS = MAX_BLOCK_SIZE/100;
 /** Default for -maxorphanblocks, maximum number of orphan blocks kept in memory */
@@ -77,10 +79,14 @@ static const int BLOCK_REORG_MAX_DEPTH = 1;
 static int BLOCK_REORG_OVERRIDE_DEPTH = 0;
 /** Combined Maximum block reorganize depth (consider else an invalid fork) */
 static int BLOCK_REORG_THRESHOLD = BLOCK_REORG_MAX_DEPTH + BLOCK_REORG_OVERRIDE_DEPTH;
+/** Log Block Reorganize Threshold */
+static const int LOG_REORG_THRESHOLD = BLOCK_REORG_THRESHOLD;
 /** Depth for rolling checkpoing block */
 static const int BLOCK_TEMP_CHECKPOINT_DEPTH = 120;
 /** Allow/Deny reorganize requests from peers as well as Demi-nodes */
 static int PEER_REORG_TYPE = 0;
+/** Log reorganize type selected */
+static const int LOG_REORG_TYPE = PEER_REORG_TYPE;
 /** Future Drift Params*/ // inline int64_t FutureDrift(int64_t nTime) { return nTime + 10 * 60; }
 inline int64_t TimeDrift() { return 10 * 60; } // Default time drift window
 inline int64_t FutureDriftV1(int64_t nTime) { return nTime + TimeDrift(); } // Initial future drift | Protocol-v2
