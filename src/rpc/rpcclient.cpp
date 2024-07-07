@@ -8,6 +8,7 @@
 
 #include "rpcprotocol.h"
 #include "util/util.h"
+#include "primitives/boost_iocontext.h"
 #include "ui/ui_interface.h"
 #include "core/chainparams.h" // for Params().RPCPort()
 

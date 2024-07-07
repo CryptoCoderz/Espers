@@ -232,7 +232,7 @@ int main(int argc, char *argv[])
     }
 #endif
 
-    QSplashScreen splash(QPixmap(":/images/splash"), 0);
+    QSplashScreen splash(QPixmap(":/images/splash"));
     if (GetBoolArg("-splash", true) && !GetBoolArg("-min", false))
     {
         splash.show();

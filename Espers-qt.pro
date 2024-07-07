@@ -226,6 +226,9 @@ HEADERS += src/qt/bitcoingui.h \
     src/node/addrman.h \
     src/primitives/base58.h \
     src/primitives/bignum.h \
+    src/primitives/boost_placeholders.h \
+    src/primitives/boost_iocontext.h \
+    src/primitives/boost_ioservices.h \
     src/core/blockparams.h \
     src/core/chainparams.h \
     src/core/chainparamsseeds.h \

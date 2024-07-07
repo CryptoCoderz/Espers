@@ -67,7 +67,7 @@
         <number>7</number>
        </property>
        <item>
-        <widget class="QLabel" name="timeLabel">
+        <widget class="QLabel" name="blockexplorerLabel">
          <property name="font">
           <font>
            <family>Open Sans,sans-serif</family>

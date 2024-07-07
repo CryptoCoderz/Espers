@@ -6,6 +6,9 @@
 #include "rpcserver.h"
 
 #include "primitives/base58.h"
+#include "primitives/boost_iocontext.h"
+#include "primitives/boost_ioservices.h"
+#include "primitives/boost_placeholders.h"
 #include "util/init.h"
 #include "util/util.h"
 #include "core/sync.h"
@@ -30,16 +33,6 @@
 #include <boost/shared_ptr.hpp>
 #include <boost/version.hpp>
 #include <list>
-
-// Boost Support for 1.70+ (Depricated)
-// TODO: Remove in next release! (not needed, clean this up!)
-// ====== BOOST SUCKS - AKA - v1.69 AND BELOW RETROCOMPATIBILITY ========
-//#if BOOST_VERSION >= 107000
-//#define GET_IO_SERVICE(s) ((boost::asio::io_context&)(s)->get_executor().context())
-//#else
-//#define GET_IO_SERVICE(s) ((s)->get_io_service())
-//#endif
-// ===== RETROCOMPATIBILITY SHOULD NOT BE AN OPTION ======
 
 using namespace std;
 using namespace boost;
@@ -453,10 +446,6 @@ static void RPCListen(boost::shared_ptr< basic_socket_acceptor<Protocol> > accep
                    const bool fUseSSL)
 {
     // Accept connection
-    //
-    // Boost Version < 1.70 handling (Depricated) - Thank you Mino#8171
-    //AcceptedConnectionImpl<Protocol>* conn = new AcceptedConnectionImpl<Protocol>(acceptor->get_io_service(), context, fUseSSL);
-    // Boost Version < 1.70 handling (Updated) - Thank you https://github.com/g1itch
     AcceptedConnectionImpl<Protocol>* conn = new AcceptedConnectionImpl<Protocol>(GetIOServiceFromPtr(acceptor), context, fUseSSL);
 
     acceptor->async_accept(
@@ -658,7 +647,7 @@ void RPCRunLater(const std::string& name, boost::function<void(void)> func, int6
                                         boost::shared_ptr<deadline_timer>(new deadline_timer(*rpc_io_service))));
     }
     deadlineTimers[name]->expires_from_now(posix_time::seconds(nSeconds));
-    deadlineTimers[name]->async_wait(boost::bind(RPCRunHandler, _1, func));
+    deadlineTimers[name]->async_wait(boost::bind(RPCRunHandler, boost::placeholders::_1, func));
 }
 
 class JSONRequest
@@ -872,7 +861,7 @@ std::vector<std::string> CRPCTable::listCommands() const
 
     std::transform(mapCommands.begin(), mapCommands.end(), 
                     std::back_inserter(commandList), 
-                    boost::bind(&commandMap::value_type::first, _1));
+                    boost::bind(&commandMap::value_type::first, boost::placeholders::_1));
     return commandList;
 }
 
