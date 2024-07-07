@@ -23,7 +23,7 @@ twitter @EspersCoin
 Microsoft Windows
 -----------------
 
-- Download and Run (Recommended)
+- Download and Run **(Recommended)**
 [See latest releases](https://github.com/CryptoCoderz/Espers/releases) 
 for the latest pre-built binaries which you can simply run as apposed-
 to having to build/compile them yourself.
