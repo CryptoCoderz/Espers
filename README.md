@@ -42,19 +42,17 @@ Developer Discord can be found at https://discord.gg/cn3AfPS .
 
 Testing
 -------
-Testing and code review is the bottleneck for development; we get more pull
-requests than we can review and test on short notice. Please be patient and help out by testing
-other people's pull requests, and remember this is a security-critical project where any mistake might cost people
-lots of money.
+Testing and code review is the bottleneck for development; we get more development tasks
+than we can review, build, and test on short notice. Please be patient and help out by testing
+other people's pull requests and our test builds as they become available.
+Remember this is a security-critical project where any mistake might cost people
+the loss of their Espers which is something we strive to prevent at all costs.
 
 ### Automated Testing
 
 Developers are strongly encouraged to write [unit tests](/doc/unit-tests.md) for new code, and to
 submit new unit tests for old code. Unit tests can be compiled and run
 (assuming they weren't disabled in configure) with: `make check`
-
-There are also [regression and integration tests](/qa) of the RPC interface, written
-in Python, that are run automatically on the build server.
 
 ### Manual Quality Assurance (QA) Testing
 
