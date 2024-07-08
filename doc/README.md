@@ -66,7 +66,7 @@ General Info:
 
 License
 -------
-Copyright (c) 2016-2023 Espers Developers / CryptoCoderz Team
+Copyright (c) 2016-2024 Espers Developers / CryptoCoderz Team
 Copyright (c) 2014-2015 BlackCoin Developers
 Copyright (c) 2013-2014 NovaCoin Developers
 Copyright (c) 2011-2012 PPCoin Developers
