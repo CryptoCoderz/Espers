@@ -1894,9 +1894,11 @@ bool static Reorganize(CTxDB& txdb, CBlockIndex* pindexNew)
             return error("Reorganize() : Maximum depth exceeded \n");
         }
     } else {
-        // Only accept blocks from a peer if we are a Demi-node
-        if (!fDemiSelf) {
-            return error("Reorganize() : Not toggled self as a Demi-node \n Only accepting single-block Peer relays if we are \n");
+        // Only accept blocks from a peer if we are a Demi-node or if peer is a Demi-node
+        if (!fDemiPeerRelay(GetRelayPeerAddr) && fDemiNodes) {
+            if (!fDemiSelf) {
+                return error("Reorganize() : Not toggled self as a Demi-node \n Only accepting single-block Peer relays if we are \n");
+            }
         }
     }
 
