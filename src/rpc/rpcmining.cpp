@@ -227,19 +227,29 @@ Value checkkernel(const Array& params, bool fHelp)
         return result;
 
     int64_t nFees;
-#ifdef __GNUC__
-#define GCC_VERSION (__GNUC__ * 10000 \
-                     + __GNUC_MINOR__ * 100 \
-                     + __GNUC_PATCHLEVEL__)
 
-/* Test for GCC < 6.3.0 */
-#if GCC_VERSION > 60300
+#ifdef WIN32
+    // Windows
+    //
+    // We assume we are using MINGW with GCC version greater than 6.3.0
     unique_ptr<CBlock> pblock(CreateNewBlock(*pMiningKey, true, &nFees));
 #else
-    auto_ptr<CBlock> pblock(CreateNewBlock(*pMiningKey, true, &nFees));
-#endif
-#else
-    unique_ptr<CBlock> pblock(CreateNewBlock(*pMiningKey, true, &nFees));
+    // Linux / Mac_OS
+    //
+    // We ensure we are using GCC version greater than 6.3.0
+    // Otherwise default to legacy compatibility
+    #ifdef __GNUC__
+        #define GCC_VERSION (__GNUC__ * 10000 \
+                            + __GNUC_MINOR__ * 100 \
+                            + __GNUC_PATCHLEVEL__)
+
+        /* Test for GCC > 6.3.0 */
+        #if GCC_VERSION > 60300
+            unique_ptr<CBlock> pblock(CreateNewBlock(*pMiningKey, true, &nFees));
+        #else
+            auto_ptr<CBlock> pblock(CreateNewBlock(*pMiningKey, true, &nFees));
+        #endif
+    #endif
 #endif
 
     pblock->nTime = pblock->vtx[0].nTime = nTime;
@@ -381,7 +391,7 @@ Value getworkex(const Array& params, bool fHelp)
         pblock->hashMerkleRoot = pblock->BuildMerkleTree();
 
         assert(pwalletMain != NULL);
-        return CheckWork(pblock, *pwalletMain, *pMiningKey);
+        return CheckWork(pblock, *pMiningKey);
     }
 }
 
@@ -494,7 +504,7 @@ Value getwork(const Array& params, bool fHelp)
         pblock->hashMerkleRoot = pblock->BuildMerkleTree();
 
         assert(pwalletMain != NULL);
-        return CheckWork(pblock, *pwalletMain, *pMiningKey);
+        return CheckWork(pblock, *pMiningKey);
     }
 }
 
@@ -678,11 +688,6 @@ Value submitblock(const Array& params, bool fHelp)
         throw JSONRPCError(RPC_DESERIALIZATION_ERROR, "Block decode failed");
     }
 
-    // Depricated:
-    // ------------
-    // bool fAccepted = ProcessBlock(NULL, &block);
-    // ----------------
-    //
     // Relay created block, but don't accept it... Let network consensus decide
     bool fAccepted = NewBlockRelay(&block);
 

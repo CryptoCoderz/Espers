@@ -458,7 +458,7 @@ void FormatHashBuffers(CBlock* pblock, char* pmidstate, char* pdata, char* phash
 }
 
 
-bool CheckWork(CBlock* pblock, CWallet& wallet, CReserveKey& reservekey)
+bool CheckWork(CBlock* pblock, CReserveKey& reservekey)
 {
     uint256 hashBlock = pblock->GetHash();
     uint256 hashProof = pblock->GetHash();
@@ -476,31 +476,17 @@ bool CheckWork(CBlock* pblock, CWallet& wallet, CReserveKey& reservekey)
     LogPrintf("generated %s\n", FormatMoney(pblock->vtx[0].vout[0].nValue));
 
     // Found a solution
-    {
-        LOCK(cs_main);
-        if (pblock->hashPrevBlock != hashBestChain)
-            return error("CheckWork() : generated block is stale");
 
-        // Remove key from key pool
-        reservekey.KeepKey();
+    if (pblock->hashPrevBlock != hashBestChain) {
+        return error("CheckWork() : generated block is stale");
+    }
 
-        // Track how many getdata requests this block gets
-        {
-            LOCK(wallet.cs_wallet);
-            wallet.mapRequestCount[hashBlock] = 0;
-        }
+    // Remove key from key pool
+    reservekey.KeepKey();
 
-        // Depricated:
-        // ------------
-        // Process this block the same as if we had received it from another node
-        // if (!ProcessBlock(NULL, pblock))
-        //     return error("CheckWork() : ProcessBlock, block not accepted");
-        // ----------------
-        //
-        // Relay created block, but don't accept it... Let network consensus decide
-        if (!NewBlockRelay(pblock)) {
-            return error("CheckWork() : NewBlockRelay, block failed being relayed to peers!");
-        }
+    // Relay created block, but don't accept it... Let network consensus decide
+    if (!NewBlockRelay(pblock)) {
+        return error("CheckWork() : NewBlockRelay, block failed being relayed to peers!");
     }
 
     return true;
@@ -524,30 +510,15 @@ bool CheckStake(CBlock* pblock)
     LogPrintf("out %s\n", FormatMoney(pblock->vtx[1].GetValueOut()));
 
     // Found a solution
-    //{
-        //LOCK(cs_main);
-        if (pblock->hashPrevBlock != hashBestChain) {
-            return error("CheckStake() : generated block is stale");
-        }
 
-        // Track how many getdata requests this block gets
-        //{
-        //    LOCK(wallet.cs_wallet);
-        //    wallet.mapRequestCount[hashBlock] = 0;
-        //}
+    if (pblock->hashPrevBlock != hashBestChain) {
+        return error("CheckStake() : generated block is stale");
+    }
 
-        // Depricated:
-        // ------------
-        // Process this block the same as if we had received it from another node
-        // if (!ProcessBlock(NULL, pblock))
-        //     return error("CheckStake() : ProcessBlock, block not accepted");
-        // ----------------
-        //
-        // Relay created block, but don't accept it... Let network consensus decide
-        if (!NewBlockRelay(pblock)) {
-            return error("CheckStake() : NewBlockRelay, block failed being relayed to peers!");
-        }
-    //}
+    // Relay created block, but don't accept it... Let network consensus decide
+    if (!NewBlockRelay(pblock)) {
+        return error("CheckStake() : NewBlockRelay, block failed being relayed to peers!");
+    }
 
     return true;
 }
@@ -602,20 +573,31 @@ void ThreadStakeMiner(CWallet *pwallet)
         // Create new block
         //
         int64_t nFees;
-    #ifdef __GNUC__
-    #define GCC_VERSION (__GNUC__ * 10000 \
-                         + __GNUC_MINOR__ * 100 \
-                         + __GNUC_PATCHLEVEL__)
 
-    /* Test for GCC < 6.3.0 */
-    #if GCC_VERSION > 60300
-        unique_ptr<CBlock> pblock(CreateNewBlock(reservekey, true, &nFees));
-    #else
-        auto_ptr<CBlock> pblock(CreateNewBlock(reservekey, true, &nFees));
+#ifdef WIN32
+    // Windows
+    //
+    // We assume we are using MINGW with GCC version greater than 6.3.0
+    unique_ptr<CBlock> pblock(CreateNewBlock(reservekey, true, &nFees));
+#else
+    // Linux / Mac_OS
+    //
+    // We ensure we are using GCC version greater than 6.3.0
+    // Otherwise default to legacy compatibility
+    #ifdef __GNUC__
+        #define GCC_VERSION (__GNUC__ * 10000 \
+                            + __GNUC_MINOR__ * 100 \
+                            + __GNUC_PATCHLEVEL__)
+
+        /* Test for GCC > 6.3.0 */
+        #if GCC_VERSION > 60300
+            unique_ptr<CBlock> pblock(CreateNewBlock(reservekey, true, &nFees));
+        #else
+            auto_ptr<CBlock> pblock(CreateNewBlock(reservekey, true, &nFees));
+        #endif
     #endif
-    #else
-        unique_ptr<CBlock> pblock(CreateNewBlock(reservekey, true, &nFees));
-    #endif
+#endif
+
         if (!pblock.get())
             return;
 
