@@ -1871,7 +1871,7 @@ bool static Reorganize(CTxDB& txdb, CBlockIndex* pindexNew)
         } else if(PEER_REORG_TYPE == 1) {
             LogPrintf("Reorganize() : Authorized a Peer reverse-reorganize, now executing...\n");
         } else {
-            return error("Reorganize() : Denied a reverse-reorganize - Not authorized!");
+            return error("Reorganize() : Denied a reverse-reorganize - Not authorized! \n");
         }
     }
 
@@ -1879,7 +1879,7 @@ bool static Reorganize(CTxDB& txdb, CBlockIndex* pindexNew)
     if (nMergeDepth > BLOCK_REORG_MAX_DEPTH) {
         // Only allow deep reorgs from Demi-nodes or during back-to-block
         // TODO: allow override as set in config file
-        if((fDemiPeerRelay(GetRelayPeerAddr) && fDemiNodes) || fRollBackCall) {
+        if ((fDemiPeerRelay(GetRelayPeerAddr) && fDemiNodes) || fRollBackCall) {
             nReorgMax -= BLOCK_REORG_OVERRIDE_DEPTH;
             if (nMergeDepth > BLOCK_REORG_THRESHOLD) {
                 // Back-to-block bypasses normal threshold as it might not be set
@@ -1887,11 +1887,16 @@ bool static Reorganize(CTxDB& txdb, CBlockIndex* pindexNew)
                     nReorgMax = (nNewHeight-1);
                     LogPrintf("Reorganize() : Rolling back to block: %u \n", nNewHeight);
                 } else {
-                    return error("Reorganize() : Threshold depth exceeded");
+                    return error("Reorganize() : Threshold depth exceeded \n");
                 }
             }
         } else {
-            return error("Reorganize() : Maximum depth exceeded");
+            return error("Reorganize() : Maximum depth exceeded \n");
+        }
+    } else {
+        // Only accept blocks from a peer if we are a Demi-node
+        if (!fDemiSelf) {
+            return error("Reorganize() : Not toggled self as a Demi-node \n Only accepting single-block Peer relays if we are \n");
         }
     }
 
@@ -2330,10 +2335,13 @@ bool NewBlockRelay(CBlock* pblock)
     int nBlockEstimate = Checkpoints::GetTotalBlocksEstimate();
     LOCK(cs_vNodes);
     BOOST_FOREACH(CNode* pnode, vNodes) {
-        if (nRelayHeight > (pnode->nStartingHeight != -1 ? pnode->nStartingHeight - 2000 : nBlockEstimate)) {
-            pnode->PushMessage("block", *pblock);
-            LogPrintf("NewBlockRelay() : Relayed Block: %s, To Peer: %s \n", hashBlock.ToString(), pnode->addrName );
-            relayFail = false;
+        if (nRelayHeight > (pnode->nStartingHeight != -1 ? pnode->nStartingHeight - 5 : nBlockEstimate)) {
+            // Only relay to DemiNodes, this further prevents chain splitting
+            if (fDemiPeerRelay(pnode->addrName) && fDemiNodes) {
+                pnode->PushMessage("block", *pblock);
+                LogPrintf("NewBlockRelay() : Relayed Block: %s, To Node: %s \n", hashBlock.ToString(), pnode->addrName );
+                relayFail = false;
+            }
         }
     }
     // Return success if relayed to a peer/node
@@ -2555,7 +2563,7 @@ bool CBlock::AcceptBlock()
     {
         LOCK(cs_vNodes);
         BOOST_FOREACH(CNode* pnode, vNodes)
-            if (nBestHeight > (pnode->nStartingHeight != -1 ? pnode->nStartingHeight - 2000 : nBlockEstimate))
+            if (nBestHeight > (pnode->nStartingHeight != -1 ? pnode->nStartingHeight - 5 : nBlockEstimate))
                 pnode->PushInventory(CInv(MSG_BLOCK, hash));
     }
 

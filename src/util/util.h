@@ -114,6 +114,7 @@ extern int nXNodeMinProtocol;
 extern bool settingsStatus;
 // Demi-node toggle
 extern bool fDemiNodes;
+extern bool fDemiSelf;
 // Pubkey Alias Service toggle
 extern int nPubkeyaliasserviceMinProtocol;
 extern bool fPubkeyAliasService;

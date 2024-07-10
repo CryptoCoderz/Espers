@@ -26,8 +26,6 @@ bool fDemiPeerRelay(std::string peerAddr)
         LogPrintf("Demi-node System: fDemiPeerRelay - Peer: %s matches listed Demi-node!\n", peerAddr);
         return true;
     }
-    // Failure if not found
-    // LogPrintf("Demi-node System: fDemiPeerRelay - Peer: %s does NOT match any listed Demi-node!\n", peerAddr);
     return false;
 }
 
@@ -47,26 +45,8 @@ static void DemiNodeFetch(uint256 blockHash)
                 continue;
             }
 
-            // See if we found a Demi-node
-            /*
-            if(scanDeminodes[0] == pnode->addrName) {
-                voteDeminodes[0] ++;
-                pnode->PushMessage("getdata", vGetDemiData);
-                fDemiFound = true;
-            } else if(scanDeminodes[1] == pnode->addrName) {
-                voteDeminodes[1] ++;
-                pnode->PushMessage("getdata", vGetDemiData);
-                fDemiFound = true;
-            } else if(scanDeminodes[2] == pnode->addrName) {
-                voteDeminodes[2] ++;
-                pnode->PushMessage("getdata", vGetDemiData);
-                fDemiFound = true;
-            } else if(scanDeminodes[3] == pnode->addrName) {
-                voteDeminodes[3] ++;
-                pnode->PushMessage("getdata", vGetDemiData);
-                fDemiFound = true;
-            }
-            */
+            // TODO: See if we found a Demi-node
+
         }
 
         vGetDemiData.clear();
@@ -79,13 +59,6 @@ bool getDemiBlock(uint256 blockHash)
 {
     // Fetch block data from Demi-nodes
     DemiNodeFetch(blockHash);
-
-    // Setup our node list to scan through
-    //
-    // TODO: Open deminode.conf and scan for registered Demi-nodes
-    // For now we hardset Team nodes as Demi-nodes
-    //
-    //std::string scanNet[vNodes.size()];
 
     // Make sure we found a Demi-node
     if(!fDemiFound) {

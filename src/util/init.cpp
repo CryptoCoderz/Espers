@@ -305,6 +305,7 @@ std::string HelpMessage()
 
     strUsage += "\n" + _("Demi-node feature options:") + "\n";
     strUsage += "  -deminodes=<n> " + _("Toggle Demi-node features on/off, (0-1, default: 0") + "\n";
+    strUsage += "  -demiself=<n> " + _("Toggle Demi-node self designation on/off, (0-1, default: 0") + "\n";
     strUsage += "  -demimaxdepth=<n> " + _("Set the maximum override depth for chain reorganization, (default: 0") + "\n";
     strUsage += "  -demilocksync=<n> " + _("Lock Demi-nodes to either allow or deny standard node sync failover, (0-1, default: 0") + "\n";
     strUsage += "  -demistrict=<n> " + _("Toggle using Demi-nodes exclusively to accept new blocks on/off, (0-1, default: 0") + "\n";
@@ -1117,6 +1118,7 @@ bool AppInit2(boost::thread_group& threadGroup)
     // Check for Demi-node toggle
     uiInterface.InitMessage(_("Checking Demi-node feature toggle..."));
     fDemiNodes = GetBoolArg("-deminodes", false);
+    fDemiSelf = GetBoolArg("-demiself", false);
     LogPrintf("Checking for Demi-nodes feature toggle...\n");// BLOCK_REORG_OVERRIDE_DEPTH
     if(fDemiNodes) {
         // Set Demi-node values
