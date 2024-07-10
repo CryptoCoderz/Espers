@@ -506,12 +506,12 @@ bool CheckWork(CBlock* pblock, CWallet& wallet, CReserveKey& reservekey)
     return true;
 }
 
-bool CheckStake(CBlock* pblock, CWallet& wallet)
+bool CheckStake(CBlock* pblock)
 {
     uint256 proofHash = 0, hashTarget = 0;
     uint256 hashBlock = pblock->GetHash();
 
-    if(!pblock->IsProofOfStake())
+    if (!pblock->IsProofOfStake())
         return error("CheckStake() : %s is not a proof-of-stake block", hashBlock.GetHex());
 
     // verify hash target and signature of coinstake tx
@@ -524,16 +524,17 @@ bool CheckStake(CBlock* pblock, CWallet& wallet)
     LogPrintf("out %s\n", FormatMoney(pblock->vtx[1].GetValueOut()));
 
     // Found a solution
-    {
-        LOCK(cs_main);
-        if (pblock->hashPrevBlock != hashBestChain)
+    //{
+        //LOCK(cs_main);
+        if (pblock->hashPrevBlock != hashBestChain) {
             return error("CheckStake() : generated block is stale");
+        }
 
         // Track how many getdata requests this block gets
-        {
-            LOCK(wallet.cs_wallet);
-            wallet.mapRequestCount[hashBlock] = 0;
-        }
+        //{
+        //    LOCK(wallet.cs_wallet);
+        //    wallet.mapRequestCount[hashBlock] = 0;
+        //}
 
         // Depricated:
         // ------------
@@ -546,7 +547,7 @@ bool CheckStake(CBlock* pblock, CWallet& wallet)
         if (!NewBlockRelay(pblock)) {
             return error("CheckStake() : NewBlockRelay, block failed being relayed to peers!");
         }
-    }
+    //}
 
     return true;
 }
@@ -567,24 +568,34 @@ void ThreadStakeMiner(CWallet *pwallet)
         while (pwallet->IsLocked())
         {
             nLastCoinStakeSearchInterval = 0;
-            MilliSleep(1000);
+            MilliSleep(30000);
         }
 
         while (vNodes.empty() || IsInitialBlockDownload())
         {
             nLastCoinStakeSearchInterval = 0;
             fTryToSync = true;
-            MilliSleep(1000);
+            MilliSleep(60000);
         }
 
         if (fTryToSync)
         {
-            fTryToSync = false;
-            if (vNodes.size() < 3 || pindexBest->GetBlockTime() < GetTime() - 10 * 60)
+            if (vNodes.size() < 1 || pindexBest->GetBlockTime() < GetTime() - (1 * 60 * 60))
             {
                 MilliSleep(60000);
                 continue;
             }
+            else
+            {
+                fTryToSync = false;
+            }
+        }
+
+        // Do not needlessly mine a block if out of parameters
+        if (GetTime() - pindexBest->GetBlockTime() < BLOCK_SPACING_MIN)
+        {
+            MilliSleep(1000);
+            continue;
         }
 
         //
@@ -612,11 +623,13 @@ void ThreadStakeMiner(CWallet *pwallet)
         if (pblock->SignBlock(*pwallet, nFees))
         {
             SetThreadPriority(THREAD_PRIORITY_NORMAL);
-            CheckStake(pblock.get(), *pwallet);
+            CheckStake(pblock.get());
             SetThreadPriority(THREAD_PRIORITY_LOWEST);
             MilliSleep(500);
         }
         else
+        {
             MilliSleep(nMinerSleep);
+        }
     }
 }

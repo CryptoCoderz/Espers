@@ -2323,14 +2323,16 @@ bool NewBlockRelay(CBlock* pblock)
         return error("NewBlockRelay() : newly generated block failed to meet parameters \n");
     }
     // Setup values
-    uint256 hash = pblock->GetHash();
+    uint256 hashBlock = pblock->GetHash();
+    int nRelayHeight = nBestHeight+1;
     bool relayFail = true;
     // Relay New Block
     int nBlockEstimate = Checkpoints::GetTotalBlocksEstimate();
     LOCK(cs_vNodes);
     BOOST_FOREACH(CNode* pnode, vNodes) {
-        if (nBestHeight > (pnode->nStartingHeight != -1 ? pnode->nStartingHeight - 2000 : nBlockEstimate)) {
-            pnode->PushInventory(CInv(MSG_BLOCK, hash));
+        if (nRelayHeight > (pnode->nStartingHeight != -1 ? pnode->nStartingHeight - 2000 : nBlockEstimate)) {
+            pnode->PushMessage("block", *pblock);
+            LogPrintf("NewBlockRelay() : Relayed Block: %s, To Peer: %s \n", hashBlock.ToString(), pnode->addrName );
             relayFail = false;
         }
     }
