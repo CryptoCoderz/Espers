@@ -4080,9 +4080,25 @@ bool static ProcessMessage(CNode* pfrom, string strCommand, CDataStream& vRecv, 
 
 
     // Update the last seen time for this node's address
-    if (pfrom->fNetworkNode)
-        if (strCommand == "version" || strCommand == "addr" || strCommand == "inv" || strCommand == "getdata" || strCommand == "ping")
+    if (pfrom->fNetworkNode) {
+        if (strCommand == "version" || strCommand == "addr" || strCommand == "inv" || strCommand == "getdata" || strCommand == "ping") {
             AddressCurrentlyConnected(pfrom->addr);
+        }
+    }
+
+
+    // Trigger sync select and start
+    if(pnodeSync == NULL) {
+        if(SyncSelectStart(pfrom)) {
+            if(fDebug) {
+                LogPrintf("ProcessMessage(): Succesfully triggered sync select and start \n");
+            }
+        } else {
+            if(fDebug) {
+                LogPrintf("ProcessMessage(): Failed to trigger sync select and start \n");
+            }
+        }
+    }
 
 
     return true;
@@ -4283,49 +4299,6 @@ bool SendMessages(CNode* pto, bool fSendTrickle)
             }
         }
 
-        // Start block sync
-        //
-        // Demi-nodes v0.7 alpha
-        //
-        if (pto->fStartSync && !fImporting && !fReindex) {
-            // Espers Demi-node rewrite...
-            // Don't send blind get blocks message anymore.
-            // Instead we wait to accumulate connections
-            // then we gather a network concensus of what should
-            // be deemed the main chain. We sync to this chain.
-            // There are overrides and exceptions, please consult
-            // the Demi-node documentation for more information.
-            //
-            pto->fStartSync = false;
-            if(!fDemiNodes) {
-                PushGetBlocks(pto, pindexBest, uint256(0));
-            } else {
-                if(pto->nVersion < DEMINODE_VERSION) {
-                    // Syncing from legacy peers is no longer supported.
-                    // Later itterations of Demi-nodes will be able
-                    // to re-activate this funtionality with advanced
-                    // concensus handling.
-                } else {
-                    // TODO: add     || -demilocksync
-                    // Ensure handling of demi and standard failover
-                    //
-                    // Sync only if peer is a registered Demi-node
-                    // This is a limitation only of v0.7
-                    if(fDemiPeerRelay(pto->addrName)) {
-                        LogPrintf("Current peer is an acceptable Demi-node, downloading blocks!\n");
-                        PushGetBlocks(pto, pindexBest, uint256(0));
-                    } else {
-                        if(!startDemiSync()) {
-                            pnodeSync = NULL;
-                            // LogPrintf("Current peers are not suitable for sync relay, waiting for other connections...\n");
-                        } else {
-                            LogPrintf("Syncing started with Demi-node scan and connect!\n");
-                        }
-                    }
-                }
-            }
-        }
-
         // Resend wallet transactions that haven't gotten in a block yet
         // Except during reindex, importing and IBD, when old wallet
         // transactions become unconfirmed and spams other nodes.
@@ -4507,4 +4480,68 @@ bool SendMessages(CNode* pto, bool fSendTrickle)
 
     }
     return true;
+}
+
+bool SyncSelectStart(CNode* pnodepeer) {
+    // check preconditions for allowing a sync
+    if (!pnodepeer->fClient && !pnodepeer->fOneShot &&
+        !pnodepeer->fDisconnect && pnodepeer->fSuccessfullyConnected &&
+        (pnodepeer->nStartingHeight > (nBestHeight - 100)) &&
+        (pnodepeer->nVersion < NOBLKS_VERSION_START || pnodepeer->nVersion >= NOBLKS_VERSION_END)) {
+        // if ok, start sync
+        pnodeSync = pnodepeer;
+        pnodepeer->fStartSync = true;
+    }
+
+    // Start block sync
+    //
+    // Demi-nodes v0.7 alpha
+    //
+    if(pnodepeer->fStartSync) {
+        if (!fImporting && !fReindex) {
+            // Espers Demi-node rewrite...
+            // Don't send blind get blocks message anymore.
+            // Instead we wait to accumulate connections
+            // then we gather a network concensus of what should
+            // be deemed the main chain. We sync to this chain.
+            // There are overrides and exceptions, please consult
+            // the Demi-node documentation for more information.
+            //
+            pnodepeer->fStartSync = false;
+            if(!fDemiNodes) {
+                PushGetBlocks(pnodepeer, pindexBest, uint256(0));
+                return true;
+            } else {
+                if(pnodepeer->nVersion < DEMINODE_VERSION) {
+                    // Syncing from legacy peers is no longer supported.
+                    // Later itterations of Demi-nodes will be able
+                    // to re-activate this funtionality with advanced
+                    // concensus handling.
+                } else {
+                    // TODO: add     || -demilocksync
+                    // Ensure handling of demi and standard failover
+                    //
+                    // Sync only if peer is a registered Demi-node
+                    // This is a limitation only of v0.7
+                    if(fDemiPeerRelay(pnodepeer->addrName)) {
+                        LogPrintf("Current peer is an acceptable Demi-node, downloading blocks!\n");
+                        PushGetBlocks(pnodepeer, pindexBest, uint256(0));
+                        return true;
+                    } else {
+                        if(!startDemiSync()) {
+                            pnodeSync = NULL;
+                            return false;
+                            // LogPrintf("Current peers are not suitable for sync relay, waiting for other connections...\n");
+                        } else {
+                            LogPrintf("Syncing started with Demi-node scan and connect!\n");
+                            return true;
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    // Return Sync Select and Start failure
+    return false;
 }
