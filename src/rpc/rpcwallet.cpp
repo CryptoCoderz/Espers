@@ -12,6 +12,7 @@
 #include "util/util.h"
 #include "core/wallet.h"
 #include "database/walletdb.h"
+#include "deminode/demisync.h"
 
 using namespace std;
 using namespace json_spirit;
@@ -1586,4 +1587,22 @@ Value settxfee(const Array& params, bool fHelp)
     nTransactionFee = (nTransactionFee / CENT) * CENT;  // round to cent
 
     return true;
+}
+
+Value forcesync(const Array& params, bool fHelp)
+{
+    if (fHelp || params.size() > 0)
+        throw runtime_error(
+            "forcesync\n"
+            "Force a sync request on demand.\n");
+
+    Object result;
+    if(!startDemiSync()) {
+        result.push_back(Pair("force sync started with demi-node scan and connect!", true));
+
+    } else {
+        result.push_back(Pair("current peers are not suitable for sync relay, waiting for other connections...", true));
+    }
+
+    return result;
 }

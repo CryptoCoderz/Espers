@@ -312,6 +312,7 @@ static const CRPCCommand vRPCCommands[] =
     { "resendtx",               &resendtx,               false,     true,      true },
     { "makekeypair",            &makekeypair,            false,     true,      false },
     { "checkkernel",            &checkkernel,            true,      false,     true },
+    { "forcesync",              &forcesync,              false,     true,      true },
 #endif
 };
 
