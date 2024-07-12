@@ -23,7 +23,6 @@
 #include <boost/asio.hpp>
 #include <boost/asio/ip/v6_only.hpp>
 #include <boost/asio/ssl.hpp>
-#include <boost/bind.hpp>
 #include <boost/filesystem.hpp>
 #include <boost/filesystem/fstream.hpp>
 #include <boost/foreach.hpp>
@@ -648,7 +647,7 @@ void RPCRunLater(const std::string& name, boost::function<void(void)> func, int6
                                         boost::shared_ptr<deadline_timer>(new deadline_timer(*rpc_io_service))));
     }
     deadlineTimers[name]->expires_from_now(posix_time::seconds(nSeconds));
-    deadlineTimers[name]->async_wait(boost::bind(RPCRunHandler, boost::placeholders::_1, func));
+    deadlineTimers[name]->async_wait(boost::bind(RPCRunHandler, _1, func));
 }
 
 class JSONRequest
@@ -862,7 +861,7 @@ std::vector<std::string> CRPCTable::listCommands() const
 
     std::transform(mapCommands.begin(), mapCommands.end(), 
                     std::back_inserter(commandList), 
-                    boost::bind(&commandMap::value_type::first, boost::placeholders::_1));
+                    boost::bind(&commandMap::value_type::first, _1));
     return commandList;
 }
 

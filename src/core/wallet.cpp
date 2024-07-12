@@ -6,6 +6,7 @@
 #include "wallet.h"
 
 #include "primitives/base58.h"
+#include "primitives/boost_placeholders.h"
 #include "blockparams.h"
 #include "subcore/coincontrol.h"
 #include "consensus/kernel.h"
@@ -23,7 +24,6 @@
 #include <boost/algorithm/string/replace.hpp>
 #include <boost/range/algorithm.hpp>
 #include <boost/numeric/ublas/matrix.hpp>
-#include <boost/bind.hpp>
 
 using namespace std;
 
