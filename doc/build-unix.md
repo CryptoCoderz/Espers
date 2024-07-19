@@ -58,26 +58,14 @@ rpcport=22442
 port=22448
 rpcconnect=127.0.0.1
 rpcallowip=127.0.0.1
-addnode=n1.espers.io:22448
-addnode=n2.espers.io:22448
-addnode=n3.espers.io:22448
-addnode=n4.espers.io:22448
-addnode=n5.espers.io:22448
-addnode=n6.espers.io:22448
-addnode=n7.espers.io:22448
-addnode=n8.espers.io:22448
-addnode=n9.espers.io:22448
-addnode=n10.espers.io:22448
-addnode=n1.espers.io
-addnode=n2.espers.io
-addnode=n3.espers.io
-addnode=n4.espers.io
-addnode=n5.espers.io
-addnode=n6.espers.io
-addnode=n7.espers.io
-addnode=n8.espers.io
-addnode=n9.espers.io
-addnode=n10.espers.io
+addnode=46.18.47.191
+addnode=80.7.228.11:22448
+addnode=95.39.17.203
+addnode=95.39.17.203:22448
+addnode=172.105.121.51
+addnode=172.105.121.51:22448
+addnode=198.58.109.214:22448
+addnode=188.164.197.250:22448
 
 CONFIG
 chmod 700 ~/.ESP/Espers.conf; chmod 700 ~/.ESP; ls -la ~/.ESP
