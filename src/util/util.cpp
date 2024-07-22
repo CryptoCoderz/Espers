@@ -1117,26 +1117,14 @@ void BuildConfigFile()
     fprintf(ConfFile, "rpcport=22442\n");
     fprintf(ConfFile, "rpcconnect=127.0.0.1\n");
     fprintf(ConfFile, "rpcallowip=127.0.0.1\n");
-    fprintf(ConfFile, "addnode=n1.espers.io:22448\n");
-    fprintf(ConfFile, "addnode=n2.espers.io:22448\n");
-    fprintf(ConfFile, "addnode=n3.espers.io:22448\n");
-    fprintf(ConfFile, "addnode=n4.espers.io:22448\n");
-    fprintf(ConfFile, "addnode=n5.espers.io:22448\n");
-    fprintf(ConfFile, "addnode=n6.espers.io:22448\n");
-    fprintf(ConfFile, "addnode=n7.espers.io:22448\n");
-    fprintf(ConfFile, "addnode=n8.espers.io:22448\n");
-    fprintf(ConfFile, "addnode=n9.espers.io:22448\n");
-    fprintf(ConfFile, "addnode=n10.espers.io:22448\n");
-    fprintf(ConfFile, "addnode=n1.espers.io\n");
-    fprintf(ConfFile, "addnode=n2.espers.io\n");
-    fprintf(ConfFile, "addnode=n3.espers.io\n");
-    fprintf(ConfFile, "addnode=n4.espers.io\n");
-    fprintf(ConfFile, "addnode=n5.espers.io\n");
-    fprintf(ConfFile, "addnode=n6.espers.io\n");
-    fprintf(ConfFile, "addnode=n7.espers.io\n");
-    fprintf(ConfFile, "addnode=n8.espers.io\n");
-    fprintf(ConfFile, "addnode=n9.espers.io\n");
-    fprintf(ConfFile, "addnode=n10.espers.io\n");
+    fprintf(ConfFile, "addnode=46.18.47.191\n");
+    fprintf(ConfFile, "addnode=80.7.228.11:22448\n");
+    fprintf(ConfFile, "addnode=95.39.17.203\n");
+    fprintf(ConfFile, "addnode=95.39.17.203:22448\n");
+    fprintf(ConfFile, "addnode=172.105.121.51\n");
+    fprintf(ConfFile, "addnode=172.105.121.51:22448\n");
+    fprintf(ConfFile, "addnode=198.58.109.214:22448\n");
+    fprintf(ConfFile, "addnode=188.164.197.250:22448\n");
     fclose(ConfFile);
 }
 
