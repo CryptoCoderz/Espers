@@ -6,6 +6,7 @@
 #include "util/util.h"
 
 bool fDemiFound = false;
+bool fDemiUpdate = true;
 
 std::string GetDemiConfigFile()
 {
@@ -18,28 +19,29 @@ std::string GetDemiConfigFile()
     return pathConfigFile;
 }
 
+void BuildDemiConfigFile()
+{
+    std::string ConfPath = GetDataDir().string().c_str();
+    std::string ConfigFileAlias = "/Demi.conf";
+    ConfPath += ConfigFileAlias.c_str();
+    FILE* ConfFile = fopen(ConfPath.c_str(), "w");
+    fprintf(ConfFile, "88931 version\n");
+    fprintf(ConfFile, "46.18.47.191\n");
+    fprintf(ConfFile, "80.7.228.11:22448\n");
+    fprintf(ConfFile, "95.39.17.203\n");
+    fprintf(ConfFile, "95.39.17.203:22448\n");
+    fprintf(ConfFile, "172.105.121.51\n");
+    fprintf(ConfFile, "172.105.121.51:22448\n");
+    fprintf(ConfFile, "198.58.109.214\n");
+    fprintf(ConfFile, "198.58.109.214:22448\n");
+    fprintf(ConfFile, "188.164.197.250\n");
+    fprintf(ConfFile, "188.164.197.250:22448\n");
+    fclose(ConfFile);
+}
+
 void ReadDemiConfigFile(std::string peerReadAddr)
 {
     fDemiFound = false;
-    std::ifstream streamConfig(GetDemiConfigFile().c_str());
-    if (!streamConfig.good())
-    {
-               std::string ConfPath = GetDataDir().string().c_str();
-               std::string ConfigFileAlias = "/Demi.conf";
-               ConfPath += ConfigFileAlias.c_str();
-               FILE* ConfFile = fopen(ConfPath.c_str(), "w");
-               fprintf(ConfFile, "46.18.47.191\n");
-               fprintf(ConfFile, "80.7.228.11:22448\n");
-               fprintf(ConfFile, "95.39.17.203\n");
-               fprintf(ConfFile, "95.39.17.203:22448\n");
-               fprintf(ConfFile, "172.105.121.51\n");
-               fprintf(ConfFile, "172.105.121.51:22448\n");
-               fprintf(ConfFile, "198.58.109.214\n");
-               fprintf(ConfFile, "198.58.109.214:22448\n");
-               fprintf(ConfFile, "188.164.197.250\n");
-               fprintf(ConfFile, "188.164.197.250:22448\n");
-               fclose(ConfFile);
-    }
 
     // Open requested config file
     std::ifstream file;
@@ -56,8 +58,8 @@ void ReadDemiConfigFile(std::string peerReadAddr)
     while(file.good()) {
         // Loop through lines
         std::getline(file, line);
-        if (!line.empty()) {
-            if (line[0] != '#') {
+        if(!line.empty()) {
+            if(line[0] != '#') {
                 // Combine input string
                 if(peerReadAddr == line) {
                     fDemiFound = true;
@@ -66,6 +68,76 @@ void ReadDemiConfigFile(std::string peerReadAddr)
             }
         }
     }
-
     file.close();
+}
+
+void UpdateDemiConfigFile()
+{
+    bool fVersionFound = false;
+    bool fFlagUpdate = false;
+    // Open requested config file
+    std::ifstream file;
+    file.open(GetDemiConfigFile().c_str());
+    if(!file.is_open()) {
+        // Print for debugging
+        LogPrintf("UpdateDemiConfigFile - ERROR - Cannot open file!\n");
+        return;
+    }
+
+    // Read data
+    //
+    std::string line;
+    int iVersion = 88931;// Version number
+    int lVersion;
+    while(file.good()) {
+        // Loop through lines
+        std::getline(file, line);
+        if(!line.empty()) {
+            // Ensure line contains expected data
+            if(line.find("version") != std::string::npos) {
+                fVersionFound = true;
+                // Convert string to integer value
+                std::string::size_type string_sz;
+                lVersion = std::stoi(line, &string_sz);
+                // Print for debugging
+                LogPrintf("UpdateDemiConfigFile - Logged Version - %i \n", lVersion);
+                // Verify version update
+                if(lVersion >= iVersion) {
+                    fDemiUpdate = false;
+                    break;
+                } else {
+                    fFlagUpdate = true;
+                    fDemiUpdate = false;
+                    break;
+                }
+            }
+        }
+    }
+    file.close();
+
+    // Rebuild Demi.conf if needed
+    if(fFlagUpdate || !fVersionFound) {
+        // Print for debugging
+        LogPrintf("UpdateDemiConfigFile - Updating Demi Config to version: %i \n", iVersion);
+        BuildDemiConfigFile();
+    }
+}
+
+void InitializeDemiConfigFile(std::string peerReadAddr)
+{
+    std::ifstream streamConfig(GetDemiConfigFile().c_str());
+    if(!streamConfig.good())
+    {
+        // Create Demi.conf
+        BuildDemiConfigFile();
+        // Then read it...
+        ReadDemiConfigFile(peerReadAddr);
+    } else {
+        // Check if Demi.conf needs update (once)
+        if(fDemiUpdate) {
+            UpdateDemiConfigFile();
+        }
+        // Read Demi.conf
+        ReadDemiConfigFile(peerReadAddr);
+    }
 }

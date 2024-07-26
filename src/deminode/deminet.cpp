@@ -20,7 +20,7 @@ uint256 hashDeminodes[4] {
 bool fDemiPeerRelay(std::string peerAddr)
 {
     // Loop through Demi-node list
-    ReadDemiConfigFile(peerAddr);
+    InitializeDemiConfigFile(peerAddr);
     if(fDemiFound) {
         // Return success
         LogPrintf("Demi-node System: fDemiPeerRelay - Peer: %s matches listed Demi-node!\n", peerAddr);

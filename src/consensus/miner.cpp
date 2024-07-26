@@ -563,10 +563,9 @@ void ThreadStakeMiner(CWallet *pwallet)
         }
 
         // Do not needlessly mine a block if out of parameters
-        if ((GetTime() - pindexBest->GetBlockTime()) < (BLOCK_SPACING_MIN + 5))
+        while ((GetTime() - pindexBest->GetBlockTime()) < (BLOCK_SPACING_MIN + 5))
         {
             MilliSleep(5000);
-            continue;
         }
 
         //
@@ -607,7 +606,7 @@ void ThreadStakeMiner(CWallet *pwallet)
             SetThreadPriority(THREAD_PRIORITY_NORMAL);
             CheckStake(pblock.get());
             SetThreadPriority(THREAD_PRIORITY_LOWEST);
-            MilliSleep(500);
+            MilliSleep(5000);
         }
         else
         {

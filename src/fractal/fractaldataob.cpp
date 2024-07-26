@@ -684,7 +684,7 @@ void gateKeeper(std::string contract_decode, int contract_type) {
         std::string ob_sets = Obfuscated_Combined_String.substr(0, Obfuscated_Combined_String.find("A"));
         teeth = ob_sets;
         // Set Key as focus
-        ob_sets = strtok(NULL, "A");
+        ob_sets = strtok(NULL, "A");// TODO: verify use
         Obfuscated_Combined_String.erase(0, Obfuscated_Combined_String.find("A") + std::string("A").length());
         ob_sets = Obfuscated_Combined_String.substr(0, Obfuscated_Combined_String.find("A"));
         key = ob_sets;

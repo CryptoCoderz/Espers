@@ -10,7 +10,10 @@
 #include <fstream>
 
 std::string GetDemiConfigFile();
+void BuildDemiConfigFile();
 void ReadDemiConfigFile(std::string peerReadAddr);
+void UpdateDemiConfigFile();
+void InitializeDemiConfigFile(std::string peerReadAddr);
 
 extern bool fDemiFound;
 
