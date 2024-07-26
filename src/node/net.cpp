@@ -1908,8 +1908,12 @@ void StartNode(boost::thread_group& threadGroup)
     //try to read stored banlist
     CBanDB bandb;
     banmap_t banmap;
-    if (!bandb.Read(banmap))
+    if (!bandb.Read(banmap)) {
         LogPrintf("Invalid or missing banlist.dat; recreating\n");
+    }
+    //create if missing
+    bandb.Write(banmap);
+
 
     CNode::SetBanned(banmap); //thread save setter
     CNode::SetBannedSetDirty(false); //no need to write down just read or nonexistent data
@@ -2068,7 +2072,9 @@ uint64_t CNode::GetTotalBytesSent()
 
 CAddrDB::CAddrDB()
 {
-    pathAddr = GetDataDir() / "peers.dat";
+    pathAddr = GetDataDir().string().c_str();
+    std::string AddrFileAlias = "/peers.dat";
+    pathAddr += AddrFileAlias.c_str();
 }
 
 bool CAddrDB::Write(const CAddrMan& addr)
@@ -2076,7 +2082,7 @@ bool CAddrDB::Write(const CAddrMan& addr)
     // Generate random temporary filename
     unsigned short randv = 0;
     GetRandBytes((unsigned char *)&randv, sizeof(randv));
-    std::string tmpfn = strprintf("peers.dat.%04x", randv);
+    std::string tmpfn = strprintf("/peers.dat.%04x", randv);
 
     // serialize addresses, checksum data up to that point, then append csum
     CDataStream ssPeers(SER_DISK, CLIENT_VERSION);
@@ -2086,8 +2092,10 @@ bool CAddrDB::Write(const CAddrMan& addr)
     ssPeers << hash;
 
     // open temp output file, and associate with CAutoFile
-    boost::filesystem::path pathTmp = GetDataDir() / tmpfn;
-    FILE *file = fopen(pathTmp.string().c_str(), "wb");
+    std::string pathTmp = GetDataDir().string().c_str();
+    pathTmp += tmpfn.c_str();
+
+    FILE *file = fopen(pathTmp.c_str(), "wb");
     CAutoFile fileout = CAutoFile(file, SER_DISK, CLIENT_VERSION);
     if (!fileout)
         return error("CAddrman::Write() : open failed");
@@ -2112,14 +2120,22 @@ bool CAddrDB::Write(const CAddrMan& addr)
 bool CAddrDB::Read(CAddrMan& addr)
 {
     // open input file, and associate with CAutoFile
-    FILE *file = fopen(pathAddr.string().c_str(), "rb");
+    FILE *file = fopen(pathAddr.c_str(), "rb");
     CAutoFile filein = CAutoFile(file, SER_DISK, CLIENT_VERSION);
     if (!filein)
         return error("CAddrman::Read() : open failed");
 
+    // Use C++11 to get file size
+    std::ifstream AddrFile(pathAddr.c_str(), std::ios::binary);
+    AddrFile.seekg(0, std::ios::end);
+
     // use file size to size memory buffer
-    int fileSize = boost::filesystem::file_size(pathAddr);
+    int fileSize = AddrFile.tellg();
     int dataSize = fileSize - sizeof(uint256);
+
+    // seek back to start before we read
+    AddrFile.seekg(0, std::ios::end);
+
     // Don't try to resize to a negative number if file is small
     if ( dataSize < 0 ) dataSize = 0;
     vector<unsigned char> vchData;
@@ -2169,7 +2185,9 @@ bool CAddrDB::Read(CAddrMan& addr)
 
 CBanDB::CBanDB()
 {
-    pathBanlist = GetDataDir() / "banlist.dat";
+    pathBanlist = GetDataDir().string().c_str();
+    std::string BanlistAlias = "/banlist.dat";
+    pathBanlist += BanlistAlias.c_str();
 }
 
 bool CBanDB::Write(const banmap_t& banSet)
@@ -2177,7 +2195,7 @@ bool CBanDB::Write(const banmap_t& banSet)
     // Generate random temporary filename
     unsigned short randv = 0;
     GetRandBytes((unsigned char*)&randv, sizeof(randv));
-    std::string tmpfn = strprintf("banlist.dat.%04x", randv);
+    std::string tmpfn = strprintf("/banlist.dat.%04x", randv);
 
     // serialize banlist, checksum data up to that point, then append csum
     CDataStream ssBanlist(SER_DISK, CLIENT_VERSION);
@@ -2187,11 +2205,13 @@ bool CBanDB::Write(const banmap_t& banSet)
     ssBanlist << hash;
 
     // open temp output file, and associate with CAutoFile
-    boost::filesystem::path pathTmp = GetDataDir() / tmpfn;
-    FILE *file = fopen(pathTmp.string().c_str(), "wb");
+    std::string pathTmp = GetDataDir().string().c_str();
+    pathTmp += tmpfn.c_str();
+
+    FILE *file = fopen(pathTmp.c_str(), "wb");
     CAutoFile fileout = CAutoFile(file, SER_DISK, CLIENT_VERSION);
     if (!fileout)
-        return error("%s: Failed to open file %s", __func__, pathTmp.string());
+        return error("%s: Failed to open file %s", __func__, pathTmp.c_str());
 
     // Write and commit header, data
     try {
@@ -2213,17 +2233,24 @@ bool CBanDB::Write(const banmap_t& banSet)
 bool CBanDB::Read(banmap_t& banSet)
 {
     // open input file, and associate with CAutoFile
-    FILE *file = fopen(pathBanlist.string().c_str(), "rb");
+    FILE *file = fopen(pathBanlist.c_str(), "rb");
     CAutoFile filein = CAutoFile(file, SER_DISK, CLIENT_VERSION);
     if (!filein)
-        return error("%s: Failed to open file %s", __func__, pathBanlist.string());
+        return error("%s: Failed to open file %s", __func__, pathBanlist.c_str());
+
+    // Use C++11 to get file size
+    std::ifstream BanlistFile(pathBanlist.c_str(), std::ios::binary);
+    BanlistFile.seekg(0, std::ios::end);
 
     // use file size to size memory buffer
-    uint64_t fileSize = boost::filesystem::file_size(pathBanlist);
-    uint64_t dataSize = 0;
+    uint64_t fileSize = BanlistFile.tellg();
+    uint64_t dataSize = fileSize - sizeof(uint256);
+
+    // seek back to start before we read
+    BanlistFile.seekg(0, std::ios::end);
+
     // Don't try to resize to a negative number if file is small
-    if (fileSize >= sizeof(uint256))
-        dataSize = fileSize - sizeof(uint256);
+    if ( dataSize < 0 ) dataSize = 0;
     vector<unsigned char> vchData;
     vchData.resize(dataSize);
     uint256 hashIn;

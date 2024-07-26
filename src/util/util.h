@@ -20,6 +20,7 @@
 #include <utility>
 #include <vector>
 #include <string>
+#include <fstream>// For std/C++11
 
 #include <boost/thread.hpp>
 #include <boost/filesystem.hpp>
@@ -187,19 +188,22 @@ void ParseParameters(int argc, const char*const argv[]);
 bool WildcardMatch(const char* psz, const char* mask);
 bool WildcardMatch(const std::string& str, const std::string& mask);
 void FileCommit(FILE *fileout);
-bool RenameOver(boost::filesystem::path src, boost::filesystem::path dest);
+bool RenameOver(std::string src, std::string dest);
 boost::filesystem::path GetDefaultDataDir();
 const boost::filesystem::path &GetDataDir(bool fNetSpecific = true);
-boost::filesystem::path GetConfigFile();
-boost::filesystem::path GetPidFile();
-#ifndef WIN32
-void CreatePidFile(const boost::filesystem::path &path, pid_t pid);
-#endif
+std::string GetConfigFile();
+// 4k Display Support
+std::string GetDPIConfigFile();
+void ReadDPIConfigFile();
 // Enforced Config Support
 void BuildConfigFile();
 void StreamConfigFile(std::map<std::string, std::string>& mapSettingsRet, std::map<std::string, std::vector<std::string> >& mapMultiSettingsRet);
 void ReadConfigFile();
 void InitializeConfigFile();
+std::string GetPidFile();
+#ifndef WIN32
+void CreatePidFile(const boost::filesystem::path &path, pid_t pid);
+#endif
 #ifdef WIN32
 boost::filesystem::path GetSpecialFolderPath(int nFolder, bool fCreate = true);
 #endif
@@ -213,9 +217,6 @@ void SetMockTime(int64_t nMockTimeIn);
 std::string FormatFullVersion();
 std::string FormatSubVersion(const std::string& name, int nClientVersion, const std::vector<std::string>& comments);
 void runCommand(std::string strCommand);
-
-// 4k Display Support
-void ReadDPIConfigFile();
 
 
 /**

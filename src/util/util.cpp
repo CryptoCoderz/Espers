@@ -990,6 +990,7 @@ void PrintExceptionContinue(std::exception* pex, const char* pszThread)
     strMiscWarning = message;
 }
 
+// TODO: remove boost in favor of C++11 file lookup/handling
 boost::filesystem::path GetDefaultDataDir()
 {
     namespace fs = boost::filesystem;
@@ -1022,6 +1023,7 @@ boost::filesystem::path GetDefaultDataDir()
 static boost::filesystem::path pathCached[CChainParams::MAX_NETWORK_TYPES+1];
 static CCriticalSection csPathCached;
 
+// TODO: remove boost in favor of C++11 file lookup/handling
 const boost::filesystem::path &GetDataDir(bool fNetSpecific)
 {
     namespace fs = boost::filesystem;
@@ -1055,36 +1057,41 @@ const boost::filesystem::path &GetDataDir(bool fNetSpecific)
     return path;
 }
 
+// TODO: remove boost in favor of C++11 file lookup/handling
 void ClearDatadirCache()
 {
     std::fill(&pathCached[0], &pathCached[CChainParams::MAX_NETWORK_TYPES+1],
               boost::filesystem::path());
 }
 
-boost::filesystem::path GetConfigFile()
+std::string GetConfigFile()
 {
-    boost::filesystem::path pathConfigFile(GetArg("-conf", "Espers.conf"));
-    if (!pathConfigFile.is_complete()) pathConfigFile = GetDataDir(false) / pathConfigFile;
+    std::string pathConfigFile = GetDataDir().string().c_str();
+    std::string ConfigFileAlias = "/Espers.conf";
+    pathConfigFile += ConfigFileAlias.c_str();
 
     return pathConfigFile;
 }
 
 // Create config for 4k displays
-boost::filesystem::path GetDPIConfigFile()
+std::string GetDPIConfigFile()
 {
-    boost::filesystem::path pathConfigFile = GetDataDir() / "qt.conf";
+    std::string pathConfigFile = GetDataDir().string().c_str();
+    std::string ConfigFileAlias = "/qt.conf";
+    pathConfigFile += ConfigFileAlias.c_str();
+
     return pathConfigFile;
 }
 // 4k display cont...
 void ReadDPIConfigFile()
 {
-    // TODO: remove boost in favor of C++11 file lookup/handling
-    boost::filesystem::ifstream streamConfig(GetDPIConfigFile());
+    std::ifstream streamConfig(GetDPIConfigFile().c_str());
     if (!streamConfig.good())
     {
-           boost::filesystem::path ConfPath;
-           ConfPath = GetDPIConfigFile();
-           FILE* ConfFile = fopen(ConfPath.string().c_str(), "w");
+           std::string ConfPath = GetDPIConfigFile().c_str();
+           std::string ConfigFileAlias = "/Demi.conf";
+           ConfPath += ConfigFileAlias.c_str();
+           FILE* ConfFile = fopen(ConfPath.c_str(), "w");
            fprintf(ConfFile, "[Platforms]\n");
            fprintf(ConfFile, "WindowsArguments = dpiawareness=0\n");
 
@@ -1094,10 +1101,10 @@ void ReadDPIConfigFile()
 
 void BuildConfigFile()
 {
-    // TODO: remove boost in favor of C++11 file lookup/handling
-    boost::filesystem::path ConfPath;
-    ConfPath = GetDataDir() / "Espers.conf";
-    FILE* ConfFile = fopen(ConfPath.string().c_str(), "w");
+    std::string pathConfigFile = GetDataDir().string().c_str();
+    std::string ConfigFileAlias = "/Espers.conf";
+    pathConfigFile += ConfigFileAlias.c_str();
+    FILE* ConfFile = fopen(pathConfigFile.c_str(), "w");
     fprintf(ConfFile, "listen=1\n");
     fprintf(ConfFile, "server=1\n");
     fprintf(ConfFile, "deminodes=1\n");
@@ -1134,8 +1141,8 @@ void StreamConfigFile(map<string, string>& mapSettingsRet,
     set<string> setOptions;
     setOptions.insert("*");
 
+    std::ifstream streamConfig(GetConfigFile().c_str());
     // TODO: remove boost in favor of C++11 file lookup/handling
-    boost::filesystem::ifstream streamConfig(GetConfigFile());
     for (boost::program_options::detail::config_file_iterator it(streamConfig, setOptions), end; it != end; ++it)
     {
         // Don't overwrite existing settings so command line settings override bitcoin.conf
@@ -1160,8 +1167,7 @@ void ReadConfigFile()
 
 void InitializeConfigFile()
 {
-    // TODO: remove boost in favor of C++11 file lookup/handling
-    boost::filesystem::ifstream streamConfig(GetConfigFile());
+    std::ifstream streamConfig(GetConfigFile().c_str());
     if (!streamConfig.good())
     {
         // Create Espers.conf
@@ -1174,10 +1180,12 @@ void InitializeConfigFile()
     }
 }
 
-boost::filesystem::path GetPidFile()
+std::string GetPidFile()
 {
-    boost::filesystem::path pathPidFile(GetArg("-pid", "Espersd.pid"));
-    if (!pathPidFile.is_complete()) pathPidFile = GetDataDir() / pathPidFile;
+    std::string pathPidFile = GetDataDir().string().c_str();
+    std::string ConfigFileAlias = "/Espersd.pid";
+    pathPidFile += ConfigFileAlias.c_str();
+
     return pathPidFile;
 }
 
@@ -1193,13 +1201,13 @@ void CreatePidFile(const boost::filesystem::path &path, pid_t pid)
 }
 #endif
 
-bool RenameOver(boost::filesystem::path src, boost::filesystem::path dest)
+bool RenameOver(std::string src, std::string dest)
 {
 #ifdef WIN32
-    return MoveFileExA(src.string().c_str(), dest.string().c_str(),
+    return MoveFileExA(src.c_str(), dest.c_str(),
                       MOVEFILE_REPLACE_EXISTING);
 #else
-    int rc = std::rename(src.string().c_str(), dest.string().c_str());
+    int rc = std::rename(src.c_str(), dest.c_str());
     return (rc == 0);
 #endif /* WIN32 */
 }

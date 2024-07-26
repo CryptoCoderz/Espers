@@ -220,8 +220,8 @@ QString ClientModel::getConfigFileContent() const
 {
     QString result;
 
-    boost::filesystem::path path = GetConfigFile();
-    QString pathString = QString::fromStdString(path.string());
+    std::string path = GetConfigFile().c_str();
+    QString pathString = QString::fromStdString(path.c_str());
     QFile file(pathString);
 
     if (file.exists())
@@ -244,8 +244,8 @@ QString ClientModel::getConfigFileContent() const
 
 void ClientModel::setConfigFileContent(const QString &content)
 {
-    boost::filesystem::path path = GetConfigFile();
-    QString pathString = QString::fromStdString(path.string());
+    std::string path = GetConfigFile().c_str();
+    QString pathString = QString::fromStdString(path.c_str());
     QFile file(pathString);
 
     if (file.open(QIODevice::WriteOnly | QIODevice::Text))

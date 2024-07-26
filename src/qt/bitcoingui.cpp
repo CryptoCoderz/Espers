@@ -676,7 +676,7 @@ void BitcoinGUI::setNumBlocks(int count)
         return;
     }
 
-    bool fShowStatusBar = false;
+    //bool fShowStatusBar = false;
     QString tooltip;
 
     QDateTime lastBlockDate = clientModel->getLastBlockDate();
@@ -1321,14 +1321,14 @@ void BitcoinGUI::editConfig()
 
 void BitcoinGUI::editConfigExt()
 {
-    boost::filesystem::path path = GetConfigFile();
-    QString pathString = QString::fromStdString(path.string());
+    std::string path = GetConfigFile().c_str();
+    QString pathString = QString::fromStdString(path.c_str());
     QDesktopServices::openUrl(QUrl::fromLocalFile(pathString));
 }
 
 void BitcoinGUI::openDataDir()
 {
-    boost::filesystem::path path = GetDataDir();
-    QString pathString = QString::fromStdString(path.string());
+    std::string path = GetDataDir().string().c_str();
+    QString pathString = QString::fromStdString(path.c_str());
     QDesktopServices::openUrl(QUrl::fromLocalFile(pathString));
 }

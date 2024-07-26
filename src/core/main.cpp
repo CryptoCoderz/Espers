@@ -3160,28 +3160,31 @@ struct CImportingNow
     }
 };
 
-void ThreadImport(std::vector<boost::filesystem::path> vImportFiles)
+void ThreadImport(std::vector<std::string> vImportFiles)
 {
     RenameThread("Espers-loadblk");
 
     CImportingNow imp;
 
     // -loadblock=
-    BOOST_FOREACH(boost::filesystem::path &path, vImportFiles) {
-        FILE *file = fopen(path.string().c_str(), "rb");
-        if (file)
+    for(std::string &path : vImportFiles) {
+        FILE *file = fopen(path.c_str(), "rb");
+        if (file) {
             LoadExternalBlockFile(file);
+        }
     }
 
     // hardcoded $DATADIR/bootstrap.dat
-    boost::filesystem::path pathBootstrap = GetDataDir() / "bootstrap.dat";
-    if (boost::filesystem::exists(pathBootstrap)) {
-        FILE *file = fopen(pathBootstrap.string().c_str(), "rb");
-        if (file) {
-            boost::filesystem::path pathBootstrapOld = GetDataDir() / "bootstrap.dat.old";
-            LoadExternalBlockFile(file);
-            RenameOver(pathBootstrap, pathBootstrapOld);
-        }
+    std::string pathBootstrap = GetDataDir().string().c_str();
+    std::string BootstrapAlias = "/bootstrap.dat";
+    pathBootstrap += BootstrapAlias.c_str();
+    FILE *file = fopen(pathBootstrap.c_str(), "rb");
+    if (file) {
+        std::string pathBootstrapOld = GetDataDir().string().c_str();
+        std::string BootstrapOldAlias = "/bootstrap.dat.old";
+        pathBootstrapOld += BootstrapOldAlias.c_str();
+        LoadExternalBlockFile(file);
+        RenameOver(pathBootstrap, pathBootstrapOld);
     }
 }
 

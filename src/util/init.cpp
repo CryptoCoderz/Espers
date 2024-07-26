@@ -139,7 +139,7 @@ void Shutdown()
     if (pwalletMain)
         bitdb.Flush(true);
 #endif
-    boost::filesystem::remove(GetPidFile());
+    remove(GetPidFile().c_str());
     UnregisterAllWallets();
 #ifdef ENABLE_WALLET
     delete pwalletMain;
@@ -970,11 +970,12 @@ bool AppInit2(boost::thread_group& threadGroup)
 #endif // !ENABLE_WALLET
     // ********************************************************* Step 9: import blocks
 
-    std::vector<boost::filesystem::path> vImportFiles;
+    std::vector<std::string> vImportFiles;
     if (mapArgs.count("-loadblock"))
     {
-        BOOST_FOREACH(string strFile, mapMultiArgs["-loadblock"])
+        for(string strFile : mapMultiArgs["-loadblock"]) {
             vImportFiles.push_back(strFile);
+        }
     }
     threadGroup.create_thread(boost::bind(&ThreadImport, vImportFiles));
 

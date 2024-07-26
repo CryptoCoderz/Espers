@@ -10,8 +10,6 @@ bool fDemiUpdate = true;
 
 std::string GetDemiConfigFile()
 {
-    //TODO: include GetArg for user defined directories
-    //example: ConfigFileAlias(GetArg("-demiconf", "Demi.conf"))
     std::string pathConfigFile = GetDataDir().string().c_str();
     std::string ConfigFileAlias = "/Demi.conf";
     pathConfigFile += ConfigFileAlias.c_str();

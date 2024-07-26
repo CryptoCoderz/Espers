@@ -164,7 +164,7 @@ CBlockIndex* FindBlockByHeight(int nHeight);
 bool ProcessMessages(CNode* pfrom);
 bool SendMessages(CNode* pto, bool fSendTrickle);
 bool SyncSelectStart(CNode* pnodepeer);
-void ThreadImport(std::vector<boost::filesystem::path> vImportFiles);
+void ThreadImport(std::vector<std::string> vImportFiles);
 bool CheckProofOfWork(uint256 hash, unsigned int nBits);
 bool IsInitialBlockDownload();
 bool IsConfirmedInNPrevBlocks(const CTxIndex& txindex, const CBlockIndex* pindexFrom, int nMaxDepth, int& nActualDepth);

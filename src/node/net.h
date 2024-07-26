@@ -897,7 +897,7 @@ void RelayTransaction(const CTransaction& tx, const uint256& hash, const CDataSt
 class CAddrDB
 {
 private:
-    boost::filesystem::path pathAddr;
+    std::string pathAddr;
 public:
     CAddrDB();
     bool Write(const CAddrMan& addr);
@@ -908,7 +908,7 @@ public:
 class CBanDB
 {
 private:
-    boost::filesystem::path pathBanlist;
+    std::string pathBanlist;
 public:
     CBanDB();
     bool Write(const banmap_t& banSet);

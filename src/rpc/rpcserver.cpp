@@ -524,7 +524,7 @@ void StartRPCThreads()
               "It is also recommended to set alertnotify so you are notified of problems;\n"
               "for example: alertnotify=echo %%s | mail -s \"Espers Alert\" admin@foo.com\n"),
                 strWhatAmI,
-                GetConfigFile().string(),
+                GetConfigFile().c_str(),
                 EncodeBase58(&rand_pwd[0],&rand_pwd[0]+32)),
                 "", CClientUIInterface::MSG_ERROR);
         StartShutdown();
