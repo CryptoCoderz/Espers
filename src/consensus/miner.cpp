@@ -563,8 +563,10 @@ void ThreadStakeMiner(CWallet *pwallet)
         }
 
         // Do not needlessly mine a block if out of parameters
-        while ((GetTime() - pindexBest->GetBlockTime()) < (BLOCK_SPACING_MIN + 5))
+        int64_t elapsedTime = GetTime() - pindexBest->GetBlockTime();
+        while (elapsedTime < (BLOCK_SPACING_MIN + 5))
         {
+            elapsedTime = GetTime() - pindexBest->GetBlockTime();
             MilliSleep(5000);
         }
 
