@@ -19,11 +19,8 @@ std::string GetDemiConfigFile()
 
 void BuildDemiConfigFile()
 {
-    std::string ConfPath = GetDataDir().string().c_str();
-    std::string ConfigFileAlias = "/Demi.conf";
-    ConfPath += ConfigFileAlias.c_str();
-    FILE* ConfFile = fopen(ConfPath.c_str(), "w");
-    fprintf(ConfFile, "88931 version\n");
+    FILE* ConfFile = fopen(GetDemiConfigFile().c_str(), "w");
+    fprintf(ConfFile, "#88931 version\n");
     fprintf(ConfFile, "46.18.47.191\n");
     fprintf(ConfFile, "80.7.228.11:22448\n");
     fprintf(ConfFile, "95.39.17.203\n");
@@ -42,23 +39,22 @@ void ReadDemiConfigFile(std::string peerReadAddr)
     fDemiFound = false;
 
     // Open requested config file
-    std::ifstream file;
-    file.open(GetDemiConfigFile().c_str());
-    if(!file.is_open()) {
+    std::ifstream fileConfigRead;
+    fileConfigRead.open(GetDemiConfigFile().c_str());
+    if(!fileConfigRead.is_open()) {
         // Print for debugging
         LogPrintf("ReadDemiConfigFile - ERROR - Cannot open file!\n");
         return;
     }
 
     // Read data
-    //
     std::string line;
-    while(file.good()) {
+    while(fileConfigRead.good()) {
         // Loop through lines
-        std::getline(file, line);
+        std::getline(fileConfigRead, line);
         if(!line.empty()) {
             if(line[0] != '#') {
-                // Combine input string
+                // Check for match
                 if(peerReadAddr == line) {
                     fDemiFound = true;
                     break;
@@ -66,34 +62,36 @@ void ReadDemiConfigFile(std::string peerReadAddr)
             }
         }
     }
-    file.close();
+    fileConfigRead.close();
 }
 
 void UpdateDemiConfigFile()
 {
+    // Set standard values
     bool fVersionFound = false;
     bool fFlagUpdate = false;
     // Open requested config file
-    std::ifstream file;
-    file.open(GetDemiConfigFile().c_str());
-    if(!file.is_open()) {
+    std::ifstream fileConfigRead;
+    fileConfigRead.open(GetDemiConfigFile().c_str());
+    if(!fileConfigRead.is_open()) {
         // Print for debugging
         LogPrintf("UpdateDemiConfigFile - ERROR - Cannot open file!\n");
         return;
     }
 
     // Read data
-    //
     std::string line;
     int iVersion = 88931;// Version number
     int lVersion;
-    while(file.good()) {
+    while(fileConfigRead.good()) {
         // Loop through lines
-        std::getline(file, line);
+        std::getline(fileConfigRead, line);
         if(!line.empty()) {
             // Ensure line contains expected data
             if(line.find("version") != std::string::npos) {
                 fVersionFound = true;
+                // Set version as focus
+                line.erase(0, line.find("#") + std::string("#").length());
                 // Convert string to integer value
                 std::string::size_type string_sz;
                 lVersion = std::stoi(line, &string_sz);
@@ -105,19 +103,20 @@ void UpdateDemiConfigFile()
                     break;
                 } else {
                     fFlagUpdate = true;
-                    fDemiUpdate = false;
                     break;
                 }
             }
         }
     }
-    file.close();
+    fileConfigRead.close();
 
     // Rebuild Demi.conf if needed
     if(fFlagUpdate || !fVersionFound) {
         // Print for debugging
         LogPrintf("UpdateDemiConfigFile - Updating Demi Config to version: %i \n", iVersion);
+        // Rebuild without any previous user-defined data
         BuildDemiConfigFile();
+        fDemiUpdate = false;
     }
 }
 

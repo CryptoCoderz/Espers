@@ -569,7 +569,7 @@ void BitcoinGUI::setWalletModel(WalletModel *walletModel)
 
         // Balloon pop-up for new transaction
         connect(walletModel->getTransactionTableModel(), SIGNAL(rowsInserted(QModelIndex,int,int)),
-                this, SLOT(incomingTransaction(QModelIndex,int,int)));
+                this, SLOT(incomingTransaction(QModelIndex,int)));
 
         // Ask for passphrase if needed
         connect(walletModel, SIGNAL(requireUnlock()), this, SLOT(unlockWallet()));
@@ -853,7 +853,7 @@ void BitcoinGUI::askFee(qint64 nFeeRequired, bool *payFee)
     *payFee = (retval == QMessageBox::Yes);
 }
 
-void BitcoinGUI::incomingTransaction(const QModelIndex & parent, int start, int end)
+void BitcoinGUI::incomingTransaction(const QModelIndex & parent, int start)
 {
     if(!walletModel || !clientModel)
         return;

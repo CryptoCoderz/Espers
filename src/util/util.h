@@ -197,6 +197,8 @@ std::string GetDPIConfigFile();
 void ReadDPIConfigFile();
 // Enforced Config Support
 void BuildConfigFile();
+void ReBuildConfigFile();
+void UpdateConfigFile();
 void StreamConfigFile(std::map<std::string, std::string>& mapSettingsRet, std::map<std::string, std::vector<std::string> >& mapMultiSettingsRet);
 void ReadConfigFile();
 void InitializeConfigFile();

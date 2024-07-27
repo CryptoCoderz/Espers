@@ -108,6 +108,8 @@ bool fDemiSelf = false;
 //Pubkey Alias Service toggle
 int nPubkeyaliasserviceMinProtocol = 0;
 bool fPubkeyAliasService = false;
+//Config update check toggle
+bool fConfigUpdate = true;
 
 // Init OpenSSL library multithreading support
 static CCriticalSection** ppmutexOpenSSL;
@@ -1088,23 +1090,17 @@ void ReadDPIConfigFile()
     std::ifstream streamConfig(GetDPIConfigFile().c_str());
     if (!streamConfig.good())
     {
-           std::string ConfPath = GetDPIConfigFile().c_str();
-           std::string ConfigFileAlias = "/Demi.conf";
-           ConfPath += ConfigFileAlias.c_str();
-           FILE* ConfFile = fopen(ConfPath.c_str(), "w");
+           FILE* ConfFile = fopen(GetDPIConfigFile().c_str(), "w");
            fprintf(ConfFile, "[Platforms]\n");
            fprintf(ConfFile, "WindowsArguments = dpiawareness=0\n");
-
            fclose(ConfFile);
     }
 }
 
 void BuildConfigFile()
 {
-    std::string pathConfigFile = GetDataDir().string().c_str();
-    std::string ConfigFileAlias = "/Espers.conf";
-    pathConfigFile += ConfigFileAlias.c_str();
-    FILE* ConfFile = fopen(pathConfigFile.c_str(), "w");
+    FILE* ConfFile = fopen(GetConfigFile().c_str(), "w");
+    fprintf(ConfFile, "#88931 version\n");
     fprintf(ConfFile, "listen=1\n");
     fprintf(ConfFile, "server=1\n");
     fprintf(ConfFile, "deminodes=1\n");
@@ -1112,14 +1108,14 @@ void BuildConfigFile()
     fprintf(ConfFile, "maxconnections=500\n");
     fprintf(ConfFile, "rpcuser=yourusername\n");
 
-    char s[34];
+    char cPass[34];
     for (int i = 0; i < 34; ++i)
     {
-        s[i] = alphanum[rand() % (sizeof(alphanum) - 1)];
+        cPass[i] = alphanum[rand() % (sizeof(alphanum) - 1)];
     }
 
-    std::string str(s, 34);
-    fprintf(ConfFile, "rpcpassword=%s\n", str.c_str());
+    std::string sPass(cPass, 34);
+    fprintf(ConfFile, "rpcpassword=%s\n", sPass.c_str());
     fprintf(ConfFile, "port=22448\n");
     fprintf(ConfFile, "rpcport=22442\n");
     fprintf(ConfFile, "rpcconnect=127.0.0.1\n");
@@ -1133,6 +1129,106 @@ void BuildConfigFile()
     fprintf(ConfFile, "addnode=198.58.109.214:22448\n");
     fprintf(ConfFile, "addnode=188.164.197.250:22448\n");
     fclose(ConfFile);
+}
+
+void ReBuildConfigFile()
+{
+    // Set standard values
+    std::string userConfigData = "#88931 version\n";
+    // Open requested config file
+    std::ifstream fileConfigRead;
+    fileConfigRead.open(GetConfigFile().c_str());
+    if(!fileConfigRead.is_open()) {
+        // Print for debugging
+        LogPrintf("ReBuildConfigFile - ERROR - Cannot open file!\n");
+        return;
+    }
+
+    // Read data
+    std::string line;
+    while(fileConfigRead.good()) {
+        // Loop through lines
+        std::getline(fileConfigRead, line);
+        if(!line.empty()) {
+            if(line[0] != '#') {
+                // Ensure line does NOT contain addnode data
+                if(line.find("addnode") == std::string::npos) {
+                    // Store user-defined data for rebuild
+                    line += "\n";
+                    userConfigData += line;
+                }
+            }
+        }
+    }
+    fileConfigRead.close();
+
+    // Rebuild Espers.conf using stored user-defined data
+    FILE* ConfFile = fopen(GetConfigFile().c_str(), "w");
+    fprintf(ConfFile, "%s", userConfigData.c_str());
+    fprintf(ConfFile, "addnode=46.18.47.191\n");
+    fprintf(ConfFile, "addnode=80.7.228.11:22448\n");
+    fprintf(ConfFile, "addnode=95.39.17.203\n");
+    fprintf(ConfFile, "addnode=95.39.17.203:22448\n");
+    fprintf(ConfFile, "addnode=172.105.121.51\n");
+    fprintf(ConfFile, "addnode=172.105.121.51:22448\n");
+    fprintf(ConfFile, "addnode=198.58.109.214:22448\n");
+    fprintf(ConfFile, "addnode=188.164.197.250:22448\n");
+    fclose(ConfFile);
+}
+
+void UpdateConfigFile()
+{
+    // Set standard values
+    bool fVersionFound = false;
+    bool fFlagUpdate = false;
+    // Open requested config file
+    std::ifstream fileConfigRead;
+    fileConfigRead.open(GetConfigFile().c_str());
+    if(!fileConfigRead.is_open()) {
+        // Print for debugging
+        LogPrintf("UpdateConfigFile - ERROR - Cannot open file!\n");
+        return;
+    }
+
+    // Read data
+    std::string line;
+    int iVersion = 88931;// Version number
+    int lVersion;
+    while(fileConfigRead.good()) {
+        // Loop through lines
+        std::getline(fileConfigRead, line);
+        if(!line.empty()) {
+            // Ensure line contains expected data
+            if(line.find("version") != std::string::npos) {
+                fVersionFound = true;
+                // Set version as focus
+                line.erase(0, line.find("#") + std::string("#").length());
+                // Convert string to integer value
+                std::string::size_type string_sz;
+                lVersion = std::stoi(line, &string_sz);
+                // Print for debugging
+                LogPrintf("UpdateConfigFile - Logged Version - %i \n", lVersion);
+                // Verify version update
+                if(lVersion >= iVersion) {
+                    fConfigUpdate = false;
+                    break;
+                } else {
+                    fFlagUpdate = true;
+                    break;
+                }
+            }
+        }
+    }
+    fileConfigRead.close();
+
+    // Rebuild Espers.conf if needed
+    if(fFlagUpdate || !fVersionFound) {
+        // Print for debugging
+        LogPrintf("UpdateConfigFile - Updating Espers Config to version: %i \n", iVersion);
+        // Rebuild using previous user-defined data
+        ReBuildConfigFile();
+        fConfigUpdate = false;
+    }
 }
 
 void StreamConfigFile(map<string, string>& mapSettingsRet,
@@ -1175,6 +1271,10 @@ void InitializeConfigFile()
         // Then read it...
         ReadConfigFile();
     } else {
+        // Check if Espers.conf needs update (once)
+        if (fConfigUpdate) {
+            UpdateConfigFile();
+        }
         // Read Espers.conf
         ReadConfigFile();
     }
