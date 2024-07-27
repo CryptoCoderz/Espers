@@ -74,7 +74,7 @@ cd ~/Espers; qmake -qt=qt5 USE_UPNP=-; make
 ```
 **Upon success the built Espers-qt program will be in the ~/Espers folder (directory)**
 
-### Run Espers daemon
+### Run Espers Qt (GUI)
 ```
 cd ~; ~/Espers/Espers-fractal-qt
 ```
