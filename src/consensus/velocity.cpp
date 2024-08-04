@@ -169,48 +169,63 @@ bool RollingCheckpoints(int nHeight, CBlockIndex* pindexRequest)
 bool tx_Factor(CBlockIndex* prevBlock, CBlock* block)
 {
     // Define Values
-    CAmount tx_inputs_values = 0;
-    CAmount tx_outputs_values = 0;
-    CAmount tx_MapIn_values = 0;
-    CAmount tx_MapOut_values = 0;
-    CAmount tx_threshold = 0;
+    unsigned int nFile = -1;
+    unsigned int nBlockPos = 0;
+    unsigned int nTxPos = 1;
+    int64_t tx_inputs_values = 0;
+    int64_t tx_outputs_values = 0;
+    int64_t tx_MapIn_values = 0;
+    int64_t tx_MapOut_values = 0;
+    int64_t tx_threshold = 0;
+    CTxDB txdb("r");
+    map<uint256, CTxIndex> mapQueuedChanges;
 
+    // Construct new block index object
+    CBlockIndex* pindexNew = new CBlockIndex(nFile, nBlockPos, *block);
+
+    // Set factor values
+    BOOST_FOREACH(const CTransaction& tx, block->vtx)
+    {
+        // Load TX inputs
+        MapPrevTx mapInputs;
+        uint256 hashTx = tx.GetHash();
+        bool fInvalid = false;
+        CDiskTxPos posThisTx(pindexNew->nFile, pindexNew->nBlockPos, nTxPos);
+        // Don't run input checks for coinbase TX
+        if (tx.IsCoinBase()) {
+            tx_outputs_values += tx.GetValueOut();
+        } else {
+            // Ensure we can fetch inputs
+            if (!tx.FetchInputs(txdb, mapQueuedChanges, true, false, mapInputs, fInvalid)) {
+                LogPrintf("DENIED: Invalid TX found during FetchInputs\n");
+                return false;
+            }
+            // Authenticate submitted block's TXs
+            tx_MapIn_values = tx.GetValueMapIn(mapInputs);
+            tx_MapOut_values = tx.GetValueOut();
+            if(tx_inputs_values + tx_MapIn_values >= 0) {
+                tx_inputs_values += tx_MapIn_values;
+            } else {
+                LogPrintf("DENIED: overflow detected tx_inputs_values + tx.GetValueMapIn(mapInputs)\n");
+                return false;
+            }
+            if(tx_outputs_values + tx_MapOut_values >= 0) {
+                tx_outputs_values += tx_MapOut_values;
+            } else {
+                LogPrintf("DENIED: overflow detected tx_outputs_values + tx.GetValueOut()\n");
+                return false;
+            }
+        }
+        mapQueuedChanges[hashTx] = CTxIndex(posThisTx, tx.vout.size());
+    }
+
+    // Set threshold values
     if(block->IsProofOfStake()) {
         tx_threshold = GetProofOfStakeReward(0, 0);
     } else {
         tx_threshold = GetProofOfWorkReward(prevBlock->nHeight+1, 0);
     }
 
-    // Set factor values
-    BOOST_FOREACH(const CTransaction& tx, block->vtx)
-    {
-        // Load TX inputs
-        CTxDB txdb("r");
-        MapPrevTx mapInputs;
-        map<uint256, CTxIndex> mapUnused;
-        bool fInvalid = false;
-        // Ensure we can fetch inputs
-        if (!tx.FetchInputs(txdb, mapUnused, true, false, mapInputs, fInvalid))
-        {
-            LogPrintf("DENIED: Invalid TX found during FetchInputs\n");
-            return false;
-        }
-        // Authenticate submitted block's TXs
-        tx_MapIn_values = tx.GetValueMapIn(mapInputs);
-        tx_MapOut_values = tx.GetValueOut();
-        if(tx_inputs_values + tx_MapIn_values >= 0) {
-            tx_inputs_values += tx_MapIn_values;
-        } else {
-            LogPrintf("DENIED: overflow detected tx_inputs_values + tx.GetValueMapIn(mapInputs)\n");
-            return false;
-        }
-        if(tx_outputs_values + tx_MapOut_values >= 0) {
-            tx_outputs_values += tx_MapOut_values;
-        } else {
-            LogPrintf("DENIED: overflow detected tx_outputs_values + tx.GetValueOut()\n");
-            return false;
-        }
-    }
     // Ensure input/output sanity of transactions in the block
     if((tx_inputs_values + tx_threshold) < tx_outputs_values)
     {

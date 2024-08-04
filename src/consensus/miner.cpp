@@ -73,10 +73,10 @@ public:
     }
 };
 
-
 uint64_t nLastBlockTx = 0;
 uint64_t nLastBlockSize = 0;
 int64_t nLastCoinStakeSearchInterval = 0;
+int nSubmitHeight = 0;
  
 // We want to sort transactions by priority and fee, so:
 typedef boost::tuple<double, double, CTransaction*> TxPriority;
@@ -109,23 +109,33 @@ CBlock* CreateNewBlock(CReserveKey& reservekey, bool fProofOfStake, int64_t* pFe
     GetRelayPeerAddr = "127.0.0.1";
 
     // Create new block
-#ifdef __GNUC__
-#define GCC_VERSION (__GNUC__ * 10000 \
-                     + __GNUC_MINOR__ * 100 \
-                     + __GNUC_PATCHLEVEL__)
-
-/* Test for GCC < 6.3.0 */
-#if GCC_VERSION > 60300
+#ifdef WIN32
+    // Windows
+    //
+    // We assume we are using MINGW with GCC version greater than 6.3.0
     unique_ptr<CBlock> pblock(new CBlock());
 #else
-    auto_ptr<CBlock> pblock(new CBlock());
-#endif
-#else
-    unique_ptr<CBlock> pblock(new CBlock());
+    // Linux / Mac_OS
+    //
+    // We ensure we are using GCC version greater than 6.3.0
+    // Otherwise default to legacy compatibility
+    #ifdef __GNUC__
+        #define GCC_VERSION (__GNUC__ * 10000 \
+                            + __GNUC_MINOR__ * 100 \
+                            + __GNUC_PATCHLEVEL__)
+
+        /* Test for GCC > 6.3.0 */
+        #if GCC_VERSION > 60300
+            unique_ptr<CBlock> pblock(new CBlock());
+        #else
+            auto_ptr<CBlock> pblock(new CBlock());
+        #endif
+    #endif
 #endif
 
-    if (!pblock.get())
+    if (!pblock.get()) {
         return NULL;
+    }
 
     CBlockIndex* pindexPrev = pindexBest;
     int nHeight = pindexPrev->nHeight + 1;
@@ -136,19 +146,16 @@ CBlock* CreateNewBlock(CReserveKey& reservekey, bool fProofOfStake, int64_t* pFe
     txNew.vin[0].prevout.SetNull();
     txNew.vout.resize(1);
 
-    if (!fProofOfStake)
-    {
+    if (!fProofOfStake) {
         CPubKey pubkey;
-        if (!reservekey.GetReservedKey(pubkey))
+        if (!reservekey.GetReservedKey(pubkey)) {
             return NULL;
+        }
         txNew.vout[0].scriptPubKey.SetDestination(pubkey.GetID());
-    }
-    else
-    {
+    } else {
         // Height first in coinbase required for block.version=2
         txNew.vin[0].scriptSig = (CScript() << nHeight) + COINBASE_FLAGS;
         assert(txNew.vin[0].scriptSig.size() <= 100);
-
         txNew.vout[0].SetEmpty();
     }
 
@@ -176,8 +183,9 @@ CBlock* CreateNewBlock(CReserveKey& reservekey, bool fProofOfStake, int64_t* pFe
     // 1-satoshi-fee transactions. It should be set above the real
     // cost to you of processing a transaction.
     int64_t nMinTxFee = MIN_TX_FEE;
-    if (mapArgs.count("-mintxfee"))
+    if (mapArgs.count("-mintxfee")) {
         ParseMoney(mapArgs["-mintxfee"], nMinTxFee);
+    }
 
     pblock->nBits = GetNextTargetRequired(pindexPrev, fProofOfStake);
 
@@ -392,7 +400,6 @@ CBlock* CreateNewBlock(CReserveKey& reservekey, bool fProofOfStake, int64_t* pFe
     return pblock.release();
 }
 
-
 void IncrementExtraNonce(CBlock* pblock, CBlockIndex* pindexPrev, unsigned int& nExtraNonce)
 {
     // Update nExtraNonce
@@ -410,7 +417,6 @@ void IncrementExtraNonce(CBlock* pblock, CBlockIndex* pindexPrev, unsigned int& 
 
     pblock->hashMerkleRoot = pblock->BuildMerkleTree();
 }
-
 
 void FormatHashBuffers(CBlock* pblock, char* pmidstate, char* pdata, char* phash1)
 {
@@ -510,7 +516,6 @@ bool CheckStake(CBlock* pblock)
     LogPrintf("out %s\n", FormatMoney(pblock->vtx[1].GetValueOut()));
 
     // Found a solution
-
     if (pblock->hashPrevBlock != hashBestChain) {
         return error("CheckStake() : generated block is stale");
     }
@@ -570,6 +575,11 @@ void ThreadStakeMiner(CWallet *pwallet)
             MilliSleep(5000);
         }
 
+        // Do not mine a block if we've already submitted one at same height
+        while (nSubmitHeight == pindexBest->nHeight) {
+            MilliSleep(5000);
+        }
+
         //
         // Create new block
         //
@@ -599,10 +609,14 @@ void ThreadStakeMiner(CWallet *pwallet)
     #endif
 #endif
 
-        if (!pblock.get())
+        if (!pblock.get()) {
             return;
+        }
 
-        // Trying to sign a block
+        // Set submitted block height
+        nSubmitHeight = pindexBest->nHeight;
+
+        // Try to sign a block
         if (pblock->SignBlock(*pwallet, nFees))
         {
             SetThreadPriority(THREAD_PRIORITY_NORMAL);

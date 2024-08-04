@@ -1663,13 +1663,12 @@ bool CBlock::DisconnectBlock(CTxDB& txdb, CBlockIndex* pindex)
 bool CBlock::ConnectBlock(CTxDB& txdb, CBlockIndex* pindex, bool fJustCheck)
 {
     // Check it again in case a previous version let a bad block in, but skip BlockSig checking
-    if (!CheckBlock(!fJustCheck, !fJustCheck, false))
+    if (!CheckBlock(!fJustCheck, !fJustCheck, false)) {
         return false;
+    }
 
     unsigned int flags = SCRIPT_VERIFY_NOCACHE;
-
-    if (IsProtocolV3(nTime))
-    {
+    if (IsProtocolV3(nTime)) {
         flags |= SCRIPT_VERIFY_NULLDUMMY |
                  SCRIPT_VERIFY_STRICTENC |
                  SCRIPT_VERIFY_ALLOW_EMPTY_SIG |
@@ -1679,12 +1678,13 @@ bool CBlock::ConnectBlock(CTxDB& txdb, CBlockIndex* pindex, bool fJustCheck)
 
     //// issue here: it doesn't know the version
     unsigned int nTxPos;
-    if (fJustCheck)
+    if (fJustCheck) {
         // FetchInputs treats CDiskTxPos(1,1,1) as a special "refer to memorypool" indicator
         // Since we're just checking the block and not actually connecting it, it might not (and probably shouldn't) be on the disk to get the transaction from
         nTxPos = 1;
-    else
+    } else {
         nTxPos = pindex->nBlockPos + ::GetSerializeSize(CBlock(), SER_DISK, CLIENT_VERSION) - (2 * GetSizeOfCompactSize(0)) + GetSizeOfCompactSize(vtx.size());
+    }
 
     map<uint256, CTxIndex> mapQueuedChanges;
     int64_t nFees = 0;
@@ -1693,15 +1693,13 @@ bool CBlock::ConnectBlock(CTxDB& txdb, CBlockIndex* pindex, bool fJustCheck)
     int64_t nStakeReward = 0;
     unsigned int nSigOps = 0;
 
-    if(nBestHeight > sysUpgrade_01)
-    {
+    if(nBestHeight > sysUpgrade_01) {
         MAX_BLOCK_SIZE = BlockSizeCalculator::ComputeBlockSize(pindex);
         MAX_BLOCK_SIGOPS = MAX_BLOCK_SIZE/50;
         MAX_TX_SIGOPS = MAX_BLOCK_SIGOPS/5;
     }
 
-    BOOST_FOREACH(CTransaction& tx, vtx)
-    {
+    BOOST_FOREACH(CTransaction& tx, vtx) {
         uint256 hashTx = tx.GetHash();
 
         // Do not allow blocks that contain transactions which 'overwrite' older transactions,
@@ -1718,53 +1716,60 @@ bool CBlock::ConnectBlock(CTxDB& txdb, CBlockIndex* pindex, bool fJustCheck)
         // initial block download.
         CTxIndex txindexOld;
         if (txdb.ReadTxIndex(hashTx, txindexOld)) {
-            BOOST_FOREACH(CDiskTxPos &pos, txindexOld.vSpent)
-                if (pos.IsNull())
+            BOOST_FOREACH(CDiskTxPos &pos, txindexOld.vSpent) {
+                if (pos.IsNull()) {
                     return DoS(100, error("ConnectBlock() : tried to overwrite transaction"));
+                }
+            }
         }
 
         nSigOps += GetLegacySigOpCount(tx);
-        if (nSigOps > MAX_BLOCK_SIGOPS)
+        if (nSigOps > MAX_BLOCK_SIGOPS) {
             return DoS(100, error("ConnectBlock() : too many sigops"));
+        }
 
         CDiskTxPos posThisTx(pindex->nFile, pindex->nBlockPos, nTxPos);
-        if (!fJustCheck)
+        if (!fJustCheck) {
             nTxPos += ::GetSerializeSize(tx, SER_DISK, CLIENT_VERSION);
+        }
 
         MapPrevTx mapInputs;
-        if (tx.IsCoinBase())
+        if (tx.IsCoinBase()) {
             nValueOut += tx.GetValueOut();
-        else
-        {
+        } else {
             bool fInvalid;
-            if (!tx.FetchInputs(txdb, mapQueuedChanges, true, false, mapInputs, fInvalid))
+            if (!tx.FetchInputs(txdb, mapQueuedChanges, true, false, mapInputs, fInvalid)) {
                 return false;
+            }
 
             // Add in sigops done by pay-to-script-hash inputs;
             // this is to prevent a "rogue miner" from creating
             // an incredibly-expensive-to-validate block.
             nSigOps += GetP2SHSigOpCount(tx, mapInputs);
-            if (nSigOps > MAX_BLOCK_SIGOPS)
+            if (nSigOps > MAX_BLOCK_SIGOPS) {
                 return DoS(100, error("ConnectBlock() : too many sigops"));
+            }
 
             int64_t nTxValueIn = tx.GetValueMapIn(mapInputs);
             int64_t nTxValueOut = tx.GetValueOut();
             nValueIn += nTxValueIn;
             nValueOut += nTxValueOut;
-            if (!tx.IsCoinStake())
+            if (!tx.IsCoinStake()) {
                 nFees += nTxValueIn - nTxValueOut;
-            if (tx.IsCoinStake())
+            }
+            if (tx.IsCoinStake()) {
                 nStakeReward = nTxValueOut - nTxValueIn;
+            }
 
-            if (!tx.ConnectInputs(mapInputs, mapQueuedChanges, posThisTx, pindex, true, false, flags))
+            if (!tx.ConnectInputs(mapInputs, mapQueuedChanges, posThisTx, pindex, true, false, flags)) {
                 return false;
+            }
         }
 
         mapQueuedChanges[hashTx] = CTxIndex(posThisTx, tx.vout.size());
     }
 
-    if (IsProofOfWork())
-    {
+    if (IsProofOfWork()) {
         int64_t nReward = GetProofOfWorkReward(pindex->nHeight, nFees);
         // TODO: Clean this up!
         // Allow legacy payout for old switch-over blocks (may not conform)
@@ -1780,48 +1785,51 @@ bool CBlock::ConnectBlock(CTxDB& txdb, CBlockIndex* pindex, bool fJustCheck)
                    nReward));
         }
     }
-    if (IsProofOfStake())
-    {
+    if (IsProofOfStake()) {
         // ppcoin: coin stake tx earns reward instead of paying fee
         uint64_t nCoinAge;
-        if (!vtx[1].GetCoinAge(txdb, pindex->pprev, nCoinAge))
+        if (!vtx[1].GetCoinAge(txdb, pindex->pprev, nCoinAge)) {
             return error("ConnectBlock() : %s unable to get coin age for coinstake", vtx[1].GetHash().ToString());
+        }
 
         int64_t nCalculatedStakeReward = GetProofOfStakeReward(nCoinAge, nFees);
-
-        if (nStakeReward > nCalculatedStakeReward)
+        if (nStakeReward > nCalculatedStakeReward) {
             return DoS(100, error("ConnectBlock() : coinstake pays too much(actual=%d vs calculated=%d)", nStakeReward, nCalculatedStakeReward));
+        }
     }
 
     // ppcoin: track money supply and mint amount info
     pindex->nMint = nValueOut - nValueIn + nFees;
     pindex->nMoneySupply = (pindex->pprev? pindex->pprev->nMoneySupply : 0) + nValueOut - nValueIn;
-    if (!txdb.WriteBlockIndex(CDiskBlockIndex(pindex)))
+    if (!txdb.WriteBlockIndex(CDiskBlockIndex(pindex))) {
         return error("Connect() : WriteBlockIndex for pindex failed");
+    }
 
-    if (fJustCheck)
+    if (fJustCheck) {
         return true;
+    }
 
     // Write queued txindex changes
-    for (map<uint256, CTxIndex>::iterator mi = mapQueuedChanges.begin(); mi != mapQueuedChanges.end(); ++mi)
-    {
-        if (!txdb.UpdateTxIndex((*mi).first, (*mi).second))
+    for (map<uint256, CTxIndex>::iterator mi = mapQueuedChanges.begin(); mi != mapQueuedChanges.end(); ++mi) {
+        if (!txdb.UpdateTxIndex((*mi).first, (*mi).second)) {
             return error("ConnectBlock() : UpdateTxIndex failed");
+        }
     }
 
     // Update block index on disk without changing it in memory.
     // The memory index structure will be changed after the db commits.
-    if (pindex->pprev)
-    {
+    if (pindex->pprev) {
         CDiskBlockIndex blockindexPrev(pindex->pprev);
         blockindexPrev.hashNext = pindex->GetBlockHash();
-        if (!txdb.WriteBlockIndex(blockindexPrev))
+        if (!txdb.WriteBlockIndex(blockindexPrev)) {
             return error("ConnectBlock() : WriteBlockIndex failed");
+        }
     }
 
     // Watch for transactions paying to me
-    BOOST_FOREACH(CTransaction& tx, vtx)
+    BOOST_FOREACH(CTransaction& tx, vtx) {
         SyncWithWallets(tx, this);
+    }
 
     return true;
 }
@@ -2328,10 +2336,12 @@ bool NewBlockRelay(CBlock* pblock)
     if (!Velocity(pindexBest, pblock, false)) {
         return error("NewBlockRelay() : newly generated block failed to meet parameters \n");
     }
+
     // Setup values
     uint256 hashBlock = pblock->GetHash();
     int nRelayHeight = nBestHeight+1;
     bool relayFail = true;
+
     // Relay New Block
     int nBlockEstimate = Checkpoints::GetTotalBlocksEstimate();
     LOCK(cs_vNodes);
@@ -2345,10 +2355,12 @@ bool NewBlockRelay(CBlock* pblock)
             }
         }
     }
+
     // Return success if relayed to a peer/node
     if (relayFail == false) {
         return true;
     }
+
     // Fail if we can't relay
     return error("NewBlockRelay() : newly generated block relay failed (Are we synced?) \n");
 
