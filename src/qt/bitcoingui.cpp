@@ -745,15 +745,6 @@ void BitcoinGUI::setNumBlocks(int count)
         //tooltip += QString("<br>");
         //tooltip += tr("Transactions after this will not yet be visible.");
     }
-
-    // Don't word-wrap this (fixed-width) tooltip
-    //tooltip = QString("<nobr>") + tooltip + QString("</nobr>");
-
-    //labelBlocksIcon->setToolTip(tooltip);
-    //progressBarLabel->setToolTip(tooltip);
-    //progressBar->setToolTip(tooltip);
-
-    //statusBar()->setVisible(fShowStatusBar);
 }
 
 void BitcoinGUI::message(const QString &title, const QString &message, bool modal, unsigned int style)

@@ -517,18 +517,24 @@ void OverviewPage::updatePoSstat(bool stat)
             QSyncPercentage = "100";
             nSyncPercentage = 100;
         }
+        if(nSyncPercentage == 100)
+            ui->clStat->setText("<font color=\"green\">" + QSynced + "</font>");
+        if(nSyncPercentage != 100)
+        {
+            // Don't show 100% if it's not (possible due to float value)
+            if(QSyncPercentage == "100.00") {
+                // If QString floats to 100% (innacurate) show realistic % value
+                QSyncPercentage = "99.99";
+            }
+            if(clientModel->getNumConnections() > 0) {
+                ui->clStat->setText("<font color=\"orange\">" + QSyncing + "</font>");
+            }
+        }
         ui->lbTime->setText(QTime);
         ui->stken->setText(QStaking);
         ui->urweight_2->setText(QStakePercentage + "%");
         ui->netweight_2->setText(QNetPercentage + "%");
         ui->sncStatus->setText(QSyncPercentage + "%");
-        if(nSyncPercentage == 100)
-            ui->clStat->setText("<font color=\"green\">" + QSynced + "</font>");
-        if(nSyncPercentage != 100)
-        {
-            if(clientModel->getNumConnections() > 0)
-                ui->clStat->setText("<font color=\"orange\">" + QSyncing + "</font>");
-        }
         return;
     }
 }
