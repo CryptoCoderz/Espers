@@ -1128,6 +1128,7 @@ void BuildConfigFile()
     fprintf(ConfFile, "addnode=172.105.121.51:22448\n");
     fprintf(ConfFile, "addnode=198.58.109.214:22448\n");
     fprintf(ConfFile, "addnode=188.164.197.250:22448\n");
+    fprintf(ConfFile, "addnode=188.164.198.102:22448\n");
     fclose(ConfFile);
 }
 
@@ -1173,6 +1174,7 @@ void ReBuildConfigFile()
     fprintf(ConfFile, "addnode=172.105.121.51:22448\n");
     fprintf(ConfFile, "addnode=198.58.109.214:22448\n");
     fprintf(ConfFile, "addnode=188.164.197.250:22448\n");
+    fprintf(ConfFile, "addnode=188.164.198.102:22448\n");
     fclose(ConfFile);
 }
 

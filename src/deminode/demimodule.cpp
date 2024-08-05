@@ -31,6 +31,8 @@ void BuildDemiConfigFile()
     fprintf(ConfFile, "198.58.109.214:22448\n");
     fprintf(ConfFile, "188.164.197.250\n");
     fprintf(ConfFile, "188.164.197.250:22448\n");
+    fprintf(ConfFile, "188.164.198.102\n");
+    fprintf(ConfFile, "188.164.198.102:22448\n");
     fclose(ConfFile);
 }
 
