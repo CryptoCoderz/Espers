@@ -1846,7 +1846,6 @@ bool static Reorganize(CTxDB& txdb, CBlockIndex* pindexNew)
     int64_t pHeightMerge = pMerge->nHeight;
     int64_t nHeightShorter = 0;
     int64_t nReorgMax = 0;
-    int64_t diffFactor = 0;
     bool fMergeReverse = false;
     bool fRollBackCall = fRollbacktoBlock;
 
@@ -1937,7 +1936,6 @@ bool static Reorganize(CTxDB& txdb, CBlockIndex* pindexNew)
     // Find the fork
     while (pfork != pMerge)
     {
-        diffFactor ++;
         while (pMerge->nHeight > pfork->nHeight)
             if (!(pMerge = pMerge->pprev))
                 return error("Reorganize() : plonger->pprev is null");
@@ -1948,7 +1946,7 @@ bool static Reorganize(CTxDB& txdb, CBlockIndex* pindexNew)
     }
 
     // Verify Supply Sanity of connecting branch
-    if(!bIndex_Factor(pfork, pMerge, diffFactor))
+    if(!bIndex_Factor(pfork, pMerge))
     {
         // Invalid branch coin supply
         return error("Reorganize() : Invalid branch coin supply");

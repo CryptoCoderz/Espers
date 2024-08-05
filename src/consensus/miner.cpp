@@ -525,6 +525,9 @@ bool CheckStake(CBlock* pblock)
         return error("CheckStake() : NewBlockRelay, block failed being relayed to peers!");
     }
 
+    // Set submitted block height
+    nSubmitHeight = pindexBest->nHeight;
+
     return true;
 }
 
@@ -541,6 +544,10 @@ void ThreadStakeMiner(CWallet *pwallet)
 
     while (true)
     {
+        // Set/Define values
+        int64_t elapsedTime = GetTime() - pindexBest->GetBlockTime();
+        int64_t syncWindowTime = 8 * 60 * 60;
+
         while (pwallet->IsLocked())
         {
             nLastCoinStakeSearchInterval = 0;
@@ -554,9 +561,10 @@ void ThreadStakeMiner(CWallet *pwallet)
             MilliSleep(60000);
         }
 
+        // Do not mine a block when syncing or if below connection threshold
         if (fTryToSync)
         {
-            if (vNodes.size() < 1 || IsInitialBlockDownload())
+            if (vNodes.size() < 1 || syncWindowTime < elapsedTime)
             {
                 MilliSleep(60000);
                 continue;
@@ -568,7 +576,6 @@ void ThreadStakeMiner(CWallet *pwallet)
         }
 
         // Do not needlessly mine a block if out of parameters
-        int64_t elapsedTime = GetTime() - pindexBest->GetBlockTime();
         while (elapsedTime < (BLOCK_SPACING_MIN + 5))
         {
             elapsedTime = GetTime() - pindexBest->GetBlockTime();
@@ -612,9 +619,6 @@ void ThreadStakeMiner(CWallet *pwallet)
         if (!pblock.get()) {
             return;
         }
-
-        // Set submitted block height
-        nSubmitHeight = pindexBest->nHeight;
 
         // Try to sign a block
         if (pblock->SignBlock(*pwallet, nFees))

@@ -1100,7 +1100,7 @@ void ReadDPIConfigFile()
 void BuildConfigFile()
 {
     FILE* ConfFile = fopen(GetConfigFile().c_str(), "w");
-    fprintf(ConfFile, "#88931 version\n");
+    fprintf(ConfFile, "#89011 version\n");
     fprintf(ConfFile, "listen=1\n");
     fprintf(ConfFile, "server=1\n");
     fprintf(ConfFile, "deminodes=1\n");
@@ -1134,7 +1134,7 @@ void BuildConfigFile()
 void ReBuildConfigFile()
 {
     // Set standard values
-    std::string userConfigData = "#88931 version\n";
+    std::string userConfigData = "#89011 version\n";
     // Open requested config file
     std::ifstream fileConfigRead;
     fileConfigRead.open(GetConfigFile().c_str());
@@ -1192,7 +1192,7 @@ void UpdateConfigFile()
 
     // Read data
     std::string line;
-    int iVersion = 88931;// Version number
+    int iVersion = 89011;// Version number
     int lVersion;
     while(fileConfigRead.good()) {
         // Loop through lines

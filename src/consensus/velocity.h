@@ -27,7 +27,7 @@ static const          bool VELOCITY_EXPLICIT[]  = { false }; /** Require all swi
 bool Velocity_check(int nHeight);
 bool Velocity(CBlockIndex* prevBlock, CBlock* block, bool fFactor_tx);
 bool tx_Factor(CBlockIndex* prevBlock, CBlock* block);
-bool bIndex_Factor(CBlockIndex* InSplitPoint, CBlockIndex* InSplitEnd, int InFactor);
+bool bIndex_Factor(CBlockIndex* InSplitPoint, CBlockIndex* InSplitEnd);
 
 int VelocityI(int nHeight);
 bool RollingCheckpoints(int nHeight, CBlockIndex *pindexRequest);

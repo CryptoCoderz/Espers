@@ -154,9 +154,6 @@ OverviewPage::OverviewPage(QWidget *parent) :
     SYNCmovie->stop();// Initially set stopped
     ui->syncLabel->setVisible(true);
 
-    // start with displaying the "out of sync" warnings
-    showOutOfSyncWarning(true);
-
     // Always show these labels (Sync Status)
     ui->labelTransactionsStatus->setVisible(true);
     //ui->syncstatusGIF->setVisible(true);
@@ -319,12 +316,6 @@ void OverviewPage::updateAlerts(const QString &warnings)
     this->ui->labelAlerts->setText(warnings);
 }
 
-void OverviewPage::showOutOfSyncWarning(bool fShow)
-{
-    fShow = false;
-    //ui->labelWalletStatus->setVisible(fShow);
-}
-
 void OverviewPage::ShowSynchronizedMessage(bool fSyncFinish)
 {
     if(fSyncFinish) {
@@ -483,6 +474,41 @@ void OverviewPage::updatePoSstat(bool stat)
         double nTimetotalLapse = (GetTime() - Params().GenesisBlock().GetBlockTime()) / 100;
         double nSyncPercentage = 100 - (nTimeLapse / nTimetotalLapse * 100);
 
+        // Sync percentage override based on average block spacing
+        CBlockIndex* pindexScan = pindexBest;
+        int scanDepth = 6;
+        int startDepth = 0;
+        int nDayTime = 24 * 60 * 60;
+        int nLastBlockLapse = GetTime() - pindexScan->GetBlockTime();
+        int64_t averageSpacing;
+        int64_t syncSpacing;
+
+        // If close to genesis block, skip average block scanning
+        if((GetTime() - pindexScan->GetBlockTime() + nDayTime) >= (GetTime() - Params().GenesisBlock().GetBlockTime())) {
+            syncSpacing = 45 * 60;
+            startDepth = 6;
+        } else {
+            // Initialize average spacing value
+            averageSpacing = (pindexScan->GetBlockTime() - pindexScan->pprev->GetBlockTime());
+        }
+
+        // Loop to find average block spacing (an average of 7 blocks)
+        while(startDepth < scanDepth) {
+
+            // Calculate average block spacing
+            pindexScan = pindexScan->pprev;
+            averageSpacing += (pindexScan->GetBlockTime() - pindexScan->pprev->GetBlockTime());
+
+            // Derrive average on final loop
+            if(startDepth == 5) {
+                // Set sync spacing value
+                syncSpacing = (averageSpacing / 7) * 5;
+            }
+
+            // Move up per loop
+            startDepth ++;
+        }
+
         QString QStakePercentage = QString::number(nStakePercentage, 'f', 2);
         QString QNetPercentage = QString::number(nNetPercentage, 'f', 2);
         QString QSyncPercentage = QString::number(nSyncPercentage, 'f', 2);
@@ -512,7 +538,7 @@ void OverviewPage::updatePoSstat(bool stat)
         {
             QStaking = "Enabled";
         }
-        if((GetTime() - pindexBest->GetBlockTime()) < 45 * 60)
+        if(nLastBlockLapse < syncSpacing)
         {
             QSyncPercentage = "100";
             nSyncPercentage = 100;

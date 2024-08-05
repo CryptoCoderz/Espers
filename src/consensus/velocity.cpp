@@ -238,15 +238,12 @@ bool tx_Factor(CBlockIndex* prevBlock, CBlock* block)
     return true;
 }
 
-bool bIndex_Factor(CBlockIndex* InSplitPoint, CBlockIndex* InSplitEnd, int InFactor)
+bool bIndex_Factor(CBlockIndex* InSplitPoint, CBlockIndex* InSplitEnd)
 {
-    CAmount tx_threshold = 500 * COIN;
-    tx_threshold *= InFactor;
-
     // Ensure expected coin supply matches actualy coin supply of branch
-    if(((InSplitPoint->nMoneySupply + tx_threshold) / COIN) < (InSplitEnd->nMoneySupply / COIN))
+    if((InSplitPoint->nMoneySupply / COIN) < (InSplitEnd->nMoneySupply / COIN))
     {
-        LogPrintf("VELOCITY_FACTOR: Mismatched supply in branch, excpected: %u | found: %u\n", (int64_t)((InSplitPoint->nMoneySupply + tx_threshold) / COIN), (int64_t)(InSplitEnd->nMoneySupply / COIN));
+        LogPrintf("VELOCITY_FACTOR: Mismatched supply in branch, excpected: %u | found: %u\n", (int64_t)(InSplitPoint->nMoneySupply / COIN), (int64_t)(InSplitEnd->nMoneySupply / COIN));
         LogPrintf("DENIED: branch contains invalid coin supply amount\n");
         return false;
     }

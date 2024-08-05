@@ -508,7 +508,7 @@ void BitcoinGUI::createToolBars()
 
 void BitcoinGUI::setClientModel(ClientModel *clientModel)
 {
-    netLabel->setText("v0.8.8.9");// Version in GUI
+    netLabel->setText("v0.8.9.0");// Version in GUI
     this->clientModel = clientModel;
     if(clientModel)
     {
@@ -663,8 +663,6 @@ void BitcoinGUI::setNumConnections(int count)
     case 7: case 8: case 9: icon = ":/icons/connect_3"; break;
     default: icon = ":/icons/connect_4"; break;
     }
-    //labelConnectionsIcon->setPixmap(QIcon(icon).pixmap(STATUSBAR_ICONSIZE,STATUSBAR_ICONSIZE));
-    //labelConnectionsIcon->setToolTip(tr("%n active connection(s) to Espers network", "", count));
 }
 
 void BitcoinGUI::setNumBlocks(int count)
@@ -676,74 +674,53 @@ void BitcoinGUI::setNumBlocks(int count)
         return;
     }
 
-    //bool fShowStatusBar = false;
     QString tooltip;
-
     QDateTime lastBlockDate = clientModel->getLastBlockDate();
     QDateTime currentDate = QDateTime::currentDateTime();
-    //int totalSecs = GetTime() - Params().GenesisBlock().GetBlockTime();
+    CBlockIndex* pindexScan = pindexBest;
     int secs = lastBlockDate.secsTo(currentDate);
+    int scanDepth = 6;
+    int startDepth = 0;
+    int nDayTime = 24 * 60 * 60;
+    int64_t averageSpacing;
+    int64_t syncSpacing;
+
+    // If close to genesis block, skip average block scanning
+    if((GetTime() - pindexScan->GetBlockTime() + nDayTime) >= (GetTime() - Params().GenesisBlock().GetBlockTime())) {
+        syncSpacing = 45 * 60;
+        startDepth = 6;
+    } else {
+        // Initialize average spacing value
+        averageSpacing = (pindexScan->GetBlockTime() - pindexScan->pprev->GetBlockTime());
+    }
+
+    // Loop to find average block spacing (an average of 7 blocks)
+    while(startDepth < scanDepth) {
+
+        // Calculate average block spacing
+        pindexScan = pindexScan->pprev;
+        averageSpacing += (pindexScan->GetBlockTime() - pindexScan->pprev->GetBlockTime());
+
+        // Derrive average on final loop
+        if(startDepth == 5) {
+            // Set sync spacing value
+            syncSpacing = (averageSpacing / 7) * 5;
+        }
+
+        // Move up per loop
+        startDepth ++;
+    }
 
     tooltip = tr("Processed %1 blocks of transaction history.").arg(count);
 
     // Set icon state: spinning if catching up, tick otherwise
-    if(secs < 45*60)
+    if(secs < syncSpacing)
     {
-        //tooltip = tr("Up to date") + QString(".<br>") + tooltip;
-        //labelBlocksIcon->setPixmap(QIcon(":/icons/synced").pixmap(STATUSBAR_ICONSIZE, STATUSBAR_ICONSIZE));
-
-        overviewPage->showOutOfSyncWarning(false);
-
         overviewPage->ShowSynchronizedMessage(true);
-
-        //progressBarLabel->setVisible(false);
-        //progressBar->setVisible(false);
     }
     else
     {
-        // Represent time from last generated block in human readable text
-        //QString timeBehindText;
-        //const int HOUR_IN_SECONDS = 60*60;
-        //const int DAY_IN_SECONDS = 24*60*60;
-        //const int WEEK_IN_SECONDS = 7*24*60*60;
-        //const int YEAR_IN_SECONDS = 31556952; // Average length of year in Gregorian calendar
-        //if(secs < 2*DAY_IN_SECONDS)
-        //{
-        //    timeBehindText = tr("%n hour(s)","",secs/HOUR_IN_SECONDS);
-        //}
-        //else if(secs < 2*WEEK_IN_SECONDS)
-        //{
-        //    timeBehindText = tr("%n day(s)","",secs/DAY_IN_SECONDS);
-        //}
-        //else if(secs < YEAR_IN_SECONDS)
-        //{
-        //    timeBehindText = tr("%n week(s)","",secs/WEEK_IN_SECONDS);
-        //}
-        //else
-        //{
-        //    int years = secs / YEAR_IN_SECONDS;
-        //    int remainder = secs % YEAR_IN_SECONDS;
-        //    timeBehindText = tr("%1 and %2").arg(tr("%n year(s)", "", years)).arg(tr("%n week(s)","", remainder/WEEK_IN_SECONDS));
-        //}
-
-        //progressBarLabel->setText(tr(clientModel->isImporting() ? "Importing blocks..." : "Synchronizing with network..."));
-        //progressBarLabel->setVisible(true);
-        //progressBarLabel->setStyleSheet("QLabel { color: #ffffff; }");
-        //progressBar->setFormat(tr("%1 behind").arg(timeBehindText));
-        //progressBar->setMaximum(totalSecs);
-        //progressBar->setValue(totalSecs - secs);
-        //progressBar->setVisible(true);
-        //fShowStatusBar = true;
-
-        //tooltip = tr("Catching up...") + QString("<br>") + tooltip;
-        //labelBlocksIcon->setPixmap(QIcon(":/icons/notsynced").pixmap(STATUSBAR_ICONSIZE, STATUSBAR_ICONSIZE));
-        overviewPage->showOutOfSyncWarning(true);
         overviewPage->ShowSynchronizedMessage(false);
-
-        //tooltip += QString("<br>");
-        //tooltip += tr("Last received block was generated %1 ago.").arg(timeBehindText);
-        //tooltip += QString("<br>");
-        //tooltip += tr("Transactions after this will not yet be visible.");
     }
 }
 
