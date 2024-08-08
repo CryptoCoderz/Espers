@@ -11,7 +11,7 @@ CONFIG += thread
 CONFIG += static
 CONFIG += openssl
 
-QMAKE_CXXFLAGS += -fpermissive
+QMAKE_CXXFLAGS += -fpermissive -std=c++11
 
 # WIN32 OS
 # for boost 1.66 on windows, add (MinGW_Version)-mt-s-x32-(Boost_Version)
@@ -69,15 +69,32 @@ contains(RELEASE, 1) {
     }
 }
 
+# Hardening
+# Make some classes of vulnerabilities unexploitable in case one is discovered.
+#
+# Linux/MacOS
 !win32 {
-# for extra security against potential buffer overflows: enable GCCs Stack Smashing Protection
-QMAKE_CXXFLAGS *= -fstack-protector-all --param ssp-buffer-size=1
-QMAKE_LFLAGS *= -fstack-protector-all --param ssp-buffer-size=1
-# We need to exclude this for Windows cross compile with MinGW 4.2.x, as it will result in a non-working executable!
-# This can be enabled for Windows, when we switch to MinGW >= 4.4.x.
+    # This is a workaround for Ubuntu bug #691722, the default -fstack-protector causes
+    # -fstack-protector-all to be ignored unless -fno-stack-protector is used first.
+    # see: https://bugs.launchpad.net/ubuntu/+source/gcc-4.5/+bug/691722
+    QMAKE_CXXFLAGS *= -fno-stack-protector
 }
+# for extra security against potential buffer overflows: enable GCCs Stack Smashing Protection
+QMAKE_CXXFLAGS *= -fstack-protector-all --param ssp-buffer-size=1 -Wstack-protector
+QMAKE_LFLAGS *= -fstack-protector-all --param ssp-buffer-size=1 -Wstack-protector
 # for extra security (see: https://wiki.debian.org/Hardening): this flag is GCC compiler-specific
 QMAKE_CXXFLAGS += -U_FORTIFY_SOURCE -D_FORTIFY_SOURCE=2
+# Linux/MacOS
+!win32 {
+    # Make some important things such as the global offset table read only as soon as
+    # the dynamic linker is finished building it. This will prevent overwriting of addresses
+    # which would later be jumped to.
+    QMAKE_LFLAGS *= -Wl,-z,relro -Wl,-z,now
+    # Linker in Linux/Debian//Ubuntu 24.04+ assumes that it needs executable stack.
+    # The program doesn't need executable stack. Passing "-z noexecstack" forcefully
+    # disables executable stack, if plausible.
+    QMAKE_LFLAGS *= -Wl,-z,noexecstack
+}
 # for extra security on Windows: enable ASLR and DEP via GCC linker flags
 win32:QMAKE_LFLAGS *= -Wl,--dynamicbase -Wl,--nxcompat
 # on Windows: enable GCC large address aware linker flag

@@ -69,6 +69,11 @@ LIBS+= \
     # which would later be jumped to.
     LDHARDENING+=-Wl,-z,relro -Wl,-z,now
 
+    # Linker in Linux/Debian//Ubuntu 24.04+ assumes that it needs executable stack.
+    # The program doesn't need executable stack. Passing "-z noexecstack" forcefully 
+    # disables executable stack, if plausible.
+    LDHARDENING+=-Wl,-z,noexecstack
+
     # Build position independent code to take advantage of Address Space Layout Randomization
     # offered by some kernels.
     # see doc/build-unix.txt for more information.
@@ -79,7 +84,7 @@ LIBS+= \
 
     # -D_FORTIFY_SOURCE=2 does some checking for potentially exploitable code patterns in
     # the source such overflowing a statically defined buffer.
-    HARDENING+=-D_FORTIFY_SOURCE=2
+    HARDENING+=-U_FORTIFY_SOURCE -D_FORTIFY_SOURCE=2
 #
 
 
