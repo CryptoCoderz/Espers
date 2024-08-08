@@ -675,10 +675,8 @@ void BitcoinGUI::setNumBlocks(int count)
     }
 
     QString tooltip;
-    QDateTime lastBlockDate = clientModel->getLastBlockDate();
-    QDateTime currentDate = QDateTime::currentDateTime();
     CBlockIndex* pindexScan = pindexBest;
-    int secs = lastBlockDate.secsTo(currentDate);
+    int nLastBlockLapse = GetTime() - pindexScan->GetBlockTime();
     int scanDepth = 6;
     int startDepth = 0;
     int nDayTime = 24 * 60 * 60;
@@ -714,7 +712,7 @@ void BitcoinGUI::setNumBlocks(int count)
     tooltip = tr("Processed %1 blocks of transaction history.").arg(count);
 
     // Set icon state: spinning if catching up, tick otherwise
-    if(secs < syncSpacing)
+    if(nLastBlockLapse < syncSpacing)
     {
         overviewPage->ShowSynchronizedMessage(true);
     }
