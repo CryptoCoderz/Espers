@@ -78,14 +78,10 @@ contains(RELEASE, 1) {
     # -fstack-protector-all to be ignored unless -fno-stack-protector is used first.
     # see: https://bugs.launchpad.net/ubuntu/+source/gcc-4.5/+bug/691722
     QMAKE_CXXFLAGS *= -fno-stack-protector
-}
-# for extra security against potential buffer overflows: enable GCCs Stack Smashing Protection
-QMAKE_CXXFLAGS *= -fstack-protector-all --param ssp-buffer-size=1 -Wstack-protector
-QMAKE_LFLAGS *= -fstack-protector-all --param ssp-buffer-size=1 -Wstack-protector
-# for extra security (see: https://wiki.debian.org/Hardening): this flag is GCC compiler-specific
-QMAKE_CXXFLAGS += -U_FORTIFY_SOURCE -D_FORTIFY_SOURCE=2
-# Linux/MacOS
-!win32 {
+    # for extra security against potential buffer overflows: enable GCCs Stack Smashing Protection
+    # We need to exclude this for Windows compile with MinGW, as it can result in a non-working executable!
+    QMAKE_CXXFLAGS *= -fstack-protector-all --param ssp-buffer-size=1 -Wstack-protector
+    QMAKE_LFLAGS *= -fstack-protector-all --param ssp-buffer-size=1 -Wstack-protector
     # Make some important things such as the global offset table read only as soon as
     # the dynamic linker is finished building it. This will prevent overwriting of addresses
     # which would later be jumped to.
@@ -95,6 +91,8 @@ QMAKE_CXXFLAGS += -U_FORTIFY_SOURCE -D_FORTIFY_SOURCE=2
     # disables executable stack, if plausible.
     QMAKE_LFLAGS *= -Wl,-z,noexecstack
 }
+# for extra security (see: https://wiki.debian.org/Hardening): this flag is GCC compiler-specific
+QMAKE_CXXFLAGS += -U_FORTIFY_SOURCE -D_FORTIFY_SOURCE=2
 # for extra security on Windows: enable ASLR and DEP via GCC linker flags
 win32:QMAKE_LFLAGS *= -Wl,--dynamicbase -Wl,--nxcompat
 # on Windows: enable GCC large address aware linker flag

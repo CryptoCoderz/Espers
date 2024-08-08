@@ -32,7 +32,7 @@ LDFLAGS=-fstack-protector-all -Wstack-protector -Wl,--dynamicbase -Wl,--nxcompat
 
 # CXXFLAGS can be specified on the make command line, so we use xCXXFLAGS that only
 # adds some defaults in front. Unfortunately, CXXFLAGS=... $(CXXFLAGS) does not work.
-xCXXFLAGS=-std=c++11 -fstack-protector-all -Wstack-protector -U_FORTIFY_SOURCE -D_FORTIFY_SOURCE=2
+xCXXFLAGS=-std=c++11 -fstack-protector-all -Wstack-protector -D_FORTIFY_SOURCE=2
 
 TESTDEFS = -DTEST_DATA_DIR=$(abspath test/data)
 
