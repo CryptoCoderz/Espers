@@ -28,11 +28,11 @@ LIBS= \
 DEFS=-DWIN32 -D_WINDOWS -DBOOST_THREAD_USE_LIB -DBOOST_SPIRIT_THREADSAFE
 DEBUGFLAGS=-g
 CFLAGS=-mthreads -O2 -msse2 -w -Wall -Wextra -Wno-ignored-qualifiers -Wformat -Wformat-security -Wno-unused-parameter $(DEBUGFLAGS) $(DEFS) $(INCLUDEPATHS)
-LDFLAGS=-fstack-protector-all -Wstack-protector -Wl,--dynamicbase -Wl,--nxcompat -Wl,--large-address-aware -static -static-libgcc -static-libstdc++
+LDFLAGS=-Wstack-protector -Wl,--dynamicbase -Wl,--nxcompat -Wl,--large-address-aware -static -static-libgcc -static-libstdc++
 
 # CXXFLAGS can be specified on the make command line, so we use xCXXFLAGS that only
 # adds some defaults in front. Unfortunately, CXXFLAGS=... $(CXXFLAGS) does not work.
-xCXXFLAGS=-std=c++11 -fstack-protector-all -Wstack-protector -D_FORTIFY_SOURCE=2
+xCXXFLAGS=-std=c++11 -Wstack-protector -D_FORTIFY_SOURCE=2
 
 TESTDEFS = -DTEST_DATA_DIR=$(abspath test/data)
 
