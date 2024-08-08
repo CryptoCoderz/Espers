@@ -9,7 +9,7 @@ Linux/Unix Espersd: Headless Daemon for Espers
 Build instructions
 ===================
 
-Compiling Espers daemon on Ubuntu 22.04 LTS (Jammy Jellyfish)
+Compiling Espers daemon on Ubuntu 24.04 LTS (Noble Numbat)
 ---------------------------
 ### Note: guide should be compatible with other Ubuntu/Linux versions from 14.04+
 
