@@ -20,7 +20,7 @@ std::string GetDemiConfigFile()
 void BuildDemiConfigFile()
 {
     FILE* ConfFile = fopen(GetDemiConfigFile().c_str(), "w");
-    fprintf(ConfFile, "#89021 version\n");
+    fprintf(ConfFile, "#89031 version\n");
     fprintf(ConfFile, "46.18.47.191\n");
     fprintf(ConfFile, "80.7.228.11:22448\n");
     fprintf(ConfFile, "95.39.17.203\n");
@@ -35,6 +35,8 @@ void BuildDemiConfigFile()
     fprintf(ConfFile, "188.164.198.102:22448\n");
     fprintf(ConfFile, "172.234.87.233\n");
     fprintf(ConfFile, "172.234.87.233:22448\n");
+    fprintf(ConfFile, "172.105.11.34\n");
+    fprintf(ConfFile, "172.105.11.34:22448\n");
     fclose(ConfFile);
 }
 
@@ -85,7 +87,7 @@ void UpdateDemiConfigFile()
 
     // Read data
     std::string line;
-    int iVersion = 89021;// Version number
+    int iVersion = 89031;// Version number
     int lVersion;
     while(fileConfigRead.good()) {
         // Loop through lines

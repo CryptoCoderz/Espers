@@ -1100,7 +1100,7 @@ void ReadDPIConfigFile()
 void BuildConfigFile()
 {
     FILE* ConfFile = fopen(GetConfigFile().c_str(), "w");
-    fprintf(ConfFile, "#89021 version\n");
+    fprintf(ConfFile, "#89031 version\n");
     fprintf(ConfFile, "listen=1\n");
     fprintf(ConfFile, "server=1\n");
     fprintf(ConfFile, "deminodes=1\n");
@@ -1130,13 +1130,14 @@ void BuildConfigFile()
     fprintf(ConfFile, "addnode=188.164.197.250:22448\n");
     fprintf(ConfFile, "addnode=188.164.198.102:22448\n");
     fprintf(ConfFile, "addnode=172.234.87.233:22448\n");
+    fprintf(ConfFile, "addnode=172.105.11.34:22448\n");
     fclose(ConfFile);
 }
 
 void ReBuildConfigFile()
 {
     // Set standard values
-    std::string userConfigData = "#89011 version\n";
+    std::string userConfigData = "#89031 version\n";
     // Open requested config file
     std::ifstream fileConfigRead;
     fileConfigRead.open(GetConfigFile().c_str());
@@ -1177,6 +1178,7 @@ void ReBuildConfigFile()
     fprintf(ConfFile, "addnode=188.164.197.250:22448\n");
     fprintf(ConfFile, "addnode=188.164.198.102:22448\n");
     fprintf(ConfFile, "addnode=172.234.87.233:22448\n");
+    fprintf(ConfFile, "addnode=172.105.11.34:22448\n");
     fclose(ConfFile);
 }
 
@@ -1196,7 +1198,7 @@ void UpdateConfigFile()
 
     // Read data
     std::string line;
-    int iVersion = 89021;// Version number
+    int iVersion = 89031;// Version number
     int lVersion;
     while(fileConfigRead.good()) {
         // Loop through lines
