@@ -9,7 +9,7 @@ Linux/Unix Espers-qt: Qt5 GUI for Espers
 Build instructions
 ===================
 
-Compiling Espers Qt on Ubuntu 22.04 LTS (Jammy Jellyfish)
+Compiling Espers Qt on Ubuntu 24.04 LTS (Noble Numbat)
 ---------------------------
 ### Note: guide should be compatible with other Ubuntu/Linux versions from 14.04+
 
