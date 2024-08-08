@@ -67,6 +67,8 @@ addnode=172.105.121.51:22448
 addnode=198.58.109.214:22448
 addnode=188.164.197.250:22448
 addnode=188.164.198.102:22448
+addnode=172.234.87.233:22448
+addnode=172.105.11.34:22448
 
 CONFIG
 chmod 700 ~/.ESP/Espers.conf; chmod 700 ~/.ESP; ls -la ~/.ESP
