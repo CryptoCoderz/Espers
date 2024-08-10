@@ -55,8 +55,9 @@ int64_t scantime_2 = 0;
 int64_t prevPoW = 0; // hybrid value
 int64_t prevPoS = 0; // hybrid value
 uint64_t blkTime = 0;
-uint64_t cntTime = 0;
+uint64_t typeTime = 0;
 uint64_t prvTime = 0;
+uint64_t prvTime_2 = 0;
 uint64_t difTime = 0;
 uint64_t hourRounds = 0;
 uint64_t minuteRounds = 0;
@@ -87,7 +88,7 @@ void VRXswngdebug(bool fProofOfStake)
 {
     // Print for debugging
     LogPrintf("Previously discovered %s block: %u: \n",difType.c_str(),prvTime);
-    LogPrintf("Current block-time: %u: \n",difType.c_str(),cntTime);
+    LogPrintf("Current block-time: %u: \n",difType.c_str(),typeTime);
     LogPrintf("Time since last %s block: %u: \n",difType.c_str(),difTime);
     // Handle updated versions as well as legacy
     if(pindexPrev->GetBlockTime() > VRX_V3_6) {
@@ -102,7 +103,7 @@ void VRXswngdebug(bool fProofOfStake)
                 return;
             }
             debugTerminalAverage /= debugDifCurve;
-            LogPrintf("diffTime%s is greater than %u Minutes: %u \n",difType.c_str(),debugminuteRounds,cntTime);
+            LogPrintf("diffTime%s is greater than %u Minutes: %u \n",difType.c_str(),debugminuteRounds,typeTime);
             LogPrintf("Difficulty will be multiplied by: %d \n",debugTerminalAverage);
             // Break loop after 20 minutes, otherwise time threshold will auto-break loop
             if (debugminuteRounds > (5 + 15)){
@@ -112,10 +113,10 @@ void VRXswngdebug(bool fProofOfStake)
             debugminuteRounds ++;
         }
     } else {
-        if(difTime > (hourRounds+0) * 60 * 60) {LogPrintf("diffTime%s is greater than 1 Hours: %u \n",difType.c_str(),cntTime);}
-        if(difTime > (hourRounds+1) * 60 * 60) {LogPrintf("diffTime%s is greater than 2 Hours: %u \n",difType.c_str(),cntTime);}
-        if(difTime > (hourRounds+2) * 60 * 60) {LogPrintf("diffTime%s is greater than 3 Hours: %u \n",difType.c_str(),cntTime);}
-        if(difTime > (hourRounds+3) * 60 * 60) {LogPrintf("diffTime%s is greater than 4 Hours: %u \n",difType.c_str(),cntTime);}
+        if(difTime > (hourRounds+0) * 60 * 60) {LogPrintf("diffTime%s is greater than 1 Hours: %u \n",difType.c_str(),typeTime);}
+        if(difTime > (hourRounds+1) * 60 * 60) {LogPrintf("diffTime%s is greater than 2 Hours: %u \n",difType.c_str(),typeTime);}
+        if(difTime > (hourRounds+2) * 60 * 60) {LogPrintf("diffTime%s is greater than 3 Hours: %u \n",difType.c_str(),typeTime);}
+        if(difTime > (hourRounds+3) * 60 * 60) {LogPrintf("diffTime%s is greater than 4 Hours: %u \n",difType.c_str(),typeTime);}
     }
     return;
 }
@@ -288,7 +289,7 @@ unsigned int DarkGravityWave(const CBlockIndex* pindexLast, bool fProofOfStake)
 //
 
 //
-// This is VRX (v3.6) revised implementation
+// This is VRX (v3.7) revised implementation
 //
 // Terminal-Velocity-RateX, v10-Beta-R9, written by Jonathan Dan Zaretsky - cryptocoderz@gmail.com
 void VRX_BaseEngine(const CBlockIndex* pindexLast, bool fProofOfStake)
@@ -436,9 +437,10 @@ void VRX_ThreadCurve(const CBlockIndex* pindexLast, bool fProofOfStake)
     {
         // Define time values
         blkTime = pindexLast->GetBlockTime();
-        cntTime = BlockVelocityType->GetBlockTime();
+        typeTime = BlockVelocityType->GetBlockTime();
         prvTime = BlockVelocityType->pprev->GetBlockTime();
-        difTime = cntTime - prvTime;
+        prvTime_2 = pindexLast->pprev->GetBlockTime();
+        difTime = typeTime - prvTime;
         hourRounds = 1;
         minuteRounds = 15;
         difCurve = 2;
@@ -453,9 +455,14 @@ void VRX_ThreadCurve(const CBlockIndex* pindexLast, bool fProofOfStake)
         if(fDebug) VRXswngdebug(fProofOfStake);
 
         // Version 1.2 Extended Curve Run Upgrade
-        if(pindexLast->GetBlockTime() > VRX_V3_6) {
-            // Set unbiased comparison
-            difTime = blkTime - cntTime;
+        if(blkTime > VRX_V3_6) {
+            // Set block type biased comparison
+            difTime = blkTime - typeTime;
+            // Version 1.3 Extended Curve Run Upgrade
+            if(blkTime > VRX_V3_7) {
+                // Add unbiased comparison
+                difTime += blkTime - prvTime_2;
+            }
             // Run Curve
             while(difTime > (minuteRounds * 60)) {
                 // Skip Extended Curve Run if diff is too low

@@ -508,7 +508,7 @@ void BitcoinGUI::createToolBars()
 
 void BitcoinGUI::setClientModel(ClientModel *clientModel)
 {
-    netLabel->setText("v0.8.9.0");// Version in GUI
+    netLabel->setText("v0.8.9.1");// Version in GUI
     this->clientModel = clientModel;
     if(clientModel)
     {

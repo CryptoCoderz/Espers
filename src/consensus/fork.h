@@ -58,21 +58,23 @@ static const int64_t VELOCITY_TDIFF = 667350; // Use Velocity's retargetting met
 inline bool IsProtocolV3(int64_t nTime) { return TestNet() || nTime > 1535673600; } // ON (TOGGLED Fri, 31 Aug 2018 00:00:00 GMT)
 /** VRX difficulty upgrade to v3.6 */
 static const int64_t VRX_V3_6 = 1696576027; // ON (TOGGLED Fri, 6 Oct 2023 7:07:07 GMT)
+/** VRX difficulty upgrade to v3.7 */
+static const int64_t VRX_V3_7 = 1723506989; // ON (TOGGLED Mon, 12 August 2024 23:56:29 GMT)
 
 // Don't ever reuse these IDs for other sporks
 #define SPORK_1_XNODE_PAYMENTS_ENFORCEMENT               10000
-#define SPORK_6_REPLAY_BLOCKS                                 10005
+#define SPORK_6_REPLAY_BLOCKS                            10005
 #define SPORK_7_XNODE_SCANNING                           10006
 #define SPORK_8_XNODE_PAYMENT_ENFORCEMENT                10007
 #define SPORK_10_XNODE_PAY_UPDATED_NODES                 10009
-#define SPORK_12_RECONSIDER_BLOCKS                            10011
+#define SPORK_12_RECONSIDER_BLOCKS                       10011
 
 #define SPORK_1_XNODE_PAYMENTS_ENFORCEMENT_DEFAULT       4070908800   // OFF
-#define SPORK_4_RECONVERGE_DEFAULT                            0            // ON - BUT NOT USED
-#define SPORK_6_REPLAY_BLOCKS_DEFAULT                         0            // ON - BUT NOT USED
+#define SPORK_4_RECONVERGE_DEFAULT                       0            // ON - BUT NOT USED
+#define SPORK_6_REPLAY_BLOCKS_DEFAULT                    0            // ON - BUT NOT USED
 #define SPORK_8_XNODE_PAYMENT_ENFORCEMENT_DEFAULT        4070908800   // OFF
 #define SPORK_10_XNODE_PAY_UPDATED_NODES_DEFAULT         4070908800   // OFF
-#define SPORK_12_RECONSIDER_BLOCKS_DEFAULT                    0            // ON
+#define SPORK_12_RECONSIDER_BLOCKS_DEFAULT               0            // ON
 
 void ProcessSpork(CNode* pfrom, std::string& strCommand, CDataStream& vRecv);
 int64_t GetSporkValue(int nSporkID);
