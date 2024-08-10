@@ -1464,8 +1464,9 @@ bool CTransaction::FetchInputs(CTxDB& txdb, const map<uint256, CTxIndex>& mapTes
                 txindex.vSpent.resize(txPrev.vout.size());
         } else {
             // Get prev tx from disk
-            if (!txPrev.ReadFromDisk(txindex.pos))
+            if (!txPrev.ReadFromDisk(txindex.pos)) {
                 return error("FetchInputs() : %s ReadFromDisk prev tx %s failed", GetHash().ToString(),  prevout.hash.ToString());
+            }
         }
     }
 
