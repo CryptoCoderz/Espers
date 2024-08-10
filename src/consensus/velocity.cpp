@@ -169,8 +169,8 @@ bool RollingCheckpoints(int nHeight, CBlockIndex* pindexRequest)
 bool tx_Factor(CBlockIndex* prevBlock, CBlock* block)
 {
     // Define Values
-    unsigned int nFile = -1;
-    unsigned int nBlockPos = 0;
+    unsigned int nFile = 1;
+    unsigned int nBlockPos = 1;
     unsigned int nTxPos = 1;
     int64_t tx_inputs_values = 0;
     int64_t tx_outputs_values = 0;
@@ -180,9 +180,6 @@ bool tx_Factor(CBlockIndex* prevBlock, CBlock* block)
     CTxDB txdb("r");
     map<uint256, CTxIndex> mapQueuedChanges;
 
-    // Construct new block index object
-    CBlockIndex* pindexNew = new CBlockIndex(nFile, nBlockPos, *block);
-
     // Set factor values
     BOOST_FOREACH(const CTransaction& tx, block->vtx)
     {
@@ -190,7 +187,7 @@ bool tx_Factor(CBlockIndex* prevBlock, CBlock* block)
         MapPrevTx mapInputs;
         uint256 hashTx = tx.GetHash();
         bool fInvalid = false;
-        CDiskTxPos posThisTx(pindexNew->nFile, pindexNew->nBlockPos, nTxPos);
+        CDiskTxPos posThisTx(nFile, nBlockPos, nTxPos);
         // Don't run input checks for coinbase TX
         if (tx.IsCoinBase()) {
             tx_outputs_values += tx.GetValueOut();

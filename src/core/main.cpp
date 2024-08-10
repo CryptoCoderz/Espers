@@ -1430,43 +1430,39 @@ bool CTransaction::FetchInputs(CTxDB& txdb, const map<uint256, CTxIndex>& mapTes
     // be dropped).  If tx is definitely invalid, fInvalid will be set to true.
     fInvalid = false;
 
-    if (IsCoinBase())
+    if (IsCoinBase()) {
         return true; // Coinbase transactions have no inputs to fetch.
+    }
 
-    for (unsigned int i = 0; i < vin.size(); i++)
-    {
+    for (unsigned int i = 0; i < vin.size(); i++) {
         COutPoint prevout = vin[i].prevout;
-        if (inputsRet.count(prevout.hash))
+        if (inputsRet.count(prevout.hash)) {
             continue; // Got it already
+        }
 
         // Read txindex
         CTxIndex& txindex = inputsRet[prevout.hash].first;
         bool fFound = true;
-        if ((fBlock || fMiner) && mapTestPool.count(prevout.hash))
-        {
+        if ((fBlock || fMiner) && mapTestPool.count(prevout.hash)) {
             // Get txindex from current proposed changes
             txindex = mapTestPool.find(prevout.hash)->second;
-        }
-        else
-        {
+        } else {
             // Read txindex from txdb
             fFound = txdb.ReadTxIndex(prevout.hash, txindex);
         }
-        if (!fFound && (fBlock || fMiner))
+        if (!fFound && (fBlock || fMiner)) {
             return fMiner ? false : error("FetchInputs() : %s prev tx %s index entry not found", GetHash().ToString(),  prevout.hash.ToString());
+        }
 
         // Read txPrev
         CTransaction& txPrev = inputsRet[prevout.hash].second;
-        if (!fFound || txindex.pos == CDiskTxPos(1,1,1))
-        {
+        if (!fFound || txindex.pos == CDiskTxPos(1,1,1)) {
             // Get prev tx from single transactions in memory
             if (!mempool.lookup(prevout.hash, txPrev))
                 return error("FetchInputs() : %s mempool Tx prev not found %s", GetHash().ToString(),  prevout.hash.ToString());
             if (!fFound)
                 txindex.vSpent.resize(txPrev.vout.size());
-        }
-        else
-        {
+        } else {
             // Get prev tx from disk
             if (!txPrev.ReadFromDisk(txindex.pos))
                 return error("FetchInputs() : %s ReadFromDisk prev tx %s failed", GetHash().ToString(),  prevout.hash.ToString());
@@ -1474,14 +1470,12 @@ bool CTransaction::FetchInputs(CTxDB& txdb, const map<uint256, CTxIndex>& mapTes
     }
 
     // Make sure all prevout.n indexes are valid:
-    for (unsigned int i = 0; i < vin.size(); i++)
-    {
+    for (unsigned int i = 0; i < vin.size(); i++) {
         const COutPoint prevout = vin[i].prevout;
         assert(inputsRet.count(prevout.hash) != 0);
         const CTxIndex& txindex = inputsRet[prevout.hash].first;
         const CTransaction& txPrev = inputsRet[prevout.hash].second;
-        if (prevout.n >= txPrev.vout.size() || prevout.n >= txindex.vSpent.size())
-        {
+        if (prevout.n >= txPrev.vout.size() || prevout.n >= txindex.vSpent.size()) {
             // Revisit this if/when transaction replacement is implemented and allows
             // adding inputs:
             fInvalid = true;

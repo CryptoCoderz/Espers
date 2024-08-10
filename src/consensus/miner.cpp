@@ -503,12 +503,18 @@ bool CheckStake(CBlock* pblock)
     uint256 proofHash = 0, hashTarget = 0;
     uint256 hashBlock = pblock->GetHash();
 
-    if (!pblock->IsProofOfStake())
+    // Set submitted block height
+    nSubmitHeight = pindexBest->nHeight;
+
+    // Ensure block is proof-of-stake
+    if (!pblock->IsProofOfStake()) {
         return error("CheckStake() : %s is not a proof-of-stake block", hashBlock.GetHex());
+    }
 
     // verify hash target and signature of coinstake tx
-    if (!CheckProofOfStake(mapBlockIndex[pblock->hashPrevBlock], pblock->vtx[1], pblock->nBits, proofHash, hashTarget))
+    if (!CheckProofOfStake(mapBlockIndex[pblock->hashPrevBlock], pblock->vtx[1], pblock->nBits, proofHash, hashTarget)) {
         return error("CheckStake() : proof-of-stake checking failed");
+    }
 
     //// debug print
     LogPrintf("CheckStake() : new proof-of-stake block found  \n  hash: %s \nproofhash: %s  \ntarget: %s\n", hashBlock.GetHex(), proofHash.GetHex(), hashTarget.GetHex());
@@ -524,9 +530,6 @@ bool CheckStake(CBlock* pblock)
     if (!NewBlockRelay(pblock)) {
         return error("CheckStake() : NewBlockRelay, block failed being relayed to peers!");
     }
-
-    // Set submitted block height
-    nSubmitHeight = pindexBest->nHeight;
 
     return true;
 }
