@@ -38,7 +38,7 @@ The contribution workflow is described in [CONTRIBUTING.md](CONTRIBUTING.md).
 The developer Discord should be used to discuss complicated or controversial changes 
 before working on a patch set.
 
-Developer Discord can be found at https://discord.gg/cn3AfPS .
+Developer Discord can be found by clicking (Joining): [Espers Discord](https://discord.gg/cn3AfPS).
 
 Testing
 -------
