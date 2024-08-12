@@ -570,8 +570,8 @@ void ThreadStakeMiner(CWallet *pwallet)
             if (vNodes.size() < 1 || syncWindowTime < elapsedTime)
             {
                 if (pindexBest->nHeight != 1178164) {
-                MilliSleep(60000);
-                continue;
+                    MilliSleep(60000);
+                    continue;
                 }
             }
             else
