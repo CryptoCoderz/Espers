@@ -326,7 +326,7 @@ CBlock* CreateNewBlock(CReserveKey& reservekey, bool fProofOfStake, int64_t* pFe
             map<uint256, CTxIndex> mapTestPoolTmp(mapTestPool);
             MapPrevTx mapInputs;
             bool fInvalid;
-            if (!tx.FetchInputs(txdb, mapTestPoolTmp, false, true, mapInputs, fInvalid))
+            if (!tx.FetchInputs(txdb, mapTestPoolTmp, true, false, mapInputs, fInvalid))
                 continue;
 
             int64_t nTxFees = tx.GetValueMapIn(mapInputs)-tx.GetValueOut();
@@ -569,8 +569,10 @@ void ThreadStakeMiner(CWallet *pwallet)
         {
             if (vNodes.size() < 1 || syncWindowTime < elapsedTime)
             {
+                if (pindexBest->nHeight != 1178164) {
                 MilliSleep(60000);
                 continue;
+                }
             }
             else
             {

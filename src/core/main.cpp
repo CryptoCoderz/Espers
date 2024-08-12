@@ -1421,19 +1421,25 @@ bool CTransaction::DisconnectInputs(CTxDB& txdb)
 }
 
 
-bool CTransaction::FetchInputs(CTxDB& txdb, const map<uint256, CTxIndex>& mapTestPool,
-                               bool fBlock, bool fMiner, MapPrevTx& inputsRet, bool& fInvalid) const
+bool CTransaction::FetchInputs(CTxDB& txdb, const map<uint256, CTxIndex>& mapTxPool,
+                               bool fBlock, bool fInFlight, MapPrevTx& inputsRet, bool& fInvalid) const
 {
     // FetchInputs can return false either because we just haven't seen some inputs
     // (in which case the transaction should be stored as an orphan)
     // or because the transaction is malformed (in which case the transaction should
     // be dropped).  If tx is definitely invalid, fInvalid will be set to true.
+    // When accepting an incoming block that is not yet stored to the disk we allow
+    // inputs that are only found in the in-flight block. Once stored this is verified
+    // in depth via ConnectBlock() function which is always called after writing a
+    // block to the disk.
     fInvalid = false;
 
+    // Coinbase transactions have no inputs to fetch.
     if (IsCoinBase()) {
-        return true; // Coinbase transactions have no inputs to fetch.
+        return true;
     }
 
+    // Loop through tx inputs and find their coinciding previous outputs
     for (unsigned int i = 0; i < vin.size(); i++) {
         COutPoint prevout = vin[i].prevout;
         if (inputsRet.count(prevout.hash)) {
@@ -1442,45 +1448,70 @@ bool CTransaction::FetchInputs(CTxDB& txdb, const map<uint256, CTxIndex>& mapTes
 
         // Read txindex
         CTxIndex& txindex = inputsRet[prevout.hash].first;
-        bool fFound = true;
-        if ((fBlock || fMiner) && mapTestPool.count(prevout.hash)) {
+        // Read txindex from txdb
+        bool fFound = txdb.ReadTxIndex(prevout.hash, txindex);
+        // Check if we have proposed changes mapped
+        bool fHasMap = mapTxPool.count(prevout.hash);
+        // Check if we are verifying data going into a block
+        if (fBlock && fHasMap) {
             // Get txindex from current proposed changes
-            txindex = mapTestPool.find(prevout.hash)->second;
-        } else {
-            // Read txindex from txdb
-            fFound = txdb.ReadTxIndex(prevout.hash, txindex);
+            txindex = mapTxPool.find(prevout.hash)->second;
+            fFound = true;
         }
-        if (!fFound && (fBlock || fMiner)) {
-            return fMiner ? false : error("FetchInputs() : %s prev tx %s index entry not found", GetHash().ToString(),  prevout.hash.ToString());
+
+        // Do not allow unfound inputs into a block
+        if (!fFound && fBlock) {
+            return error("FetchInputs() : fBlock() - prev tx index entry not found %s", prevout.hash.ToString());
         }
 
         // Read txPrev
         CTransaction& txPrev = inputsRet[prevout.hash].second;
+        bool fInDisk = true;
+        // Get prev tx from single transactions in memory
         if (!fFound || txindex.pos == CDiskTxPos(1,1,1)) {
-            // Get prev tx from single transactions in memory
-            if (!mempool.lookup(prevout.hash, txPrev))
-                return error("FetchInputs() : %s mempool Tx prev not found %s", GetHash().ToString(),  prevout.hash.ToString());
-            if (!fFound)
-                txindex.vSpent.resize(txPrev.vout.size());
-        } else {
-            // Get prev tx from disk
-            if (!txPrev.ReadFromDisk(txindex.pos)) {
-                return error("FetchInputs() : %s ReadFromDisk prev tx %s failed", GetHash().ToString(),  prevout.hash.ToString());
+            if (!mempool.lookup(prevout.hash, txPrev)) {
+                if (!fInFlight) {
+                    return error("FetchInputs() : mempool() - prev tx not found %s", prevout.hash.ToString());
+                }
             }
+        }
+        // Get prev tx from disk if not in mempool
+        if (fFound) {
+            if (!txPrev.ReadFromDisk(txindex.pos)) {
+                fInDisk = false;
+                if (!fInFlight) {
+                    return error("FetchInputs() : ReadFromDisk() prev tx not found %s", prevout.hash.ToString());
+                }
+            }
+        }
+        // Get prev tx from in-flight block mapped tx
+        if (!fInDisk) {
+            if (!fHasMap) {
+                return error("FetchInputs() : mapTxPool() - prev tx not found %s", prevout.hash.ToString());
+            }
+        }
+        if (!fFound) {
+            txindex.vSpent.resize(txPrev.vout.size());
         }
     }
 
     // Make sure all prevout.n indexes are valid:
-    for (unsigned int i = 0; i < vin.size(); i++) {
-        const COutPoint prevout = vin[i].prevout;
-        assert(inputsRet.count(prevout.hash) != 0);
-        const CTxIndex& txindex = inputsRet[prevout.hash].first;
-        const CTransaction& txPrev = inputsRet[prevout.hash].second;
-        if (prevout.n >= txPrev.vout.size() || prevout.n >= txindex.vSpent.size()) {
-            // Revisit this if/when transaction replacement is implemented and allows
-            // adding inputs:
-            fInvalid = true;
-            return DoS(100, error("FetchInputs() : %s prevout.n out of range %d %u %u prev tx %s\n%s", GetHash().ToString(), prevout.n, txPrev.vout.size(), txindex.vSpent.size(), prevout.hash.ToString(), txPrev.ToString()));
+    // Do not run this check if we are indexing an in-flight block
+    // as in-flight blocks may possibly not contain proper output size.
+    // This is checked later in ConnectBlock() once in-flight block is
+    // stored to the disk.
+    if (!fInFlight) {
+        for (unsigned int i = 0; i < vin.size(); i++) {
+            const COutPoint prevout = vin[i].prevout;
+            assert(inputsRet.count(prevout.hash) != 0);
+            const CTxIndex& txindex = inputsRet[prevout.hash].first;
+            const CTransaction& txPrev = inputsRet[prevout.hash].second;
+            if (prevout.n >= txPrev.vout.size() || prevout.n >= txindex.vSpent.size()) {
+                // Revisit this if/when transaction replacement is implemented and allows
+                // adding inputs:
+                fInvalid = true;
+                return DoS(100, error("FetchInputs() : %s prevout.n out of range %d %u %u prev tx %s\n%s", GetHash().ToString(), prevout.n, txPrev.vout.size(), txindex.vSpent.size(), prevout.hash.ToString(), txPrev.ToString()));
+            }
         }
     }
 
@@ -1655,10 +1686,10 @@ bool CBlock::DisconnectBlock(CTxDB& txdb, CBlockIndex* pindex)
     return true;
 }
 
-bool CBlock::ConnectBlock(CTxDB& txdb, CBlockIndex* pindex, bool fJustCheck)
+bool CBlock::ConnectBlock(CTxDB& txdb, CBlockIndex* pindex)
 {
     // Check it again in case a previous version let a bad block in, but skip BlockSig checking
-    if (!CheckBlock(!fJustCheck, !fJustCheck, false)) {
+    if (!CheckBlock(IsProofOfWork(), true, IsProofOfStake())) {
         return false;
     }
 
@@ -1673,18 +1704,14 @@ bool CBlock::ConnectBlock(CTxDB& txdb, CBlockIndex* pindex, bool fJustCheck)
 
     //// issue here: it doesn't know the version
     unsigned int nTxPos;
-    if (fJustCheck) {
-        // FetchInputs treats CDiskTxPos(1,1,1) as a special "refer to memorypool" indicator
-        // Since we're just checking the block and not actually connecting it, it might not (and probably shouldn't) be on the disk to get the transaction from
-        nTxPos = 1;
-    } else {
-        nTxPos = pindex->nBlockPos + ::GetSerializeSize(CBlock(), SER_DISK, CLIENT_VERSION) - (2 * GetSizeOfCompactSize(0)) + GetSizeOfCompactSize(vtx.size());
-    }
+    nTxPos = pindex->nBlockPos + ::GetSerializeSize(CBlock(), SER_DISK, CLIENT_VERSION) - (2 * GetSizeOfCompactSize(0)) + GetSizeOfCompactSize(vtx.size());
 
     map<uint256, CTxIndex> mapQueuedChanges;
     int64_t nFees = 0;
     int64_t nValueIn = 0;
     int64_t nValueOut = 0;
+    int64_t nReward = 0;
+    int64_t nCoinbaseReward = 0;
     int64_t nStakeReward = 0;
     unsigned int nSigOps = 0;
 
@@ -1724,13 +1751,12 @@ bool CBlock::ConnectBlock(CTxDB& txdb, CBlockIndex* pindex, bool fJustCheck)
         }
 
         CDiskTxPos posThisTx(pindex->nFile, pindex->nBlockPos, nTxPos);
-        if (!fJustCheck) {
-            nTxPos += ::GetSerializeSize(tx, SER_DISK, CLIENT_VERSION);
-        }
+        nTxPos += ::GetSerializeSize(tx, SER_DISK, CLIENT_VERSION);
 
         MapPrevTx mapInputs;
         if (tx.IsCoinBase()) {
-            nValueOut += tx.GetValueOut();
+            nCoinbaseReward = tx.GetValueOut();
+            nValueOut += nCoinbaseReward;
         } else {
             bool fInvalid;
             if (!tx.FetchInputs(txdb, mapQueuedChanges, true, false, mapInputs, fInvalid)) {
@@ -1745,13 +1771,24 @@ bool CBlock::ConnectBlock(CTxDB& txdb, CBlockIndex* pindex, bool fJustCheck)
                 return DoS(100, error("ConnectBlock() : too many sigops"));
             }
 
+            // Authenticate connecting block's TXs
             int64_t nTxValueIn = tx.GetValueMapIn(mapInputs);
             int64_t nTxValueOut = tx.GetValueOut();
-            nValueIn += nTxValueIn;
-            nValueOut += nTxValueOut;
+            if(nValueIn + nTxValueIn >= 0) {
+                nValueIn += nTxValueIn;
+            } else {
+                return DoS(100, error("ConnectBlock() : overflow detected - nValueIn += nTxValueIn"));
+            }
+            if(nValueOut + nTxValueOut >= 0) {
+                nValueOut += nTxValueOut;
+            } else {
+                return DoS(100, error("ConnectBlock() : overflow detected - nValueOut += nTxValueOut"));
+            }
+
             if (!tx.IsCoinStake()) {
                 nFees += nTxValueIn - nTxValueOut;
             }
+
             if (tx.IsCoinStake()) {
                 nStakeReward = nTxValueOut - nTxValueIn;
             }
@@ -1765,32 +1802,42 @@ bool CBlock::ConnectBlock(CTxDB& txdb, CBlockIndex* pindex, bool fJustCheck)
     }
 
     if (IsProofOfWork()) {
-        int64_t nReward = GetProofOfWorkReward(pindex->nHeight, nFees);
-        // TODO: Clean this up!
+        // TODO: Verify that switch-over blocks are still accepted after value update
         // Allow legacy payout for old switch-over blocks (may not conform)
+        int64_t nCalculatedCoinbaseReward = GetProofOfWorkReward(pindex->nHeight, nFees);
         if(pindex->nHeight < 990000 && pindex->nHeight > 980949)
         {
-            nReward = (5100 * COIN);
+            nCalculatedCoinbaseReward = ((5000 * COIN) + nFees);
         }
         // Check coinbase reward
-        if (vtx[0].GetValueOut() > nReward)
+        if (nCalculatedCoinbaseReward > nCoinbaseReward)
         {
             return DoS(50, error("ConnectBlock() : coinbase reward exceeded (actual=%d vs calculated=%d)",
                    vtx[0].GetValueOut(),
-                   nReward));
+                   nCoinbaseReward));
         }
+        // Update reward value for tx sanity checks
+        nReward = (nCalculatedCoinbaseReward - nFees);
     }
     if (IsProofOfStake()) {
-        // ppcoin: coin stake tx earns reward instead of paying fee
+        // Espers: coin stake tx earns reward and pays a fee
         uint64_t nCoinAge;
         if (!vtx[1].GetCoinAge(txdb, pindex->pprev, nCoinAge)) {
             return error("ConnectBlock() : %s unable to get coin age for coinstake", vtx[1].GetHash().ToString());
         }
-
+        // Check coin stake reward
         int64_t nCalculatedStakeReward = GetProofOfStakeReward(nCoinAge, nFees);
         if (nStakeReward > nCalculatedStakeReward) {
             return DoS(100, error("ConnectBlock() : coinstake pays too much(actual=%d vs calculated=%d)", nStakeReward, nCalculatedStakeReward));
         }
+        // Update reward value for tx sanity checks
+        nReward = (nCalculatedStakeReward - nFees);
+    }
+
+    // Ensure input/output sanity of transactions in the block
+    if((nValueIn + nReward) < nValueOut)
+    {
+        return DoS(100, error("ConnectBlock() : block contains inputs that are less that outputs (actual=%d vs calculated=%d)", nValueOut, (nValueIn + nReward)));
     }
 
     // ppcoin: track money supply and mint amount info
@@ -1798,10 +1845,6 @@ bool CBlock::ConnectBlock(CTxDB& txdb, CBlockIndex* pindex, bool fJustCheck)
     pindex->nMoneySupply = (pindex->pprev? pindex->pprev->nMoneySupply : 0) + nValueOut - nValueIn;
     if (!txdb.WriteBlockIndex(CDiskBlockIndex(pindex))) {
         return error("Connect() : WriteBlockIndex for pindex failed");
-    }
-
-    if (fJustCheck) {
-        return true;
     }
 
     // Write queued txindex changes

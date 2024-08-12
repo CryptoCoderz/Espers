@@ -169,12 +169,7 @@ bool RollingCheckpoints(int nHeight, CBlockIndex* pindexRequest)
 bool tx_Factor(CBlockIndex* prevBlock, CBlock* block)
 {
     // Define Values
-    unsigned int nFile = 1;
-    unsigned int nBlockPos = 1;
-    unsigned int nTxPos = 1;
-    int64_t tx_inputs_values = 0;
     int64_t tx_outputs_values = 0;
-    int64_t tx_MapIn_values = 0;
     int64_t tx_MapOut_values = 0;
     int64_t tx_threshold = 0;
     CTxDB txdb("r");
@@ -187,25 +182,17 @@ bool tx_Factor(CBlockIndex* prevBlock, CBlock* block)
         MapPrevTx mapInputs;
         uint256 hashTx = tx.GetHash();
         bool fInvalid = false;
-        CDiskTxPos posThisTx(nFile, nBlockPos, nTxPos);
         // Don't run input checks for coinbase TX
         if (tx.IsCoinBase()) {
             tx_outputs_values += tx.GetValueOut();
         } else {
             // Ensure we can fetch inputs
-            if (!tx.FetchInputs(txdb, mapQueuedChanges, true, false, mapInputs, fInvalid)) {
+            if (!tx.FetchInputs(txdb, mapQueuedChanges, false, true, mapInputs, fInvalid)) {
                 LogPrintf("DENIED: Invalid TX found during FetchInputs\n");
                 return false;
             }
             // Authenticate submitted block's TXs
-            tx_MapIn_values = tx.GetValueMapIn(mapInputs);
             tx_MapOut_values = tx.GetValueOut();
-            if(tx_inputs_values + tx_MapIn_values >= 0) {
-                tx_inputs_values += tx_MapIn_values;
-            } else {
-                LogPrintf("DENIED: overflow detected tx_inputs_values + tx.GetValueMapIn(mapInputs)\n");
-                return false;
-            }
             if(tx_outputs_values + tx_MapOut_values >= 0) {
                 tx_outputs_values += tx_MapOut_values;
             } else {
@@ -213,7 +200,7 @@ bool tx_Factor(CBlockIndex* prevBlock, CBlock* block)
                 return false;
             }
         }
-        mapQueuedChanges[hashTx] = CTxIndex(posThisTx, tx.vout.size());
+        mapQueuedChanges[hashTx] = CTxIndex(CDiskTxPos(1,1,1), tx.vout.size());
     }
 
     // Set threshold values
@@ -224,7 +211,7 @@ bool tx_Factor(CBlockIndex* prevBlock, CBlock* block)
     }
 
     // Ensure input/output sanity of transactions in the block
-    if((tx_inputs_values + tx_threshold) < tx_outputs_values)
+    if((prevBlock->nMoneySupply + tx_threshold) < tx_outputs_values)
     {
         LogPrintf("DENIED: block contains a tx input that is less that output\n");
         return false;
