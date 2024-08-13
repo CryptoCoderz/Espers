@@ -2369,7 +2369,8 @@ bool CBlock::AddToBlockIndex(unsigned int nFile, unsigned int nBlockPos, const u
 bool NewBlockRelay(CBlock* pblock)
 {
     // Verify we meet basic parameters
-    if (!Velocity(pindexBest, pblock, false)) {
+    int64_t elapseTime = pblock->GetBlockTime() - mapBlockIndex[pblock->hashPrevBlock]->GetBlockTime();
+    if (elapseTime < BLOCK_SPACING_MIN) {
         return error("NewBlockRelay() : newly generated block failed to meet parameters \n");
     }
 
