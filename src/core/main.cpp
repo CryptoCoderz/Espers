@@ -1459,7 +1459,7 @@ bool CTransaction::FetchInputs(CTxDB& txdb, const map<uint256, CTxIndex>& mapTxP
             fFound = true;
         }
 
-        // Do not allow unfound inputs into a block
+        // Do not allow missing inputs into a block
         if (!fFound && fBlock) {
             return error("FetchInputs() : fBlock() - prev tx index entry not found %s", prevout.hash.ToString());
         }
