@@ -268,6 +268,9 @@ extern void leveldb_cache_destroy(leveldb_cache_t* cache);
 extern leveldb_env_t* leveldb_create_default_env();
 extern void leveldb_env_destroy(leveldb_env_t*);
 
+/* If not NULL, the returned buffer must be released using leveldb_free(). */
+extern char* leveldb_env_get_test_directory(leveldb_env_t*);
+
 /* Utility */
 
 /* Calls free(ptr).

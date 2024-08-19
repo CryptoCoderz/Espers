@@ -14,6 +14,10 @@ OPT ?= -O2 -DNDEBUG
 # OPT ?= -O2 -g2 -DNDEBUG
 #-----------------------------------------------
 
+# Updated for Windows OS native compatibility (compiling)
+# by Cryptocoderz (https://github.com/CryptoCoderz)
+# for the Espers Project on August 19th 2024
+
 # detect what platform we're building on
 $(shell CC="$(CC)" CXX="$(CXX)" TARGET_OS="$(TARGET_OS)" \
     ./build_detect_platform build_config.mk ./)
@@ -65,8 +69,8 @@ CXXFLAGS += -I. -I./include $(PLATFORM_CXXFLAGS) $(OPT)
 LDFLAGS += $(PLATFORM_LDFLAGS)
 LIBS += $(PLATFORM_LIBS)
 
-SIMULATOR_OUTDIR=out-ios-x86
-DEVICE_OUTDIR=out-ios-arm
+SIMULATOR_OUTDIR=build-simulator
+DEVICE_OUTDIR=build-device
 
 ifeq ($(PLATFORM), IOS)
 # Note: iOS should probably be using libtool, not ar.
@@ -75,10 +79,11 @@ SIMULATORSDK=$(shell xcrun -sdk iphonesimulator --show-sdk-path)
 DEVICESDK=$(shell xcrun -sdk iphoneos --show-sdk-path)
 DEVICE_CFLAGS = -isysroot "$(DEVICESDK)" -arch armv6 -arch armv7 -arch armv7s -arch arm64
 SIMULATOR_CFLAGS = -isysroot "$(SIMULATORSDK)" -arch i686 -arch x86_64
-STATIC_OUTDIR=out-ios-universal
+STATIC_OUTDIR=build-universal
+SHARED_OUTDIR=build-shared
 else
-STATIC_OUTDIR=out-static
-SHARED_OUTDIR=out-shared
+STATIC_OUTDIR=build-static
+SHARED_OUTDIR=build-shared
 STATIC_PROGRAMS := $(addprefix $(STATIC_OUTDIR)/, $(PROGNAMES))
 SHARED_PROGRAMS := $(addprefix $(SHARED_OUTDIR)/, db_bench)
 endif
@@ -138,14 +143,21 @@ $(SHARED_OUTDIR)/$(SHARED_LIB3): $(SHARED_LIBOBJECTS)
 
 endif  # PLATFORM_SHARED_EXT
 
-all: $(SHARED_LIBS) $(SHARED_PROGRAMS) $(STATIC_OUTDIR)/libleveldb.a $(STATIC_OUTDIR)/libmemenv.a $(STATIC_PROGRAMS)
+clean-builds: 
+	-rm -rf $(SHARED_LIBS) $(SHARED_PROGRAMS) $(STATIC_OUTDIR) $(STATIC_PROGRAMS)
+	-rm -f build_config.mk
+	-rm -rf ios-x86 ios-arm
+
+libs.a: libleveldb.a libmemenv.a
+
+all: $(SHARED_LIBS) $(SHARED_PROGRAMS) $(STATIC_OUTDIR) libleveldb.a libmemenv.a $(STATIC_PROGRAMS)
 
 check: $(STATIC_PROGRAMS)
 	for t in $(notdir $(TESTS)); do echo "***** Running $$t"; $(STATIC_OUTDIR)/$$t || exit 1; done
 
 clean:
-	-rm -rf out-static out-shared out-ios-x86 out-ios-arm out-ios-universal
-	-rm -f build_config.mk
+	-rm -rf $(SIMULATOR_OUTDIR) $(DEVICE_OUTDIR) $(STATIC_OUTDIR) $(SHARED_OUTDIR)
+	-rm -f build_config.mk libleveldb.a libmemenv.a
 	-rm -rf ios-x86 ios-arm
 
 $(STATIC_OUTDIR):
@@ -276,17 +288,17 @@ $(SIMULATOR_OUTDIR)/libmemenv.a: $(SIMULATOR_MEMENVOBJECTS)
 
 # For iOS, create universal object libraries to be used on both the simulator and
 # a device.
-$(STATIC_OUTDIR)/libleveldb.a: $(STATIC_OUTDIR) $(DEVICE_OUTDIR)/libleveldb.a $(SIMULATOR_OUTDIR)/libleveldb.a
+libleveldb.a: $(STATIC_OUTDIR) $(DEVICE_OUTDIR)/libleveldb.a $(SIMULATOR_OUTDIR)/libleveldb.a
 	lipo -create $(DEVICE_OUTDIR)/libleveldb.a $(SIMULATOR_OUTDIR)/libleveldb.a -output $@
 
-$(STATIC_OUTDIR)/libmemenv.a: $(STATIC_OUTDIR) $(DEVICE_OUTDIR)/libmemenv.a $(SIMULATOR_OUTDIR)/libmemenv.a
+libmemenv.a: $(STATIC_OUTDIR) $(DEVICE_OUTDIR)/libmemenv.a $(SIMULATOR_OUTDIR)/libmemenv.a
 	lipo -create $(DEVICE_OUTDIR)/libmemenv.a $(SIMULATOR_OUTDIR)/libmemenv.a -output $@
 else
-$(STATIC_OUTDIR)/libleveldb.a:$(STATIC_LIBOBJECTS)
+libleveldb.a:$(STATIC_LIBOBJECTS)
 	rm -f $@
 	$(AR) -rs $@ $(STATIC_LIBOBJECTS)
 
-$(STATIC_OUTDIR)/libmemenv.a:$(STATIC_MEMENVOBJECTS)
+libmemenv.a:$(STATIC_MEMENVOBJECTS)
 	rm -f $@
 	$(AR) -rs $@ $(STATIC_MEMENVOBJECTS)
 endif
@@ -379,8 +391,8 @@ $(STATIC_OUTDIR)/version_set_test:db/version_set_test.cc $(STATIC_LIBOBJECTS) $(
 $(STATIC_OUTDIR)/write_batch_test:db/write_batch_test.cc $(STATIC_LIBOBJECTS) $(TESTHARNESS)
 	$(CXX) $(LDFLAGS) $(CXXFLAGS) db/write_batch_test.cc $(STATIC_LIBOBJECTS) $(TESTHARNESS) -o $@ $(LIBS)
 
-$(STATIC_OUTDIR)/memenv_test:$(STATIC_OUTDIR)/helpers/memenv/memenv_test.o $(STATIC_OUTDIR)/libmemenv.a $(STATIC_OUTDIR)/libleveldb.a $(TESTHARNESS)
-	$(XCRUN) $(CXX) $(LDFLAGS) $(STATIC_OUTDIR)/helpers/memenv/memenv_test.o $(STATIC_OUTDIR)/libmemenv.a $(STATIC_OUTDIR)/libleveldb.a $(TESTHARNESS) -o $@ $(LIBS)
+$(STATIC_OUTDIR)/memenv_test:$(STATIC_OUTDIR)/helpers/memenv/memenv_test.o libmemenv.a libleveldb.a $(TESTHARNESS)
+	$(XCRUN) $(CXX) $(LDFLAGS) $(STATIC_OUTDIR)/helpers/memenv/memenv_test.o libmemenv.a libleveldb.a $(TESTHARNESS) -o $@ $(LIBS)
 
 $(SHARED_OUTDIR)/db_bench:$(SHARED_OUTDIR)/db/db_bench.o $(SHARED_LIBS) $(TESTUTIL)
 	$(XCRUN) $(CXX) $(LDFLAGS) $(CXXFLAGS) $(PLATFORM_SHARED_CFLAGS) $(SHARED_OUTDIR)/db/db_bench.o $(TESTUTIL) $(SHARED_OUTDIR)/$(SHARED_LIB3) -o $@ $(LIBS)

@@ -175,7 +175,7 @@ DEFS += $(addprefix -I,$(CURDIR)/leveldb/include)
 DEFS += $(addprefix -I,$(CURDIR)/leveldb/helpers)
 OBJS += obj/database/txdb-leveldb.o
 leveldb/libleveldb.a:
-	@echo "Building LevelDB ..."; cd leveldb; TARGET_OS=NATIVE_WINDOWS make libleveldb.a libmemenv.a; cd ..;
+	@echo "Building LevelDB ..."; cd leveldb; TARGET_OS=NATIVE_WINDOWS make libs.a; cd ..;
 obj/txdb-leveldb.o: leveldb/libleveldb.a
 
 obj/build.h: FORCE
