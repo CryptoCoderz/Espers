@@ -24,6 +24,9 @@
 #       -DLEVELDB_PLATFORM_POSIX     for Posix-based platforms
 #       -DSNAPPY                     if the Snappy library is present
 #
+# Updated for Windows OS native compatibility (compiling)
+# by Cryptocoderz (https://github.com/CryptoCoderz)
+# for the Espers Project on August 19th 2024
 
 OUTPUT=$1
 PREFIX=$2
@@ -63,6 +66,50 @@ PLATFORM_SHARED_EXT="so"
 PLATFORM_SHARED_LDFLAGS="-shared -Wl,-soname -Wl,"
 PLATFORM_SHARED_CFLAGS="-fPIC"
 PLATFORM_SHARED_VERSIONED=true
+
+SOURCES="db/builder.cc \
+        db/c.cc \
+        db/db_impl.cc \
+        db/db_iter.cc \
+        db/dbformat.cc \
+        db/dumpfile.cc \
+        db/filename.cc \
+        db/log_reader.cc \
+        db/log_writer.cc \
+        db/memtable.cc \
+        db/repair.cc \
+        db/table_cache.cc \
+        db/version_edit.cc \
+        db/version_set.cc \
+        db/write_batch.cc \
+        helpers\memenv\memenv.cc \
+        port\port_win.cc \
+        table\block.cc \
+        table\block_builder.cc \
+        table\filter_block.cc \
+        table\format.cc \
+        table\iterator.cc \
+        table\merger.cc \
+        table\table.cc \
+        table\table_builder.cc \
+        table\two_level_iterator.cc \
+        util\arena.cc \
+        util\bloom.cc \
+        util\cache.cc \
+        util\coding.cc \
+        util\comparator.cc \
+        util\crc32c.cc \
+        util\env.cc \
+        util\env_posix.cc \
+        util\env_win.cc \
+        util\filter_policy.cc \
+        util\hash.cc \
+        util\histogram.cc \
+        util\logging.cc \
+        util\options.cc \
+        util\status.cc \
+        util\testharness.cc \
+        util\testutil.cc"
 
 MEMCMP_FLAG=
 if [ "$CXX" = "g++" ]; then
@@ -153,13 +200,23 @@ case "$TARGET_OS" in
         PLATFORM_SHARED_CFLAGS=
         PLATFORM_SHARED_VERSIONED=
         ;;
-    OS_WINDOWS_CROSSCOMPILE | NATIVE_WINDOWS)
+    OS_WINDOWS_CROSSCOMPILE)
         PLATFORM=OS_WINDOWS
         COMMON_FLAGS="-fno-builtin-memcmp -D_REENTRANT -DOS_WINDOWS -DLEVELDB_PLATFORM_WINDOWS -DWINVER=0x0500 -D__USE_MINGW_ANSI_STDIO=1"
         PLATFORM_SOURCES="util/env_win.cc"
         PLATFORM_LIBS="-lshlwapi"
         PORT_FILE=port/port_win.cc
         CROSS_COMPILE=true
+        ;;
+    NATIVE_WINDOWS)
+        PLATFORM=OS_WINDOWS
+        PLATFORM_CCFLAGS="-pipe -fno-keep-inline-dllexport -g -Wall -Wextra -DLEVELDB_PLATFORM_WINDOWS"
+        PLATFORM_CXXFLAGS="-pipe -fno-keep-inline-dllexport -g -frtti -Wall -Wextra -fexceptions -mthreads -DLEVELDB_PLATFORM_WINDOWS -std=c++11"
+        PLATFORM_SOURCES="util/env_win.cc"
+        PLATFORM_LIBS="-lshlwapi"
+        PORT_FILE=port/port_win.cc
+        CROSS_COMPILE=true
+        CC=gcc
         ;;
     *)
         echo "Unknown platform!" >&2
