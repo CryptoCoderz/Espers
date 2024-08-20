@@ -166,10 +166,10 @@ SOURCES += src/database/txdb-leveldb.cpp \
     src/crypto/common/sha2big.c
 !win32 {
     # we use QMAKE_CXXFLAGS_RELEASE even without RELEASE=1 because we use RELEASE to indicate linking preferences not -O preferences
-    genleveldb.commands = cd $$PWD/src/leveldb && CC=$$QMAKE_CC CXX=$$QMAKE_CXX TARGET_OS=Linux $(MAKE) OPT=\"$$QMAKE_CXXFLAGS $$QMAKE_CXXFLAGS_RELEASE\" libs.a && TARGET_OS=Linux $(MAKE) clean-builds
+    genleveldb.commands = cd $$PWD/src/leveldb && TARGET_OS=Linux $(MAKE) libs.a && TARGET_OS=Linux $(MAKE) clean-builds
 } else {
     LIBS += -lshlwapi
-    genleveldb.commands = cd $$PWD/src/leveldb && CC=$$QMAKE_CC CXX=$$QMAKE_CXX TARGET_OS=NATIVE_WINDOWS $(MAKE) OPT=\"$$QMAKE_CXXFLAGS $$QMAKE_CXXFLAGS_RELEASE\" libs.a && TARGET_OS=NATIVE_WINDOWS $(MAKE) clean-builds
+    genleveldb.commands = cd $$PWD/src/leveldb && TARGET_OS=NATIVE_WINDOWS $(MAKE) libs.a && TARGET_OS=NATIVE_WINDOWS $(MAKE) clean-builds
 }
 genleveldb.target = $$PWD/src/leveldb/libleveldb.a
 genleveldb.depends = FORCE

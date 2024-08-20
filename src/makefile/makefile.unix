@@ -208,7 +208,7 @@ DEFS += $(addprefix -I,$(CURDIR)/leveldb/include)
 DEFS += $(addprefix -I,$(CURDIR)/leveldb/helpers)
 OBJS += obj/database/txdb-leveldb.o
 leveldb/libleveldb.a:
-	@echo "Building LevelDB ..."; cd leveldb; TARGET_OS=Linux make libs.a; cd ..;
+	@echo "Building LevelDB ..."; cd leveldb; TARGET_OS=Linux make libs.a; TARGET_OS=Linux make clean-builds; cd ..;
 obj/txdb-leveldb.o: leveldb/libleveldb.a
 
 # auto-generated dependencies:
