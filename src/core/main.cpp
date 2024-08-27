@@ -4303,11 +4303,12 @@ bool SendMessages(CNode* pto, bool fSendTrickle)
         // Message: ping
         //
         bool pingSend = false;
+        uint64_t nPingInterval = pto->nPingUsecStart + PING_INTERVAL * 1000000;
         if (pto->fPingQueued) {
             // RPC ping request by user
             pingSend = true;
         }
-        if (pto->nPingNonceSent == 0 && pto->nPingUsecStart + PING_INTERVAL * 1000000 < GetTimeMicros()) {
+        if (pto->nPingNonceSent == 0 && nPingInterval < uint64_t(GetTimeMicros())) {
             // Ping automatically sent as a latency probe & keepalive.
             pingSend = true;
         }

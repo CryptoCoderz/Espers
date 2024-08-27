@@ -1201,6 +1201,7 @@ void ThreadSocketHandler()
             // Inactivity checking
             //
             int64_t nTime = GetTime();
+            uint64_t nTimeout = pnode->nPingUsecStart + PING_INTERVAL * 1000000;
             if (GetTime() - pnode->nTimeConnected > IDLE_TIMEOUT)
             {
                 // First see if we've received anything
@@ -1227,12 +1228,14 @@ void ThreadSocketHandler()
                     pnode->fDisconnect = true;
                 }
                 // Ping timeout
-                // TODO: Correct overflow integer warning
-                else if (pnode->nPingNonceSent && pnode->nPingUsecStart + TIMEOUT_INTERVAL * 1000000 < GetTimeMicros())
+                else if (pnode->nPingNonceSent && nTimeout < uint64_t(GetTimeMicros()))
                 {
-                    LogPrintf("ping timeout: %fs\n", 0.000001 * (GetTimeMicros() - pnode->nPingUsecStart));
-                    pnode->fDisconnect = true;
-                    pnode->CloseSocketDisconnect();
+                    // Ensure we don't timeout if peer hasn't been pinged yet
+                    if (pnode->nPingUsecStart != 0) {
+                        LogPrintf("ping timeout: %fs\n", 0.000001 * (GetTimeMicros() - pnode->nPingUsecStart));
+                        pnode->fDisconnect = true;
+                        pnode->CloseSocketDisconnect();
+                    }
                 }
             }
         }
@@ -1851,7 +1854,7 @@ bool BindListenPort(const CService &addrBind, string& strError)
     return true;
 }
 
-void static Discover(boost::thread_group& threadGroup)
+void static Discover()
 {
     if (!fDiscover)
         return;
@@ -1928,7 +1931,7 @@ void StartNode(boost::thread_group& threadGroup)
     if (pnodeLocalHost == NULL)
         pnodeLocalHost = new CNode(INVALID_SOCKET, CAddress(CService("127.0.0.1", 0), nLocalServices));
 
-    Discover(threadGroup);
+    Discover();
 
     //
     // Start threads
@@ -2004,10 +2007,10 @@ void RelayTransaction(const CTransaction& tx, const uint256& hash)
     CDataStream ss(SER_NETWORK, PROTOCOL_VERSION);
     ss.reserve(10000);
     ss << tx;
-    RelayTransaction(tx, hash, ss);
+    RelayTransaction(hash, ss);
 }
 
-void RelayTransaction(const CTransaction& tx, const uint256& hash, const CDataStream& ss)
+void RelayTransaction(const uint256& hash, const CDataStream& ss)
 {
     CInv inv(MSG_TX, hash);
     {
@@ -2250,7 +2253,7 @@ bool CBanDB::Read(banmap_t& banSet)
     BanlistFile.seekg(0, std::ios::end);
 
     // Don't try to resize to a negative number if file is small
-    if ( dataSize < 0 ) dataSize = 0;
+    if (int64_t(dataSize) < 0) dataSize = 0;
     vector<unsigned char> vchData;
     vchData.resize(dataSize);
     uint256 hashIn;

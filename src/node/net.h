@@ -892,7 +892,7 @@ inline void RelayInventory(const CInv& inv)
 
 class CTransaction;
 void RelayTransaction(const CTransaction& tx, const uint256& hash);
-void RelayTransaction(const CTransaction& tx, const uint256& hash, const CDataStream& ss);
+void RelayTransaction(const uint256& hash, const CDataStream& ss);
 
 /** Access to the (IP) address database (peers.dat) */
 class CAddrDB
