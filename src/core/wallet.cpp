@@ -6,7 +6,7 @@
 #include "wallet.h"
 
 #include "primitives/base58.h"
-#include "primitives/boost_placeholders.h"
+#include "boost/boost_placeholders.h"
 #include "blockparams.h"
 #include "subcore/coincontrol.h"
 #include "consensus/kernel.h"

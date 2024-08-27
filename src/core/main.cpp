@@ -26,7 +26,7 @@
 #include "xnode/xnodereward.h"
 #include "deminode/deminet.h"
 #include "deminode/demisync.h"
-#include "primitives/boost_placeholders.h"
+#include "boost/boost_placeholders.h"
 #include "ui/ui_interface.h"
 
 using namespace std;
@@ -57,6 +57,7 @@ uint256 nBestInvalidTrust = 0;
 uint256 hashBestChain = 0;
 CBlockIndex* pindexBest = NULL;
 int64_t nTimeBestReceived = 0;
+int64_t nAddrLastRebroadcast = 0;
 bool fImporting = false;
 bool fReindex = false;
 bool fHaveGUI = false;
@@ -170,11 +171,11 @@ void ResendWalletTransactions(bool fForce) {
 
 namespace {
 
-struct CBlockReject {
-    unsigned char chRejectCode;
-    string strRejectReason;
-    uint256 hashBlock;
-};
+//struct CBlockReject {
+//    unsigned char chRejectCode;
+//    string strRejectReason;
+//    uint256 hashBlock;
+//};
 
 // Maintain validation-specific state about nodes, protected by cs_main, instead
 // by CNode's own locks. This simplifies asynchronous operation, where
@@ -187,7 +188,7 @@ struct CNodeState {
     bool fShouldBan;
     std::string name;
     // List of asynchronously-determined block rejections to notify this peer about.
-    std::vector<CBlockReject> rejects;
+    //std::vector<CBlockReject> rejects;
     list<QueuedBlock> vBlocksInFlight;
     int nBlocksInFlight;
     list<uint256> vBlocksToDownload;
@@ -3483,17 +3484,14 @@ bool static ProcessMessage(CNode* pfrom, string strCommand, CDataStream& vRecv, 
 {
     RandAddSeedPerfmon();
     LogPrint("net", "received: %s (%u bytes)\n", strCommand, vRecv.size());
-    if (mapArgs.count("-dropmessagestest") && GetRand(atoi(mapArgs["-dropmessagestest"])) == 0)
-    {
+    if (mapArgs.count("-dropmessagestest") && GetRand(atoi(mapArgs["-dropmessagestest"])) == 0) {
         LogPrintf("dropmessagestest DROPPING RECV MESSAGE\n");
         return true;
     }
 
-    if (strCommand == "version")
-    {
+    if (strCommand == "version") {
         // Each connection can only send one version message
-        if (pfrom->nVersion != 0)
-        {
+        if (pfrom->nVersion != 0) {
             Misbehaving(pfrom->GetId(), 1);
             return false;
         }
@@ -3503,39 +3501,27 @@ bool static ProcessMessage(CNode* pfrom, string strCommand, CDataStream& vRecv, 
         CAddress addrFrom;
         uint64_t nNonce = 1;
         vRecv >> pfrom->nVersion >> pfrom->nServices >> nTime >> addrMe;
-        if(pfrom->nVersion <= (PROTOCOL_VERSION - 1))
-        {
-            if(pindexBest->GetBlockTime() > HRD_LEGACY_CUTOFF)
-            {
+        if(pfrom->nVersion <= (PROTOCOL_VERSION - 1)) {
+            if(pindexBest->GetBlockTime() > HRD_LEGACY_CUTOFF) {
                 // disconnect from peers older than legacy cutoff allows : Disconnect message 02
                 LogPrintf("partner %s using obsolete version %i; disconnecting DCM:02\n", pfrom->addr.ToString(), pfrom->nVersion);
                 pfrom->fDisconnect = true;
                 return false;
-            }
-            else if(pfrom->nVersion < MIN_PEER_PROTO_VERSION)
-            {
+            } else if(pfrom->nVersion < MIN_PEER_PROTO_VERSION) {
                 // disconnect from peers older than this proto version : Disconnect message 01
                 LogPrintf("partner %s using obsolete version %i; disconnecting DCM:01\n", pfrom->addr.ToString(), pfrom->nVersion);
                 pfrom->fDisconnect = true;
                 return false;
             }
-        }
-        else
-        {
-            if(pfrom->nVersion == (PROTOCOL_VERSION))
-            {
+        } else {
+            if(pfrom->nVersion == (PROTOCOL_VERSION)) {
                 // log successfull same-version-peer connection : Connection attempt message 02
                 LogPrintf("partner %s using acceptable same version %i; connecting CAM:02\n", pfrom->addr.ToString(), pfrom->nVersion);
-            }
-            else
-            {
-                if(pindexBest->GetBlockTime() < HRD_FUTURE_CUTOFF)
-                {
+            } else {
+                if(pindexBest->GetBlockTime() < HRD_FUTURE_CUTOFF) {
                     // log successfull future-peer-version connection : Connection attempt message 01
                     LogPrintf("partner %s using acceptable future version %i; connecting CAM:01\n", pfrom->addr.ToString(), pfrom->nVersion);
-                }
-                else
-                {
+                } else {
                     // disconnect from peers outside of future cutoff window (invalid versions) : Disconnect message 03
                     LogPrintf("partner %s using invalid future version %i; disconnecting DCM:03\n", pfrom->addr.ToString(), pfrom->nVersion);
                     pfrom->fDisconnect = true;
@@ -3544,36 +3530,39 @@ bool static ProcessMessage(CNode* pfrom, string strCommand, CDataStream& vRecv, 
             }
         }
 
-        if (pfrom->nVersion == 10300)
+        if (pfrom->nVersion == 10300) {
             pfrom->nVersion = 300;
-        if (!vRecv.empty())
+        }
+        if (!vRecv.empty()) {
             vRecv >> addrFrom >> nNonce;
+        }
         if (!vRecv.empty()) {
             vRecv >> pfrom->strSubVer;
             pfrom->cleanSubVer = SanitizeString(pfrom->strSubVer);
         }
-        if (!vRecv.empty())
+        if (!vRecv.empty()) {
             vRecv >> pfrom->nStartingHeight;
-        if (!vRecv.empty())
+        }
+        if (!vRecv.empty()) {
             pfrom->fRelayTxes = true;
+        }
 
         // Disconnect if we connected to ourself
-        if (nNonce == nLocalHostNonce && nNonce > 1)
-        {
+        if (nNonce == nLocalHostNonce && nNonce > 1) {
             LogPrintf("connected to self at %s, disconnecting\n", pfrom->addr.ToString());
             pfrom->fDisconnect = true;
             return true;
         }
 
         pfrom->addrLocal = addrMe;
-        if (pfrom->fInbound && addrMe.IsRoutable())
-        {
+        if (pfrom->fInbound && addrMe.IsRoutable()) {
             SeenLocal(addrMe);
         }
 
-        // Be shy and don't send version until we hear
-        if (pfrom->fInbound)
+        // Be shy and don't send version until we hear something
+        if (pfrom->fInbound) {
             pfrom->PushVersion();
+        }
 
         pfrom->fClient = !(pfrom->nServices & NODE_NETWORK);
 
@@ -3581,14 +3570,11 @@ bool static ProcessMessage(CNode* pfrom, string strCommand, CDataStream& vRecv, 
         pfrom->PushMessage("verack");
         pfrom->ssSend.SetVersion(min(pfrom->nVersion, PROTOCOL_VERSION));
 
-        if (!pfrom->fInbound)
-        {
+        if (!pfrom->fInbound) {
             // Advertise our address
-            if (!fNoListen && !IsInitialBlockDownload())
-            {
+            if (!fNoListen && !IsInitialBlockDownload()) {
                 CAddress addr = GetLocalAddress(&pfrom->addr);
-                if (addr.IsRoutable())
-                {
+                if (addr.IsRoutable()) {
                     pfrom->PushAddress(addr);
                 } else if (IsPeerAddrLocalGood(pfrom)) {
                     addr.SetIP(pfrom->addrLocal);
@@ -3597,60 +3583,57 @@ bool static ProcessMessage(CNode* pfrom, string strCommand, CDataStream& vRecv, 
             }
 
             // Get recent addresses
-            if (pfrom->fOneShot || pfrom->nVersion >= CADDR_TIME_VERSION || addrman.size() < 1000)
-            {
+            if (pfrom->fOneShot || pfrom->nVersion >= CADDR_TIME_VERSION || addrman.size() < 1000) {
                 pfrom->PushMessage("getaddr");
                 pfrom->fGetAddr = true;
             }
             addrman.Good(pfrom->addr);
         } else {
-            if (((CNetAddr)pfrom->addr) == (CNetAddr)addrFrom)
-            {
+            if (((CNetAddr)pfrom->addr) == (CNetAddr)addrFrom) {
                 addrman.Add(addrFrom, addrFrom);
                 addrman.Good(addrFrom);
             }
         }
 
+        // TODO: Rework alert handling
         // Relay alerts
-        {
-            LOCK(cs_mapAlerts);
-            BOOST_FOREACH(PAIRTYPE(const uint256, CAlert)& item, mapAlerts)
-                item.second.RelayTo(pfrom);
-        }
+        //{
+        //    LOCK(cs_mapAlerts);
+        //    BOOST_FOREACH(PAIRTYPE(const uint256, CAlert)& item, mapAlerts)
+        //        item.second.RelayTo(pfrom);
+        //}
 
         pfrom->fSuccessfullyConnected = true;
 
         LogPrintf("receive version message: version %d, blocks=%d, us=%s, them=%s, peer=%s\n", pfrom->nVersion, pfrom->nStartingHeight, addrMe.ToString(), addrFrom.ToString(), pfrom->addr.ToString());
 
-        if (GetBoolArg("-synctime", true))
+        if (GetBoolArg("-synctime", true)) {
             AddTimeData(pfrom->addr, nTime);
+        }
     }
 
 
-    else if (pfrom->nVersion == 0)
-    {
+    else if (pfrom->nVersion == 0) {
         // Must have a version message before anything else
         Misbehaving(pfrom->GetId(), 1);
         return false;
     }
 
 
-    else if (strCommand == "verack")
-    {
+    else if (strCommand == "verack") {
         pfrom->SetRecvVersion(min(pfrom->nVersion, PROTOCOL_VERSION));
     }
 
 
-    else if (strCommand == "addr")
-    {
+    else if (strCommand == "addr") {
         vector<CAddress> vAddr;
         vRecv >> vAddr;
 
         // Don't want addr from older versions unless seeding
-        if (pfrom->nVersion < CADDR_TIME_VERSION && addrman.size() > 1000)
+        if (pfrom->nVersion < CADDR_TIME_VERSION && addrman.size() > 1000) {
             return true;
-        if (vAddr.size() > 1000)
-        {
+        }
+        if (vAddr.size() > 1000) {
             Misbehaving(pfrom->GetId(), 20);
             return error("message addr size() = %u", vAddr.size());
         }
@@ -3659,47 +3642,41 @@ bool static ProcessMessage(CNode* pfrom, string strCommand, CDataStream& vRecv, 
         vector<CAddress> vAddrOk;
         int64_t nNow = GetAdjustedTime();
         int64_t nSince = nNow - 10 * 60;
-        BOOST_FOREACH(CAddress& addr, vAddr)
-        {
-            boost::this_thread::interruption_point();
 
-            if (addr.nTime <= 100000000 || addr.nTime > nNow + 10 * 60)
-                addr.nTime = nNow - 5 * 24 * 60 * 60;
-            pfrom->AddAddressKnown(addr);
+        // Relay to all available nodes
+        for(CAddress& addr : vAddr) {
+            // Skip saving or relay, already have this address
+            if (pfrom->setAddrKnown.count(addr)) {
+                continue;
+            }
+            // Ensure thread handling for unexpected delays
+            boost::this_thread::interruption_point();
+            // Check if address is outside our network
             bool fReachable = IsReachable(addr);
-            if (addr.nTime > nSince && !pfrom->fGetAddr && vAddr.size() <= 10 && addr.IsRoutable())
-            {
-                // Relay to a limited number of other nodes
-                {
+            // Decide what to relay, and how much
+            if (addr.nTime > nSince && !pfrom->fGetAddr && vAddr.size() <= 500 && addr.IsRoutable()) {
+                if (addr.nTime <= 100000000 || addr.nTime > nNow + 10 * 60) {
+                    addr.nTime = nNow - 5 * 24 * 60 * 60;
+                }
+                // Add to seen addresses list
+                pfrom->AddAddressKnown(addr);
+                // Don't relay addresses outside our network(s)
+                if (fReachable) {
                     LOCK(cs_vNodes);
-                    // Use deterministic randomness to send to the same nodes for 24 hours
-                    // at a time so the setAddrKnowns of the chosen nodes prevent repeats
-                    static uint256 hashSalt;
-                    if (hashSalt == 0)
-                        hashSalt = GetRandHash();
-                    uint64_t hashAddr = addr.GetHash();
-                    uint256 hashRand = hashSalt ^ (hashAddr<<32) ^ ((GetTime()+hashAddr)/(24*60*60));
-                    hashRand = Hash(BEGIN(hashRand), END(hashRand));
-                    multimap<uint256, CNode*> mapMix;
-                    BOOST_FOREACH(CNode* pnode, vNodes)
-                    {
-                        if (pnode->nVersion < CADDR_TIME_VERSION)
-                            continue;
-                        unsigned int nPointer;
-                        memcpy(&nPointer, &pnode, sizeof(nPointer));
-                        uint256 hashKey = hashRand ^ nPointer;
-                        hashKey = Hash(BEGIN(hashKey), END(hashKey));
-                        mapMix.insert(make_pair(hashKey, pnode));
+                    for(CNode* pnode : vNodes) {
+                        // Don't relay addr to older versions that aren't capable
+                        if (pnode->nVersion < CADDR_TIME_VERSION) {
+                            pnode->PushAddress(addr);
+                        }
                     }
-                    int nRelayNodes = fReachable ? 2 : 1; // limited relaying of addresses outside our network(s)
-                    for (multimap<uint256, CNode*>::iterator mi = mapMix.begin(); mi != mapMix.end() && nRelayNodes-- > 0; ++mi)
-                        ((*mi).second)->PushAddress(addr);
                 }
             }
-            // Do not store addresses outside our network
-            if (fReachable)
+            // Don't store addresses outside our network(s)
+            if (fReachable) {
                 vAddrOk.push_back(addr);
+            }
         }
+
         addrman.Add(vAddrOk, pfrom->addr, 2 * 60 * 60);
         if (vAddr.size() < 1000)
             pfrom->fGetAddr = false;
@@ -3866,13 +3843,14 @@ bool static ProcessMessage(CNode* pfrom, string strCommand, CDataStream& vRecv, 
         vector<uint256> vWorkQueue;
         vector<uint256> vEraseQueue;
         CTransaction tx;
-        //CTxDB txdb("r");
+        CTxDB txdb("r");
         vRecv >> tx;
 
         CInv inv(MSG_TX, tx.GetHash());
-        // Check for recently rejected (and do other quick existence checks) (OFF)
-        //if (AlreadyHave(txdb, inv))
-        //    return true;
+        // Check for recently rejected (and do other quick existence checks)
+        if (AlreadyHave(txdb, inv)) {
+            return true;
+        }
 
         pfrom->AddInventoryKnown(inv);
 
@@ -4359,15 +4337,14 @@ bool SendMessages(CNode* pto, bool fSendTrickle)
         }
 
         // Address refresh broadcast
-        static int64_t nLastRebroadcast;
-        if (!IsInitialBlockDownload() && (GetTime() - nLastRebroadcast > 24 * 60 * 60))
+        bool fRebroadcast = GetTime() - nAddrLastRebroadcast > 24 * 60 * 60;
+        if (!IsInitialBlockDownload() && fRebroadcast)
         {
             LOCK(cs_vNodes);
-            BOOST_FOREACH(CNode* pnode, vNodes)
+            for(CNode* pnode : vNodes)
             {
                 // Periodically clear setAddrKnown to allow refresh broadcasts
-                if (nLastRebroadcast)
-                    pnode->setAddrKnown.clear();
+                pnode->setAddrKnown.clear();
 
                 // Rebroadcast our address
                 if (!fNoListen)
@@ -4377,33 +4354,33 @@ bool SendMessages(CNode* pto, bool fSendTrickle)
                         pnode->PushAddress(addr);
                 }
             }
-            nLastRebroadcast = GetTime();
+            nAddrLastRebroadcast = GetTime();
         }
 
         //
         // Message: addr
         //
+        // TODO: Review and possibly remove fSendTrickle
         if (fSendTrickle)
         {
             vector<CAddress> vAddr;
             vAddr.reserve(pto->vAddrToSend.size());
-            BOOST_FOREACH(const CAddress& addr, pto->vAddrToSend)
+            for(const CAddress& addr : pto->vAddrToSend)
             {
-                // returns true if wasn't already contained in the set
-                if (pto->setAddrKnown.insert(addr).second)
-                {
-                    vAddr.push_back(addr);
-                    // receiver rejects addr messages larger than 1000
-                    if (vAddr.size() >= 1000)
-                    {
-                        pto->PushMessage("addr", vAddr);
-                        vAddr.clear();
-                    }
+                // receiver rejects addr messages larger than 1000
+                if (vAddr.size() >= 1000) {
+                    pto->PushMessage("addr", vAddr);
+                    vAddr.clear();
                 }
+                // add to address relay list vector
+                vAddr.push_back(addr);
             }
+            // Clear our address send list, since we've already built the vector
             pto->vAddrToSend.clear();
-            if (!vAddr.empty())
+            // Relay our address send list to peer(s)
+            if (!vAddr.empty()) {
                 pto->PushMessage("addr", vAddr);
+            }
         }
 
         CNodeState &state = *State(pto->GetId());
@@ -4417,9 +4394,11 @@ bool SendMessages(CNode* pto, bool fSendTrickle)
             state.fShouldBan = false;
         }
 
-        BOOST_FOREACH(const CBlockReject& reject, state.rejects)
-            pto->PushMessage("reject", (string)"block", reject.chRejectCode, reject.strRejectReason, reject.hashBlock);
-        state.rejects.clear();
+        // TODO: Review and rewrite reject block notify functionality
+        //
+        //BOOST_FOREACH(const CBlockReject& reject, state.rejects)
+        //    pto->PushMessage("reject", (string)"block", reject.chRejectCode, reject.strRejectReason, reject.hashBlock);
+        //state.rejects.clear();
 
         //
         // Message: inventory

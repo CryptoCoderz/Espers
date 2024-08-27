@@ -8,7 +8,7 @@
 #include "core/wallet.h"
 #include "database/walletdb.h" // for BackupWallet
 #include "primitives/base58.h"
-#include "primitives/boost_placeholders.h"
+#include "boost/boost_placeholders.h"
 
 #include <QSet>
 #include <QTimer>

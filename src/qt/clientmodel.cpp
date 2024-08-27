@@ -8,7 +8,7 @@
 #include "transactiontablemodel.h"
 
 #include "core/chainparams.h"
-#include "primitives/boost_placeholders.h"
+#include "boost/boost_placeholders.h"
 #include "node/alert.h"
 #include "core/main.h"
 #include "ui/ui_interface.h"

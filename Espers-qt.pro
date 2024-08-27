@@ -1,9 +1,8 @@
 TEMPLATE = app
 TARGET = Espers-fractal-qt
-VERSION = 0.8.9.1
+VERSION = 0.8.9.2
 INCLUDEPATH += src src/json src/qt
 QT += core gui network
-greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 DEFINES += ENABLE_WALLET
 DEFINES += QT_GUI BOOST_THREAD_USE_LIB BOOST_SPIRIT_THREADSAFE
 CONFIG += no_include_pwd
@@ -13,10 +12,28 @@ CONFIG += openssl
 
 QMAKE_CXXFLAGS += -fpermissive -std=c++11
 
-# WIN32 OS
-# for boost 1.66 on windows, add (MinGW_Version)-mt-s-x32-(Boost_Version)
-# as a reference refer to the below section
+greaterThan(QT_MAJOR_VERSION, 4) {
+    QT += widgets
+}
 
+# Notes for defining includes/libraries
+#
+# for boost versions 1.66 and newer,
+# add (MinGW_Version)-mt-s-x32-(Boost_Version)
+# as a reference refer to the below section
+#
+# for older boost (since 1.37),
+# add -mt to the boost libraries
+# use: qmake BOOST_LIB_SUFFIX=-mt
+# for boost thread win32 with _win32 sufix
+# use: BOOST_THREAD_LIB_SUFFIX=_win32-...
+# or when linking against a specific BerkelyDB version: BDB_LIB_SUFFIX=-4.8
+#
+# Dependency library locations can be customized with:
+# BOOST_INCLUDE_PATH, BOOST_LIB_PATH, BDB_INCLUDE_PATH,
+# BDB_LIB_PATH, OPENSSL_INCLUDE_PATH and OPENSSL_LIB_PATH respectively
+
+# WIN32 OS
 win32{
 BOOST_LIB_SUFFIX=-mgw8-mt-s-x32-1_74
 BOOST_INCLUDE_PATH=C:/deps/boost_1_74_0
@@ -31,21 +48,11 @@ QRENCODE_INCLUDE_PATH=C:/deps/qrencode-4.0.2
 QRENCODE_LIB_PATH=C:/deps/qrencode-4.0.2/.libs
 }
 
+# Linux OS
 !win32:!macx{
 BDB_INCLUDE_PATH=/usr/local/BerkeleyDB.6.2/include
 BDB_LIB_PATH=/usr/local/BerkeleyDB.6.2/lib
 }
-
-# OTHER OS
-# for boost 1.37, add -mt to the boost libraries
-# use: qmake BOOST_LIB_SUFFIX=-mt
-# for boost thread win32 with _win32 sufix
-# use: BOOST_THREAD_LIB_SUFFIX=_win32-...
-# or when linking against a specific BerkelyDB version: BDB_LIB_SUFFIX=-4.8
-
-# Dependency library locations can be customized with:
-#    BOOST_INCLUDE_PATH, BOOST_LIB_PATH, BDB_INCLUDE_PATH,
-#    BDB_LIB_PATH, OPENSSL_INCLUDE_PATH and OPENSSL_LIB_PATH respectively
 
 # workaround for boost 1.58
 DEFINES += BOOST_VARIANT_USE_RELAXED_GET_BY_DEFAULT
@@ -108,6 +115,8 @@ contains(USE_QRCODE, 1) {
     message(Building with QRCode support)
     DEFINES += USE_QRCODE
     LIBS += -lqrencode
+} else {
+    message(Building without QRCode support)
 }
 
 # use: qmake "USE_UPNP=1" ( enabled by default; default)
@@ -143,8 +152,6 @@ contains(ESPERS_NEED_QT_PLUGINS, 1) {
     QTPLUGIN += qcncodecs qjpcodecs qtwcodecs qkrcodecs qtaccessiblewidgets
 }
 
-INCLUDEPATH += src/leveldb/include src/leveldb/helpers
-LIBS += $$PWD/src/leveldb/libleveldb.a $$PWD/src/leveldb/libmemenv.a
 SOURCES += src/database/txdb-leveldb.cpp \
     src/crypto/common/aes_helper.c \
     src/crypto/common/blake.c \
@@ -164,12 +171,13 @@ SOURCES += src/database/txdb-leveldb.cpp \
     src/crypto/common/whirlpool.c \
     src/crypto/common/haval.c \
     src/crypto/common/sha2big.c
-!win32 {
-    # we use QMAKE_CXXFLAGS_RELEASE even without RELEASE=1 because we use RELEASE to indicate linking preferences not -O preferences
-    genleveldb.commands = cd $$PWD/src/leveldb && TARGET_OS=Linux $(MAKE) libs.a && TARGET_OS=Linux $(MAKE) clean-builds
-} else {
+
+# Assume that user has referenced Readme.md and build instructions
+# leveldb is now built externally as all other dependencies
+INCLUDEPATH += src/leveldb/include src/leveldb/helpers
+LIBS += $$PWD/src/leveldb/libleveldb.a $$PWD/src/leveldb/libmemenv.a
+win32: {
     LIBS += -lshlwapi
-    genleveldb.commands = cd $$PWD/src/leveldb && TARGET_OS=NATIVE_WINDOWS $(MAKE) libs.a && TARGET_OS=NATIVE_WINDOWS $(MAKE) clean-builds
 }
 genleveldb.target = $$PWD/src/leveldb/libleveldb.a
 genleveldb.depends = FORCE
@@ -204,7 +212,6 @@ contains(USE_O0, 1) {
 
 *-g++-32 {
     message("32 platform, adding -msse2 flag")
-
     QMAKE_CXXFLAGS += -msse2
     QMAKE_CFLAGS += -msse2
 }
@@ -237,9 +244,9 @@ HEADERS += src/qt/bitcoingui.h \
     src/node/addrman.h \
     src/primitives/base58.h \
     src/primitives/bignum.h \
-    src/primitives/boost_placeholders.h \
-    src/primitives/boost_iocontext.h \
-    src/primitives/boost_ioservices.h \
+    src/boost/boost_placeholders.h \
+    src/boost/boost_iocontext.h \
+    src/boost/boost_ioservices.h \
     src/core/blockparams.h \
     src/core/chainparams.h \
     src/core/chainparamsseeds.h \
@@ -631,3 +638,5 @@ system($$QMAKE_LRELEASE -silent $$_PRO_FILE_)
 
 OBJECTIVE_SOURCES += \
     src/qt/macnotificationhandler.mm
+
+# message($${CONFIG})

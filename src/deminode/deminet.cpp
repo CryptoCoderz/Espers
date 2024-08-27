@@ -44,8 +44,10 @@ static void DemiNodeFetch(uint256 blockHash)
             if(pnode->nVersion < DEMINODE_VERSION) {
                 continue;
             }
-
-            // TODO: See if we found a Demi-node
+            // Request block data if peer is Demi-node
+            if(fDemiPeerRelay(pnode->addrName)) {
+                pnode->PushMessage("getdata", dinv);
+            }
 
         }
 

@@ -7,8 +7,8 @@
 #define _BITCOINRPC_PROTOCOL_H_ 1
 
 #include "primitives/compat.h"
-#include "primitives/boost_iocontext.h"// TODO: check if useless include
-#include "primitives/boost_ioservices.h"// TODO: check if useless include
+#include "boost/boost_iocontext.h"// TODO: check if useless include
+#include "boost/boost_ioservices.h"// TODO: check if useless include
 #include <list>
 #include <map>
 #include <stdint.h>

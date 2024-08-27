@@ -6,9 +6,9 @@
 #include "rpcserver.h"
 
 #include "primitives/base58.h"
-#include "primitives/boost_iocontext.h"
-#include "primitives/boost_ioservices.h"
-#include "primitives/boost_placeholders.h"
+#include "boost/boost_iocontext.h"
+#include "boost/boost_ioservices.h"
+#include "boost/boost_placeholders.h"
 #include "util/init.h"
 #include "util/util.h"
 #include "core/sync.h"
