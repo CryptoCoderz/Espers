@@ -3982,7 +3982,7 @@ bool static ProcessMessage(CNode* pfrom, string strCommand, CDataStream& vRecv, 
         int64_t nCutOff = GetTime() - (nNodeLifespan * 24 * 60 * 60);
         pfrom->vAddrToSend.clear();
         vector<CAddress> vAddr = addrman.GetAddr();
-        for(const CAddress &addr : vAddr) {
+        for(const CAddress& addr : vAddr) {
             if(addr.nTime > nCutOff) {
                 pfrom->PushAddress(addr);
             }

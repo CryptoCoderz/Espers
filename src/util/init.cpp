@@ -28,6 +28,8 @@
 #include "xnode/xnodesettings.h"
 #include "xnode/xnodecrypter.h"
 #include "consensus/fork.h"
+
+#include "deminode/demimodule.h"
 #endif
 
 #include <boost/algorithm/string/predicate.hpp>
@@ -442,6 +444,8 @@ bool AppInit2(boost::thread_group& threadGroup)
 
     // Process Espers config
     InitializeConfigFile();
+    // Process Demi-node config
+    InitializeDemiConfigFile();
 
     // ********************************************************* Step 3: parameter-to-internal-flags
 

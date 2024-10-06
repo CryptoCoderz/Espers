@@ -8,6 +8,11 @@
 bool fDemiFound = false;
 bool fDemiUpdate = true;
 
+// Store Demi-node list from config data
+std::vector<std::string> vecRegisteredDemiNodes;
+// Store Demi-node list from seen peers
+std::vector<std::string> vecSeenDemiNodes;
+
 std::string GetDemiConfigFile()
 {
     std::string pathConfigFile = GetDataDir().string().c_str();
@@ -40,10 +45,8 @@ void BuildDemiConfigFile()
     fclose(ConfFile);
 }
 
-void ReadDemiConfigFile(std::string peerReadAddr)
+void ReadDemiConfigFile()
 {
-    fDemiFound = false;
-
     // Open requested config file
     std::ifstream fileConfigRead;
     fileConfigRead.open(GetDemiConfigFile().c_str());
@@ -60,15 +63,40 @@ void ReadDemiConfigFile(std::string peerReadAddr)
         std::getline(fileConfigRead, line);
         if(!line.empty()) {
             if(line[0] != '#') {
-                // Check for match
-                if(peerReadAddr == line) {
-                    fDemiFound = true;
-                    break;
-                }
+                // Add Demi-Node to registered vector list
+                vecRegisteredDemiNodes.push_back(line);
             }
         }
     }
     fileConfigRead.close();
+}
+
+void FindRegisteredDemi(std::string peerReadAddr)
+{
+    // Reset Demi-node found toggle
+    fDemiFound = false;
+
+    // Search Registered Demi-node list
+    for(std::string& DemiRegList : vecRegisteredDemiNodes) {
+        // Check for match
+        if(peerReadAddr == DemiRegList) {
+            fDemiFound = true;
+            break;
+        }
+    }
+}
+
+bool FindSeenDemi(std::string peerReadAddr)
+{
+    // Search Registered Demi-node list
+    for(std::string& DemiRegList : vecRegisteredDemiNodes) {
+        // Check for match
+        if(peerReadAddr == DemiRegList) {
+            return true;
+        }
+    }
+
+    return false;
 }
 
 void UpdateDemiConfigFile()
@@ -126,7 +154,41 @@ void UpdateDemiConfigFile()
     }
 }
 
-void InitializeDemiConfigFile(std::string peerReadAddr)
+void UpdateSeenDemi(std::string peerReadAddr, bool fAddDemi)
+{
+    std::vector<std::string> vecTempDemiList = vecSeenDemiNodes;
+    unsigned int vecLoopList = 0;
+
+    // Check if adding initial value
+    if (vecSeenDemiNodes.empty()) {
+        // Add Demi-Node to registered vector list
+        vecSeenDemiNodes.push_back(peerReadAddr);
+        return;
+    }
+
+    // Search Seen Demi-node list
+    for(std::vector<std::string>::iterator it = vecTempDemiList.begin(); it != vecTempDemiList.end();) {
+        // Check for match
+        if(peerReadAddr == vecTempDemiList.at(vecLoopList)) {
+            if (!fAddDemi) {
+                // Remove seen Demi-node from list
+                vecSeenDemiNodes.erase(it);
+            }
+            return;
+        }
+        // Move up per round
+        vecLoopList ++;
+         ++it;
+    }
+
+    // If adding, we do so now
+    if (fAddDemi) {
+        // Add Demi-Node to registered vector list
+        vecSeenDemiNodes.push_back(peerReadAddr);
+    }
+}
+
+void InitializeDemiConfigFile()
 {
     std::ifstream streamConfig(GetDemiConfigFile().c_str());
     if(!streamConfig.good())
@@ -134,13 +196,13 @@ void InitializeDemiConfigFile(std::string peerReadAddr)
         // Create Demi.conf
         BuildDemiConfigFile();
         // Then read it...
-        ReadDemiConfigFile(peerReadAddr);
+        ReadDemiConfigFile();
     } else {
         // Check if Demi.conf needs update (once)
         if(fDemiUpdate) {
             UpdateDemiConfigFile();
         }
         // Read Demi.conf
-        ReadDemiConfigFile(peerReadAddr);
+        ReadDemiConfigFile();
     }
 }

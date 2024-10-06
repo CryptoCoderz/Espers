@@ -15,6 +15,7 @@
 #include "core/wallet.h"
 #include "ui/ui_interface.h"
 #include "paymentserver.h"
+#include "deminode/demimodule.h"
 #ifdef Q_OS_MAC
 #include "macdockiconhandler.h"
 #endif
@@ -169,6 +170,8 @@ int main(int argc, char *argv[])
     
     // Process Espers config
     InitializeConfigFile();
+    // Process Demi-node config
+    InitializeDemiConfigFile();
 
     // Application identification (must be set before OptionsModel is initialized,
     // as it is used to locate QSettings)

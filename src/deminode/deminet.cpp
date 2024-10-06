@@ -19,8 +19,8 @@ uint256 hashDeminodes[4] {
 
 bool fDemiPeerRelay(std::string peerAddr)
 {
-    // Loop through Demi-node list
-    InitializeDemiConfigFile(peerAddr);
+    // Search through Registered Demi-node list
+    FindRegisteredDemi(peerAddr);
     if(fDemiFound) {
         // Return success
         LogPrintf("Demi-node System: fDemiPeerRelay - Peer: %s matches listed Demi-node!\n", peerAddr);
@@ -39,13 +39,14 @@ static void DemiNodeFetch(uint256 blockHash)
         // Reset previously set data
         fDemiFound = false;
         // Loop through peers/nodes
-        BOOST_FOREACH(CNode* pnode, vNodes) {
+        for(CNode* pnode : vNodes) {
             // Skip obsolete nodes
             if(pnode->nVersion < DEMINODE_VERSION) {
                 continue;
             }
             // Request block data if peer is Demi-node
             if(fDemiPeerRelay(pnode->addrName)) {
+                LogPrintf("Demi-node System: DemiNodeFetch - Requesting block %s from %s\n", blockHash.ToString().c_str(), pnode->addrName.c_str());
                 pnode->PushMessage("getdata", dinv);
             }
 

@@ -13,7 +13,7 @@ static void DemiNodeSelect(bool demiSelectStatus, std::string demiSelectAddr)
         fDemiFound = false;
 
         // Loop through peers/nodes
-        BOOST_FOREACH(CNode* pnode, vNodes) {
+        for(CNode* pnode : vNodes) {
             // Skip obsolete nodes
             if(pnode->nVersion < DEMINODE_VERSION) {
                 continue;

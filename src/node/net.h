@@ -336,7 +336,7 @@ protected:
     static CCriticalSection cs_setBanned;
     static bool setBannedIsDirty;
 
-    std::vector<std::string> vecRequestsFulfilled; //keep track of what client has asked for
+    std::vector<std::string> vecRequestsFulfilled; // keep track of what client has asked for
 
 public:
     uint256 hashContinue;

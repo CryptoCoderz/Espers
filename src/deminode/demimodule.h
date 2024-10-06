@@ -8,12 +8,19 @@
 #include <cstring>
 // Compatibility for some compiliers (linking)
 #include <fstream>
+// For vector handling
+#include <vector>
 
+extern std::vector<std::string> vecRegisteredDemiNodes;
+extern std::vector<std::string> vecSeenDemiNodes;
 std::string GetDemiConfigFile();
 void BuildDemiConfigFile();
-void ReadDemiConfigFile(std::string peerReadAddr);
+void ReadDemiConfigFile();
+void FindRegisteredDemi(std::string peerReadAddr);
+bool FindSeenDemi(std::string peerReadAddr);
 void UpdateDemiConfigFile();
-void InitializeDemiConfigFile(std::string peerReadAddr);
+void UpdateSeenDemi(std::string peerReadAddr, bool fAddDemi);
+void InitializeDemiConfigFile();
 
 extern bool fDemiFound;
 
