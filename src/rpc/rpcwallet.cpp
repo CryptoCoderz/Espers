@@ -13,6 +13,7 @@
 #include "core/wallet.h"
 #include "database/walletdb.h"
 #include "deminode/demisync.h"
+#include "deminode/demimodule.h"
 
 using namespace std;
 using namespace json_spirit;
@@ -1603,6 +1604,36 @@ Value forcesync(const Array& params, bool fHelp)
     } else {
         result.push_back(Pair("current peers are not suitable for sync relay, waiting for other connections...", true));
     }
+
+    return result;
+}
+
+Value resetregdemilist(const Array& params, bool fHelp)
+{
+    if (fHelp || params.size() > 0)
+        throw runtime_error(
+            "resetregdemilist\n"
+            "Reset current registered Demi-node list.\n"
+            "Used to reload currently stored Demi-node config data.\n");
+
+    Object result;
+    ResetRegisteredDemi();
+    result.push_back(Pair("Successfully reset registered Demi-node list from Demi.conf data", true));
+
+    return result;
+}
+
+Value resetseendemilist(const Array& params, bool fHelp)
+{
+    if (fHelp || params.size() > 0)
+        throw runtime_error(
+            "resetseendemilist\n"
+            "Reset current seen Demi-node list.\n"
+            "Used to refresh currently seen Demi-node list from network.\n");
+
+    Object result;
+    ResetSeenDemi();
+    result.push_back(Pair("Successfully reset seen Demi-node list from network peers/nodes", true));
 
     return result;
 }

@@ -4,6 +4,7 @@
 
 #include "demimodule.h"
 #include "util/util.h"
+#include "database/txdb.h"
 
 bool fDemiFound = false;
 bool fDemiUpdate = true;
@@ -88,10 +89,15 @@ void FindRegisteredDemi(std::string peerReadAddr)
 
 bool FindSeenDemi(std::string peerReadAddr)
 {
+    // Check if there is anything to search
+    if (vecSeenDemiNodes.empty()) {
+        return false;
+    }
+
     // Search Registered Demi-node list
-    for(std::string& DemiRegList : vecRegisteredDemiNodes) {
+    for(std::string& DemiSeenList : vecSeenDemiNodes) {
         // Check for match
-        if(peerReadAddr == DemiRegList) {
+        if(peerReadAddr == DemiSeenList) {
             return true;
         }
     }
@@ -185,6 +191,36 @@ void UpdateSeenDemi(std::string peerReadAddr, bool fAddDemi)
     if (fAddDemi) {
         // Add Demi-Node to registered vector list
         vecSeenDemiNodes.push_back(peerReadAddr);
+    }
+}
+
+void ResetRegisteredDemi()
+{
+    // Clear current registered list
+    vecRegisteredDemiNodes.clear();
+
+    // Read Demi.conf
+    ReadDemiConfigFile();
+}
+
+void ResetSeenDemi()
+{
+    // Clear current registered list
+    vecSeenDemiNodes.clear();
+
+    // Loop through peers/nodes
+    LOCK(cs_vNodes);
+    for(CNode* pnode : vNodes) {
+        // Skip obsolete nodes
+        if(pnode->nVersion < DEMINODE_VERSION) {
+            continue;
+        }
+        // Add Demi-Node to registered vector list
+        FindRegisteredDemi(pnode->addrName);
+        if(fDemiFound) {
+            UpdateSeenDemi(pnode->addrName, true);
+        }
+
     }
 }
 

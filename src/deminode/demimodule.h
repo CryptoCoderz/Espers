@@ -20,6 +20,8 @@ void FindRegisteredDemi(std::string peerReadAddr);
 bool FindSeenDemi(std::string peerReadAddr);
 void UpdateDemiConfigFile();
 void UpdateSeenDemi(std::string peerReadAddr, bool fAddDemi);
+void ResetRegisteredDemi();
+void ResetSeenDemi();
 void InitializeDemiConfigFile();
 
 extern bool fDemiFound;
