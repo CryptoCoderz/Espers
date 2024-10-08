@@ -314,6 +314,11 @@ static const CRPCCommand vRPCCommands[] =
     { "forcesync",              &forcesync,              false,     true,      true },
     { "resetregdemilist",       &resetregdemilist,       false,     false,     true },
     { "resetseendemilist",      &resetseendemilist,      false,     false,     true },
+    { "registerdeminode",       &registerdeminode,       false,     false,     true },
+    { "removedeminode",         &removedeminode,         false,     false,     true },
+    { "getdeminodeinfo",        &getdeminodeinfo,        false,     false,     true },
+    { "getdeminetstatus",       &getdeminetstatus,       false,     false,     true },
+    { "getnetstatus",           &getnetstatus,           false,     false,     true },
 #endif
 };
 

@@ -195,5 +195,10 @@ extern json_spirit::Value pubkeyaliasservicelist(const json_spirit::Array& param
 // Demi-node Features
 extern json_spirit::Value resetregdemilist(const json_spirit::Array& params, bool fHelp);
 extern json_spirit::Value resetseendemilist(const json_spirit::Array& params, bool fHelp);
+extern json_spirit::Value registerdeminode(const json_spirit::Array& params, bool fHelp);
+extern json_spirit::Value removedeminode(const json_spirit::Array& params, bool fHelp);
+extern json_spirit::Value getdeminodeinfo(const json_spirit::Array& params, bool fHelp);
+extern json_spirit::Value getdeminetstatus(const json_spirit::Array& params, bool fHelp);
+extern json_spirit::Value getnetstatus(const json_spirit::Array& params, bool fHelp);
 
 #endif

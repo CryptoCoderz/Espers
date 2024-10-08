@@ -160,15 +160,54 @@ void UpdateDemiConfigFile()
     }
 }
 
-void UpdateSeenDemi(std::string peerReadAddr, bool fAddDemi)
+void UpdateRegisteredDemi(std::string peerReadAddr, bool fAddDemi, bool fHaveDemi)
+{
+    std::vector<std::string> vecTempDemiList = vecRegisteredDemiNodes;
+    unsigned int vecLoopList = 0;
+
+    // Check if adding initial value
+    if (vecTempDemiList.empty()) {
+        // Add Demi-Node to registered vector list
+        vecRegisteredDemiNodes.push_back(peerReadAddr);
+        fHaveDemi = false;
+        return;
+    }
+
+    // Search Registered Demi-node list
+    for(std::vector<std::string>::iterator it = vecTempDemiList.begin(); it != vecTempDemiList.end();) {
+        // Check for match
+        if(peerReadAddr == vecTempDemiList.at(vecLoopList)) {
+            if (!fAddDemi) {
+                // Remove registered Demi-node from list
+                vecRegisteredDemiNodes.erase(it);
+            }
+            fHaveDemi = true;
+            return;
+        }
+        // Move up per round
+        vecLoopList ++;
+         ++it;
+    }
+
+    // If adding, we do so now
+    if (fAddDemi) {
+        // Add Demi-Node to registered vector list
+        vecRegisteredDemiNodes.push_back(peerReadAddr);
+    }
+
+    fHaveDemi = false;
+}
+
+void UpdateSeenDemi(std::string peerReadAddr, bool fAddDemi, bool fHaveDemi)
 {
     std::vector<std::string> vecTempDemiList = vecSeenDemiNodes;
     unsigned int vecLoopList = 0;
 
     // Check if adding initial value
-    if (vecSeenDemiNodes.empty()) {
-        // Add Demi-Node to registered vector list
+    if (vecTempDemiList.empty()) {
+        // Add Demi-Node to seen vector list
         vecSeenDemiNodes.push_back(peerReadAddr);
+        fHaveDemi = false;
         return;
     }
 
@@ -180,6 +219,7 @@ void UpdateSeenDemi(std::string peerReadAddr, bool fAddDemi)
                 // Remove seen Demi-node from list
                 vecSeenDemiNodes.erase(it);
             }
+            fHaveDemi = true;
             return;
         }
         // Move up per round
@@ -189,9 +229,11 @@ void UpdateSeenDemi(std::string peerReadAddr, bool fAddDemi)
 
     // If adding, we do so now
     if (fAddDemi) {
-        // Add Demi-Node to registered vector list
+        // Add Demi-Node to seen vector list
         vecSeenDemiNodes.push_back(peerReadAddr);
     }
+
+    fHaveDemi = false;
 }
 
 void ResetRegisteredDemi()
@@ -205,22 +247,22 @@ void ResetRegisteredDemi()
 
 void ResetSeenDemi()
 {
-    // Clear current registered list
+    // Clear current seen list
     vecSeenDemiNodes.clear();
 
     // Loop through peers/nodes
+    bool fAlreadyHaveDemi = false;
     LOCK(cs_vNodes);
     for(CNode* pnode : vNodes) {
         // Skip obsolete nodes
         if(pnode->nVersion < DEMINODE_VERSION) {
             continue;
         }
-        // Add Demi-Node to registered vector list
+        // Add Demi-Node to seen vector list
         FindRegisteredDemi(pnode->addrName);
         if(fDemiFound) {
-            UpdateSeenDemi(pnode->addrName, true);
+            UpdateSeenDemi(pnode->addrName, true, fAlreadyHaveDemi);
         }
-
     }
 }
 

@@ -1637,3 +1637,95 @@ Value resetseendemilist(const Array& params, bool fHelp)
 
     return result;
 }
+
+Value registerdeminode(const Array& params, bool fHelp)
+{
+    if (fHelp || params.size() != 1)
+        throw runtime_error(
+            "registerdeminode\n"
+            "Register an IP as a Demi-node in the active list.\n"
+            "Used to manually add a Demi-node.\n");
+
+    bool fAdded = false;
+    bool fToAdd = true;
+    std::string strRegDemiNode = params[0].get_str().c_str();
+    UpdateRegisteredDemi(strRegDemiNode, fToAdd, fAdded);
+
+    Object result;
+    if (!fAdded) {
+        result.push_back(Pair("Successfully registered this IP as a demi-node!", true));
+    } else {
+        result.push_back(Pair("Failed to register this IP, it is already part of the registered list...", true));
+    }
+
+    return result;
+}
+
+Value removedeminode(const Array& params, bool fHelp)
+{
+    if (fHelp || params.size() != 1)
+        throw runtime_error(
+            "removedeminode\n"
+            "Remove a Demi-node by IP from the active list.\n"
+            "Used to manually remove a Demi-node.\n");
+
+    bool fAdded = false;
+    bool fToAdd = false;
+    std::string strRegDemiNode = params[0].get_str().c_str();
+    UpdateRegisteredDemi(strRegDemiNode, fToAdd, fAdded);
+
+    Object result;
+
+    if (fAdded) {
+        result.push_back(Pair("Successfully removed this IP as a demi-node!", true));
+    } else {
+        result.push_back(Pair("Failed to remove this IP, it is already not listed...", true));
+    }
+
+    return result;
+}
+
+Value getdeminodeinfo(const Array& params, bool fHelp)
+{
+    //if (fHelp || params.size() > 0)
+        throw runtime_error(
+            "getdeminodeinfo\n"
+            "Returns information on each Demi-node that is connected.\n"
+            "Used to view data regarding currently connected Demi-nodes.\n");
+
+    //Object result;
+    //ResetSeenDemi();
+    //result.push_back(Pair("Successfully reset seen Demi-node list from network peers/nodes", true));
+
+    //return result;
+}
+
+Value getdeminetstatus(const Array& params, bool fHelp)
+{
+    //if (fHelp || params.size() > 0)
+        throw runtime_error(
+            "getdeminetstatus\n"
+            "Returns overall Demi-node peer/network status.\n"
+            "Used to view forks, side-chains and other information.\n");
+
+    //Object result;
+    //ResetSeenDemi();
+    //result.push_back(Pair("Successfully reset seen Demi-node list from network peers/nodes", true));
+
+    //return result;
+}
+
+Value getnetstatus(const Array& params, bool fHelp)
+{
+    //if (fHelp || params.size() > 0)
+        throw runtime_error(
+            "getnetstatus\n"
+            "Returns overall peer/network status.\n"
+            "Used to view forks, side-chains and other information.\n");
+
+    //Object result;
+    //ResetSeenDemi();
+    //result.push_back(Pair("Successfully reset seen Demi-node list from network peers/nodes", true));
+
+    //return result;
+}
