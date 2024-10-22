@@ -1721,7 +1721,8 @@ Value getnetstatus(const Array& params, bool fHelp)
         throw runtime_error(
             "getnetstatus\n"
             "Returns overall peer/network status.\n"
-            "Used to view forks, side-chains and other information.\n");
+            "Used to view forks, side-chains and other information.\n"
+            "WARNING: Unfinished! Will be availale in future versions...\n");
 
     //Object result;
     //ResetSeenDemi();

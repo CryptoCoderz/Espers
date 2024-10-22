@@ -122,6 +122,8 @@ enum
     MSG_XNODE_WINNER,
     MSG_XNODE_SCANNING_ERROR,
     MSG_DEMIBLOCK,
+    MSG_DEMICURRENT,
+    MSG_DEMIMULTI,
 };
 
 extern bool fDiscover;

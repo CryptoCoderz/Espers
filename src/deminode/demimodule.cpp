@@ -205,8 +205,11 @@ void UpdateSeenDemi(std::string peerReadAddr, bool fAddDemi, bool fHaveDemi)
 
     // Check if adding initial value
     if (vecTempDemiList.empty()) {
-        // Add Demi-Node to seen vector list
-        vecSeenDemiNodes.push_back(peerReadAddr);
+        // Do not add a remove Demi request
+        if (fAddDemi) {
+            // Add Demi-Node to seen vector list
+            vecSeenDemiNodes.push_back(peerReadAddr);
+        }
         fHaveDemi = false;
         return;
     }

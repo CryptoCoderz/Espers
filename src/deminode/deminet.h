@@ -7,6 +7,14 @@
 #include "database/txdb.h"
 
 bool fDemiPeerRelay(std::string peerAddr);
+void DemiFetchBlock();
+void DemiFetchLatest();
+void DemiFetchMulti(uint256 blockHash, std::string peerAddr);
 bool getDemiBlock(uint256 blockHash);
+void DemiDataRefresh();
+void DemiProcessRefresh();
+void DemiConsensusLogix();
+bool getDemiNetStatus(int nTotalDemi, int nCurrentDemi);
+bool getDemiNodeInfo(std::vector<std::string> sDemiPeers, std::vector<int64_t> nDemiHeights, std::vector<uint256> vecDemiHashes);
 
 #endif // DEMINET_H
