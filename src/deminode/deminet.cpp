@@ -12,6 +12,8 @@ std::vector<std::string> vecFetchedDemiData;
 // Store Demi-node last data request time
 int64_t nDemiFetchIntervalNet;
 int64_t nDemiFetchIntervalSolo;
+// First run toggle
+bool fDemiInitializeFetch = false;
 
 bool fDemiPeerRelay(std::string peerAddr)
 {
@@ -19,101 +21,81 @@ bool fDemiPeerRelay(std::string peerAddr)
     FindRegisteredDemi(peerAddr);
     if(fDemiFound) {
         // Return success
-        LogPrintf("Demi-node System: fDemiPeerRelay - Peer: %s matches listed Demi-node!\n", peerAddr);
+        LogPrintf("Demi-node System: fDemiPeerRelay() - Peer: %s matches listed Demi-node!\n", peerAddr);
         return true;
     }
     return false;
 }
 
+void DemiDataRequestHandler(std::string peerAddr, bool fDemiFetched, bool fDemiSingleShot, const CInv dinv) {
+    // Node data Lock
+    LOCK(cs_vNodes);
+    // Loop through peers/nodes
+    for(CNode* pnode : vNodes) {
+        // Skip obsolete nodes
+        if(pnode->nVersion < DEMINODE_VERSION) {
+            continue;
+        }
+        // Request block data from Demi-node(s)
+        if(fDemiSingleShot) {
+            if(pnode->addrName == peerAddr) {
+                pnode->PushMessage("getdata", dinv);
+                fDemiFetched = true;
+                break;
+            }
+        } else if(fDemiPeerRelay(pnode->addrName)) {
+            pnode->PushMessage("getdata", dinv);
+            if(!fDemiFetched) {
+                fDemiFetched = true;
+            }
+        }
+    }
+}
+
 void DemiFetchBlock(uint256 blockHash)
 {
-    // Node data Lock
-    LOCK(cs_vNodes);
+    // Setup required values
+    std::string peerAddr = "127.0.0.1";
     // block allocation
-    vector<CInv> vGetDemiData;
     const CInv& dinv = CInv(MSG_DEMIBLOCK, blockHash);
-    vGetDemiData.push_back(dinv);
     // Reset previously set data
     fDemiFound = false;
-    // Loop through peers/nodes
-    for(CNode* pnode : vNodes) {
-        // Skip obsolete nodes
-        if(pnode->nVersion < DEMINODE_VERSION) {
-            continue;
-        }
-        // Request block data if peer is Demi-node
-        if(fDemiPeerRelay(pnode->addrName)) {
-            LogPrintf("Demi-node System: DemiFetchBlock - Requesting block %s from %s\n", blockHash.ToString().c_str(), pnode->addrName.c_str());
-            pnode->PushMessage("getdata", dinv);
-        }
-    }
+    // Run Demi-node data request handler
+    DemiDataRequestHandler(peerAddr, false, false, dinv);
+    // Update last data fetch time
+    nDemiFetchIntervalNet = GetTime();
 
-    vGetDemiData.clear();
     if(fDemiFound) {
-        LogPrintf("Demi-node System: DemiFetchBlock - Requested data successfully!\n");
+        LogPrintf("Demi-node System: DemiFetchBlock() - Requested specific block data successfully!\n");
     }
 }
 
-void DemiFetchLatest()
+void DemiFetchLatest(bool fDemiFetched)
 {
-    // Request Demi-node current best-block
-    //
+    // Setup required values
+    std::string peerAddr = "127.0.0.1";
     uint256 blockHash = Params().GenesisBlock().GetHash();
-    // Node data Lock
-    LOCK(cs_vNodes);
     // block allocation
-    vector<CInv> vGetDemiData;
     const CInv& dinv = CInv(MSG_DEMICURRENT, blockHash);
-    vGetDemiData.push_back(dinv);
-    // Reset previously set data
-    fDemiFound = false;
-    // Loop through peers/nodes
-    for(CNode* pnode : vNodes) {
-        // Skip obsolete nodes
-        if(pnode->nVersion < DEMINODE_VERSION) {
-            continue;
-        }
-        // Request block data if peer is Demi-node
-        if(fDemiPeerRelay(pnode->addrName)) {
-            // LogPrintf("Demi-node System: DemiFetchLatest - Requesting block %s from %s\n", blockHash.ToString().c_str(), pnode->addrName.c_str());
-            pnode->PushMessage("getdata", dinv);
-        }
+    // Run Demi-node data request handler
+    DemiDataRequestHandler(peerAddr, fDemiFetched, false, dinv);
+    // Update last data fetch time
+    nDemiFetchIntervalNet = GetTime();
 
-    }
-
-    vGetDemiData.clear();
-    if(fDemiFound) {
-        LogPrintf("Demi-node System: DemiFetchLatest - Requested Latest Block data successfully!\n");
+    if(fDemiFetched) {
+        LogPrintf("Demi-node System: DemiFetchLatest() - Requested Latest Block data successfully!\n");
     }
 }
 
-void DemiFetchMulti(uint256 blockHash, std::string peerAddr)
+void DemiFetchMulti(uint256 blockHash, std::string peerAddr, bool fDemiFetched)
 {
-    // Node data Lock
-    LOCK(cs_vNodes);
     // block allocation
-    vector<CInv> vGetDemiData;
     const CInv& dinv = CInv(MSG_DEMIMULTI, blockHash);
-    vGetDemiData.push_back(dinv);
-    // Reset previously set data
-    fDemiFound = false;
-    // Loop through peers/nodes
-    for(CNode* pnode : vNodes) {
-        // Skip obsolete nodes
-        if(pnode->nVersion < DEMINODE_VERSION) {
-            continue;
-        }
-        // Request block data from specified Demi-node
-        if(pnode->addrName == peerAddr) {
-            //LogPrintf("Demi-node System: DemiFetchBlock - Requesting block %s from %s\n", blockHash.ToString().c_str(), pnode->addrName.c_str());
-            pnode->PushMessage("getdata", dinv);
-            break;
-        }
-    }
+    // Run Demi-node data request handler
+    DemiDataRequestHandler(peerAddr, fDemiFetched, true, dinv);
 
-    vGetDemiData.clear();
-    if(fDemiFound) {
-        LogPrintf("Demi-node System: DemiFetchMulti - Requested Block data chunk successfully!\n");
+    if(fDemiFetched) {
+        LogPrintf("Demi-node System: DemiFetchMulti() - Requested Block data chunk from Demi-node\n");
     }
 }
 
@@ -124,7 +106,7 @@ bool getDemiBlock(uint256 blockHash)
 
     // Make sure we found a Demi-node
     if(!fDemiFound) {
-        LogPrintf("Demi-node System: WARNING - No Demi-nodes found!\n");
+        LogPrintf("Demi-node System: getDemiBlock() - Could not fetch any data, no Demi-nodes found!\n");
         return false;
     }
 
@@ -134,16 +116,30 @@ bool getDemiBlock(uint256 blockHash)
 
 void DemiDataRefresh()
 {
+    bool fDemiFetched = false;
+
     // Ensure nDemiFetchIntervalNet is initialized
     if(nDemiFetchIntervalNet == NULL) {
-        // Since first run, ask network for data
-        DemiFetchLatest();
-
+        // Initialize data fetch time
+        nDemiFetchIntervalNet = GetTime();
+        fDemiInitializeFetch = true;
     }
     // Check if periodic data refresh is needed (default: 5 minutes)
     if(nDemiFetchIntervalNet + (5 * 60) < (GetTime())) {
         // Request updated data from network
-        DemiFetchLatest();
+        DemiFetchLatest(fDemiFetched);
+    } else if(fDemiInitializeFetch) {
+        // Shorter wait for initial run/startup
+        if(nDemiFetchIntervalNet + (1 * 60) < (GetTime())) {
+            // Request updated data from network
+            DemiFetchLatest(fDemiFetched);
+            fDemiInitializeFetch = false;
+        }
+    }
+
+    // Make sure we found a Demi-node
+    if(!fDemiFetched) {
+        LogPrintf("Demi-node System: DemiDataRefresh() - Could not fetch any data, no Demi-nodes found!\n");
     }
 }
 

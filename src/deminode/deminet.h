@@ -7,9 +7,10 @@
 #include "database/txdb.h"
 
 bool fDemiPeerRelay(std::string peerAddr);
-void DemiFetchBlock();
-void DemiFetchLatest();
-void DemiFetchMulti(uint256 blockHash, std::string peerAddr);
+void DemiDataRequestHandler(std::string peerAddr, bool fDemiFetched, bool fDemiSingleShot, const CInv dinv);
+void DemiFetchBlock(uint256 blockHash);
+void DemiFetchLatest(bool fDemiFetched);
+void DemiFetchMulti(uint256 blockHash, std::string peerAddr, bool fDemiFetched);
 bool getDemiBlock(uint256 blockHash);
 void DemiDataRefresh();
 void DemiProcessRefresh();
