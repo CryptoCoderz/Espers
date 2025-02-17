@@ -1,5 +1,5 @@
 // Copyright (c) 2014-2015 The Darkcoin developers
-// Copyright (c) 2017-2024 The CryptoCoderz Team
+// Copyright (c) 2017-2025 The CryptoCoderz Team
 // Distributed under the MIT/X11 software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 

@@ -4,7 +4,7 @@
 // and stb_sprintf by Jeff Roberts.
 //
 // Copyright (c) 2010-2021 of above specified and respective owners
-// Copyright (c) 2020-2024 The Espers Project/CryptoCoderz Team
+// Copyright (c) 2020-2025 The Espers Project/CryptoCoderz Team
 //
 // Distributed under the MIT/X11 software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.

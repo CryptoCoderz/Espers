@@ -1,4 +1,4 @@
-// Copyright (c) 2022-2024 The CryptoCoderz Team / Espers project
+// Copyright (c) 2022-2025 The CryptoCoderz Team / Espers project
 // Distributed under the MIT/X11 software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 #ifndef PASREGISTER_H
